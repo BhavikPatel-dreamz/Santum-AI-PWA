@@ -1,0 +1,38 @@
+import type { Metadata } from "next";
+import { Poppins } from "next/font/google";
+import { Suspense } from "react";
+import "./globals.css";
+import { ReduxProvider } from "@/components/providers/ReduxProvider";
+
+const poppins = Poppins({
+  variable: "--font-poppins-ui",
+  weight: ["400", "500", "600", "700"],
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+  title: "Amigo App",
+  description: "A PWA with RTK Query",
+  manifest: "/manifest.json",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html
+      lang="en"
+      className={`${poppins.variable} h-full antialiased`}
+    >
+      <body className="min-h-full flex flex-col font-poppins">
+        <ReduxProvider>
+          <Suspense> {/* ✅ stabilises Next.MetadataOutlet Suspense boundary */}
+            <main className="flex-1">{children}</main>
+          </Suspense>
+        </ReduxProvider>
+      </body>
+    </html>
+  );
+}
