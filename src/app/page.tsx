@@ -3,7 +3,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 
-const Loading = dynamic(() => import("../components/onboarding/Loading"), { ssr: false });
 const OnboardingSlide = dynamic(() => import("../components/onboarding/OnboardingSlide"), { ssr: false });
 
 const slides = [
@@ -28,56 +27,118 @@ const slides = [
 ];
 
 const AUTO_SLIDE_INTERVAL = 4000;
+const ANIM_DURATION = 320;
+
+type Direction = "left" | "right";
 
 export default function RootPage() {
-  // ✅ Removed useIsClient — ssr:false on the dynamic imports already handles this
-  const [showLoader, setShowLoader] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [animClass, setAnimClass] = useState("");
+  const isAnimating = useRef(false);
   const router = useRouter();
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const autoSlideStopped = useRef(false);
+
+  const stopAutoSlide = useCallback(() => {
+    autoSlideStopped.current = true;
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  }, []);
+
+  const goToSlide = useCallback((next: number, direction: Direction) => {
+    if (isAnimating.current || next === currentSlide) return;
+    isAnimating.current = true;
+
+    const exitClass = direction === "left" ? "slide-exit-left" : "slide-exit-right";
+    setAnimClass(exitClass);
+
+    setTimeout(() => {
+      setCurrentSlide(next);
+      const enterClass = direction === "left" ? "slide-enter-left" : "slide-enter-right";
+      setAnimClass(enterClass);
+
+      setTimeout(() => {
+        setAnimClass("");
+        isAnimating.current = false;
+      }, ANIM_DURATION);
+    }, ANIM_DURATION);
+  }, [currentSlide]);
 
   const goNext = useCallback(() => {
-    setCurrentSlide((prev) => (prev < slides.length - 1 ? prev + 1 : prev));
+    setCurrentSlide((prev: number) => {
+      const next = prev < slides.length - 1 ? prev + 1 : prev;
+      if (next === slides.length - 1 && timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+      setAnimClass("slide-enter-left");
+      setTimeout(() => setAnimClass(""), ANIM_DURATION);
+      return next;
+    });
   }, []);
 
   const resetTimer = useCallback(() => {
+    if (autoSlideStopped.current) return;
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = setInterval(goNext, AUTO_SLIDE_INTERVAL);
   }, [goNext]);
 
   useEffect(() => {
-    if (showLoader) return;
     resetTimer();
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, [showLoader, resetTimer]); // ✅ Removed isClient dependency
+  }, [resetTimer]);
 
-  useEffect(() => {
-    if (currentSlide === slides.length - 1 && timerRef.current) {
-      clearInterval(timerRef.current);
-    }
-  }, [currentSlide]);
+  const handleDotClick = useCallback((index: number) => {
+    stopAutoSlide();
+    const dir: Direction = index > currentSlide ? "left" : "right";
+    goToSlide(index, dir);
+  }, [currentSlide, stopAutoSlide, goToSlide]);
 
   const handleNext = useCallback(() => {
     if (currentSlide < slides.length - 1) {
-      resetTimer();
-      setCurrentSlide((prev) => prev + 1);
+      stopAutoSlide();
+      goToSlide(currentSlide + 1, "left");
     } else {
       localStorage.setItem("onboarding_done", "true");
       router.push("/lets-you-in");
     }
-  }, [currentSlide, router, resetTimer]);
-
-  const handleLoaderDone = useCallback(() => setShowLoader(false), []);
-
-  // ✅ No more if (!isClient) return null — server and client render the same thing.
-  //    The dynamic components render null on SSR themselves, so no mismatch.
-  if (showLoader) return <Loading onDone={handleLoaderDone} />;
+  }, [currentSlide, router, stopAutoSlide, goToSlide]);
 
   return (
-    <OnboardingSlide
-      {...slides[currentSlide]}
-      currentDot={currentSlide}
-      onNext={handleNext}
-    />
+    <>
+      <style>{`
+        @keyframes slideInFromRight {
+          from { opacity: 0; transform: translateX(56px); }
+          to   { opacity: 1; transform: translateX(0);    }
+        }
+        @keyframes slideInFromLeft {
+          from { opacity: 0; transform: translateX(-56px); }
+          to   { opacity: 1; transform: translateX(0);     }
+        }
+        @keyframes slideOutToLeft {
+          from { opacity: 1; transform: translateX(0);     }
+          to   { opacity: 0; transform: translateX(-56px); }
+        }
+        @keyframes slideOutToRight {
+          from { opacity: 1; transform: translateX(0);    }
+          to   { opacity: 0; transform: translateX(56px); }
+        }
+        .slide-enter-left  { animation: slideInFromRight ${ANIM_DURATION}ms ease both; }
+        .slide-enter-right { animation: slideInFromLeft  ${ANIM_DURATION}ms ease both; }
+        .slide-exit-left   { animation: slideOutToLeft   ${ANIM_DURATION}ms ease both; }
+        .slide-exit-right  { animation: slideOutToRight  ${ANIM_DURATION}ms ease both; }
+      `}</style>
+
+      <OnboardingSlide
+        {...slides[currentSlide]}
+        currentDot={currentSlide}
+        totalDots={slides.length}
+        animClass={animClass}
+        onNext={handleNext}
+        onDotClick={handleDotClick}
+      />
+    </>
   );
 }

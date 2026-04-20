@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
 import { ReduxProvider } from "@/components/providers/ReduxProvider";
+import { PageTransitionProvider } from "@/components/providers/PageTransitionProvider";
 
 const poppins = Poppins({
   variable: "--font-poppins-ui",
@@ -28,9 +29,11 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col font-poppins">
         <ReduxProvider>
-          <Suspense> {/* ✅ stabilises Next.MetadataOutlet Suspense boundary */}
-            <main className="flex-1">{children}</main>
-          </Suspense>
+          <PageTransitionProvider>
+            <Suspense> {/* ✅ stabilises Next.MetadataOutlet Suspense boundary */}
+              <main className="flex-1">{children}</main>
+            </Suspense>
+          </PageTransitionProvider>
         </ReduxProvider>
       </body>
     </html>
