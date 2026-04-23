@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
 
-const GreenSection = ({name,isLogo}) => {
+const GreenSection = () => {
    const router = useRouter()
   return (
     <div>
