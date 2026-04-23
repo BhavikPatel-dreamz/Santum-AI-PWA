@@ -2,7 +2,7 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 
-export default function Loading({ onDone }) {
+export default function LoadingScreen({ onDone }) {
   const onDoneRef = useRef(onDone);
   onDoneRef.current = onDone;
 
