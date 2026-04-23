@@ -1,11 +1,9 @@
 "use client";
 
-import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import HeaderSection from "../../components/UI/HeaderSection";
 
 export default function OtpPage() {
-    const router = useRouter();
     const [otp, setOtp] = useState(["", "", "", ""]);
     const [resendTimer, setResendTimer] = useState(30);
     const inputRefs = useRef([]);
@@ -80,7 +78,7 @@ export default function OtpPage() {
     return (
         <div className="min-h-dvh bg-white">
             <div className="mx-auto flex min-h-dvh w-full max-w-[600px] flex-col bg-white">
-                <header className="relative h-[120px] overflow-hidden bg-[#23cf67] px-5 pt-6">
+                {/* <header className="relative h-[120px] overflow-hidden bg-[#23cf67] px-5 pt-6">
                     <Image
                         src="/icons/let-you-screen-main-img.jpg"
                         alt=""
@@ -117,7 +115,8 @@ export default function OtpPage() {
                             Verify Phone Number
                         </h1>
                     </div>
-                </header>
+                </header> */}
+                <HeaderSection title={"Verify Phone Number"}/>
 
                 <section className="relative -mt-10 flex flex-1 flex-col rounded-t-[32px] bg-white pb-10 pt-3">
                     <div className="flex flex-col items-center text-center">
