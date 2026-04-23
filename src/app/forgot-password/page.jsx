@@ -5,6 +5,7 @@ import StepPageShell from "@/components/app/StepPageShell";
 import { Mail, MessageSquare } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import HeaderSection from "../../components/UI/HeaderSection";
 
 const RECOVERY_OPTIONS = [
   {

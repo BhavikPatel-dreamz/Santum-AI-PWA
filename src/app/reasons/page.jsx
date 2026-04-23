@@ -4,6 +4,7 @@ import FeatureShowcaseCard from "@/components/app/FeatureShowcaseCard";
 import StepPageShell from "@/components/app/StepPageShell";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import HeaderSection from "../../components/UI/HeaderSection";
 
 const REASONS = [
   { id: 1, label: "Generate creative text formats" },
