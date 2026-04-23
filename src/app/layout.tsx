@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import "./globals.css";
 import { ReduxProvider } from "@/components/providers/ReduxProvider";
 import { PageTransitionProvider } from "@/components/providers/PageTransitionProvider";
+import LoadingScreenWrapper from "@/components/onboarding/LoadingScreenWrapper"; // ← new wrapper
 
 const poppins = Poppins({
   variable: "--font-poppins-ui",
@@ -23,14 +24,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${poppins.variable} h-full antialiased`}
-    >
+    <html lang="en" className={`${poppins.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-poppins">
         <ReduxProvider>
+          {/* LoadingScreenWrapper manages its own dismissal via onDone */}
+          <LoadingScreenWrapper />
           <PageTransitionProvider>
-            <Suspense> {/* ✅ stabilises Next.MetadataOutlet Suspense boundary */}
+            <Suspense>
               <main className="flex-1">{children}</main>
             </Suspense>
           </PageTransitionProvider>
