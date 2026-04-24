@@ -32,6 +32,8 @@ export default function SignUpPage() {
   );
   const [register, { isLoading }] = useRegisterMutation();
 
+  useAuthGuard()
+
   useEffect(() => {
     function handleClickOutside(e) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
