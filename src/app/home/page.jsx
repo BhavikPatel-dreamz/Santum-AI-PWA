@@ -707,6 +707,15 @@ export default function HomeScreen() {
     router.push(href);
   };
 
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout");
+      
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div
       className={`min-h-dvh flex justify-center ${darkMode ? "bg-[#121212]" : "bg-[#E4FFEE]"}`}

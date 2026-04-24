@@ -68,7 +68,7 @@ export default function SignInPage() {
       router.replace("/home");
     } catch (error) {
       console.log("Error:", error);
-      toast.error(error.data.data.message || "Something went wrong");
+      toast.error(error.message || "Something went wrong");
     } finally {
       setLoading(false);
       setDropdownOpen(false);
@@ -170,7 +170,6 @@ export default function SignInPage() {
                 </div>
               </div>
             )}
-            
           </div>
 
           <div className="flex items-center gap-3 bg-[#F5F5F5] rounded-[14px] px-4 py-3.5 mb-4">
