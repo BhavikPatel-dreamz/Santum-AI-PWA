@@ -3,8 +3,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
 
-const GreenSection = ({show}) => {
-   const router = useRouter()
+const GreenSection = ({ show = true }) => {
+  const router = useRouter();
   return (
     <div>
       <div className="relative bg-[#00D061] h-94 flex items-end justify-center pb-12 overflow-hidden flex-shrink-0">
@@ -21,14 +21,16 @@ const GreenSection = ({show}) => {
         />
 
         {/* Back button */}
-        <button
-          type="button"
-          onClick={() => router.back()}
-          aria-label="Go back"
-          className="absolute top-5 left-5 z-10 w-10 h-10 rounded-[10px] border-2 border-white/60 bg-white/15 backdrop-blur-sm text-white flex items-center justify-center hover:bg-white/25 transition-colors"
-        >
-          <ArrowLeft size={18}/>
-        </button>
+        {show && (
+          <button
+            type="button"
+            onClick={() => router.back()}
+            aria-label="Go back"
+            className="absolute top-5 left-5 z-10 w-10 h-10 rounded-[10px] border-2 border-white/60 bg-white/15 backdrop-blur-sm text-white flex items-center justify-center hover:bg-white/25 transition-colors"
+          >
+            <ArrowLeft size={18} />
+          </button>
+        )}
 
         {/* Logo */}
         <div className="absolute top-21 z-10 w-[120px] h-[120px] bg-white rounded-[24px] flex items-center justify-center">
