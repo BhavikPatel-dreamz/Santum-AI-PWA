@@ -10,6 +10,7 @@ import { validateInternationalPhone } from "../sign-in/page";
 import { Eye, EyeOff, LockIcon } from "lucide-react";
 import { apiFetch } from "../../lib/api/client";
 import toast from "react-hot-toast";
+import { useAuthGuard } from "../../lib/hooks/useAuthGuard";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -27,6 +28,8 @@ export default function SignUpPage() {
   const filtered = COUNTRIES.filter((c) =>
     c.name.toLowerCase().includes(search.toLowerCase()),
   );
+
+  useAuthGuard()
 
   useEffect(() => {
     function handleClickOutside(e) {
