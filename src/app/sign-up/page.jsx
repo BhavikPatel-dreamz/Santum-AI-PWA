@@ -6,10 +6,19 @@ import { useEffect, useRef, useState } from "react";
 import { COUNTRIES } from "../../lib/utills/countries";
 import GreenSection from "../../components/UI/GreenSection";
 import SocialButtons from "../../components/UI/SocialButtons";
+import { validateInternationalPhone } from "../sign-in/page";
+import { Eye, EyeOff, LockIcon } from "lucide-react";
+import ErrorMessage from "../../lib/utills/logs";
+import { apiFetch } from "../../lib/api/client";
 
 export default function SignUpPage() {
   const router = useRouter();
-  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [error, setError] = useState("");
   const [phone, setPhone] = useState("");
   const [selectedCountry, setSelectedCountry] = useState(COUNTRIES[0]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -31,6 +40,49 @@ export default function SignUpPage() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const handleSubmit = async () => {
+    try {
+      setError("");
+      setLoading(true);
+
+      if (!phone) return setError("PhoneNo is required");
+      if (!password) return setError("Password is required");
+      if (!confirmPassword) return setError("Confirm password is required");
+      if (password !== confirmPassword)
+        return setError("Passwords do not match");
+
+      const isNumberVerify = validateInternationalPhone(
+        `${phone}`,
+      );
+      if (!isNumberVerify) return setError("Enter valid number");
+
+      const payload = {
+        mobile: phone.trim(),
+        password: password.trim(),
+      };
+
+      const data = await apiFetch("/v1/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/javascript",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (data.success) {
+        localStorage.setItem("token", data.token);
+        router.push("/home");
+      }
+    } catch (error) {
+      console.log("Error:", error);
+      setError(error.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+      setDropdownOpen(false);
+      setSearch("");
+    }
+  };
+
   return (
     <div className="min-h-dvh flex flex-col items-center bg-white font-sans">
       <div className="w-full max-w-[600px] flex flex-col min-h-dvh bg-[#E4FFEE] relative">
@@ -43,33 +95,9 @@ export default function SignUpPage() {
             Sign Up
           </h2>
 
-          {/* Name input */}
-          <div className="flex items-center gap-3 bg-[#F5F5F5] rounded-[14px] px-4 py-3.5 mb-4">
-            <svg
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#0F0F0F"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-              <circle cx="12" cy="7" r="4" />
-            </svg>
-            <input
-              type="text"
-              placeholder="Your Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="flex-1 bg-transparent outline-none text-[16px] text-[#0F0F0F] placeholder-[#AAAAAA]"
-            />
-          </div>
-
           {/* Phone input with country picker */}
           <div className="relative mb-6" ref={dropdownRef}>
-            <div className="flex items-center bg-[#F5F5F5] rounded-[14px] px-4 py-3.5">
+            <div className="flex items-center bg-[#F5F5F5] rounded-[14px] px-4 py-3.5 mb-4">
               {/* Country selector */}
               <button
                 type="button"
@@ -79,7 +107,7 @@ export default function SignUpPage() {
                 }}
                 className="flex items-center gap-1.5 mr-3 shrink-0"
               >
-                <span className="text-[20px] leading-none">
+                <span className="text-[20px] text-[#555] leading-none">
                   {selectedCountry.flag}
                 </span>
                 <svg
@@ -103,6 +131,48 @@ export default function SignUpPage() {
                 onChange={(e) => setPhone(e.target.value)}
                 className="flex-1 bg-transparent outline-none text-[16px] text-[#0F0F0F] placeholder-[#AAAAAA]"
               />
+            </div>
+
+            {/* password input */}
+            <div className="flex items-center gap-3 bg-[#F5F5F5] rounded-[14px] px-4 py-3.5 mb-4">
+              <LockIcon className="text-[#555]" size={22} />
+
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Your Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="flex-1 bg-transparent outline-none text-[16px] text-[#0F0F0F] placeholder-[#AAAAAA]"
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="text-[#555]"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+
+            {/* confirm password */}
+            <div className="flex items-center gap-3 bg-[#F5F5F5] rounded-[14px] px-4 py-3.5">
+              <LockIcon className="text-[#555]" size={22} />
+
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="flex-1 bg-transparent outline-none text-[16px] text-[#0F0F0F] placeholder-[#AAAAAA]"
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="text-[#555]"
+              >
+                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
             </div>
 
             {/* Dropdown */}
@@ -131,7 +201,9 @@ export default function SignUpPage() {
                       }}
                       className={`w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-[#F0FFF6] transition-colors ${selectedCountry.code === c.code ? "bg-[#F0FFF6]" : ""}`}
                     >
-                      <span className="text-[20px] leading-none">{c.flag}</span>
+                      <span className="text-[20px] text-[#555] leading-none">
+                        {c.flag}
+                      </span>
                       <span className="flex-1 text-[14px] text-[#0F0F0F]">
                         {c.name}
                       </span>
@@ -150,8 +222,13 @@ export default function SignUpPage() {
             )}
           </div>
 
+          <ErrorMessage error={error} />
+
           {/* Sign Up button */}
-          <button className="w-full py-4 rounded-[14px] bg-[#00D061] text-white text-[18px] font-semibold tracking-wide hover:bg-[#00b856] hover:shadow-[0_6px_20px_rgba(0,208,97,0.40)] hover:-translate-y-px active:translate-y-0 transition-all duration-200 mb-6">
+          <button
+            onClick={() => handleSubmit()}
+            className="w-full py-4 rounded-[14px] bg-[#00D061] text-white text-[18px] font-semibold tracking-wide hover:bg-[#00b856] hover:shadow-[0_6px_20px_rgba(0,208,97,0.40)] hover:-translate-y-px active:translate-y-0 transition-all duration-200 mb-6"
+          >
             Sign Up
           </button>
 
@@ -165,7 +242,7 @@ export default function SignUpPage() {
           </div>
 
           {/* Social buttons */}
-            <SocialButtons/>
+          <SocialButtons />
         </div>
 
         {/* ── Spacer ── */}
