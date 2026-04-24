@@ -88,16 +88,15 @@ export default function SignUpPage() {
         return toast.error("Enter valid number");
       }
 
-      const payload = new FormData();
-      payload.append("mobile", `${selectedCountry.dial}${phone}`);
-      payload.append("password", password);
-
       const data = await apiFetch("/v1/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
+
+        body: (() => {
+          const formData = new FormData();
+          formData.append("mobile", `${selectedCountry.dial}${phone}`);
+          formData.append("password", password);
+          return formData;
+        })(),
       });
 
       if (data.success) {
@@ -106,14 +105,14 @@ export default function SignUpPage() {
         localStorage.setItem("token", data.data.token);
 
         setTimeout(() => {
-          router.push("/home");
+          router.push("/verify-otp");
         }, 800);
       } else {
-        toast.error(data.message || "Registration failed");
+        toast.error(data.data.message || "Registration failed");
       }
     } catch (error) {
       console.log("Error:", error);
-      toast.error(error.message || "Something went wrong");
+      toast.error(error.data.data.message || "Something went wrong");
     } finally {
       setLoading(false);
       setDropdownOpen(false);

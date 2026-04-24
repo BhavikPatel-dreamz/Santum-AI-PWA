@@ -11,15 +11,9 @@ import toast from "react-hot-toast";
 
 export const validateInternationalPhone = (number) => {
   const cleaned = number.trim().replace(/[^\d+]/g, "");
-  const formatRegex = /^\+?[1-9]\d{6,14}$/;
+  const formatRegex = /^\+?[1-9]\d{4,15}$/;
   if (!formatRegex.test(cleaned)) return false;
   const digits = cleaned.replace(/\D/g, "");
-  if (digits.length !== 10) return false;
-  if (/^(\d)\1+$/.test(digits)) return false;
-  if (/^(..)\1+$/.test(digits) || /^(...)\1+$/.test(digits)) return false;
-  const sequential = "01234567890123456789";
-  const reversed = "98765432109876543210";
-  if (sequential.includes(digits) || reversed.includes(digits)) return false;
   return true;
 };
 
@@ -75,7 +69,7 @@ export default function SignInPage() {
       }
     } catch (error) {
       console.log("Error:", error);
-      toast.error(error.message || "Something went wrong");
+      toast.error(error.data.data.message || "Something went wrong");
     } finally {
       setLoading(false);
       setDropdownOpen(false);
