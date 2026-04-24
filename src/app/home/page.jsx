@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { useAuthGuard } from "../../lib/hooks/useAuthGuard";
+import { Bell, ChevronRightIcon, Edit2Icon, Settings, X } from "lucide-react";
 
 // ─── SVG Icons ────────────────────────────────────────────────────────────────
 
@@ -735,14 +736,14 @@ export default function HomeScreen() {
                 className="relative"
                 onClick={() => alert("Notifications")}
               >
-                <BellIcon />
+                <Bell/>
                 <span className="absolute -top-1 -right-1 w-[18px] h-[18px] bg-[#FF484D] rounded-full flex items-center justify-center text-white text-[10px] font-medium">
                   5
                 </span>
               </button>
               {/* Hex / settings */}
               <button type="button" onClick={() => setDrawerOpen(true)}>
-                <HexIcon />
+                <Settings />
               </button>
             </div>
           </div>
@@ -843,7 +844,7 @@ export default function HomeScreen() {
               onClick={() => setDrawerOpen(false)}
               className={`text-[24px] leading-none ${darkMode ? "text-white" : "text-[#0F0F0F]"}`}
             >
-              ✕
+              <X/>
             </button>
           </div>
 
@@ -867,7 +868,7 @@ export default function HomeScreen() {
               </div>
             </div>
             <button type="button">
-              <EditIcon />
+              <Edit2Icon className="text-[]"/>
             </button>
           </div>
 
@@ -921,7 +922,7 @@ export default function HomeScreen() {
                         {item.hint}
                       </span>
                     )}
-                    <ChevronRight />
+                    <ChevronRightIcon />
                   </div>
                 </button>
               );
