@@ -10,9 +10,9 @@ export default function LetsYouInPage() {
     <div className="min-h-dvh flex flex-col items-center bg-white font-sans">
       <div className="w-full max-w-[600px] flex flex-col min-h-dvh bg-[#E4FFEE] relative">
         {/* ── Top green section ── */}
-        <GreenSection />
+        <GreenSection show={false} />
         {/* ── White card ── */}
-        <div className="absolute z-10 w-[96%] mx-3 top-59 bg-white rounded-[28px] px-7 pt-8 pb-9">
+        <div className="relative z-10 w-[96%] mx-3 -mt-20 bg-white rounded-[28px] px-7 pt-8 pb-9 shadow-md">
           <h2 className="text-[24px] font-semibold leading-9 text-[#0F0F0F] text-center mb-7">
             Let's You In
           </h2>
