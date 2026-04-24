@@ -11,6 +11,7 @@ import Image from "next/image";
 
 export default function OtpPage() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [loading, setLoading] = useState(false);
   const [resendTimer, setResendTimer] = useState(30);
   const inputRefs = useRef([]);
   const [maskedPhone] = useState(() => {
