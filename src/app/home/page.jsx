@@ -797,6 +797,15 @@ export default function HomeScreen() {
     getProfileLastName(profile) || displayName.split(" ").filter(Boolean)[1],
   );
 
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout");
+      
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="theme-shell min-h-dvh flex justify-center transition-colors duration-300">
       <div className="theme-surface w-full max-w-[600px] min-h-dvh flex flex-col relative overflow-hidden transition-colors duration-300">
