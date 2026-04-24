@@ -81,7 +81,8 @@ export default function OtpPage() {
   const handleVerify = async () => {
     try {
       const otpValue = otp.join(""); // convert ["1","2","3","4","5","6"] → "123456"
-      const token = localStorage.getItem("token");
+      const resdata = await fetch('/api/auth/me')
+      const token = resdata.data.token
 
       if (!token) {
         toast.error("User not authenticated");

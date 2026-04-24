@@ -23,7 +23,8 @@ const Page = () => {
   const [selected, setSelected] = useState("English");
   const handleSubmit = async () => {
     try {
-      const token = localStorage.getItem("token"); // 🔥 get token
+      const resdata = await fetch("/api/auth/me");
+      const token = resdata.data.token;
 
       if (!token) {
         toast.error("User not authenticated");
@@ -66,7 +67,6 @@ const Page = () => {
 
         {/* Content card */}
         <section className="relative -mt-10 flex flex-1 flex-col rounded-t-[32px] bg-white pb-10 pt-8 px-5">
-
           <p className="text-[18px] leading-6 text-[#555] font-satoshi mb-6">
             Please select your preferred language to facilitate communication.
           </p>

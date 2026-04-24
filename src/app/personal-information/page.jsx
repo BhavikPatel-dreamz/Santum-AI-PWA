@@ -57,8 +57,8 @@ export default function PersonalInformationPage() {
       payload.append("last_name", form.lastName);
       payload.append("dob", form.dob);
 
-      const token = localStorage.getItem("token");
-      if (!token) toast.error("User not authenticated");
+     const resdata = await fetch('/api/auth/me')
+      const token = resdata.data.token
       setLoading(true);
       await apiFetch("/v1/user/profile/basic", {
         method: "POST",
