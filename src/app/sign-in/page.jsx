@@ -4,10 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import { COUNTRIES } from "../../lib/utills/countries";
 import GreenSection from "../../components/UI/GreenSection";
 import SocialButtons from "../../components/UI/SocialButtons";
-import ErrorMessage from "../../lib/utills/logs";
 import { apiFetch } from "../../lib/api/client";
 import { Eye, EyeOff, LockIcon, User } from "lucide-react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export const validateInternationalPhone = (number) => {
   const cleaned = number.trim().replace(/[^\d+]/g, "");
@@ -31,7 +31,6 @@ export default function SignInPage() {
   const [selectedCountry, setSelectedCountry] = useState(COUNTRIES[0]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const [error, setError] = useState("");
   const dropdownRef = useRef(null);
 
   const router = useRouter();
@@ -53,37 +52,30 @@ export default function SignInPage() {
 
   const handleSubmit = async () => {
     try {
-      setError("");
       setLoading(true);
 
-      if (!phone) return setError("PhoneNo is required");
-      if (!password) return setError("Password is required");
-      const isNumberVerify = validateInternationalPhone(
-        `${phone}`,
-      );
+      if (!phone) return toast.error("PhoneNo is required");
+      if (!password) return toast.error("Password is required");
+      const isNumberVerify = validateInternationalPhone(`${phone}`);
 
-      if (!isNumberVerify) return setError("Enter valid number");
+      if (!isNumberVerify) return toast.error("Enter valid number");
 
-      const payload = {
-        mobile: phone.trim(),
-        password: password.trim(),
-      };
-
+      const payload = new FormData();
+      payload.append("mobile", `${selectedCountry.dial}${phone}`);
+      payload.append("password", password);
+      
       const data = await apiFetch("/v1/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/javascript",
-        },
-        body: JSON.stringify(payload),
+        body: payload,
       });
 
       if (data.success) {
-        localStorage.setItem("token", data.token);
+        localStorage.setItem("token", data.data.token);
         router.push("/home");
       }
     } catch (error) {
       console.log("Error:", error);
-      setError(error.message || "Something went wrong");
+      toast.error(error.message || "Something went wrong");
     } finally {
       setLoading(false);
       setDropdownOpen(false);
@@ -140,30 +132,9 @@ export default function SignInPage() {
               />
             </div>
 
-            {/* password input */}
-            <div className="flex items-center gap-3 bg-[#F5F5F5] rounded-[14px] px-4 py-3.5 mb-4">
-              <LockIcon className="text-[#555]" size={22} />
-
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Your Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="flex-1 bg-transparent outline-none text-[16px] text-[#0F0F0F] placeholder-[#AAAAAA]"
-              />
-
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="text-[#555]"
-              >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
-
             {/* Dropdown */}
             {dropdownOpen && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-[14px] shadow-[0_8px_30px_rgba(0,0,0,0.12)] z-50 overflow-hidden border border-gray-100">
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-[14px] shadow-[0_8px_30px_rgba(0,0,0,0.12)] z-[999] overflow-hidden border border-gray-100">
                 {/* Search box */}
                 <div className="px-3 pt-3 pb-2">
                   <input
@@ -206,9 +177,28 @@ export default function SignInPage() {
                 </div>
               </div>
             )}
-          </div>
 
-          <ErrorMessage error={error} />
+            {/* password input */}
+            <div className="flex items-center gap-3 bg-[#F5F5F5] rounded-[14px] px-4 py-3.5 mb-4">
+              <LockIcon className="text-[#555]" size={22} />
+
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Your Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="flex-1 bg-transparent outline-none text-[16px] text-[#0F0F0F] placeholder-[#AAAAAA]"
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="text-[#555]"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+          </div>
 
           {/* Sign In button */}
           <button

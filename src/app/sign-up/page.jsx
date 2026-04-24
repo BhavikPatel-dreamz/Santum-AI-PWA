@@ -8,8 +8,8 @@ import GreenSection from "../../components/UI/GreenSection";
 import SocialButtons from "../../components/UI/SocialButtons";
 import { validateInternationalPhone } from "../sign-in/page";
 import { Eye, EyeOff, LockIcon } from "lucide-react";
-import ErrorMessage from "../../lib/utills/logs";
 import { apiFetch } from "../../lib/api/client";
+import toast from "react-hot-toast";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -18,7 +18,6 @@ export default function SignUpPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [error, setError] = useState("");
   const [phone, setPhone] = useState("");
   const [selectedCountry, setSelectedCountry] = useState(COUNTRIES[0]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -40,42 +39,81 @@ export default function SignUpPage() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  function validatePassword(password) {
+    const minLength = 6;
+    const hasUpper = /[A-Z]/.test(password);
+    const hasLower = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    if (password.length < minLength) {
+      return "Password must be at least 6 characters";
+    }
+    if (!hasUpper) {
+      return "Password must include at least one uppercase letter";
+    }
+    if (!hasLower) {
+      return "Password must include at least one lowercase letter";
+    }
+    if (!hasNumber) {
+      return "Password must include at least one number";
+    }
+    if (!hasSpecial) {
+      return "Password must include at least one special character";
+    }
+
+    return null;
+  }
+
   const handleSubmit = async () => {
     try {
-      setError("");
       setLoading(true);
 
-      if (!phone) return setError("PhoneNo is required");
-      if (!password) return setError("Password is required");
-      if (!confirmPassword) return setError("Confirm password is required");
-      if (password !== confirmPassword)
-        return setError("Passwords do not match");
+      if (!phone) return toast.error("Phone number is required");
+      if (!password) return toast.error("Password is required");
+      if (!confirmPassword) return toast.error("Confirm password is required");
+
+      if (password !== confirmPassword) {
+        return toast.error("Passwords do not match");
+      }
+
+      const passwordError = validatePassword(password);
+      if (passwordError) return toast.error(passwordError);
 
       const isNumberVerify = validateInternationalPhone(
-        `${phone}`,
+        `${selectedCountry.dial}${phone}`,
       );
-      if (!isNumberVerify) return setError("Enter valid number");
 
-      const payload = {
-        mobile: phone.trim(),
-        password: password.trim(),
-      };
+      if (!isNumberVerify) {
+        return toast.error("Enter valid number");
+      }
+
+      const payload = new FormData();
+      payload.append("mobile", `${selectedCountry.dial}${phone}`);
+      payload.append("password", password);
 
       const data = await apiFetch("/v1/register", {
         method: "POST",
         headers: {
-          "Content-Type": "application/javascript",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
       });
 
       if (data.success) {
-        localStorage.setItem("token", data.token);
-        router.push("/home");
+        toast.success("Account created successfully");
+
+        localStorage.setItem("token", data.data.token);
+
+        setTimeout(() => {
+          router.push("/home");
+        }, 800);
+      } else {
+        toast.error(data.message || "Registration failed");
       }
     } catch (error) {
       console.log("Error:", error);
-      setError(error.message || "Something went wrong");
+      toast.error(error.message || "Something went wrong");
     } finally {
       setLoading(false);
       setDropdownOpen(false);
@@ -133,48 +171,6 @@ export default function SignUpPage() {
               />
             </div>
 
-            {/* password input */}
-            <div className="flex items-center gap-3 bg-[#F5F5F5] rounded-[14px] px-4 py-3.5 mb-4">
-              <LockIcon className="text-[#555]" size={22} />
-
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Your Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="flex-1 bg-transparent outline-none text-[16px] text-[#0F0F0F] placeholder-[#AAAAAA]"
-              />
-
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="text-[#555]"
-              >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
-
-            {/* confirm password */}
-            <div className="flex items-center gap-3 bg-[#F5F5F5] rounded-[14px] px-4 py-3.5">
-              <LockIcon className="text-[#555]" size={22} />
-
-              <input
-                type={showConfirmPassword ? "text" : "password"}
-                placeholder="Confirm Password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="flex-1 bg-transparent outline-none text-[16px] text-[#0F0F0F] placeholder-[#AAAAAA]"
-              />
-
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="text-[#555]"
-              >
-                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
-
             {/* Dropdown */}
             {dropdownOpen && (
               <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-[14px] shadow-[0_8px_30px_rgba(0,0,0,0.12)] z-50 overflow-hidden border border-gray-100">
@@ -220,9 +216,49 @@ export default function SignUpPage() {
                 </div>
               </div>
             )}
-          </div>
 
-          <ErrorMessage error={error} />
+            {/* password input */}
+            <div className="flex items-center gap-3 bg-[#F5F5F5] rounded-[14px] px-4 py-3.5 mb-4">
+              <LockIcon className="text-[#555]" size={22} />
+
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Your Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="flex-1 bg-transparent outline-none text-[16px] text-[#0F0F0F] placeholder-[#AAAAAA]"
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="text-[#555]"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+
+            {/* confirm password */}
+            <div className="flex items-center gap-3 bg-[#F5F5F5] rounded-[14px] px-4 py-3.5">
+              <LockIcon className="text-[#555]" size={22} />
+
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="flex-1 bg-transparent outline-none text-[16px] text-[#0F0F0F] placeholder-[#AAAAAA]"
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="text-[#555]"
+              >
+                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+          </div>
 
           {/* Sign Up button */}
           <button
