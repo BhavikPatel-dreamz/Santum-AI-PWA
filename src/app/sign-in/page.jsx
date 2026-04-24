@@ -170,6 +170,8 @@ export default function SignInPage() {
                 </div>
               </div>
             )}
+            
+          </div>
 
           <div className="flex items-center gap-3 bg-[#F5F5F5] rounded-[14px] px-4 py-3.5 mb-4">
             <LockIcon className="text-[#555]" size={22} />
