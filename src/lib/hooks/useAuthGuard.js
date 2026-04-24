@@ -5,9 +5,8 @@ export function useAuthGuard() {
   const router = useRouter();
 
   useEffect(() => {
-    async function checkAuth() {
-      try {
-        const res = await fetch("/api/auth/me");
+    function checkAuth() {
+      const token = localStorage.getItem("token")
 
         if (!res.ok) {
           router.replace("/sign-in");
