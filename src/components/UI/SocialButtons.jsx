@@ -1,6 +1,23 @@
 import React from "react";
+import toast from "react-hot-toast";
+import { apiFetch } from "../../lib/api/client";
 
 const SocialButtons = () => {
+
+  const handleGooleLogin = async()=>{
+    try {
+      const data = await apiFetch('/v1/social_logins',{
+        method: "GET",
+      })
+
+      if (data.success) {
+        window.location.href=data.data[0].link
+      }
+    } catch (error) {
+      console.log(error)
+      toast.error("Goolge login/signup error")
+    }
+  }
   return (
     <div>
       <div className="flex justify-center gap-4 mb-6">
@@ -12,7 +29,7 @@ const SocialButtons = () => {
         </button>
 
         {/* Google */}
-        <button className="w-[60px] h-[60px] rounded-[14px] border border-gray-200 flex items-center justify-center bg-white hover:border-[#2bb673] hover:shadow-[0_4px_12px_rgba(43,182,115,0.15)] hover:-translate-y-0.5 transition-all duration-200">
+        <button onClick={()=>handleGooleLogin()} className="w-[60px] h-[60px] rounded-[14px] border border-gray-200 flex items-center justify-center bg-white hover:border-[#2bb673] hover:shadow-[0_4px_12px_rgba(43,182,115,0.15)] hover:-translate-y-0.5 transition-all duration-200">
           <svg width="26" height="26" viewBox="0 0 24 24">
             <path
               fill="#4285F4"
