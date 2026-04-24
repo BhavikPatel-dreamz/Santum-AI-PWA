@@ -68,7 +68,7 @@ export default function SignInPage() {
       router.replace("/home");
     } catch (error) {
       console.log("Error:", error);
-      toast.error(error.message || "Something went wrong");
+      toast.error(error.data.data.message || "Something went wrong");
     } finally {
       setLoading(false);
       setDropdownOpen(false);
