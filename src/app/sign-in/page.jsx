@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { COUNTRIES } from "../../lib/utills/countries";
 import GreenSection from "../../components/UI/GreenSection";
 import SocialButtons from "../../components/UI/SocialButtons";
-import { apiFetch } from "../../lib/api/client";
 import { Eye, EyeOff, LockIcon, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -54,22 +53,21 @@ export default function SignInPage() {
 
       if (!isNumberVerify) return toast.error("Enter valid number");
 
-      const payload = new FormData();
-      payload.append("mobile", `${selectedCountry.dial}${phone}`);
-      payload.append("password", password);
-      
-      const data = await apiFetch("/v1/login", {
+      const data = await fetch("/api/auth/login", {
         method: "POST",
-        body: payload,
+        body: JSON.stringify({
+          mobile: `${selectedCountry.dial}${phone}`,
+          password: password,
+        }),
       });
 
-      if (data.success) {
-        localStorage.setItem("token", data.data.token);
+      if (data.data.success) {
+        toast.success(data.data.message)
         router.push("/home");
       }
     } catch (error) {
       console.log("Error:", error);
-      toast.error(error.data.data.message || "Something went wrong");
+      toast.error(error.message || "Something went wrong");
     } finally {
       setLoading(false);
       setDropdownOpen(false);
@@ -171,28 +169,27 @@ export default function SignInPage() {
                 </div>
               </div>
             )}
-            
           </div>
 
           <div className="flex items-center gap-3 bg-[#F5F5F5] rounded-[14px] px-4 py-3.5 mb-4">
-              <LockIcon className="text-[#555]" size={22} />
+            <LockIcon className="text-[#555]" size={22} />
 
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Your Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="flex-1 bg-transparent outline-none text-[16px] text-[#0F0F0F] placeholder-[#AAAAAA]"
-              />
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Your Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="flex-1 bg-transparent outline-none text-[16px] text-[#0F0F0F] placeholder-[#AAAAAA]"
+            />
 
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="text-[#555]"
-              >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="text-[#555]"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
 
           {/* Sign In button */}
           <button

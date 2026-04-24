@@ -29,7 +29,7 @@ export async function GET() {
 
     return NextResponse.json({
       authenticated: true,
-      user,
+      token,
     });
   } catch (err) {
     return NextResponse.json({ authenticated: false }, { status: 500 });

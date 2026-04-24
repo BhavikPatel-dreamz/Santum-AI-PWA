@@ -1,7 +1,6 @@
 "use client";
 import Image from "next/image";
 import { useState } from "react";
-import { useAuthGuard } from "../../lib/hooks/useAuthGuard";
 import { Bell, ChevronRightIcon, Edit2Icon, Settings, X } from "lucide-react";
 
 const CollapseIcon = () => (
@@ -586,11 +585,18 @@ const DarkModeToggle = ({ dark, onToggle }) => (
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function HomeScreen() {
-  useAuthGuard();
-
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout");
+      
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div
@@ -917,7 +923,7 @@ export default function HomeScreen() {
             </button>
             <button
               type="button"
-              onClick={() => {localStorage.removeItem("token"),window.location.reload()}}
+              onClick={() => handleLogout()}
               className="text-white text-[18px] font-medium px-8 py-[18px] rounded-[12px] bg-[#00D061] transition-all active:scale-[0.97]"
             >
               Yes, Logout

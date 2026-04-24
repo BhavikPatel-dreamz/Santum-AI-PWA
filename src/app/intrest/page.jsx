@@ -38,7 +38,8 @@ const Page = () => {
 
   const handleSubmit = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const resdata = await fetch('/api/auth/me')
+      const token = resdata.data.token
 
       if (!token) {
         alert("User not authenticated");
