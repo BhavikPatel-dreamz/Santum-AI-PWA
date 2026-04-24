@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import HeaderSection from "../../components/UI/HeaderSection";
-import { CalendarIcon } from "lucide-react";
 import toast from "react-hot-toast";
 import { apiFetch } from "../../lib/api/client";
 
@@ -32,10 +31,9 @@ function validateForm(form) {
   if (!form.lastName.trim()) return "Last name is required";
   if (!form.dob) return "Date of birth is required";
 
-  //   const age =
-  //     new Date().getFullYear() - new Date(form.dob).getFullYear();
+  const age = new Date().getFullYear() - new Date(form.dob).getFullYear();
 
-  //   if (age < 13) return "You must be at least 13 years old";
+  if (age < 13) return "You must be at least 13 years old";
 
   return null;
 }
@@ -61,7 +59,8 @@ export default function PersonalInformationPage() {
 
       const token = localStorage.getItem("token");
       if (!token) toast.error("User not authenticated");
-      const data = await apiFetch("/v1/user/profile/basic", {
+      setLoading(true);
+      await apiFetch("/v1/user/profile/basic", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -178,26 +177,13 @@ export default function PersonalInformationPage() {
                   placeholder=" "
                   maxLength={10}
                   inputMode="numeric"
-                  className="
-                                        peer block w-full h-[64px]
-                                        bg-[#F5F5F5] border-none rounded-[12px]
-                                        outline-none pl-4 pr-[50px] pt-5 pb-0
-                                        text-[#0F0F0F] font-satoshi text-[18px] font-medium leading-6
-                                        transition-all duration-300
-                                    "
+                  className="peer block w-full h-[64px] bg-[#F5F5F5] border-none rounded-[12px] outline-none pl-4 pr-[50px] pt-5 pb-0 text-[#0F0F0F] font-satoshi text-[18px] font-medium leading-6 transition-all duration-300"
                 />
                 <label
                   htmlFor="dob"
-                  className="
-                                        absolute z-10 left-[16px]
-                                        text-[#555] font-satoshi font-medium leading-5
-                                        transition-all duration-300 cursor-text pointer-events-none
-                                        top-1/2 -translate-y-1/2 text-[16px]
-                                        peer-focus:top-[14px] peer-focus:-translate-y-0 peer-focus:text-[12px] peer-focus:text-[#00D061]
-                                        peer-[&:not(:placeholder-shown)]:top-[14px] peer-[&:not(:placeholder-shown)]:-translate-y-0 peer-[&:not(:placeholder-shown)]:text-[12px] peer-[&:not(:placeholder-shown)]:text-[#00D061]
-                                    "
+                  className="absolute z-10 left-[16px] text-[#555] font-satoshi font-medium leading-5 transition-all duration-300 cursor-text pointer-events-none top-1/2 -translate-y-1/2 text-[16px] peer-focus:top-[14px] peer-focus:-translate-y-0 peer-focus:text-[12px] peer-focus:text-[#00D061] peer-[&:not(:placeholder-shown)]:top-[14px] peer-[&:not(:placeholder-shown)]:-translate-y-0 peer-[&:not(:placeholder-shown)]:text-[12px] peer-[&:not(:placeholder-shown)]:text-[#00D061]"
                 >
-                  Date of Birth (MM/DD/YYYY)
+                  Date of Birth (DD/MM/YYYY)
                 </label>
                 {/* <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
                                     <CalendarIcon/>
@@ -211,9 +197,16 @@ export default function PersonalInformationPage() {
             <button
               type="button"
               onClick={handleContinue}
-              className="w-full max-w-[343px] mx-auto block py-[18px] rounded-[12px] bg-[#00D061] text-white text-[18px] font-medium leading-6 text-center transition-all duration-200 hover:bg-[#00b856] hover:shadow-[0_6px_20px_rgba(0,208,97,0.40)] hover:-translate-y-px active:translate-y-0"
+              className="w-full max-w-[343px] flex items-center justify-center mx-auto block py-[18px] rounded-[12px] bg-[#00D061] text-white text-[18px] font-medium leading-6 text-center transition-all duration-200 hover:bg-[#00b856] hover:shadow-[0_6px_20px_rgba(0,208,97,0.40)] hover:-translate-y-px active:translate-y-0"
             >
-              Continue
+              {loading ? (
+              <div className="flex items-center gap-3">
+                <div className="w-5 h-5 border-[3px] border-white border-t-transparent rounded-full animate-spin" />
+                <span>Continuing...</span>
+              </div>
+            ) : (
+              "Continue"
+            )}
             </button>
           </div>
         </div>

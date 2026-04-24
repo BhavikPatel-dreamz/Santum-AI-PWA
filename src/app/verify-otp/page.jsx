@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 
 export default function OtpPage() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [loading, setLoading] = useState(false);
   const [resendTimer, setResendTimer] = useState(30);
   const inputRefs = useRef([]);
   const router = useRouter();
@@ -82,6 +83,13 @@ export default function OtpPage() {
       const otpValue = otp.join(""); // convert ["1","2","3","4","5","6"] → "123456"
       const token = localStorage.getItem("token");
 
+      if (!token) {
+        toast.error("User not authenticated");
+        return;
+      }
+
+      setLoading(true);
+
       const data = await apiFetch("/v1/register/verify/mobile", {
         method: "POST",
         headers: {
@@ -99,7 +107,7 @@ export default function OtpPage() {
       if (data.success) {
         // ✅ success logic
         toast.success(data.data.message || "OTP Verified Successfully");
-        router.push("/home");
+        router.push("/personal-information");
       } else {
         // ❌ error handling
         toast.error(data.data.message || "Verification failed");
@@ -107,6 +115,8 @@ export default function OtpPage() {
     } catch (error) {
       console.error("Verify Error:", error);
       toast.error(error.data.data.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -179,15 +189,22 @@ export default function OtpPage() {
           <button
             type="button"
             onClick={handleVerify}
-            disabled={!isComplete}
-            className={`w-full max-w-[343px] mx-auto py-4 rounded-[14px] text-white text-[18px] font-semibold tracking-wide transition-all duration-200
+            disabled={!isComplete || loading}
+            className={`w-full max-w-[343px] flex items-center justify-center mx-auto py-4 rounded-[14px] text-white text-[18px] font-semibold tracking-wide transition-all duration-200
               ${
                 isComplete
                   ? "bg-[#00D061] hover:bg-[#00b856] hover:shadow-[0_6px_20px_rgba(0,208,97,0.40)] hover:-translate-y-px active:translate-y-0"
                   : "bg-[#A8F0CB] cursor-not-allowed"
               }`}
           >
-            Verify
+            {loading ? (
+              <div className="flex items-center gap-3">
+                <div className="w-5 h-5 border-[3px] border-white border-t-transparent rounded-full animate-spin" />
+                <span>Verifying...</span>
+              </div>
+            ) : (
+              "Verify"
+            )}
           </button>
         </section>
       </div>

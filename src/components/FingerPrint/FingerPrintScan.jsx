@@ -43,12 +43,12 @@ export default function FingerPrintScan() {
       setScanState("scanning");
 
       if (!window.passkeyCreated) {
-        await navigator.credentials.create({
+        const createdCredential = await navigator.credentials.create({
           publicKey: {
             challenge: generateRandomChallenge(),
             rp: { name: "Demo App", id: window.location.hostname },
             user: {
-              id: new Uint8Array(16),
+              id: crypto.getRandomValues(new Uint8Array(16)),
               name: "demo@example.com",
               displayName: "Demo User",
             },
@@ -60,25 +60,32 @@ export default function FingerPrintScan() {
             },
           },
         });
-
+        window.currentPasskey = createdCredential;
         window.passkeyCreated = true;
+      }
+
+      if (!window.currentPasskey) {
+        console.warn("No passkey found, creating one...");
+        return;
       }
 
       const credential = await navigator.credentials.get({
         publicKey: {
           challenge: generateRandomChallenge(),
           userVerification: "required",
-          allowCredentials: [
-            {
-              id: window.currentPasskey?.rawId,
-              type: "public-key",
-              transports: ["internal"], // prefer device biometrics
-            },
-          ],
+          allowCredentials: window.currentPasskey
+            ? [
+                {
+                  id: window.currentPasskey.rawId,
+                  type: "public-key",
+                  transports: ["internal"],
+                },
+              ]
+            : [],
         },
       });
 
-      // console.log(credential);
+      console.log(credential);
 
       // SUCCESS
       setScanProgress(100);
