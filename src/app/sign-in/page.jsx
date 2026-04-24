@@ -4,13 +4,37 @@ import { useEffect, useRef, useState } from "react";
 import { COUNTRIES } from "../../lib/utills/countries";
 import GreenSection from "../../components/UI/GreenSection";
 import SocialButtons from "../../components/UI/SocialButtons";
+import ErrorMessage from "../../lib/utills/logs";
+import { apiFetch } from "../../lib/api/client";
+import { Eye, EyeOff, LockIcon, User } from "lucide-react";
+import { useRouter } from "next/navigation";
+
+export const validateInternationalPhone = (number) => {
+  const cleaned = number.trim().replace(/[^\d+]/g, "");
+  const formatRegex = /^\+?[1-9]\d{6,14}$/;
+  if (!formatRegex.test(cleaned)) return false;
+  const digits = cleaned.replace(/\D/g, "");
+  if (digits.length !== 10) return false;
+  if (/^(\d)\1+$/.test(digits)) return false;
+  if (/^(..)\1+$/.test(digits) || /^(...)\1+$/.test(digits)) return false;
+  const sequential = "01234567890123456789";
+  const reversed = "98765432109876543210";
+  if (sequential.includes(digits) || reversed.includes(digits)) return false;
+  return true;
+};
 
 export default function SignInPage() {
   const [phone, setPhone] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState(COUNTRIES[0]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [error, setError] = useState("");
   const dropdownRef = useRef(null);
+
+  const router = useRouter();
 
   const filtered = COUNTRIES.filter((c) =>
     c.name.toLowerCase().includes(search.toLowerCase()),
@@ -27,10 +51,50 @@ export default function SignInPage() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const handleSubmit = async () => {
+    try {
+      setError("");
+      setLoading(true);
+
+      if (!phone) return setError("PhoneNo is required");
+      if (!password) return setError("Password is required");
+      const isNumberVerify = validateInternationalPhone(
+        `${phone}`,
+      );
+
+      if (!isNumberVerify) return setError("Enter valid number");
+
+      const payload = {
+        mobile: phone.trim(),
+        password: password.trim(),
+      };
+
+      const data = await apiFetch("/v1/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/javascript",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (data.success) {
+        localStorage.setItem("token", data.token);
+        router.push("/home");
+      }
+    } catch (error) {
+      console.log("Error:", error);
+      setError(error.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+      setDropdownOpen(false);
+      setSearch("");
+    }
+  };
+
   return (
     <div className="min-h-dvh flex flex-col items-center bg-white font-sans">
       <div className="w-full max-w-[600px] flex flex-col min-h-dvh bg-[#E4FFEE] relative">
-        {/* ── Top green section ── */}
+        {/* ─ Top green section ── */}
         <GreenSection />
         {/* ── White card ── */}
         <div className="absolute z-10 w-[96%] mx-3 top-59 bg-white rounded-[28px] px-7 pt-8 pb-9">
@@ -40,7 +104,7 @@ export default function SignInPage() {
 
           {/* Phone input with country picker */}
           <div className="relative mb-6" ref={dropdownRef}>
-            <div className="flex items-center bg-[#F5F5F5] rounded-[14px] px-4 py-3.5">
+            <div className="flex items-center bg-[#F5F5F5] rounded-[14px] px-4 py-3.5 mb-4">
               {/* Country selector */}
               <button
                 type="button"
@@ -74,6 +138,27 @@ export default function SignInPage() {
                 onChange={(e) => setPhone(e.target.value)}
                 className="flex-1 bg-transparent outline-none text-[16px] text-[#0F0F0F] placeholder-[#AAAAAA]"
               />
+            </div>
+
+            {/* password input */}
+            <div className="flex items-center gap-3 bg-[#F5F5F5] rounded-[14px] px-4 py-3.5 mb-4">
+              <LockIcon className="text-[#555]" size={22} />
+
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Your Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="flex-1 bg-transparent outline-none text-[16px] text-[#0F0F0F] placeholder-[#AAAAAA]"
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="text-[#555]"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
             </div>
 
             {/* Dropdown */}
@@ -123,9 +208,15 @@ export default function SignInPage() {
             )}
           </div>
 
+          <ErrorMessage error={error} />
+
           {/* Sign In button */}
-          <button className="w-full py-4 rounded-[14px] bg-[#00D061] text-white text-[18px] font-semibold tracking-wide hover:bg-[#00b856] hover:shadow-[0_6px_20px_rgba(0,208,97,0.40)] hover:-translate-y-px active:translate-y-0 transition-all duration-200 mb-6">
-            Sign In
+          <button
+            disabled={loading}
+            onClick={() => handleSubmit()}
+            className="w-full py-4 rounded-[14px] bg-[#00D061] text-white text-[18px] font-semibold tracking-wide hover:bg-[#00b856] hover:shadow-[0_6px_20px_rgba(0,208,97,0.40)] hover:-translate-y-px active:translate-y-0 transition-all duration-200 mb-6"
+          >
+            {loading ? "Signing in..." : "Sign In"}
           </button>
 
           {/* OR divider */}
