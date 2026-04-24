@@ -83,7 +83,7 @@ export default function SignInPage() {
         {/* ─ Top green section ── */}
         <GreenSection />
         {/* ── White card ── */}
-        <div className="absolute z-10 w-[96%] mx-3 top-59 bg-white rounded-[28px] px-7 pt-8 pb-9">
+        <div className="relative z-10 w-[96%] mx-3 -mt-20 bg-white rounded-[28px] px-7 pt-8 pb-9 shadow-md">
           <h2 className="text-[24px] font-semibold leading-9 text-[#0F0F0F] text-center mb-6">
             Sign In
           </h2>
@@ -171,9 +171,10 @@ export default function SignInPage() {
                 </div>
               </div>
             )}
+            
+          </div>
 
-            {/* password input */}
-            <div className="flex items-center gap-3 bg-[#F5F5F5] rounded-[14px] px-4 py-3.5 mb-4">
+          <div className="flex items-center gap-3 bg-[#F5F5F5] rounded-[14px] px-4 py-3.5 mb-4">
               <LockIcon className="text-[#555]" size={22} />
 
               <input
@@ -192,15 +193,21 @@ export default function SignInPage() {
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
-          </div>
 
           {/* Sign In button */}
           <button
             disabled={loading}
-            onClick={() => handleSubmit()}
-            className="w-full py-4 rounded-[14px] bg-[#00D061] text-white text-[18px] font-semibold tracking-wide hover:bg-[#00b856] hover:shadow-[0_6px_20px_rgba(0,208,97,0.40)] hover:-translate-y-px active:translate-y-0 transition-all duration-200 mb-6"
+            onClick={handleSubmit}
+            className="w-full py-4 rounded-[14px] flex items-center justify-center bg-[#00D061] text-white text-[18px] font-semibold tracking-wide hover:bg-[#00b856] hover:shadow-[0_6px_20px_rgba(0,208,97,0.40)] hover:-translate-y-px active:translate-y-0 transition-all duration-200 mb-6"
           >
-            {loading ? "Signing in..." : "Sign In"}
+            {loading ? (
+              <div className="flex items-center gap-3">
+                <div className="w-5 h-5 border-[3px] border-white border-t-transparent rounded-full animate-spin" />
+                <span>Signing in...</span>
+              </div>
+            ) : (
+              "Sign in"
+            )}
           </button>
 
           {/* OR divider */}

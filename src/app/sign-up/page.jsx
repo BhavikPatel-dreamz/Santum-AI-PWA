@@ -29,7 +29,7 @@ export default function SignUpPage() {
     c.name.toLowerCase().includes(search.toLowerCase()),
   );
 
-  useAuthGuard()
+  // useAuthGuard();
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -130,7 +130,7 @@ export default function SignUpPage() {
         <GreenSection />
 
         {/* ── White card ── */}
-        <div className="absolute z-10 w-[96%] mx-3 top-59 bg-white rounded-[28px] px-7 pt-8 pb-9">
+        <div className="relative z-10 w-[96%] mx-3 -mt-20 bg-white rounded-[28px] px-7 pt-8 pb-9 shadow-md">
           <h2 className="text-[24px] font-semibold leading-9 text-[#0F0F0F] text-center mb-6">
             Sign Up
           </h2>
@@ -218,56 +218,63 @@ export default function SignUpPage() {
                 </div>
               </div>
             )}
+          </div>
 
-            {/* password input */}
-            <div className="flex items-center gap-3 bg-[#F5F5F5] rounded-[14px] px-4 py-3.5 mb-4">
-              <LockIcon className="text-[#555]" size={22} />
+          <div className="flex items-center gap-3 bg-[#F5F5F5] rounded-[14px] px-4 py-3.5 mb-4">
+            <LockIcon className="text-[#555]" size={22} />
 
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Your Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="flex-1 bg-transparent outline-none text-[16px] text-[#0F0F0F] placeholder-[#AAAAAA]"
-              />
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Your Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="flex-1 bg-transparent outline-none text-[16px] text-[#0F0F0F] placeholder-[#AAAAAA]"
+            />
 
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="text-[#555]"
-              >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="text-[#555]"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
 
-            {/* confirm password */}
-            <div className="flex items-center gap-3 bg-[#F5F5F5] rounded-[14px] px-4 py-3.5">
-              <LockIcon className="text-[#555]" size={22} />
+          {/* confirm password */}
+          <div className="flex items-center gap-3 bg-[#F5F5F5] rounded-[14px] px-4 py-3.5 mb-4">
+            <LockIcon className="text-[#555]" size={22} />
 
-              <input
-                type={showConfirmPassword ? "text" : "password"}
-                placeholder="Confirm Password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="flex-1 bg-transparent outline-none text-[16px] text-[#0F0F0F] placeholder-[#AAAAAA]"
-              />
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="flex-1 bg-transparent outline-none text-[16px] text-[#0F0F0F] placeholder-[#AAAAAA]"
+            />
 
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="text-[#555]"
-              >
-                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="text-[#555]"
+            >
+              {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
           </div>
 
           {/* Sign Up button */}
           <button
+            disabled={loading}
             onClick={() => handleSubmit()}
-            className="w-full py-4 rounded-[14px] bg-[#00D061] text-white text-[18px] font-semibold tracking-wide hover:bg-[#00b856] hover:shadow-[0_6px_20px_rgba(0,208,97,0.40)] hover:-translate-y-px active:translate-y-0 transition-all duration-200 mb-6"
+            className="w-full py-4 rounded-[14px] flex items-center justify-center bg-[#00D061] text-white text-[18px] font-semibold tracking-wide hover:bg-[#00b856] hover:shadow-[0_6px_20px_rgba(0,208,97,0.40)] hover:-translate-y-px active:translate-y-0 transition-all duration-200 mb-6"
           >
-            Sign Up
+            {loading ? (
+              <div className="flex items-center gap-3">
+                <div className="w-5 h-5 border-[3px] border-white border-t-transparent rounded-full animate-spin" />
+                <span>Signing up...</span>
+              </div>
+            ) : (
+              "Sign up"
+            )}
           </button>
 
           {/* OR divider */}
