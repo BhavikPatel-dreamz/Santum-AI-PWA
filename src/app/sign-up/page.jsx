@@ -31,6 +31,8 @@ export default function SignUpPage() {
     c.name.toLowerCase().includes(search.toLowerCase()),
   );
 
+  useAuthGuard()
+
   useEffect(() => {
     function handleClickOutside(e) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
