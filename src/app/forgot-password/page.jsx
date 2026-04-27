@@ -5,7 +5,23 @@ import StepPageShell from "@/components/app/StepPageShell";
 import { Mail, MessageSquare } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import HeaderSection from "../../components/UI/HeaderSection";
+
+const RECOVERY_OPTIONS = [
+  {
+    id: "sms",
+    title: "Recover with SMS",
+    description: "Send a short code to your verified mobile number.",
+    value: "+91 ****** 65",
+    icon: MessageSquare,
+  },
+  {
+    id: "email",
+    title: "Recover with Email",
+    description: "Use your email inbox when you cannot access your phone.",
+    value: "je*****@mail.com",
+    icon: Mail,
+  },
+];
 
 const RECOVERY_OPTIONS = [
   {

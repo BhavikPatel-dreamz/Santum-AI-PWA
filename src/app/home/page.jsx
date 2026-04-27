@@ -820,6 +820,11 @@ export default function HomeScreen() {
     "Jessica";
   const emailAddress =
     profile?.email || profile?.user_email || "jessica_smith@mail.com";
+  const navigateTo = (href) => {
+    setDrawerOpen(false);
+    setLogoutOpen(false);
+    router.push(href);
+  };
 
   return (
     <div className="theme-shell min-h-dvh flex justify-center transition-colors duration-300">
