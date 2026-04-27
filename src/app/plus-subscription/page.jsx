@@ -13,6 +13,7 @@ import { Check } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { appFetch } from "../../lib/api/internal";
 
 const PLANS = [
   {
@@ -277,6 +278,22 @@ export default function PlusSubscriptionPage() {
   const secondaryButtonLabel = purchaseSummary
     ? "View Updated Credits"
     : "Maybe Later";
+
+  useEffect(() => {
+    async function loadSubscription() {
+      try {
+        const data = await appFetch("/api/settings/subscription", {
+          cache: "no-store",
+        });
+        console.log(data, "data");
+        setPlans(data);
+      } catch (error) {
+        console.log(error);
+        toast.error(error.message || "Something went wrong");
+      }
+    }
+    loadSubscription();
+  }, [router]);
 
   return (
     <StepPageShell title="Amigo GPT Plus" contentClassName="overflow-y-auto">
