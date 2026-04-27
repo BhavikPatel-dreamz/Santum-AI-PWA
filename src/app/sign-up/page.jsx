@@ -31,8 +31,6 @@ export default function SignUpPage() {
     c.name.toLowerCase().includes(search.toLowerCase()),
   );
 
-  // useAuthGuard();
-
   useEffect(() => {
     function handleClickOutside(e) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -116,7 +114,7 @@ export default function SignUpPage() {
       }
     } catch (error) {
       console.log("Error:", error);
-      toast.error(error.data.data.message || "Something went wrong");
+      toast.error(error.message || "Something went wrong");
     } finally {
       setLoading(false);
       setDropdownOpen(false);
