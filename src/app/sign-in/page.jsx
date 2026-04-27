@@ -192,6 +192,15 @@ export default function SignInPage() {
             </button>
           </div>
 
+          <div className="mb-5 flex justify-end">
+            <Link
+              href="/forgot-password"
+              className="font-satoshi text-[14px] font-semibold text-[#0F0F0F] hover:text-[#00A84D]"
+            >
+              Forgot password?
+            </Link>
+          </div>
+
           {/* Sign In button */}
           <button
             disabled={loading}

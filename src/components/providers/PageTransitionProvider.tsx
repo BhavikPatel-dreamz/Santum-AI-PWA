@@ -27,9 +27,13 @@ export function PageTransitionProvider({ children }: { children: React.ReactNode
       return;
     }
 
-    setIsLoading(true);
-    const timer = setTimeout(() => setIsLoading(false), 800); // shorter for snappier UX
-    return () => clearTimeout(timer);
+    const startTimer = setTimeout(() => setIsLoading(true), 0);
+    const stopTimer = setTimeout(() => setIsLoading(false), 800); // shorter for snappier UX
+
+    return () => {
+      clearTimeout(startTimer);
+      clearTimeout(stopTimer);
+    };
   }, [pathname]);
 
   return (

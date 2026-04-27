@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import GreenSection from "../../components/UI/GreenSection";
 import SocialButtons from "../../components/UI/SocialButtons";
@@ -14,7 +15,7 @@ export default function LetsYouInPage() {
         {/* ── White card ── */}
         <div className="relative z-10 w-[96%] mx-3 -mt-20 bg-white rounded-[28px] px-7 pt-8 pb-9 shadow-md">
           <h2 className="text-[24px] font-semibold leading-9 text-[#0F0F0F] text-center mb-7">
-            Let's You In
+            Let&apos;s You In
           </h2>
 
           {/* Social buttons */}
@@ -55,13 +56,13 @@ text-[#555]
         {/* ── Footer ── */}
         <footer className="text-center py-6 pb-8 px-4 font-satoshi">
           <p className="text-[18px] leading-6 text-[#555] text-center px-4">
-            Don't have an account?
-            <a
+            Don&apos;t have an account?
+            <Link
               href="/sign-up"
               className="text-[#0F0F0F] font-semibold hover:underline px-1"
             >
               Sign up
-            </a>
+            </Link>
           </p>
         </footer>
       </div>
