@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 export function middleware(req) {
   const token = req.cookies.get("token")?.value;
 
-  console.log(token)
   const isAuthPage =
     req.nextUrl.pathname.startsWith("/sign-in") ||
     req.nextUrl.pathname.startsWith("/sign-up");
