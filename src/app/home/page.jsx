@@ -1,7 +1,10 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Bell, ChevronRightIcon, Edit2Icon, Settings, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { appFetch } from "../../lib/api/internal";
 
 const CollapseIcon = () => (
   <svg
@@ -588,15 +591,53 @@ export default function HomeScreen() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const [profile, setProfile] = useState({});
+  const router = useRouter();
+
+  useEffect(() => {
+    async function loadUser() {
+      try {
+        const data = await appFetch("/api/user/profile", {
+          cache: "no-store",
+        });
+        setProfile(data.data.user);
+      } catch (error) {
+        if (error?.status === 401) {
+          router.replace("/sign-in");
+          return;
+        }
+
+        console.log(error);
+        toast.error(error.message || "Something went wrong");
+      }
+    }
+
+    loadUser();
+  }, [router]);
 
   const handleLogout = async () => {
     try {
-      await fetch("/api/auth/logout");
-      
+      await appFetch("/api/auth/logout", {
+        method: "POST",
+      });
+      toast.success("Logged out successfully");
+      router.replace("/sign-in");
     } catch (error) {
       console.log(error);
+      toast.error(error.message || "Unable to log out");
     }
   };
+
+  const displayName =
+    [profile?.first_name, profile?.last_name].filter(Boolean).join(" ") ||
+    profile?.name ||
+    "Jessica Smith";
+  const firstName =
+    profile?.first_name ||
+    displayName.split(" ").filter(Boolean)[0] ||
+    "Jessica";
+  const emailAddress =
+    profile?.email || profile?.user_email || "jessica_smith@mail.com";
 
   return (
     <div
@@ -654,7 +695,7 @@ export default function HomeScreen() {
           {/* Hero text */}
           <div className="relative z-10 mt-9 pb-2">
             <h2 className="text-white text-[32px] font-bold leading-[40px]">
-              Hello, Jessica{" "}
+              Hello, {firstName}{" "}
               <span
                 className="inline-block"
                 style={{
@@ -666,7 +707,7 @@ export default function HomeScreen() {
               </span>
             </h2>
             <h3 className="text-white text-[18px] font-semibold leading-6 mt-3">
-              Let's Have Fun with Amigo!
+              Let&apos;s Have Fun with Amigo!
             </h3>
             <p className="text-[16px] font-satoshi font-medium leading-[24px] pb-3 text-white mt-2 mb-3">
               Start a conversation with Amigo right now!
@@ -767,11 +808,9 @@ export default function HomeScreen() {
                 <p
                   className={`text-[16px] font-medium ${darkMode ? "text-white" : "text-[#0F0F0F]"}`}
                 >
-                  Jessica Smith
+                  {displayName}
                 </p>
-                <p className="text-[14px] text-[#555]">
-                  jessica_smith@mail.com
-                </p>
+                <p className="text-[14px] text-[#555]">{emailAddress}</p>
               </div>
             </div>
             <button type="button">

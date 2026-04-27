@@ -2,8 +2,8 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import HeaderSection from "../../components/UI/HeaderSection";
-import { apiFetch } from "../../lib/api/client";
 import toast from "react-hot-toast";
+import { appFetch } from "../../lib/api/internal";
 
 const LANGUAGES = [
   "English",
@@ -21,38 +21,32 @@ const Page = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState("English");
+
   const handleSubmit = async () => {
     try {
-      const resdata = await fetch("/api/auth/me");
-      const token = resdata.data.token;
+      setLoading(true);
 
-      if (!token) {
-        toast.error("User not authenticated");
+      const res = await appFetch("/api/user/profile/language", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          preferredLanguage: selected,
+        }),
+      });
+
+      toast.success(res.message || "Language updated");
+      router.push("/intrest");
+    } catch (error) {
+      console.error("Language Error:", error);
+
+      if (error?.status === 401) {
+        router.replace("/sign-in");
         return;
       }
 
-      setLoading(true);
-
-      const formData = new FormData();
-      formData.append("preferred_language", selected);
-
-      const res = await apiFetch("/v1/user/profile/language", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-
-      if (res.success) {
-        // ✅ success
-        router.push("/intrest");
-      } else {
-        toast.error(res.data.message || "Failed to update language");
-      }
-    } catch (error) {
-      console.error("Language Error:", error);
-      toast.error(error.data.data.message || "Something went wrong");
+      toast.error(error.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -61,17 +55,13 @@ const Page = () => {
   return (
     <div className="min-h-dvh bg-white">
       <div className="mx-auto flex min-h-dvh w-full max-w-[600px] flex-col bg-white">
-        {/* Header */}
-
         <HeaderSection title={"Select Language"} />
 
-        {/* Content card */}
         <section className="relative -mt-10 flex flex-1 flex-col rounded-t-[32px] bg-white pb-10 pt-8 px-5">
           <p className="text-[18px] leading-6 text-[#555] font-satoshi mb-6">
             Please select your preferred language to facilitate communication.
           </p>
 
-          {/* Language chips */}
           <div className="flex flex-wrap gap-[10px]">
             {LANGUAGES.map((lang) => {
               const isSelected = selected === lang;
@@ -94,10 +84,8 @@ const Page = () => {
             })}
           </div>
 
-          {/* Spacer */}
           <div className="flex-1" />
 
-          {/* Bottom buttons */}
           <div className="flex justify-center gap-3 pt-6">
             <button
               type="button"

@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -8,9 +7,12 @@ import GreenSection from "../../components/UI/GreenSection";
 import SocialButtons from "../../components/UI/SocialButtons";
 import { validateInternationalPhone } from "../sign-in/page";
 import { Eye, EyeOff, LockIcon } from "lucide-react";
-import { apiFetch } from "../../lib/api/client";
 import toast from "react-hot-toast";
-import { useAuthGuard } from "../../lib/hooks/useAuthGuard";
+import { appFetch } from "../../lib/api/internal";
+import {
+  normalizePhoneNumber,
+  OTP_PHONE_STORAGE_KEY,
+} from "../../lib/utills/phone";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -28,8 +30,6 @@ export default function SignUpPage() {
   const filtered = COUNTRIES.filter((c) =>
     c.name.toLowerCase().includes(search.toLowerCase()),
   );
-
-  // useAuthGuard();
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -71,6 +71,7 @@ export default function SignUpPage() {
   const handleSubmit = async () => {
     try {
       setLoading(true);
+      const fullPhone = normalizePhoneNumber(`${selectedCountry.dial}${phone}`);
 
       if (!phone) return toast.error("Phone number is required");
       if (!password) return toast.error("Password is required");
@@ -83,39 +84,37 @@ export default function SignUpPage() {
       const passwordError = validatePassword(password);
       if (passwordError) return toast.error(passwordError);
 
-      const isNumberVerify = validateInternationalPhone(
-        `${selectedCountry.dial}${phone}`,
-      );
+      const isNumberVerify = validateInternationalPhone(fullPhone);
 
       if (!isNumberVerify) {
         return toast.error("Enter valid number");
       }
 
-      const data = await apiFetch("/v1/register", {
+      const data = await appFetch("/api/auth/register", {
         method: "POST",
-
-        body: (() => {
-          const formData = new FormData();
-          formData.append("mobile", `${selectedCountry.dial}${phone}`);
-          formData.append("password", password);
-          return formData;
-        })(),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          mobile: fullPhone,
+          password,
+        }),
       });
 
       if (data.success) {
-        toast.success("Account created successfully");
-
-        localStorage.setItem("token", data.data.token);
-
-        setTimeout(() => {
-          router.push("/verify-otp");
-        }, 800);
-      } else {
-        toast.error(data.data.message || "Registration failed");
+        toast.success(data.message || "Account created successfully");
+        sessionStorage.setItem(
+          OTP_PHONE_STORAGE_KEY,
+          JSON.stringify({
+            mobile: fullPhone,
+            dialCode: selectedCountry.dial,
+          }),
+        );
+        router.replace("/verify-otp");
       }
     } catch (error) {
       console.log("Error:", error);
-      toast.error(error.data.data.message || "Something went wrong");
+      toast.error(error.message || "Something went wrong");
     } finally {
       setLoading(false);
       setDropdownOpen(false);
@@ -175,7 +174,7 @@ export default function SignUpPage() {
 
             {/* Dropdown */}
             {dropdownOpen && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-[14px] shadow-[0_8px_30px_rgba(0,0,0,0.12)] z-50 overflow-hidden border border-gray-100">
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-[14px] shadow-[0_8px_30px_rgba(0,0,0,0.12)] z-50 overflow-hidden border border-gray-100 text-black">
                 {/* Search box */}
                 <div className="px-3 pt-3 pb-2">
                   <input
