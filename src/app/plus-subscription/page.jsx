@@ -4,34 +4,60 @@ import FeatureShowcaseCard from "@/components/app/FeatureShowcaseCard";
 import StepPageShell from "@/components/app/StepPageShell";
 import { Check } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { appFetch } from "../../lib/api/internal";
 
 const PLANS = [
   {
     name: "Starter",
     price: "Free",
-    description: "A friendly everyday chat companion with the core Amigo experience.",
+    description:
+      "A friendly everyday chat companion with the core Amigo experience.",
     features: ["Basic chat", "Saved preferences", "Profile setup"],
     highlighted: false,
   },
   {
     name: "Plus",
     price: "$9/mo",
-    description: "The best fit for power users who want faster replies and more workspace control.",
-    features: ["Priority responses", "Longer chat memory", "Premium prompt packs"],
+    description:
+      "The best fit for power users who want faster replies and more workspace control.",
+    features: [
+      "Priority responses",
+      "Longer chat memory",
+      "Premium prompt packs",
+    ],
     highlighted: true,
   },
   {
     name: "Team",
     price: "$24/mo",
-    description: "A simple shared setup for collaborative work, approvals, and support.",
+    description:
+      "A simple shared setup for collaborative work, approvals, and support.",
     features: ["Shared spaces", "Team prompt presets", "Priority support"],
     highlighted: false,
   },
 ];
 
 export default function PlusSubscriptionPage() {
+  const [plans, setPlans] = useState([]);
   const router = useRouter();
+
+  useEffect(() => {
+    async function loadSubscription() {
+      try {
+        const data = await appFetch("/api/settings/subscription", {
+          cache: "no-store",
+        });
+        console.log(data, "data");
+        setPlans(data);
+      } catch (error) {
+        console.log(error);
+        toast.error(error.message || "Something went wrong");
+      }
+    }
+    loadSubscription();
+  }, [router]);
 
   return (
     <StepPageShell title="Amigo GPT Plus" contentClassName="overflow-y-auto">
@@ -59,7 +85,7 @@ export default function PlusSubscriptionPage() {
       </div>
 
       <div className="space-y-4">
-        {PLANS.map((plan) => (
+        {plans?.map((plan) => (
           <div
             key={plan.name}
             className={`rounded-[26px] border px-5 py-5 shadow-[0_12px_30px_rgba(15,15,15,0.04)] ${
@@ -85,11 +111,13 @@ export default function PlusSubscriptionPage() {
                 </p>
               </div>
               <div className="rounded-[18px] bg-[#0F0F0F] px-4 py-3 text-center text-white">
-                <p className="text-[20px] font-semibold leading-7">{plan.price}</p>
+                <p className="text-[20px] font-semibold leading-7">
+                  {plan.billing_amount == 0 ? "Free" : `$${plan.billing_amount}/mo`}
+                </p>
               </div>
             </div>
 
-            <div className="mt-4 space-y-3">
+            {/* <div className="mt-4 space-y-3">
               {plan.features.map((feature) => (
                 <div key={feature} className="flex items-center gap-3">
                   <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#E8FFF1] text-[#00A84D]">
@@ -100,7 +128,7 @@ export default function PlusSubscriptionPage() {
                   </span>
                 </div>
               ))}
-            </div>
+            </div> */}
           </div>
         ))}
       </div>
