@@ -98,7 +98,7 @@ export default function FingerPrintScan() {
 
   const handleContinue = () => {
     if (scanState === "success") {
-      router.push("/language"); // adjust route as needed
+      router.push("/home");
     } else {
       setScanState("scanning");
     }
@@ -167,13 +167,13 @@ export default function FingerPrintScan() {
 
       <div className="min-h-dvh bg-white">
         <div className="mx-auto flex min-h-dvh w-full max-w-[600px] flex-col bg-white">
-          <HeaderSection title={"Create New PIN"} />
+          <HeaderSection title={"Set Up Fingerprint"} />
 
           <section className="relative -mt-10 flex flex-1 flex-col rounded-t-[32px] bg-white pb-10 pt-3">
             {/* ── Subtitle ── */}
             <div className="px-6 pt-5 pb-2">
               <p className="text-[18px] leading-6 text-[#555] text-center font-satoshi">
-                Add a PIN Number to make your account more secure.
+                Add biometric unlock so returning to Amigo feels secure and effortless.
               </p>
             </div>
 
@@ -284,7 +284,7 @@ export default function FingerPrintScan() {
                 }}
               >
                 {scanState === "idle" &&
-                  "Please put your finger on the finger print scanner to get started."}
+                  "Place your finger on the scanner to set up biometric unlock."}
                 {scanState === "scanning" &&
                   "Scanning… keep your finger steady."}
                 {scanState === "success" &&
@@ -309,12 +309,12 @@ export default function FingerPrintScan() {
                   boxShadow: "0 4px 20px #23cf6740",
                 }}
               >
-                Continue
+                {scanState === "success" ? "Go To Home" : "Scan Fingerprint"}
               </button>
 
               <button
                 type="button"
-                onClick={() => router.push("/language")}
+                onClick={() => router.push("/home")}
                 className="w-full text-center text-[18px] font-medium leading-6 text-[#0F0F0F] font-poppins py-1 transition-opacity active:opacity-60"
               >
                 Skip, I&apos;ll do this later

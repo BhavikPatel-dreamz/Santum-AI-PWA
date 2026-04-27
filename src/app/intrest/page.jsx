@@ -55,7 +55,7 @@ const Page = () => {
       });
 
       toast.success(res.message || "Interests saved");
-      router.push("/home");
+      router.push("/reasons");
     } catch (error) {
       console.error("Interests Error:", error);
 
@@ -118,7 +118,7 @@ const Page = () => {
 
           <div className="flex justify-center gap-3 pt-6">
             <button
-              onClick={() => router.push("/home")}
+              onClick={() => router.push("/reasons")}
               className="w-[163px] h-[48px] flex items-center justify-center rounded-[8px] bg-[#F5F5F5] text-[#0F0F0F] text-[18px] font-medium font-poppins transition-all active:scale-[0.98]"
             >
               Skip
@@ -137,7 +137,7 @@ const Page = () => {
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
-                "Next"
+                "Continue"
               )}
             </button>
           </div>

@@ -1,113 +1,122 @@
 "use client";
 
+import FeatureShowcaseCard from "@/components/app/FeatureShowcaseCard";
+import StepPageShell from "@/components/app/StepPageShell";
+import { Bell, Gift, MessageSquare } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import HeaderSection from "../../components/UI/HeaderSection";
+import { useState } from "react";
 
-export default function OtpPage() {
-    const [otp, setOtp] = useState(["", "", "", ""]);
-    const [resendTimer, setResendTimer] = useState(30);
-    const inputRefs = useRef([]);
+const NOTIFICATION_OPTIONS = [
+  {
+    id: "replies",
+    title: "Helpful reply alerts",
+    description: "Stay updated when Amigo has something worth checking.",
+    icon: MessageSquare,
+  },
+  {
+    id: "offers",
+    title: "Offers and plan updates",
+    description: "See premium trials, plan changes, and limited-time perks.",
+    icon: Gift,
+  },
+  {
+    id: "product",
+    title: "Product news",
+    description: "Hear about new features, fixes, and polished upgrades.",
+    icon: Bell,
+  },
+];
 
-    const maskedPhone = "*** *** **65";
-    const canResend = resendTimer === 0;
+export default function NotificationSetupPage() {
+  const router = useRouter();
+  const [enabledOptions, setEnabledOptions] = useState({
+    replies: true,
+    offers: false,
+    product: true,
+  });
 
-    useEffect(() => {
-        if (canResend) {
-            return;
-        }
+  return (
+    <StepPageShell title="Stay In The Loop" contentClassName="overflow-y-auto">
+      <FeatureShowcaseCard
+        badge="Notifications"
+        title="Choose the updates that deserve your attention"
+        description="This onboarding step now feels like part of the product, not a recycled placeholder screen."
+        imageSrc="/icons/robot-slider-img3.png"
+        imageAlt="Notification preferences"
+        className="mb-6"
+      />
 
-        const timeoutId = setTimeout(() => {
-            setResendTimer((currentValue) => currentValue - 1);
-        }, 1000);
+      <div className="space-y-3">
+        {NOTIFICATION_OPTIONS.map((option) => {
+          const Icon = option.icon;
+          const isEnabled = enabledOptions[option.id];
 
-        return () => clearTimeout(timeoutId);
-    }, [canResend, resendTimer]);
+          return (
+            <button
+              key={option.id}
+              type="button"
+              onClick={() =>
+                setEnabledOptions((currentOptions) => ({
+                  ...currentOptions,
+                  [option.id]: !currentOptions[option.id],
+                }))
+              }
+              className={`flex w-full items-start justify-between gap-4 rounded-[24px] border px-4 py-4 text-left transition-all duration-200 ${
+                isEnabled
+                  ? "border-[#00D061] bg-[#F2FFF7] shadow-[0_12px_30px_rgba(0,208,97,0.12)]"
+                  : "border-[#EEF6F1] bg-white shadow-[0_12px_30px_rgba(15,15,15,0.04)]"
+              }`}
+            >
+              <div className="flex items-start gap-4">
+                <div
+                  className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${
+                    isEnabled ? "bg-[#00D061] text-white" : "bg-[#F4F7F5] text-[#0F0F0F]"
+                  }`}
+                >
+                  <Icon size={20} />
+                </div>
+                <div>
+                  <h3 className="text-[18px] font-semibold leading-7 text-[#0F0F0F]">
+                    {option.title}
+                  </h3>
+                  <p className="mt-1 font-satoshi text-[14px] leading-6 text-[#555]">
+                    {option.description}
+                  </p>
+                </div>
+              </div>
 
-    const handleChange = (index, value) => {
-        if (!/^\d?$/.test(value)) {
-            return;
-        }
+              <div
+                className={`relative h-[30px] w-[54px] rounded-full transition-all duration-300 ${
+                  isEnabled ? "bg-[#00D061]" : "bg-[#E8E8E8]"
+                }`}
+              >
+                <span
+                  className={`absolute top-[3px] h-6 w-6 rounded-full bg-white shadow-sm transition-all duration-300 ${
+                    isEnabled ? "left-[26px]" : "left-[3px]"
+                  }`}
+                />
+              </div>
+            </button>
+          );
+        })}
+      </div>
 
-        const nextOtp = [...otp];
-        nextOtp[index] = value;
-        setOtp(nextOtp);
-
-        if (value && index < otp.length - 1) {
-            inputRefs.current[index + 1]?.focus();
-        }
-    };
-
-    const handleKeyDown = (index, event) => {
-        if (event.key === "Backspace" && !otp[index] && index > 0) {
-            inputRefs.current[index - 1]?.focus();
-        }
-    };
-
-    const handlePaste = (event) => {
-        const pastedValue = event.clipboardData
-            .getData("text")
-            .replace(/\D/g, "")
-            .slice(0, otp.length);
-
-        if (!pastedValue) {
-            return;
-        }
-
-        const nextOtp = Array(otp.length).fill("");
-        pastedValue.split("").forEach((character, index) => {
-            nextOtp[index] = character;
-        });
-
-        setOtp(nextOtp);
-        inputRefs.current[Math.min(pastedValue.length, otp.length - 1)]?.focus();
-        event.preventDefault();
-    };
-
-    const handleResend = () => {
-        if (!canResend) {
-            return;
-        }
-
-        setOtp(["", "", "", ""]);
-        setResendTimer(30);
-        inputRefs.current[0]?.focus();
-    };
-
-    const isComplete = otp.every((digit) => digit !== "");
-
-    return (
-        <div className="min-h-dvh bg-white">
-            <div className="mx-auto flex min-h-dvh w-full max-w-[600px] flex-col bg-white">
-
-                <HeaderSection title={"Verify Phone Number"}/>
-
-                <section className="relative -mt-10 flex flex-1 flex-col rounded-t-[32px] bg-white pb-10 pt-3">
-                    <div className="flex flex-col items-center text-center">
-                        <div className="mb-8 mt-2 flex aspect-square w-full max-w-[343px] items-center justify-center bg-[#d9d9d9]">
-                            <span className="text-[22px] font-semibold tracking-[0.02em] text-[#616161]">
-                                343 x 343
-                            </span>
-                        </div>
-
-                        <p className="mb-8 text-[18px] text-center leading-6 text-center text-[#555] font-satoshi">
-                            Stay notified about new car, offer status and other updates. You can turn off any time from setting.
-                        </p>
-
-
-                    </div>
-
-                    <div className="flex-1" />
-
-                    <button
-                        type="button"
-                        disabled={!isComplete}
-                        className={`w-full max-w-[343px] mx-auto py-4 rounded-[14px] text-white text-[18px] font-semibold tracking-wide transition-all duration-200  bg-[#00D061] hover:bg-[#00b856] hover:shadow-[0_6px_20px_rgba(0,208,97,0.40)] hover:-translate-y-px active:translate-y-0`}
-                    >
-                        Verify
-                    </button>
-                </section>
-            </div >
-        </div >
-    );
+      <div className="mt-auto grid grid-cols-1 gap-3 pt-6 sm:grid-cols-2">
+        <button
+          type="button"
+          onClick={() => router.push("/create-pin")}
+          className="rounded-[14px] bg-[#F4F7F5] px-5 py-4 text-[16px] font-semibold text-[#0F0F0F]"
+        >
+          Skip
+        </button>
+        <button
+          type="button"
+          onClick={() => router.push("/create-pin")}
+          className="rounded-[14px] bg-[#00D061] px-5 py-4 text-[16px] font-semibold text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)]"
+        >
+          Continue
+        </button>
+      </div>
+    </StepPageShell>
+  );
 }

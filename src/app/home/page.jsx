@@ -565,6 +565,69 @@ const MENU_ITEMS = [
   },
 ];
 
+const MENU_ROUTES = {
+  "New Chat": "/amigo-chat",
+  History: "/settings/history",
+  "Banks & Cards": "/settings/banks-cards",
+  "Payment Methods": "/settings/payment-methods",
+  Subscriptions: "/settings/subscriptions",
+  "Personal Info": "/personal-information",
+  Security: "/settings/security",
+  "Marketing Preferences": "/settings/marketing-preferences",
+  "Notification Options": "/settings/notification-options",
+  Language: "/language",
+  Currency: "/settings/currency",
+  FAQs: "/settings/faqs",
+  "Data & Privacy Policy": "/settings/privacy-policy",
+  "About Amigo GPT": "/settings/about-amigo",
+  "Send Feedback": "/settings/send-feedback",
+  "Contact Us": "/settings/contact-us",
+  "Invite Friends": "/settings/invite-friends",
+  "Delete or Deactivate Account": "/settings/account-management",
+};
+
+const QUICK_ACCESS_ITEMS = [
+  {
+    label: "Inbox",
+    caption: "Unread updates",
+    value: "03",
+    href: "/notifications",
+  },
+  {
+    label: "Security",
+    caption: "Protect access",
+    value: "PIN",
+    href: "/settings/security",
+  },
+  {
+    label: "Plans",
+    caption: "See premium perks",
+    value: "Plus",
+    href: "/plus-subscription",
+  },
+  {
+    label: "Chat",
+    caption: "Start fresh",
+    value: "Now",
+    href: "/amigo-chat",
+  },
+];
+
+const TODAY_CARDS = [
+  {
+    title: "Prompt ideas picked for you",
+    description: "Based on your interests in code, productivity, and learning.",
+    cta: "Open Chat",
+    href: "/amigo-chat",
+  },
+  {
+    title: "Settings pass is ready",
+    description: "Language, notifications, and security pages now have full themed screens.",
+    cta: "Review",
+    href: "/settings/security",
+  },
+];
+
 // ─── Dark-mode Toggle Switch ──────────────────────────────────────────────────
 
 const DarkModeToggle = ({ dark, onToggle }) => (
@@ -638,6 +701,11 @@ export default function HomeScreen() {
     "Jessica";
   const emailAddress =
     profile?.email || profile?.user_email || "jessica_smith@mail.com";
+  const navigateTo = (href) => {
+    setDrawerOpen(false);
+    setLogoutOpen(false);
+    router.push(href);
+  };
 
   return (
     <div
@@ -678,7 +746,7 @@ export default function HomeScreen() {
               <button
                 type="button"
                 className="relative"
-                onClick={() => alert("Notifications")}
+                onClick={() => router.push("/notifications")}
               >
                 <Bell />
                 <span className="absolute -top-1 -right-1 w-[18px] h-[18px] bg-[#FF484D] rounded-full flex items-center justify-center text-white text-[10px] font-medium">
@@ -732,7 +800,7 @@ export default function HomeScreen() {
               </div>
               <button
                 type="button"
-                onClick={() => alert("Navigate to /plus_subscription")}
+                onClick={() => router.push("/plus-subscription")}
                 className="mt-4 self-start bg-white text-[#00D061] text-[14px] font-semibold px-4 py-[10px] rounded-[8px] transition-all active:scale-[0.97]"
               >
                 Upgrades
@@ -740,11 +808,81 @@ export default function HomeScreen() {
             </div>
             {/* Robot placeholder */}
             <div className="w-[110px] bg-[#00D061]/50 flex items-end justify-end rounded-r-[12px]">
-              <img
+              <Image
                 src="/icons/plus-robort.png"
                 alt=""
+                width={96}
+                height={96}
                 className="size-24 object-contain"
               />
+            </div>
+          </div>
+
+          <div className="mb-5">
+            <div className="mb-3 flex items-center justify-between">
+              <div>
+                <h4 className="text-[#0F0F0F] text-[20px] font-semibold leading-7">
+                  Quick access
+                </h4>
+                <p className="text-[#555] font-satoshi text-[14px] leading-6">
+                  Fast ways to move around the app.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              {QUICK_ACCESS_ITEMS.map((item) => (
+                <button
+                  key={item.label}
+                  type="button"
+                  onClick={() => router.push(item.href)}
+                  className="rounded-[22px] border border-[#EEF6F1] bg-white px-4 py-4 text-left shadow-[0_12px_30px_rgba(15,15,15,0.04)] transition-all hover:-translate-y-[1px]"
+                >
+                  <span className="inline-flex rounded-full bg-[#E8FFF1] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#00A84D]">
+                    {item.value}
+                  </span>
+                  <h5 className="mt-3 text-[#0F0F0F] text-[17px] font-semibold leading-6">
+                    {item.label}
+                  </h5>
+                  <p className="mt-1 font-satoshi text-[13px] leading-5 text-[#555]">
+                    {item.caption}
+                  </p>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <div className="mb-3">
+              <h4 className="text-[#0F0F0F] text-[20px] font-semibold leading-7">
+                Today with Amigo
+              </h4>
+              <p className="text-[#555] font-satoshi text-[14px] leading-6">
+                A few guided places to keep momentum going.
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              {TODAY_CARDS.map((card) => (
+                <div
+                  key={card.title}
+                  className="rounded-[22px] bg-[#F8FFFB] px-4 py-4 shadow-[0_12px_30px_rgba(15,15,15,0.04)]"
+                >
+                  <h5 className="text-[#0F0F0F] text-[17px] font-semibold leading-6">
+                    {card.title}
+                  </h5>
+                  <p className="mt-1 font-satoshi text-[14px] leading-6 text-[#555]">
+                    {card.description}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => router.push(card.href)}
+                    className="mt-4 inline-flex items-center rounded-full bg-[#0F0F0F] px-4 py-2 text-[13px] font-semibold text-white"
+                  >
+                    {card.cta}
+                  </button>
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -753,7 +891,7 @@ export default function HomeScreen() {
         <div className="fixed bottom-5 left-0 right-0 mx-auto max-w-[600px] px-4 z-10">
           <button
             type="button"
-            onClick={() => alert("Navigate to /amigo_chat")}
+            onClick={() => router.push("/amigo-chat")}
             className="w-full max-w-[343px] mx-auto flex items-center justify-center h-[56px] rounded-[12px] bg-[#00D061] text-white text-[18px] font-medium shadow-[0_4px_20px_rgba(0,208,97,0.4)] transition-all active:scale-[0.98] hover:opacity-92"
           >
             Start Chat with Amigo
@@ -813,7 +951,7 @@ export default function HomeScreen() {
                 <p className="text-[14px] text-[#555]">{emailAddress}</p>
               </div>
             </div>
-            <button type="button">
+            <button type="button" onClick={() => navigateTo("/personal-information")}>
               <Edit2Icon className="text-[#00D061]" />
             </button>
           </div>
@@ -851,7 +989,16 @@ export default function HomeScreen() {
                 <button
                   key={item.label}
                   type="button"
-                  onClick={() => alert(`Navigate to ${item.label}`)}
+                  onClick={() => {
+                    const href = MENU_ROUTES[item.label];
+
+                    if (!href) {
+                      toast.error("This page is not mapped yet.");
+                      return;
+                    }
+
+                    navigateTo(href);
+                  }}
                   className={`w-full flex items-center justify-between px-4 py-2 border-b-2 ${darkMode ? "border-[#2a2a2a]" : "border-[#F5F5F5]"} transition-colors hover:bg-[#f9fffe] active:bg-[#E4FFEE]`}
                 >
                   <div className="flex items-center gap-4 min-w-0">
