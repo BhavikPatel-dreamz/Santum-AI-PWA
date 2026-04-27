@@ -1,4 +1,4 @@
-"use client";
+ "use client";
 
 import FeatureShowcaseCard from "@/components/app/FeatureShowcaseCard";
 import StepPageShell from "@/components/app/StepPageShell";
