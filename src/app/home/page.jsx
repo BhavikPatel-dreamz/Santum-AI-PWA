@@ -887,12 +887,27 @@ export default function HomeScreen() {
 
   const handleLogout = async () => {
     try {
-      await fetch("/api/auth/logout");
-      
+      await appFetch("/api/auth/logout", {
+        method: "POST",
+      });
+      toast.success("Logged out successfully");
+      router.replace("/sign-in");
     } catch (error) {
       console.log(error);
+      toast.error(error.message || "Unable to log out");
     }
   };
+
+  const displayName =
+    [profile?.first_name, profile?.last_name].filter(Boolean).join(" ") ||
+    profile?.name ||
+    "Jessica Smith";
+  const firstName =
+    profile?.first_name ||
+    displayName.split(" ").filter(Boolean)[0] ||
+    "Jessica";
+  const emailAddress =
+    profile?.email || profile?.user_email || "jessica_smith@mail.com";
 
   return (
     <div className="theme-shell min-h-dvh flex justify-center transition-colors duration-300">
