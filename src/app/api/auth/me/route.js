@@ -1,37 +1,37 @@
-"use server";
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
+import {
+  apiFetchWithAuth,
+  assertApiSuccess,
+  createErrorResponse,
+} from "../../../../lib/api/server";
+import { clearAuthCookie, getAuthToken } from "../../../../lib/auth/session";
 
 export async function GET() {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("token");
+    const token = await getAuthToken();
 
     if (!token) {
       return NextResponse.json({ authenticated: false }, { status: 401 });
     }
 
-    // (optional) verify with WordPress
-    // const res = await fetch(
-    //   `${process.env.WP_API_URL}/wp-json/wp/v2/users/me`,
-    //   {
-    //     headers: {
-    //       Authorization: `Bearer ${token}`,
-    //     },
-    //   },
-    // );
-
-    // if (!res.ok) {
-    //   return NextResponse.json({ authenticated: false }, { status: 401 });
-    // }
-
-    // const user = await res.json();
+    assertApiSuccess(
+      await apiFetchWithAuth("/v1/user/profile/", { method: "GET" }),
+      "Unable to verify session",
+    );
 
     return NextResponse.json({
       authenticated: true,
-      token,
     });
   } catch (err) {
-    return NextResponse.json({ authenticated: false }, { status: 500 });
+    if (err?.status === 401) {
+      const response = NextResponse.json(
+        { authenticated: false, message: "Unauthorized" },
+        { status: 401 },
+      );
+
+      return clearAuthCookie(response);
+    }
+
+    return createErrorResponse(err, "Unable to verify session");
   }
 }

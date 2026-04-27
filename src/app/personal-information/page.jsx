@@ -1,10 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import HeaderSection from "../../components/UI/HeaderSection";
 import toast from "react-hot-toast";
-import { apiFetch } from "../../lib/api/client";
+import { appFetch } from "../../lib/api/internal";
 
 /* ── Reusable floating-label input ── */
 function FloatingInput({ id, label, value, onChange, type = "text" }) {
@@ -52,20 +52,17 @@ export default function PersonalInformationPage() {
       const errorMsg = validateForm(form);
       if (errorMsg) return toast.error(errorMsg);
 
-      const payload = new FormData();
-      payload.append("first_name", form.firstName);
-      payload.append("last_name", form.lastName);
-      payload.append("dob", form.dob);
-
-     const resdata = await fetch('/api/auth/me')
-      const token = resdata.data.token
       setLoading(true);
-      await apiFetch("/v1/user/profile/basic", {
+      await appFetch("/api/user/profile/basic", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
-        body: payload,
+        body: JSON.stringify({
+          firstName: form.firstName,
+          lastName: form.lastName,
+          dob: form.dob,
+        }),
       });
 
       toast.success("Profile saved");
@@ -73,6 +70,11 @@ export default function PersonalInformationPage() {
       router.push("/language");
     } catch (error) {
       console.log(error);
+      if (error?.status === 401) {
+        router.replace("/sign-in");
+        return;
+      }
+
       toast.error(error?.message || "Something went wrong");
     } finally {
       setLoading(false);

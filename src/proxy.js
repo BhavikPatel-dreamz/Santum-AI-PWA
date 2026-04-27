@@ -1,13 +1,17 @@
 import { NextResponse } from "next/server";
 
-export function middleware(req) {
+export function proxy(req) {
   const token = req.cookies.get("token")?.value;
-
   const isAuthPage =
     req.nextUrl.pathname.startsWith("/sign-in") ||
     req.nextUrl.pathname.startsWith("/sign-up");
 
-  const isProtected = req.nextUrl.pathname.startsWith("/home");
+  const isProtected =
+    req.nextUrl.pathname.startsWith("/home") ||
+    req.nextUrl.pathname.startsWith("/verify-otp") ||
+    req.nextUrl.pathname.startsWith("/personal-information") ||
+    req.nextUrl.pathname.startsWith("/language") ||
+    req.nextUrl.pathname.startsWith("/intrest");
 
   if (!token && isProtected) {
     return NextResponse.redirect(new URL("/sign-in", req.url));
@@ -21,5 +25,13 @@ export function middleware(req) {
 }
 
 export const config = {
-  matcher: ["/home/:path*", "/sign-in", "/sign-up"],
+  matcher: [
+    "/home/:path*",
+    "/verify-otp",
+    "/personal-information",
+    "/language",
+    "/intrest",
+    "/sign-in",
+    "/sign-up",
+  ],
 };

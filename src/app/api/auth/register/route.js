@@ -22,24 +22,28 @@ export async function POST(req) {
     payload.append("password", body.password);
 
     const data = assertApiSuccess(
-      await apiFetch("/v1/login", {
+      await apiFetch("/v1/register", {
         method: "POST",
         body: payload,
       }),
-      "Login failed",
+      "Registration failed",
     );
 
     if (!data?.data?.token) {
-      throw { status: 502, message: "Login token missing from upstream response" };
+      throw {
+        status: 502,
+        message: "Registration token missing from upstream response",
+      };
     }
 
     const response = NextResponse.json({
       success: true,
-      message: data?.data?.message || data?.message || "Signed in successfully",
+      message:
+        data?.data?.message || data?.message || "Account created successfully",
     });
 
     return setAuthCookie(response, data.data.token);
-  } catch (err) {
-    return createErrorResponse(err, "Login failed");
+  } catch (error) {
+    return createErrorResponse(error, "Registration failed");
   }
 }

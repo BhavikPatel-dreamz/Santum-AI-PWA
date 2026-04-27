@@ -4,15 +4,15 @@ import { useEffect, useRef, useState } from "react";
 import { COUNTRIES } from "../../lib/utills/countries";
 import GreenSection from "../../components/UI/GreenSection";
 import SocialButtons from "../../components/UI/SocialButtons";
-import { Eye, EyeOff, LockIcon, User } from "lucide-react";
+import { Eye, EyeOff, LockIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { appFetch } from "../../lib/api/internal";
 
 export const validateInternationalPhone = (number) => {
   const cleaned = number.trim().replace(/[^\d+]/g, "");
   const formatRegex = /^\+?[1-9]\d{4,15}$/;
   if (!formatRegex.test(cleaned)) return false;
-  const digits = cleaned.replace(/\D/g, "");
   return true;
 };
 
@@ -53,18 +53,19 @@ export default function SignInPage() {
 
       if (!isNumberVerify) return toast.error("Enter valid number");
 
-      const data = await fetch("/api/auth/login", {
+      const data = await appFetch("/api/auth/login", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           mobile: `${selectedCountry.dial}${phone}`,
-          password: password,
+          password,
         }),
       });
 
-      if (data.data.success) {
-        toast.success(data.data.message)
-        router.push("/home");
-      }
+      toast.success(data.message || "Signed in successfully");
+      router.replace("/home");
     } catch (error) {
       console.log("Error:", error);
       toast.error(error.message || "Something went wrong");

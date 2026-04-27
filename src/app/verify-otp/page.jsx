@@ -2,18 +2,20 @@
 
 import { useEffect, useRef, useState } from "react";
 import HeaderSection from "../../components/UI/HeaderSection";
-import { apiFetch } from "../../lib/api/client";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { appFetch } from "../../lib/api/internal";
+import { maskPhoneNumber, OTP_PHONE_STORAGE_KEY } from "../../lib/utills/phone";
+import Image from "next/image";
 
 export default function OtpPage() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
   const [resendTimer, setResendTimer] = useState(30);
   const inputRefs = useRef([]);
+  const [maskedPhone, setMaskedPhone] = useState("");
   const router = useRouter();
-
-  const maskedPhone = "*** *** **65";
+  
   const canResend = resendTimer === 0;
 
   useEffect(() => {
@@ -27,6 +29,21 @@ export default function OtpPage() {
 
     return () => clearTimeout(timeoutId);
   }, [canResend, resendTimer]);
+
+  useEffect(() => {
+    try {
+      const storedPhone = sessionStorage.getItem(OTP_PHONE_STORAGE_KEY);
+
+      if (!storedPhone) {
+        return;
+      }
+
+      const { mobile, dialCode } = JSON.parse(storedPhone);
+      setMaskedPhone(maskPhoneNumber(mobile, dialCode));
+    } catch (error) {
+      console.error("Unable to load pending OTP phone:", error);
+    }
+  }, []);
 
   const handleChange = (index, value) => {
     if (!/^\d?$/.test(value)) {
@@ -80,42 +97,31 @@ export default function OtpPage() {
 
   const handleVerify = async () => {
     try {
-      const otpValue = otp.join(""); // convert ["1","2","3","4","5","6"] → "123456"
-      const resdata = await fetch('/api/auth/me')
-      const token = resdata.data.token
+      const otpValue = otp.join("");
+      setLoading(true);
 
-      if (!token) {
-        toast.error("User not authenticated");
+      const data = await appFetch("/api/auth/verify-mobile", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          otp: otpValue,
+        }),
+      });
+      if (data.success) sessionStorage.removeItem(OTP_PHONE_STORAGE_KEY);
+
+      toast.success(data.message || "OTP verified successfully");
+      router.replace("/personal-information");
+    } catch (error) {
+      console.error("Verify Error:", error);
+
+      if (error?.status === 401) {
+        router.replace("/sign-in");
         return;
       }
 
-      setLoading(true);
-
-      const data = await apiFetch("/v1/register/verify/mobile", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: (() => {
-          const formData = new FormData();
-          formData.append("otp", otpValue);
-          return formData;
-        })(),
-      });
-
-      console.log("Verify Response:", data);
-
-      if (data.success) {
-        // ✅ success logic
-        toast.success(data.data.message || "OTP Verified Successfully");
-        router.push("/personal-information");
-      } else {
-        // ❌ error handling
-        toast.error(data.data.message || "Verification failed");
-      }
-    } catch (error) {
-      console.error("Verify Error:", error);
-      toast.error(error.data.data.message || "Something went wrong");
+      toast.error(error.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -131,9 +137,13 @@ export default function OtpPage() {
         <section className="relative -mt-10 flex flex-1 flex-col rounded-t-[32px] bg-white pb-10 pt-3">
           <div className="flex flex-col items-center text-center">
             <div className="mb-8 mt-2 flex aspect-square w-full max-w-[343px] items-center justify-center bg-[#d9d9d9]">
-              <span className="text-[22px] font-semibold tracking-[0.02em] text-[#616161]">
-                343 x 343
-              </span>
+              <Image
+                src="/icons/Artboard 2@2x-100.jpg"
+                alt="Verification illustration"
+                width={343}
+                height={343}
+                className="h-auto w-full"
+              />
             </div>
 
             <p className="mb-8 font-satoshi text-[18px] leading-6 text-center text-[#555]">

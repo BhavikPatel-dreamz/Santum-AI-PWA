@@ -2,8 +2,8 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import HeaderSection from "../../components/UI/HeaderSection";
-import { apiFetch } from "../../lib/api/client";
 import toast from "react-hot-toast";
+import { appFetch } from "../../lib/api/internal";
 
 const interests = [
   { id: 1, label: "History", checked: false },
@@ -33,48 +33,38 @@ const Page = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState(
-    interests.filter((i) => i.checked).map((i) => i.id),
+    interests.filter((interest) => interest.checked).map((interest) => interest.id),
   );
 
   const handleSubmit = async () => {
     try {
-      const resdata = await fetch('/api/auth/me')
-      const token = resdata.data.token
+      setLoading(true);
 
-      if (!token) {
-        alert("User not authenticated");
+      const selectedInterests = selected
+        .map((id) => interests.find((interest) => interest.id === id)?.label)
+        .filter(Boolean);
+
+      const res = await appFetch("/api/user/profile/interests", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          interests: selectedInterests,
+        }),
+      });
+
+      toast.success(res.message || "Interests saved");
+      router.push("/home");
+    } catch (error) {
+      console.error("Interests Error:", error);
+
+      if (error?.status === 401) {
+        router.replace("/sign-in");
         return;
       }
 
-      setLoading(true);
-
-      const formData = new FormData();
-
-      // 🔥 Convert selected IDs → labels
-      selected.forEach((id) => {
-        const interest = interests.find((i) => i.id === id);
-        if (interest) {
-          formData.append("area_of_interest[]", interest.label);
-        }
-      });
-
-      const res = await apiFetch("/v1/user/profile/interests", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-
-      if (res.success) {
-        // ✅ success
-        router.push("/home");
-      } else {
-        toast.error(res.data.message || "Failed to save interests");
-      }
-    } catch (error) {
-      console.error("Interests Error:", error);
-      toast.error(error.data.data.message || "Something went wrong");
+      toast.error(error.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -83,20 +73,18 @@ const Page = () => {
   const handleSelect = (id) => {
     setSelected((prev) => {
       if (prev.includes(id)) {
-        return prev.filter((item) => item !== id); // remove
-      } else {
-        return [...prev, id]; // add
+        return prev.filter((item) => item !== id);
       }
+
+      return [...prev, id];
     });
   };
 
   return (
     <div className="min-h-dvh bg-white">
       <div className="mx-auto flex min-h-dvh w-full max-w-[600px] flex-col bg-white">
-        {/* Header */}
         <HeaderSection title={"Choose Interests"} />
 
-        {/* Content card */}
         <section className="relative -mt-10 flex flex-1 flex-col rounded-t-[32px] bg-white pb-10 pt-8 px-5">
           <p
             suppressHydrationWarning
@@ -105,14 +93,13 @@ const Page = () => {
             Choose 3 or more areas you are interested
           </p>
 
-          {/* Language chips */}
           <div className="flex flex-wrap gap-[10px]">
-            {interests?.map((lang) => {
-              const isSelected = selected.includes(lang?.id);
+            {interests.map((interest) => {
+              const isSelected = selected.includes(interest.id);
               return (
                 <button
-                  key={lang?.id}
-                  onClick={() => handleSelect(lang?.id)}
+                  key={interest.id}
+                  onClick={() => handleSelect(interest.id)}
                   className="text-center font-satoshi text-[14px] font-medium leading-[18px] rounded-[8px] border-2 px-[16px] py-[11px] transition-all active:scale-95"
                   style={{
                     background: isSelected ? "#111" : "#fff",
@@ -121,19 +108,17 @@ const Page = () => {
                     boxShadow: isSelected ? "0 2px 8px #0002" : "none",
                   }}
                 >
-                  {lang?.label}
+                  {interest.label}
                 </button>
               );
             })}
           </div>
 
-          {/* Spacer */}
           <div className="flex-1" />
 
-          {/* Bottom buttons */}
           <div className="flex justify-center gap-3 pt-6">
             <button
-              onClick={() => router.push("/dashboard")}
+              onClick={() => router.push("/home")}
               className="w-[163px] h-[48px] flex items-center justify-center rounded-[8px] bg-[#F5F5F5] text-[#0F0F0F] text-[18px] font-medium font-poppins transition-all active:scale-[0.98]"
             >
               Skip
