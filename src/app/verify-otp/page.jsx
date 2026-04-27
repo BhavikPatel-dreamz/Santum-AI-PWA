@@ -50,6 +50,21 @@ export default function OtpPage() {
     return () => clearTimeout(timeoutId);
   }, [canResend, resendTimer]);
 
+  useEffect(() => {
+    try {
+      const storedPhone = sessionStorage.getItem(OTP_PHONE_STORAGE_KEY);
+
+      if (!storedPhone) {
+        return;
+      }
+
+      const { mobile, dialCode } = JSON.parse(storedPhone);
+      setMaskedPhone(maskPhoneNumber(mobile, dialCode));
+    } catch (error) {
+      console.error("Unable to load pending OTP phone:", error);
+    }
+  }, []);
+
   const handleChange = (index, value) => {
     if (!/^\d?$/.test(value)) {
       return;
