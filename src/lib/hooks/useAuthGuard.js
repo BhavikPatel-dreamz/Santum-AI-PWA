@@ -19,7 +19,7 @@ export function useAuthGuard() {
         if (!data.authenticated) {
           router.replace("/sign-in");
         }
-      } catch (err) {
+      } catch {
         router.replace("/sign-in");
       }
     }
