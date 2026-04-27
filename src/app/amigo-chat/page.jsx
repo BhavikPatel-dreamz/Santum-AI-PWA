@@ -1,4 +1,4 @@
-"use client";
+ "use client";
 
 import FeatureShowcaseCard from "@/components/app/FeatureShowcaseCard";
 import StepPageShell from "@/components/app/StepPageShell";
@@ -41,7 +41,7 @@ export default function AmigoChatPage() {
     text,
   });
 
-  const sendMessage = (nextMessage) => {
+  const sendMessage = async (nextMessage) => {
     const text = nextMessage.trim();
 
     if (!text || isReplying) {
@@ -49,29 +49,106 @@ export default function AmigoChatPage() {
     }
 
     const userMessage = createMessage("user", text);
+    const history = messages.map((msg) => ({
+      role: msg.role === "user" ? "human" : "ai",
+      content: msg.text,
+    }));
 
     setMessages((currentMessages) => [...currentMessages, userMessage]);
     setComposer("");
     setIsReplying(true);
 
-    setTimeout(() => {
+    try {
+      console.log(text);
+      console.log(history);
+
+      
+      const response = await fetch("/api/chat/stream", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: text,
+          chat_history: history,
+          plan_level: "premium",
+          remaining_tokens: 1000,
+        }),
+      });
+
+      if (!response.ok) throw new Error("Failed to connect to Amigo");
+      if (!response.body) throw new Error("No response body");
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      const assistantMessage = createMessage("assistant", "");
+      
+      setMessages((currentMessages) => [...currentMessages, assistantMessage]);
+
+      let accumulatedText = "";
+      let displayedText = "";
+      let isStreamDone = false;
+
+      // Start the typing animation loop
+      const typingInterval = setInterval(() => {
+        if (displayedText.length < accumulatedText.length) {
+          // Find the next word or character to add
+          // We can add one character at a time for smoothness, 
+          // or chunks of characters if we are falling too far behind.
+          const diff = accumulatedText.length - displayedText.length;
+          const increment = diff > 50 ? 10 : diff > 20 ? 5 : 2; // Speed up if lagging
+          
+          displayedText = accumulatedText.substring(0, displayedText.length + increment);
+
+          setMessages((currentMessages) => {
+            const newMessages = [...currentMessages];
+            const lastIndex = newMessages.length - 1;
+            if (newMessages[lastIndex]?.role === "assistant") {
+              newMessages[lastIndex] = { ...newMessages[lastIndex], text: displayedText };
+            }
+            return newMessages;
+          });
+        } else if (isStreamDone) {
+          clearInterval(typingInterval);
+        }
+      }, 30); // 30ms for smooth character/word flow
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) {
+          isStreamDone = true;
+          break;
+        }
+
+        const chunk = decoder.decode(value, { stream: true });
+        const metadataIndex = chunk.indexOf("\n\n{");
+        
+        if (metadataIndex !== -1) {
+          accumulatedText += chunk.substring(0, metadataIndex);
+          isStreamDone = true;
+          break;
+        } else {
+          accumulatedText += chunk;
+        }
+      }
+    } catch (error) {
+      console.error("Chat error:", error);
       setMessages((currentMessages) => [
         ...currentMessages,
         createMessage(
           "assistant",
-          `Here is a polished dummy response for "${text}". I can turn this into a checklist, a summary, or a more detailed workflow next.`,
+          "Sorry, I'm having trouble connecting to Amigo right now. Please check your connection and try again.",
         ),
       ]);
+    } finally {
       setIsReplying(false);
-    }, 850);
+    }
   };
 
   return (
     <StepPageShell title="Chat With Amigo" contentClassName="overflow-hidden pb-6">
       <FeatureShowcaseCard
-        badge="Assistant Ready"
+        badge="Assistant Live"
         title="A calmer chat space built around quick momentum"
-        description="This dummy conversation surface is ready for prompts, suggestions, and premium interactions."
+        description="Amigo is ready to help you brainstorm, organize, or explain something fast."
         imageSrc="/icons/robot-slider-img3.png"
         imageAlt="Chat companion"
         className="mb-5"
@@ -105,7 +182,7 @@ export default function AmigoChatPage() {
                     : "rounded-bl-[8px] bg-white text-[#0F0F0F] shadow-[0_10px_24px_rgba(15,15,15,0.05)]"
                 }`}
               >
-                <p className="font-satoshi text-[15px] leading-6">
+                <p className="font-satoshi text-[15px] leading-6 whitespace-pre-wrap">
                   {message.text}
                 </p>
               </div>
@@ -130,13 +207,19 @@ export default function AmigoChatPage() {
             rows={3}
             value={composer}
             onChange={(event) => setComposer(event.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage(composer);
+              }
+            }}
             placeholder="Ask Amigo anything..."
             className="w-full resize-none rounded-[18px] bg-[#F6FBF8] px-4 py-4 font-satoshi text-[15px] leading-6 text-[#0F0F0F] outline-none placeholder:text-[#8A968F]"
           />
 
           <div className="mt-3 flex items-center justify-between gap-3">
             <p className="font-satoshi text-[13px] leading-5 text-[#555]">
-              Dummy chat for layout and experience testing.
+              Powered by Santum AI Counseling service.
             </p>
             <button
               type="button"
