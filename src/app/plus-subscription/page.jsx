@@ -13,6 +13,7 @@ import { Check } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { appFetch } from "../../lib/api/internal";
 
 const PLANS = [
   {
