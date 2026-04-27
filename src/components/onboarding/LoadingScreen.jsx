@@ -1,19 +1,16 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import Image from "next/image";
 
 export default function LoadingScreen({ onDone }) {
-  const onDoneRef = useRef(onDone);
-  onDoneRef.current = onDone;
-
   useEffect(() => {
     const t = setTimeout(() => {
-      if (typeof onDoneRef.current === "function") {
-        onDoneRef.current();
+      if (typeof onDone === "function") {
+        onDone();
       }
     }, 2000);
     return () => clearTimeout(t);
-  }, []);
+  }, [onDone]);
 
   return (
     <div className="fixed inset-0 bg-white flex items-center justify-center overflow-hidden" style={{ zIndex: 99999 }}>

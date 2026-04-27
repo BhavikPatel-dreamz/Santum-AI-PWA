@@ -5,6 +5,7 @@ import "./globals.css";
 import { ReduxProvider } from "@/components/providers/ReduxProvider";
 import { PageTransitionProvider } from "@/components/providers/PageTransitionProvider";
 import LoadingScreenWrapper from "@/components/onboarding/LoadingScreenWrapper"; // ← new wrapper
+import { Toaster } from "react-hot-toast";
 
 const poppins = Poppins({
   variable: "--font-poppins-ui",
@@ -32,6 +33,23 @@ export default function RootLayout({
           <PageTransitionProvider>
             <Suspense>
               <main className="flex-1">{children}</main>
+              <Toaster
+                position="top-center"
+                toastOptions={{
+                  success: {
+                    style: {
+                      background: "#00D061",
+                      color: "#fff",
+                    },
+                  },
+                  error: {
+                    style: {
+                      background: "#ffecec",
+                      color: "#d32f2f",
+                    },
+                  },
+                }}
+              />
             </Suspense>
           </PageTransitionProvider>
         </ReduxProvider>

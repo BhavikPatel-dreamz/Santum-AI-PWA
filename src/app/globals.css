@@ -43,3 +43,29 @@ body {
     background-color: #00D061;
     height: 300px;
 }
+
+/* datepicker */
+.react-datepicker {
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.react-datepicker__header {
+  background-color: #00D061;
+  border-bottom: none;
+}
+
+.react-datepicker__current-month,
+.react-datepicker__day-name {
+  color: white;
+}
+
+.react-datepicker__day--selected {
+  background-color: #00D061;
+  color: white;
+}
+
+.react-datepicker__day:hover {
+  background-color: #E4FFEE;
+}

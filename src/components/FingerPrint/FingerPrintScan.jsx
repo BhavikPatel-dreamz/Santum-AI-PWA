@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-
+import HeaderSection from "../UI/HeaderSection";
 
 export default function FingerPrintScan() {
   const router = useRouter();
@@ -27,15 +27,78 @@ export default function FingerPrintScan() {
     return () => clearInterval(interval);
   }, [scanState]);
 
-  const handleScannerPress = () => {
-    if (scanState === "idle" || scanState === "error") {
+  const generateRandomChallenge = () => {
+    const randomValues = new Uint8Array(32);
+    window.crypto.getRandomValues(randomValues);
+    return randomValues;
+  };
+
+  const handleScannerPress = async () => {
+    try {
+      if (!navigator.credentials || !navigator.credentials.get) {
+        alert("Biometric not supported on this device");
+        return;
+      }
+
       setScanState("scanning");
+
+      if (!window.passkeyCreated) {
+        const createdCredential = await navigator.credentials.create({
+          publicKey: {
+            challenge: generateRandomChallenge(),
+            rp: { name: "Demo App", id: window.location.hostname },
+            user: {
+              id: crypto.getRandomValues(new Uint8Array(16)),
+              name: "demo@example.com",
+              displayName: "Demo User",
+            },
+            pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+            timeout: 60000,
+            authenticatorSelection: {
+              authenticatorAttachment: "platform",
+              userVerification: "required",
+            },
+          },
+        });
+        window.currentPasskey = createdCredential;
+        window.passkeyCreated = true;
+      }
+
+      if (!window.currentPasskey) {
+        console.warn("No passkey found, creating one...");
+        return;
+      }
+
+      const credential = await navigator.credentials.get({
+        publicKey: {
+          challenge: generateRandomChallenge(),
+          userVerification: "required",
+          allowCredentials: window.currentPasskey
+            ? [
+                {
+                  id: window.currentPasskey.rawId,
+                  type: "public-key",
+                  transports: ["internal"],
+                },
+              ]
+            : [],
+        },
+      });
+
+      console.log(credential);
+
+      // SUCCESS
+      setScanProgress(100);
+      setScanState("success");
+    } catch (err) {
+      console.error(err);
+      setScanState("error");
     }
   };
 
   const handleContinue = () => {
     if (scanState === "success") {
-      router.push("/language"); // adjust route as needed
+      router.push("/home");
     } else {
       setScanState("scanning");
     }
@@ -49,7 +112,11 @@ export default function FingerPrintScan() {
         : "/icons/finger-print-img-black.png";
 
   const scanLineColor =
-    scanState === "success" ? "#23cf67" : scanState === "error" ? "#ef4444" : "#23cf67";
+    scanState === "success"
+      ? "#23cf67"
+      : scanState === "error"
+        ? "#ef4444"
+        : "#23cf67";
 
   return (
     <>
@@ -100,50 +167,13 @@ export default function FingerPrintScan() {
 
       <div className="min-h-dvh bg-white">
         <div className="mx-auto flex min-h-dvh w-full max-w-[600px] flex-col bg-white">
-          <header className="relative h-[120px] overflow-hidden bg-[#23cf67] px-5 pt-6">
-            <Image
-              src="/icons/let-you-screen-main-img.jpg"
-              alt=""
-              width={480}
-              height={108}
-              priority
-              unoptimized
-              sizes="(max-width: 480px) 100vw, 480px"
-              className="absolute inset-0 top-0 w-[60%] mx-auto object-cover"
-            />
-
-            <div className="relative z-10 flex items-center gap-3 pt-1">
-              <button
-                type="button"
-                onClick={() => router.back()}
-                aria-label="Go back"
-                className="flex h-9 w-9 items-center justify-center rounded-[10px] border border-white/80 bg-white/10 text-white transition-colors hover:bg-white/15"
-              >
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <polyline points="15 18 9 12 15 6" />
-                  <line x1="9" y1="12" x2="20" y2="12" />
-                </svg>
-              </button>
-              <h1 className="text-[18px] font-medium leading-6 text-white">
-                Create New PIN
-              </h1>
-            </div>
-          </header>
+          <HeaderSection title={"Set Up Fingerprint"} />
 
           <section className="relative -mt-10 flex flex-1 flex-col rounded-t-[32px] bg-white pb-10 pt-3">
             {/* ── Subtitle ── */}
             <div className="px-6 pt-5 pb-2">
               <p className="text-[18px] leading-6 text-[#555] text-center font-satoshi">
-                Add a PIN Number to make your account more secure.
+                Add biometric unlock so returning to Amigo feels secure and effortless.
               </p>
             </div>
 
@@ -189,7 +219,10 @@ export default function FingerPrintScan() {
                     <div
                       key={c}
                       className={`corner corner-${c}`}
-                      style={{ borderColor: scanState === "success" ? "#23cf67" : "#23cf67aa" }}
+                      style={{
+                        borderColor:
+                          scanState === "success" ? "#23cf67" : "#23cf67aa",
+                      }}
                     />
                   ))}
 
@@ -202,14 +235,18 @@ export default function FingerPrintScan() {
                       className="absolute left-0 right-0 bottom-0 pointer-events-none transition-all"
                       style={{
                         height: `${scanProgress}%`,
-                        background: "linear-gradient(0deg, #23cf6718 0%, transparent 100%)",
+                        background:
+                          "linear-gradient(0deg, #23cf6718 0%, transparent 100%)",
                       }}
                     />
                   )}
 
                   {/* Fingerprint image */}
                   <div className="w-full h-full flex items-center justify-center p-6">
-                    <div className={scanState === "success" ? "success-img" : ""} style={{ width: 130, height: 130, position: "relative" }}>
+                    <div
+                      className={scanState === "success" ? "success-img" : ""}
+                      style={{ width: 130, height: 130, position: "relative" }}
+                    >
                       <Image
                         src={fingerSrc}
                         alt="Fingerprint"
@@ -247,10 +284,13 @@ export default function FingerPrintScan() {
                 }}
               >
                 {scanState === "idle" &&
-                  "Please put your finger on the finger print scanner to get started."}
-                {scanState === "scanning" && "Scanning… keep your finger steady."}
-                {scanState === "success" && "Fingerprint registered successfully!"}
-                {scanState === "error" && "Scan failed. Tap the scanner to try again."}
+                  "Place your finger on the scanner to set up biometric unlock."}
+                {scanState === "scanning" &&
+                  "Scanning… keep your finger steady."}
+                {scanState === "success" &&
+                  "Fingerprint registered successfully!"}
+                {scanState === "error" &&
+                  "Scan failed. Tap the scanner to try again."}
               </p>
             </div>
 
@@ -269,12 +309,12 @@ export default function FingerPrintScan() {
                   boxShadow: "0 4px 20px #23cf6740",
                 }}
               >
-                Continue
+                {scanState === "success" ? "Go To Home" : "Scan Fingerprint"}
               </button>
 
               <button
                 type="button"
-                onClick={() => router.push("/language")}
+                onClick={() => router.push("/home")}
                 className="w-full text-center text-[18px] font-medium leading-6 text-[#0F0F0F] font-poppins py-1 transition-opacity active:opacity-60"
               >
                 Skip, I&apos;ll do this later
