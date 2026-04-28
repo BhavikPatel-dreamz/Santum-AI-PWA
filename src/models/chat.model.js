@@ -14,6 +14,15 @@ const chatSchema = new Schema(
       type: String,
     },
 
+    lastMessage: {
+      type: String,
+    },
+
+    lastMessageRole: {
+      type: String,
+      enum: ["user", "assistant", "system"],
+    },
+
     model: {
       type: String, // gpt-4.1 or gpt-4.1-mini
     },
@@ -47,4 +56,4 @@ const chatSchema = new Schema(
   },
   { timestamps: true },
 );
-export const Chat = mongoose.model("Chat", chatSchema);
+export const Chat = mongoose.models.Chat || mongoose.model("Chat", chatSchema);

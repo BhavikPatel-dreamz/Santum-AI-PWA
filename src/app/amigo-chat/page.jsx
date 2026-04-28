@@ -3,10 +3,18 @@
 import FeatureShowcaseCard from "@/components/app/FeatureShowcaseCard";
 import StepPageShell from "@/components/app/StepPageShell";
 import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
-import { useGetCreditBalanceQuery } from "@/lib/store";
+import {
+  appApi,
+  useAppDispatch,
+  useCreateChatMutation,
+  useGetChatQuery,
+  useGetChatMessagesQuery,
+  useGetCreditBalanceQuery,
+  useGetProfileQuery,
+} from "@/lib/store";
 import { extractCreditBalance, formatCreditAmount } from "@/lib/utills/credit";
-import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import toast from "react-hot-toast";
 
@@ -20,22 +28,12 @@ const QUICK_PROMPTS = [
 const CREDIT_LIMIT_MESSAGE =
   "You have reached your chat credit limit. Purchase a plan to continue with Amigo.";
 const PURCHASE_PLAN_PATH = "/plus-subscription";
-
-const INITIAL_MESSAGES = [
+const PLAN_LEVEL = "premium";
+const STARTER_MESSAGES = [
   {
-    id: 1,
+    id: "starter-assistant",
     role: "assistant",
     text: "Hi, I’m Amigo. I can help you brainstorm, organize, or explain something fast.",
-  },
-  {
-    id: 2,
-    role: "user",
-    text: "I want a cleaner routine for work and study this week.",
-  },
-  {
-    id: 3,
-    role: "assistant",
-    text: "Great. We can build a light plan with focus blocks, recovery time, and a realistic nightly reset.",
   },
 ];
 
@@ -61,13 +59,48 @@ function getCreditLimitMessage(error) {
   return error?.data?.message || error?.message || CREDIT_LIMIT_MESSAGE;
 }
 
+function mapStoredMessage(message) {
+  return {
+    id: String(message?._id ?? message?.id ?? `${message?.role}-${Date.now()}`),
+    role: message?.role === "user" ? "user" : "assistant",
+    text: String(message?.content ?? message?.text ?? ""),
+  };
+}
+
+function buildHistory(messages) {
+  return messages
+    .filter(
+      (message) =>
+        message?.id !== "starter-assistant" &&
+        typeof message?.text === "string" &&
+        message.text.trim(),
+    )
+    .map((message) => ({
+      role: message.role === "user" ? "human" : "ai",
+      content: message.text,
+    }));
+}
+
+function buildTempMessageId(prefix) {
+  return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
 export default function AmigoChatPage() {
   const router = useRouter();
-  const [messages, setMessages] = useState([]);
+  const searchParams = useSearchParams();
+  const dispatch = useAppDispatch();
+  const requestedChatId = searchParams.get("chat");
   const [composer, setComposer] = useState("");
   const [isReplying, setIsReplying] = useState(false);
   const [purchasePromptMessage, setPurchasePromptMessage] = useState("");
-  const nextMessageId = useRef(INITIAL_MESSAGES.length + 1);
+  const [draftMessages, setDraftMessages] = useState([]);
+  const [hasDraftMessages, setHasDraftMessages] = useState(false);
+  const createChatPromiseRef = useRef(null);
+
+  const {
+    data: profile,
+    error: profileError,
+  } = useGetProfileQuery();
   const {
     data: balanceResponse,
     error: balanceError,
@@ -77,14 +110,56 @@ export default function AmigoChatPage() {
     refetchOnFocus: true,
     refetchOnReconnect: true,
   });
+  const {
+    data: activeChat,
+    error: chatError,
+    isLoading: isChatLoading,
+  } = useGetChatQuery(requestedChatId, {
+    skip: !requestedChatId,
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+  });
+  const {
+    data: storedMessagesData,
+    error: storedMessagesError,
+    isLoading: isMessagesLoading,
+  } = useGetChatMessagesQuery(requestedChatId, {
+    skip: !requestedChatId || !activeChat,
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+  });
+  const [createChat] = useCreateChatMutation();
+
+  const profilePhone =
+    profile?.phone || profile?.mobile || profile?.user_phone || "";
   const creditBalance = extractCreditBalance(balanceResponse);
   const isCreditDepleted = creditBalance !== null && creditBalance <= 0;
+  const isConversationLoading =
+    Boolean(requestedChatId) &&
+    !hasDraftMessages &&
+    (isChatLoading || isMessagesLoading);
+  const activeChatTitle =
+    typeof activeChat?.title === "string" && activeChat.title.trim()
+      ? activeChat.title.trim()
+      : "Stored conversation";
 
-  const createMessage = (role, text) => ({
-    id: nextMessageId.current++,
-    role,
-    text,
-  });
+  const persistedMessages = useMemo(() => {
+    if (!requestedChatId) {
+      return STARTER_MESSAGES;
+    }
+
+    if (Array.isArray(storedMessagesData)) {
+      if (storedMessagesData.length > 0) {
+        return storedMessagesData.map(mapStoredMessage);
+      }
+
+      return activeChat?.isEmpty ? STARTER_MESSAGES : [];
+    }
+
+    return [];
+  }, [activeChat?.isEmpty, requestedChatId, storedMessagesData]);
+
+  const messages = hasDraftMessages ? draftMessages : persistedMessages;
 
   const loadCreditBalance = async ({ silent = false } = {}) => {
     try {
@@ -97,12 +172,68 @@ export default function AmigoChatPage() {
       }
 
       if (!silent) {
-        toast.error(getClientErrorMessage(error, "Unable to load credit balance"));
+        toast.error(
+          getClientErrorMessage(error, "Unable to load credit balance"),
+        );
       }
 
       return null;
     }
   };
+
+  const ensureChatId = async () => {
+    if (requestedChatId) {
+      return requestedChatId;
+    }
+
+    if (createChatPromiseRef.current) {
+      return createChatPromiseRef.current;
+    }
+
+    if (!profilePhone) {
+      throw { message: "Your profile is still loading. Please try again." };
+    }
+
+    createChatPromiseRef.current = createChat({
+      user: profilePhone,
+      planType: PLAN_LEVEL,
+    })
+      .unwrap()
+      .then((chat) => {
+        const nextChatId = String(chat?._id ?? chat?.id ?? "");
+
+        if (!nextChatId) {
+          throw { message: "Unable to initialize a new conversation" };
+        }
+
+        router.replace(`/amigo-chat?chat=${nextChatId}`);
+        return nextChatId;
+      })
+      .finally(() => {
+        createChatPromiseRef.current = null;
+      });
+
+    return createChatPromiseRef.current;
+  };
+
+  const initializeChat = useEffectEvent(() => {
+    ensureChatId().catch((error) => {
+      toast.error(getClientErrorMessage(error, "Unable to start a new chat"));
+    });
+  });
+
+  useEffect(() => {
+    if (!profileError) {
+      return;
+    }
+
+    if (isUnauthorizedError(profileError)) {
+      router.replace("/sign-in");
+      return;
+    }
+
+    toast.error(getClientErrorMessage(profileError, "Unable to load profile"));
+  }, [profileError, router]);
 
   useEffect(() => {
     if (!balanceError) {
@@ -118,6 +249,51 @@ export default function AmigoChatPage() {
       getClientErrorMessage(balanceError, "Unable to load credit balance"),
     );
   }, [balanceError, router]);
+
+  useEffect(() => {
+    if (!chatError) {
+      return;
+    }
+
+    if (isUnauthorizedError(chatError)) {
+      router.replace("/sign-in");
+      return;
+    }
+
+    if (chatError?.status === 404) {
+      toast.error("This conversation was not found or has already been deleted.");
+      router.replace("/settings/history");
+      return;
+    }
+
+    toast.error(getClientErrorMessage(chatError, "Unable to load this conversation"));
+  }, [chatError, router]);
+
+  useEffect(() => {
+    if (!storedMessagesError) {
+      return;
+    }
+
+    if (isUnauthorizedError(storedMessagesError)) {
+      router.replace("/sign-in");
+      return;
+    }
+
+    toast.error(
+      getClientErrorMessage(
+        storedMessagesError,
+        "Unable to load this conversation",
+      ),
+    );
+  }, [router, storedMessagesError]);
+
+  useEffect(() => {
+    if (requestedChatId || !profilePhone) {
+      return;
+    }
+
+    initializeChat();
+  }, [profilePhone, requestedChatId]);
 
   useEffect(() => {
     if (isCreditDepleted) {
@@ -159,26 +335,32 @@ export default function AmigoChatPage() {
       return;
     }
 
-    const userMessage = createMessage("user", text);
-    const history = messages.map((msg) => ({
-      role: msg.role === "user" ? "human" : "ai",
-      content: msg.text,
-    }));
-
-    setMessages((currentMessages) => [...currentMessages, userMessage]);
-    setComposer("");
     setIsReplying(true);
 
     let typingInterval;
 
     try {
+      const chatId = await ensureChatId();
+      const baseMessages = hasDraftMessages ? draftMessages : persistedMessages;
+      const userMessage = {
+        id: buildTempMessageId("user"),
+        role: "user",
+        text,
+      };
+      const history = buildHistory(baseMessages);
+
+      setDraftMessages([...baseMessages, userMessage]);
+      setHasDraftMessages(true);
+      setComposer("");
+
       const response = await fetch("/api/chat/stream", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          chatId,
           message: text,
           chat_history: history,
-          plan_level: "premium",
+          plan_level: PLAN_LEVEL,
         }),
       });
 
@@ -202,40 +384,42 @@ export default function AmigoChatPage() {
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
-      const assistantMessage = createMessage("assistant", "");
+      const assistantMessageId = buildTempMessageId("assistant");
 
-      setMessages((currentMessages) => [...currentMessages, assistantMessage]);
+      setDraftMessages((currentMessages) => [
+        ...currentMessages,
+        { id: assistantMessageId, role: "assistant", text: "" },
+      ]);
 
       let accumulatedText = "";
       let displayedText = "";
       let isStreamDone = false;
 
-      // Start the typing animation loop
       typingInterval = setInterval(() => {
         if (displayedText.length < accumulatedText.length) {
-          // Find the next word or character to add
-          // We can add one character at a time for smoothness,
-          // or chunks of characters if we are falling too far behind.
           const diff = accumulatedText.length - displayedText.length;
-          const increment = diff > 50 ? 10 : diff > 20 ? 5 : 2; // Speed up if lagging
+          const increment = diff > 50 ? 10 : diff > 20 ? 5 : 2;
 
-          displayedText = accumulatedText.substring(0, displayedText.length + increment);
+          displayedText = accumulatedText.substring(
+            0,
+            displayedText.length + increment,
+          );
 
-          setMessages((currentMessages) => {
-            const newMessages = [...currentMessages];
-            const lastIndex = newMessages.length - 1;
-            if (newMessages[lastIndex]?.role === "assistant") {
-              newMessages[lastIndex] = { ...newMessages[lastIndex], text: displayedText };
-            }
-            return newMessages;
-          });
+          setDraftMessages((currentMessages) =>
+            currentMessages.map((message) =>
+              message.id === assistantMessageId
+                ? { ...message, text: displayedText }
+                : message,
+            ),
+          );
         } else if (isStreamDone) {
           clearInterval(typingInterval);
         }
-      }, 30); // 30ms for smooth character/word flow
+      }, 30);
 
       while (true) {
         const { done, value } = await reader.read();
+
         if (done) {
           isStreamDone = true;
           break;
@@ -246,24 +430,44 @@ export default function AmigoChatPage() {
       }
 
       await loadCreditBalance({ silent: true });
+
+      try {
+        await dispatch(
+          appApi.endpoints.getChatMessages.initiate(chatId, {
+            forceRefetch: true,
+          }),
+        ).unwrap();
+        dispatch(
+          appApi.util.invalidateTags([
+            "Chats",
+            { type: "Chat", id: chatId },
+            { type: "Messages", id: chatId },
+          ]),
+        );
+        setHasDraftMessages(false);
+        setDraftMessages([]);
+      } catch (refetchError) {
+        console.error("Unable to refresh stored chat messages:", refetchError);
+      }
     } catch (error) {
       console.error("Chat error:", error);
 
       if (isCreditLimitError(error)) {
-        setMessages((currentMessages) =>
-          currentMessages.filter((message) => message.id !== userMessage.id),
-        );
+        setHasDraftMessages(false);
+        setDraftMessages([]);
         await promptPlanPurchase(getCreditLimitMessage(error), text);
         return;
       }
 
       toast.error(getClientErrorMessage(error, "Unable to connect to Amigo"));
-      setMessages((currentMessages) => [
-        ...currentMessages,
-        createMessage(
-          "assistant",
-          "Sorry, I'm having trouble connecting to Amigo right now. Please check your connection and try again.",
-        ),
+      setHasDraftMessages(true);
+      setDraftMessages((currentMessages) => [
+        ...(currentMessages.length > 0 ? currentMessages : persistedMessages),
+        {
+          id: buildTempMessageId("assistant-error"),
+          role: "assistant",
+          text: "Sorry, I'm having trouble connecting to Amigo right now. Please check your connection and try again.",
+        },
       ]);
     } finally {
       clearInterval(typingInterval);
@@ -302,8 +506,8 @@ export default function AmigoChatPage() {
           </div>
         </div>
         <p className="mt-3 font-satoshi text-[14px] leading-6 text-[#555]">
-          Amigo now reads this balance before each chat and deducts usage from
-          the AI response metadata after the reply completes.
+          Amigo now reads this balance before each chat and stores each finished
+          reply back into your conversation history.
         </p>
       </div>
 
@@ -356,25 +560,44 @@ export default function AmigoChatPage() {
       </div>
 
       <div className="flex flex-1 flex-col overflow-hidden rounded-[28px] bg-[#F8FFFB] p-4">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#7E8A83]">
+            {requestedChatId ? activeChatTitle : "Starting a new conversation"}
+          </p>
+          {isConversationLoading ? (
+            <span className="text-[12px] font-medium text-[#7E8A83]">
+              Loading history...
+            </span>
+          ) : null}
+        </div>
+
         <div className="flex-1 space-y-4 overflow-y-auto pr-1">
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
-            >
+          {isConversationLoading ? (
+            <div className="theme-surface rounded-[22px] px-4 py-4 shadow-[0_10px_24px_rgba(15,15,15,0.05)]">
+              <p className="font-satoshi text-[14px] leading-6 text-[#555]">
+                Loading your saved conversation...
+              </p>
+            </div>
+          ) : (
+            messages.map((message) => (
               <div
-                className={`max-w-[85%] rounded-[22px] px-4 py-3 ${
-                  message.role === "user"
-                    ? "rounded-br-[8px] bg-[#00D061] text-white"
-                    : "theme-surface rounded-bl-[8px] text-[#0F0F0F] shadow-[0_10px_24px_rgba(15,15,15,0.05)]"
-                }`}
+                key={message.id}
+                className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
               >
-                <div className="font-satoshi text-[15px] leading-6 whitespace-pre-wrap">
-                  <ReactMarkdown>{message.text}</ReactMarkdown>
+                <div
+                  className={`max-w-[85%] rounded-[22px] px-4 py-3 ${
+                    message.role === "user"
+                      ? "rounded-br-[8px] bg-[#00D061] text-white"
+                      : "theme-surface rounded-bl-[8px] text-[#0F0F0F] shadow-[0_10px_24px_rgba(15,15,15,0.05)]"
+                  }`}
+                >
+                  <div className="font-satoshi text-[15px] leading-6 whitespace-pre-wrap">
+                    <ReactMarkdown>{message.text}</ReactMarkdown>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
 
           {isReplying ? (
             <div className="flex justify-start">
@@ -395,9 +618,9 @@ export default function AmigoChatPage() {
             value={composer}
             disabled={isReplying || isCreditDepleted}
             onChange={(event) => setComposer(event.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
+            onKeyDown={(event) => {
+              if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
                 sendMessage(composer);
               }
             }}
@@ -418,15 +641,9 @@ export default function AmigoChatPage() {
             <button
               type="button"
               onClick={() => sendMessage(composer)}
-              disabled={
-                !composer.trim() ||
-                isReplying ||
-                isCreditDepleted
-              }
+              disabled={!composer.trim() || isReplying || isCreditDepleted}
               className={`rounded-full px-5 py-3 text-[14px] font-semibold transition-all ${
-                !composer.trim() ||
-                isReplying ||
-                isCreditDepleted
+                !composer.trim() || isReplying || isCreditDepleted
                   ? "bg-[#CBEEDB] text-white"
                   : "bg-[#00D061] text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)]"
               }`}

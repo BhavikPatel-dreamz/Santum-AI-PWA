@@ -1,50 +1,4 @@
 export const SETTINGS_PAGE_CONTENT = {
-  history: {
-    title: "History",
-    badge: "Conversation Memory",
-    heroTitle: "Return to any thread in seconds",
-    description:
-      "Dummy conversations, saved summaries, and pinned ideas keep the app feeling alive while your real data layer catches up.",
-    imageSrc: "/icons/robot-slider-img2.png",
-    imageAlt: "Chat history preview",
-    sections: [
-      {
-        type: "stats",
-        title: "This Week",
-        items: [
-          { label: "Chats", value: "28" },
-          { label: "Pinned", value: "06" },
-          { label: "Avg. Reply", value: "1.2s" },
-        ],
-      },
-      {
-        type: "list",
-        title: "Recent Sessions",
-        items: [
-          {
-            title: "Road trip planner",
-            description: "Budget, food stops, and must-see places for a Goa trip.",
-            meta: "2 hrs ago",
-            badge: "Pinned",
-          },
-          {
-            title: "Study sprint coach",
-            description: "A 5-day revision plan for interviews and coding rounds.",
-            meta: "Yesterday",
-          },
-          {
-            title: "Brand naming workshop",
-            description: "Shortlisted clean, friendly names for a finance app.",
-            meta: "Apr 24",
-          },
-        ],
-      },
-    ],
-    footerActions: [
-      { label: "Start Fresh Chat", href: "/amigo-chat", variant: "primary" },
-      { label: "Back To Home", href: "/home", variant: "secondary" },
-    ],
-  },
   "banks-cards": {
     title: "Banks & Cards",
     badge: "Wallet Hub",
@@ -424,7 +378,7 @@ export const SETTINGS_PAGE_CONTENT = {
           {
             question: "Will my chat history stay synced across devices?",
             answer:
-              "The UI is designed for synced history, pinned threads, and device continuity. This build uses dummy data for now.",
+              "Your saved conversations now load from the real history screen, so returning to the same account should keep recent chats available across sessions.",
           },
           {
             question: "How does biometric unlock fit into the app?",
@@ -666,7 +620,7 @@ export const SETTINGS_PAGE_CONTENT = {
           },
           {
             title: "Export my chat archive",
-            description: "Prepare a downloadable copy of dummy conversations and settings.",
+            description: "Prepare a downloadable copy of your saved conversations and settings.",
             buttonLabel: "Request Export",
           },
           {

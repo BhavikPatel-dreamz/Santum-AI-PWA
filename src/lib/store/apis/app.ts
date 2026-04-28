@@ -29,10 +29,24 @@ type InterestsPayload = {
 
 type CreateChatPayload = {
   user: string;
+  title?: string;
+  model?: string;
+  planType?: string;
 };
 
 type PurchaseSubscriptionPayload = {
   plan: ApiRecord;
+};
+
+type UpdateChatPayload = {
+  chatId: string;
+  updates: ApiRecord;
+};
+
+type CreateMessagePayload = {
+  chatId: string;
+  role: string;
+  content: string;
 };
 
 function noStoreGet(url: string) {
@@ -71,10 +85,56 @@ function extractPlans(payload: unknown): ApiList {
   return [];
 }
 
+function extractChat(payload: unknown): ApiRecord | null {
+  if (!payload || typeof payload !== "object") {
+    return null;
+  }
+
+  const record = payload as ApiRecord;
+
+  if (record.chat && typeof record.chat === "object") {
+    return record.chat as ApiRecord;
+  }
+
+  if (record.data && typeof record.data === "object") {
+    return record.data as ApiRecord;
+  }
+
+  return record;
+}
+
+function extractChats(payload: unknown): ApiList {
+  if (!payload || typeof payload !== "object") {
+    return [];
+  }
+
+  const record = payload as ApiRecord;
+
+  if (Array.isArray(record.chats)) {
+    return record.chats as ApiList;
+  }
+
+  return Array.isArray(payload) ? (payload as ApiList) : [];
+}
+
+function extractMessages(payload: unknown): ApiList {
+  if (!payload || typeof payload !== "object") {
+    return [];
+  }
+
+  const record = payload as ApiRecord;
+
+  if (Array.isArray(record.messages)) {
+    return record.messages as ApiList;
+  }
+
+  return Array.isArray(payload) ? (payload as ApiList) : [];
+}
+
 export const appApi = createApi({
   reducerPath: "appApi",
   baseQuery,
-  tagTypes: ["Profile", "Credits", "Plans"],
+  tagTypes: ["Profile", "Credits", "Plans", "Chats", "Chat", "Messages"],
   endpoints: (builder) => ({
     login: builder.mutation<ApiRecord, LoginPayload>({
       query: (body) => ({
@@ -102,7 +162,7 @@ export const appApi = createApi({
         url: "/auth/logout",
         method: "POST",
       }),
-      invalidatesTags: ["Profile", "Credits", "Plans"],
+      invalidatesTags: ["Profile", "Credits", "Plans", "Chats", "Chat", "Messages"],
     }),
     getProfile: builder.query<ApiRecord | null, void>({
       query: () => noStoreGet("/user/profile"),
@@ -162,6 +222,73 @@ export const appApi = createApi({
         method: "POST",
         body,
       }),
+      transformResponse: (response: unknown) => extractChat(response) ?? {},
+      invalidatesTags: ["Chats"],
+    }),
+    getChats: builder.query<ApiList, string>({
+      query: (user) => noStoreGet(`/chat?user=${encodeURIComponent(user)}`),
+      transformResponse: (response: unknown) => extractChats(response),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result
+                .map((chat) =>
+                  typeof chat?._id === "string"
+                    ? ({ type: "Chat", id: chat._id } as const)
+                    : null,
+                )
+                .filter(Boolean),
+              "Chats",
+            ]
+          : ["Chats"],
+    }),
+    getChat: builder.query<ApiRecord | null, string>({
+      query: (chatId) => noStoreGet(`/chat/${chatId}`),
+      transformResponse: (response: unknown) => extractChat(response),
+      providesTags: (result, error, chatId) => [{ type: "Chat", id: chatId }],
+    }),
+    updateChat: builder.mutation<ApiRecord, UpdateChatPayload>({
+      query: ({ chatId, updates }) => ({
+        url: `/chat/${chatId}`,
+        method: "PATCH",
+        body: updates,
+      }),
+      transformResponse: (response: unknown) => extractChat(response) ?? {},
+      invalidatesTags: (result, error, { chatId }) => [
+        "Chats",
+        { type: "Chat", id: chatId },
+      ],
+    }),
+    deleteChat: builder.mutation<ApiRecord, string>({
+      query: (chatId) => ({
+        url: `/chat/${chatId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: (result, error, chatId) => [
+        "Chats",
+        { type: "Chat", id: chatId },
+        { type: "Messages", id: chatId },
+      ],
+    }),
+    getChatMessages: builder.query<ApiList, string>({
+      query: (chatId) =>
+        noStoreGet(`/message?chatId=${encodeURIComponent(chatId)}`),
+      transformResponse: (response: unknown) => extractMessages(response),
+      providesTags: (result, error, chatId) => [
+        { type: "Messages", id: chatId },
+      ],
+    }),
+    createMessage: builder.mutation<ApiRecord, CreateMessagePayload>({
+      query: (body) => ({
+        url: "/message",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: (result, error, { chatId }) => [
+        "Chats",
+        { type: "Chat", id: chatId },
+        { type: "Messages", id: chatId },
+      ],
     }),
   }),
 });
@@ -179,4 +306,10 @@ export const {
   useGetSubscriptionPlansQuery,
   usePurchaseSubscriptionMutation,
   useCreateChatMutation,
+  useGetChatsQuery,
+  useGetChatQuery,
+  useUpdateChatMutation,
+  useDeleteChatMutation,
+  useGetChatMessagesQuery,
+  useCreateMessageMutation,
 } = appApi;
