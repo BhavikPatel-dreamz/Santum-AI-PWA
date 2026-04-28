@@ -11,7 +11,6 @@ import Image from "next/image";
 
 export default function OtpPage() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-  const [loading, setLoading] = useState(false);
   const [resendTimer, setResendTimer] = useState(30);
   const inputRefs = useRef([]);
   const [maskedPhone] = useState(() => {
@@ -49,21 +48,6 @@ export default function OtpPage() {
 
     return () => clearTimeout(timeoutId);
   }, [canResend, resendTimer]);
-
-  useEffect(() => {
-    try {
-      const storedPhone = sessionStorage.getItem(OTP_PHONE_STORAGE_KEY);
-
-      if (!storedPhone) {
-        return;
-      }
-
-      const { mobile, dialCode } = JSON.parse(storedPhone);
-      setMaskedPhone(maskPhoneNumber(mobile, dialCode));
-    } catch (error) {
-      console.error("Unable to load pending OTP phone:", error);
-    }
-  }, []);
 
   const handleChange = (index, value) => {
     if (!/^\d?$/.test(value)) {
