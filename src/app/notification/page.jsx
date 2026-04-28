@@ -64,7 +64,7 @@ export default function NotificationSetupPage() {
               className={`flex w-full items-start justify-between gap-4 rounded-[24px] border px-4 py-4 text-left transition-all duration-200 ${
                 isEnabled
                   ? "border-[#00D061] bg-[#F2FFF7] shadow-[0_12px_30px_rgba(0,208,97,0.12)]"
-                  : "border-[#EEF6F1] bg-white shadow-[0_12px_30px_rgba(15,15,15,0.04)]"
+                  : "theme-card"
               }`}
             >
               <div className="flex items-start gap-4">
@@ -105,7 +105,7 @@ export default function NotificationSetupPage() {
         <button
           type="button"
           onClick={() => router.push("/create-pin")}
-          className="rounded-[14px] bg-[#F4F7F5] px-5 py-4 text-[16px] font-semibold text-[#0F0F0F]"
+          className="theme-secondary-button rounded-[14px] px-5 py-4 text-[16px] font-semibold"
         >
           Skip
         </button>

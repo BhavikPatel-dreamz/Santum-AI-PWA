@@ -12,7 +12,9 @@ export default function OnboardingSlide({
   animClass = "",
 }) {
   return (
-    <div className={`flex flex-col h-screen bg-white max-w-[570px] mx-auto overflow-hidden ${animClass}`}>
+    <div
+      className={`theme-surface flex h-screen max-w-[570px] mx-auto flex-col overflow-hidden transition-colors duration-300 ${animClass}`}
+    >
 
       {/* Image area */}
       <div className="h-[55vh] flex items-center justify-center px-8 pt-10">
@@ -30,10 +32,10 @@ export default function OnboardingSlide({
 
       {/* Title + description */}
       <div className="text-center px-6">
-        <h2 className="text-[30px] font-poppins font-bold leading-[40px] text-center pb-[15px] text-[#0f0f0f]">
+        <h2 className="theme-text-primary text-center text-[30px] font-poppins font-bold leading-[40px] pb-[15px]">
           {title}
         </h2>
-        <p className="text-[18px] font-satoshi font-medium leading-[24px] text-center text-[#555]">
+        <p className="theme-text-secondary text-center text-[18px] font-satoshi font-medium leading-[24px]">
           {desc}
         </p>
       </div>
@@ -50,7 +52,7 @@ export default function OnboardingSlide({
               onClick={() => onDotClick?.(i)}
               aria-label={`Go to slide ${i + 1}`}
               className={`h-2 rounded-full transition-all duration-300 cursor-pointer border-none p-0 ${
-                i === currentDot ? "w-7 bg-[#0f0f0f]" : "w-2 bg-[#cccccc]"
+                i === currentDot ? "theme-text-primary w-7 bg-current" : "w-2 bg-[#cccccc]"
               }`}
             />
           ))}

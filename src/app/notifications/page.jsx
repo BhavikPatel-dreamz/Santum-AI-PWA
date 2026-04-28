@@ -58,7 +58,7 @@ export default function NotificationsPage() {
       />
 
       <div className="mb-6 grid grid-cols-3 gap-3">
-        <div className="rounded-[22px] bg-[#F8FFFB] px-3 py-4 text-center">
+        <div className="theme-card-muted rounded-[22px] border px-3 py-4 text-center">
           <p className="text-[20px] font-semibold leading-7 text-[#0F0F0F]">
             {notifications.length}
           </p>
@@ -66,7 +66,7 @@ export default function NotificationsPage() {
             Total
           </p>
         </div>
-        <div className="rounded-[22px] bg-[#F8FFFB] px-3 py-4 text-center">
+        <div className="theme-card-muted rounded-[22px] border px-3 py-4 text-center">
           <p className="text-[20px] font-semibold leading-7 text-[#0F0F0F]">
             {unreadCount}
           </p>
@@ -74,7 +74,7 @@ export default function NotificationsPage() {
             Unread
           </p>
         </div>
-        <div className="rounded-[22px] bg-[#F8FFFB] px-3 py-4 text-center">
+        <div className="theme-card-muted rounded-[22px] border px-3 py-4 text-center">
           <p className="text-[20px] font-semibold leading-7 text-[#0F0F0F]">
             03
           </p>
@@ -126,7 +126,7 @@ export default function NotificationsPage() {
             className={`w-full rounded-[24px] border px-4 py-4 text-left shadow-[0_12px_30px_rgba(15,15,15,0.04)] transition-all duration-200 ${
               item.unread
                 ? "border-[#D6F5E3] bg-[#F8FFFB]"
-                : "border-[#EEF6F1] bg-white"
+                : "theme-card"
             }`}
           >
             <div className="flex items-start gap-3">

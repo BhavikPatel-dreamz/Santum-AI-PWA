@@ -84,7 +84,7 @@ function PageTransitionLoader({ isLoading }: { isLoading: boolean }) {
       `}</style>
 
       <div
-        className="fixed inset-0 z-[9999] flex items-center justify-center bg-white"
+        className="theme-surface fixed inset-0 z-[9999] flex items-center justify-center transition-colors duration-300"
         style={{ opacity: isLoading ? 1 : 0, pointerEvents: isLoading ? "auto" : "none" }}
       >
         <div className="fingerprint-loader-shape" />

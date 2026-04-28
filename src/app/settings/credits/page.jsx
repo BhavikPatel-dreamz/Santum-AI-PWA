@@ -173,7 +173,7 @@ export default function CreditsSettingsPage() {
       ) : null}
 
       <div className="mt-6 space-y-4">
-        <div className="rounded-[24px] border border-[#EEF6F1] bg-white px-5 py-5 shadow-[0_12px_30px_rgba(15,15,15,0.04)]">
+        <div className="theme-card rounded-[24px] border px-5 py-5">
           <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#00A84D]">
             How credits work
           </p>
@@ -199,13 +199,13 @@ export default function CreditsSettingsPage() {
           >
             Open Chat
           </button>
-          <button
-            type="button"
-            onClick={() => router.push("/plus-subscription")}
-            className="rounded-[14px] bg-[#F4F7F5] px-5 py-4 text-[16px] font-semibold text-[#0F0F0F]"
-          >
-            View Plans
-          </button>
+        <button
+          type="button"
+          onClick={() => router.push("/plus-subscription")}
+          className="theme-secondary-button rounded-[14px] px-5 py-4 text-[16px] font-semibold"
+        >
+          View Plans
+        </button>
         </div>
       </div>
     </StepPageShell>

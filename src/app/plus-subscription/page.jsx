@@ -2,42 +2,10 @@
 
 import FeatureShowcaseCard from "@/components/app/FeatureShowcaseCard";
 import StepPageShell from "@/components/app/StepPageShell";
-import { Check } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { appFetch } from "../../lib/api/internal";
-
-const PLANS = [
-  {
-    name: "Starter",
-    price: "Free",
-    description:
-      "A friendly everyday chat companion with the core Amigo experience.",
-    features: ["Basic chat", "Saved preferences", "Profile setup"],
-    highlighted: false,
-  },
-  {
-    name: "Plus",
-    price: "$9/mo",
-    description:
-      "The best fit for power users who want faster replies and more workspace control.",
-    features: [
-      "Priority responses",
-      "Longer chat memory",
-      "Premium prompt packs",
-    ],
-    highlighted: true,
-  },
-  {
-    name: "Team",
-    price: "$24/mo",
-    description:
-      "A simple shared setup for collaborative work, approvals, and support.",
-    features: ["Shared spaces", "Team prompt presets", "Priority support"],
-    highlighted: false,
-  },
-];
 
 export default function PlusSubscriptionPage() {
   const [plans, setPlans] = useState([]);
@@ -91,7 +59,7 @@ export default function PlusSubscriptionPage() {
             className={`rounded-[26px] border px-5 py-5 shadow-[0_12px_30px_rgba(15,15,15,0.04)] ${
               plan.highlighted
                 ? "border-[#00D061] bg-[linear-gradient(135deg,#F3FFF8_0%,#FFFFFF_100%)]"
-                : "border-[#EEF6F1] bg-white"
+                : "theme-card"
             }`}
           >
             <div className="flex items-start justify-between gap-4">
@@ -144,7 +112,7 @@ export default function PlusSubscriptionPage() {
         <button
           type="button"
           onClick={() => router.push("/home")}
-          className="rounded-[14px] bg-[#F4F7F5] px-5 py-4 text-[16px] font-semibold text-[#0F0F0F]"
+          className="theme-secondary-button rounded-[14px] px-5 py-4 text-[16px] font-semibold"
         >
           Maybe Later
         </button>

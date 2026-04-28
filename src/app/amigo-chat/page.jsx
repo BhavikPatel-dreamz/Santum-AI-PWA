@@ -302,7 +302,7 @@ export default function AmigoChatPage() {
         compact
       />
 
-      <div className="mb-4 rounded-[22px] border border-[#E8F6EE] bg-[#F8FFFB] px-4 py-4">
+      <div className="theme-card-muted mb-4 rounded-[22px] border px-4 py-4">
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#7E8A83]">
@@ -348,7 +348,7 @@ export default function AmigoChatPage() {
             <button
               type="button"
               onClick={() => loadCreditBalance()}
-              className="rounded-full bg-white px-4 py-2.5 text-[14px] font-semibold text-[#0F0F0F] shadow-[0_10px_24px_rgba(15,15,15,0.05)]"
+              className="theme-surface rounded-full px-4 py-2.5 text-[14px] font-semibold text-[#0F0F0F] shadow-[0_10px_24px_rgba(15,15,15,0.05)]"
             >
               Refresh Balance
             </button>
@@ -385,7 +385,7 @@ export default function AmigoChatPage() {
                 className={`max-w-[85%] rounded-[22px] px-4 py-3 ${
                   message.role === "user"
                     ? "rounded-br-[8px] bg-[#00D061] text-white"
-                    : "rounded-bl-[8px] bg-white text-[#0F0F0F] shadow-[0_10px_24px_rgba(15,15,15,0.05)]"
+                    : "theme-surface rounded-bl-[8px] text-[#0F0F0F] shadow-[0_10px_24px_rgba(15,15,15,0.05)]"
                 }`}
               >
                 <p className="font-satoshi text-[15px] leading-6 whitespace-pre-wrap">
@@ -397,7 +397,7 @@ export default function AmigoChatPage() {
 
           {isReplying ? (
             <div className="flex justify-start">
-              <div className="rounded-[22px] rounded-bl-[8px] bg-white px-4 py-3 shadow-[0_10px_24px_rgba(15,15,15,0.05)]">
+              <div className="theme-surface rounded-[22px] rounded-bl-[8px] px-4 py-3 shadow-[0_10px_24px_rgba(15,15,15,0.05)]">
                 <div className="flex items-center gap-2">
                   <span className="h-2 w-2 rounded-full bg-[#00D061] animate-bounce" />
                   <span className="h-2 w-2 rounded-full bg-[#00D061] animate-bounce [animation-delay:120ms]" />
@@ -408,7 +408,7 @@ export default function AmigoChatPage() {
           ) : null}
         </div>
 
-        <div className="mt-4 rounded-[24px] bg-white p-3 shadow-[0_12px_30px_rgba(15,15,15,0.06)]">
+        <div className="theme-surface mt-4 rounded-[24px] p-3 shadow-[0_12px_30px_rgba(15,15,15,0.06)]">
           <textarea
             rows={3}
             value={composer}
@@ -425,7 +425,7 @@ export default function AmigoChatPage() {
                 ? "Purchase a plan or refresh your balance to keep chatting."
                 : "Ask Amigo anything..."
             }
-            className="w-full resize-none rounded-[18px] bg-[#F6FBF8] px-4 py-4 font-satoshi text-[15px] leading-6 text-[#0F0F0F] outline-none placeholder:text-[#8A968F] disabled:cursor-not-allowed disabled:bg-[#F1F5F2] disabled:text-[#7E8A83]"
+            className="theme-input-surface w-full resize-none rounded-[18px] px-4 py-4 font-satoshi text-[15px] leading-6 outline-none disabled:cursor-not-allowed disabled:bg-[#F1F5F2] disabled:text-[#7E8A83]"
           />
 
           <div className="mt-3 flex items-center justify-between gap-3">

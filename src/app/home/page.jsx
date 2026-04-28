@@ -1,9 +1,16 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { Bell, ChevronRightIcon, Edit2Icon, Settings, X } from "lucide-react";
+import {
+  Bell,
+  ChevronRightIcon,
+  Edit2Icon,
+  Settings,
+  X,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { useTheme } from "@/components/providers/ThemeProvider";
 import { appFetch } from "../../lib/api/internal";
 
 const CollapseIcon = () => (
@@ -660,7 +667,8 @@ const TODAY_CARDS = [
   },
   {
     title: "Settings pass is ready",
-    description: "Language, notifications, and security pages now have full themed screens.",
+    description:
+      "Language, notifications, and security pages now have full themed screens.",
     cta: "Review",
     href: "/settings/security",
   },
@@ -672,17 +680,25 @@ const DarkModeToggle = ({ dark, onToggle }) => (
   <button
     type="button"
     onClick={onToggle}
-    className={`relative w-[45px] h-[26px] rounded-full border-2 transition-all duration-500 flex-shrink-0 ${
-      dark ? "bg-[#00D061] border-[#00D061]" : "bg-transparent border-[#F5F5F5]"
+    aria-pressed={dark}
+    className={`relative w-[50px] h-[28px] rounded-full transition-all duration-300 flex-shrink-0 ${
+      dark
+        ? "bg-gray-700 border border-gray-600"
+        : "bg-gray-300 border border-gray-300"
     }`}
   >
     <span
-      className={`absolute top-[1px] w-[18px] h-[18px] rounded-full transition-all duration-500 shadow-sm ${
-        dark
-          ? "left-[calc(100%-20px)] bg-transparent shadow-[inset_-7px_-2px_0_0px_#FFF]"
-          : "left-[1px] bg-white"
+      className={`absolute top-[3px] w-[22px] h-[22px] rounded-full transition-all duration-300 flex items-center justify-center ${
+        dark ? "left-[calc(100%-25px)] bg-gray-900" : "left-[3px] bg-white"
       }`}
-    />
+    >
+      {/* Icon */}
+      {dark ? (
+        <span className="text-white text-xs">🌙</span>
+      ) : (
+        <span className="text-yellow-500 text-xs">☀️</span>
+      )}
+    </span>
   </button>
 );
 
@@ -691,30 +707,22 @@ const DarkModeToggle = ({ dark, onToggle }) => (
 export default function HomeScreen() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
   const [profile, setProfile] = useState({});
+  const { isDark, isUsingSystemTheme, toggleTheme } = useTheme();
   const router = useRouter();
 
   useEffect(() => {
-    async function loadUser() {
+    (async () => {
       try {
         const data = await appFetch("/api/user/profile", {
           cache: "no-store",
         });
         setProfile(data.data.user);
-      } catch (error) {
-        if (error?.status === 401) {
-          router.replace("/sign-in");
-          return;
-        }
-
-        console.log(error);
-        toast.error(error.message || "Something went wrong");
+      } catch {
+        toast.error("Failed to load profile");
       }
-    }
-
-    loadUser();
-  }, [router]);
+    })();
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -732,18 +740,25 @@ export default function HomeScreen() {
   const displayName =
     [profile?.first_name, profile?.last_name].filter(Boolean).join(" ") ||
     profile?.name ||
-    "Jessica Smith";
-  const firstName =
-    profile?.first_name ||
-    displayName.split(" ").filter(Boolean)[0] ||
-    "Jessica";
+    "";
+  const firstName = profile?.first_name || "";
   const emailAddress =
-    profile?.email || profile?.user_email || "jessica_smith@mail.com";
+    profile?.email || profile?.user_email || "example@mail.com";
   const navigateTo = (href) => {
     setDrawerOpen(false);
     setLogoutOpen(false);
     router.push(href);
   };
+  const themeLabel = isDark ? "Dark mode" : "Light mode";
+  const themeStatus = isUsingSystemTheme
+    ? "Using your device preference"
+    : "Saved for this browser";
+  const drawerHoverClass = isDark
+    ? "hover:bg-white/5 active:bg-white/10"
+    : "hover:bg-[#f9fffe] active:bg-[#E4FFEE]";
+  const dangerHoverClass = isDark
+    ? "hover:bg-[#35191d] active:bg-[#431f24]"
+    : "hover:bg-red-50 active:bg-red-100";
 
   const handleLogout = async () => {
     try {
@@ -770,12 +785,8 @@ export default function HomeScreen() {
     profile?.email || profile?.user_email || "jessica_smith@mail.com";
 
   return (
-    <div
-      className={`min-h-dvh flex justify-center ${darkMode ? "bg-[#121212]" : "bg-[#E4FFEE]"}`}
-    >
-      <div
-        className={`w-full max-w-[600px] min-h-dvh flex flex-col relative overflow-hidden ${darkMode ? "bg-[#121212]" : "bg-white"}`}
-      >
+    <div className="theme-shell min-h-dvh flex justify-center transition-colors duration-300">
+      <div className="theme-surface w-full max-w-[600px] min-h-dvh flex flex-col relative overflow-hidden transition-colors duration-300">
         {/* ── Green header background ── */}
         <div className="relative bg-[#00D061] px-4 pt-[30px] pb-4 overflow-hidden">
           {/* Circuit background */}
@@ -807,7 +818,7 @@ export default function HomeScreen() {
               {/* Bell */}
               <button
                 type="button"
-                className="relative"
+                className="relative text-white"
                 onClick={() => router.push("/notifications")}
               >
                 <Bell />
@@ -816,7 +827,11 @@ export default function HomeScreen() {
                 </span>
               </button>
               {/* Hex / settings */}
-              <button type="button" onClick={() => setDrawerOpen(true)}>
+              <button
+                type="button"
+                className="text-white"
+                onClick={() => setDrawerOpen(true)}
+              >
                 <Settings />
               </button>
             </div>
@@ -846,11 +861,9 @@ export default function HomeScreen() {
         </div>
 
         {/* ── White card ── */}
-        <section
-          className={`relative -mt-5 rounded-t-[32px] flex-1 px-4 pt-6 pb-28 overflow-y-auto ${darkMode ? "bg-[#1a1a1a]" : "bg-white"}`}
-        >
+        <section className="theme-surface relative -mt-5 flex-1 overflow-y-auto rounded-t-[32px] px-4 pb-28 pt-6 transition-colors duration-300">
           {/* GPT Plus promo card */}
-          <div className="bg-[#E4FFEE] rounded-[12px] flex items-stretch justify-between mb-5 overflow-hidden">
+          <div className="theme-card-soft mb-5 flex items-stretch justify-between overflow-hidden rounded-[12px] transition-colors duration-300">
             <div className="p-3 flex flex-col justify-between">
               <div>
                 <h4 className="text-[#0F0F0F] text-[22px] font-semibold leading-[30px]">
@@ -863,7 +876,7 @@ export default function HomeScreen() {
               <button
                 type="button"
                 onClick={() => router.push("/plus-subscription")}
-                className="mt-4 self-start bg-white text-[#00D061] text-[14px] font-semibold px-4 py-[10px] rounded-[8px] transition-all active:scale-[0.97]"
+                className="theme-surface mt-4 self-start rounded-[8px] px-4 py-[10px] text-[14px] font-semibold text-[#00D061] transition-all duration-300 active:scale-[0.97]"
               >
                 Upgrades
               </button>
@@ -898,7 +911,7 @@ export default function HomeScreen() {
                   key={item.label}
                   type="button"
                   onClick={() => router.push(item.href)}
-                  className="rounded-[22px] border border-[#EEF6F1] bg-white px-4 py-4 text-left shadow-[0_12px_30px_rgba(15,15,15,0.04)] transition-all hover:-translate-y-[1px]"
+                  className="theme-card rounded-[22px] border px-4 py-4 text-left transition-all duration-300 hover:-translate-y-[1px]"
                 >
                   <span className="inline-flex rounded-full bg-[#E8FFF1] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#00A84D]">
                     {item.value}
@@ -928,7 +941,7 @@ export default function HomeScreen() {
               {TODAY_CARDS.map((card) => (
                 <div
                   key={card.title}
-                  className="rounded-[22px] bg-[#F8FFFB] px-4 py-4 shadow-[0_12px_30px_rgba(15,15,15,0.04)]"
+                  className="theme-card-muted rounded-[22px] border px-4 py-4"
                 >
                   <h5 className="text-[#0F0F0F] text-[17px] font-semibold leading-6">
                     {card.title}
@@ -939,7 +952,9 @@ export default function HomeScreen() {
                   <button
                     type="button"
                     onClick={() => router.push(card.href)}
-                    className="mt-4 inline-flex items-center rounded-full bg-[#0F0F0F] px-4 py-2 text-[13px] font-semibold text-white"
+                    className={`mt-4 inline-flex items-center rounded-full px-4 py-2 text-[13px] font-semibold ${
+                      isDark ? "bg-[#00D061] text-[#07110d]" : "bg-[#0F0F0F] text-white"
+                    }`}
                   >
                     {card.cta}
                   </button>
@@ -976,21 +991,21 @@ export default function HomeScreen() {
         <div
           className={`fixed top-0 left-0 h-full w-[320px] max-w-[85vw] z-50 flex flex-col transition-transform duration-300 ease-in-out ${
             drawerOpen ? "translate-x-0" : "-translate-x-full"
-          } ${darkMode ? "bg-[#1a1a1a]" : "bg-white"}`}
+          } theme-surface-elevated`}
         >
           {/* Drawer header */}
           <div
-            className={`flex items-center justify-between px-4 py-4 border-b-2 ${darkMode ? "border-[#2a2a2a]" : "border-[#F5F5F5]"}`}
+            className="theme-border-strong flex items-center justify-between border-b-2 px-4 py-4"
           >
             <h5
-              className={`text-[18px] font-medium ${darkMode ? "text-white" : "text-[#0F0F0F]"}`}
+              className="theme-text-primary text-[18px] font-medium"
             >
               Settings
             </h5>
             <button
               type="button"
               onClick={() => setDrawerOpen(false)}
-              className={`text-[24px] leading-none ${darkMode ? "text-white" : "text-[#0F0F0F]"}`}
+              className="theme-text-primary text-[24px] leading-none"
             >
               <X />
             </button>
@@ -998,22 +1013,25 @@ export default function HomeScreen() {
 
           {/* Profile row */}
           <div
-            className={`flex items-center justify-between px-4 py-4 border-b-2 ${darkMode ? "border-[#2a2a2a]" : "border-[#F5F5F5]"}`}
+            className="theme-border-strong flex items-center justify-between border-b-2 px-4 py-4"
           >
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-[#E4FFEE] flex items-center justify-center text-[28px] flex-shrink-0">
+              <div className="theme-surface-soft flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full text-[28px] transition-colors duration-300">
                 👩
               </div>
               <div>
                 <p
-                  className={`text-[16px] font-medium ${darkMode ? "text-white" : "text-[#0F0F0F]"}`}
+                  className="theme-text-primary text-[16px] font-medium"
                 >
                   {displayName}
                 </p>
                 <p className="text-[14px] text-[#555]">{emailAddress}</p>
               </div>
             </div>
-            <button type="button" onClick={() => navigateTo("/personal-information")}>
+            <button
+              type="button"
+              onClick={() => navigateTo("/personal-information")}
+            >
               <Edit2Icon className="text-[#00D061]" />
             </button>
           </div>
@@ -1030,7 +1048,7 @@ export default function HomeScreen() {
                       setDrawerOpen(false);
                       setLogoutOpen(true);
                     }}
-                    className={`w-full flex items-center justify-between px-4 py-2 border-b-2 ${darkMode ? "border-[#2a2a2a]" : "border-[#F5F5F5]"} transition-colors hover:bg-red-50 active:bg-red-100`}
+                    className={`theme-border-strong w-full flex items-center justify-between border-b-2 px-4 py-2 transition-colors ${dangerHoverClass}`}
                   >
                     <div className="flex items-center gap-4">
                       {item.icon}
@@ -1061,12 +1079,12 @@ export default function HomeScreen() {
 
                     navigateTo(href);
                   }}
-                  className={`w-full flex items-center justify-between px-4 py-2 border-b-2 ${darkMode ? "border-[#2a2a2a]" : "border-[#F5F5F5]"} transition-colors hover:bg-[#f9fffe] active:bg-[#E4FFEE]`}
+                  className={`theme-border-strong w-full flex items-center justify-between border-b-2 px-4 py-2 transition-colors ${drawerHoverClass}`}
                 >
                   <div className="flex items-center gap-4 min-w-0">
                     {item.icon}
                     <span
-                      className={`text-[15px] font-medium truncate ${item.danger ? "text-[#FF484D]" : darkMode ? "text-white" : "text-[#0F0F0F]"}`}
+                      className={`truncate text-[15px] font-medium ${item.danger ? "text-[#FF484D]" : "theme-text-primary"}`}
                     >
                       {item.label}
                     </span>
@@ -1085,7 +1103,7 @@ export default function HomeScreen() {
 
             {/* Dark mode toggle row */}
             <div
-              className={`flex items-center justify-between px-4 py-2 border-b-2 ${darkMode ? "border-[#2a2a2a]" : "border-[#F5F5F5]"}`}
+              className="theme-border-strong flex items-center justify-between border-b-2 px-4 py-3"
             >
               <div className="flex items-center gap-4">
                 <svg
@@ -1110,15 +1128,18 @@ export default function HomeScreen() {
                     strokeLinejoin="round"
                   />
                 </svg>
-                <span
-                  className={`text-[15px] font-medium ${darkMode ? "text-white" : "text-[#0F0F0F]"}`}
-                >
-                  {darkMode ? "Dark Mode" : "Light Mode"}
-                </span>
+                <div>
+                  <p className="theme-text-primary text-[15px] font-medium">
+                    {themeLabel}
+                  </p>
+                  <p className="theme-text-secondary text-[12px] leading-5">
+                    {themeStatus}
+                  </p>
+                </div>
               </div>
               <DarkModeToggle
-                dark={darkMode}
-                onToggle={() => setDarkMode((d) => !d)}
+                dark={isDark}
+                onToggle={toggleTheme}
               />
             </div>
           </div>
@@ -1143,7 +1164,7 @@ export default function HomeScreen() {
 
         {/* Bottom sheet */}
         <div
-          className={`fixed left-0 right-0 mx-auto max-w-[600px] z-50 bg-white rounded-t-[24px] px-4 pb-8 pt-4 transition-transform duration-300 ease-in-out ${
+          className={`theme-surface-elevated fixed left-0 right-0 mx-auto max-w-[600px] rounded-t-[24px] px-4 pb-8 pt-4 transition-all duration-300 ease-in-out z-50 ${
             logoutOpen
               ? "translate-y-0 bottom-0"
               : "translate-y-full -bottom-full"
@@ -1155,17 +1176,17 @@ export default function HomeScreen() {
               <CollapseIcon />
             </button>
           </div>
-          <h2 className="text-[#0F0F0F] text-[20px] font-semibold text-center leading-[30px] mb-3">
+          <h2 className="theme-text-primary mb-3 text-center text-[20px] font-semibold leading-[30px]">
             Logout
           </h2>
-          <p className="text-[#555] text-[18px] text-center font-medium leading-6 mb-6">
+          <p className="theme-text-secondary mb-6 text-center text-[18px] font-medium leading-6">
             Are you sure you want to log out?
           </p>
           <div className="flex items-center justify-center gap-4">
             <button
               type="button"
               onClick={() => setLogoutOpen(false)}
-              className="text-[#00D061] text-[18px] font-medium px-8 py-[18px] rounded-[12px] bg-[#E4FFEE] transition-all active:scale-[0.97]"
+              className="theme-card-soft rounded-[12px] px-8 py-[18px] text-[18px] font-medium text-[#00D061] transition-all duration-300 active:scale-[0.97]"
             >
               Cancel
             </button>
