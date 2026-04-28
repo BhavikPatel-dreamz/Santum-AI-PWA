@@ -1,13 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import {
-  Bell,
-  ChevronRightIcon,
-  Edit2Icon,
-  Settings,
-  X,
-} from "lucide-react";
+import { Bell, ChevronRightIcon, Edit2Icon, Settings, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
@@ -803,6 +797,23 @@ export default function HomeScreen() {
     } catch (error) {
       console.log(error);
       toast.error(error.message || "Unable to log out");
+    }
+  };
+
+  const handleStartChat = async () => {
+    try {
+      await appFetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user: profile.phone,
+        }),
+      });
+      router.push("/amigo-chat");
+    } catch (error) {
+      console.log(error);
     }
   };
 
