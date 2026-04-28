@@ -13,7 +13,125 @@ import { Check } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { appFetch } from "../../lib/api/internal";
+
+const PLANS = [
+  {
+    name: "Starter",
+    billing_amount: 0,
+    description:
+      "A friendly everyday chat companion with the core Amigo experience.",
+    features: ["Basic chat", "Saved preferences", "Profile setup"],
+    highlighted: false,
+  },
+  {
+    name: "Plus",
+    billing_amount: 9,
+    description:
+      "The best fit for power users who want faster replies and more workspace control.",
+    features: [
+      "Priority responses",
+      "Longer chat memory",
+      "Premium prompt packs",
+    ],
+    highlighted: true,
+  },
+  {
+    name: "Team",
+    billing_amount: 24,
+    description:
+      "A simple shared setup for collaborative work, approvals, and support.",
+    features: ["Shared spaces", "Team prompt presets", "Priority support"],
+    highlighted: false,
+  },
+];
+
+function normalizePlanName(name) {
+  return typeof name === "string" ? name.trim().toLowerCase() : "";
+}
+
+function normalizeHighlightedFlag(value) {
+  if (typeof value === "boolean") {
+    return value;
+  }
+
+  if (typeof value === "number") {
+    return value === 1;
+  }
+
+  if (typeof value === "string") {
+    return ["1", "true", "yes"].includes(value.trim().toLowerCase());
+  }
+
+  return false;
+}
+
+function getPlanKey(plan, index) {
+  if (plan?.id !== undefined && plan?.id !== null) {
+    return String(plan.id);
+  }
+
+  if (typeof plan?.slug === "string" && plan.slug.trim()) {
+    return plan.slug.trim();
+  }
+
+  if (typeof plan?.name === "string" && plan.name.trim()) {
+    return plan.name.trim().toLowerCase();
+  }
+
+  return `plan-${index}`;
+}
+
+function getBillingAmount(plan) {
+  const parsedAmount = Number(plan?.billing_amount ?? plan?.price ?? 0);
+  return Number.isFinite(parsedAmount) ? parsedAmount : 0;
+}
+
+function enrichPlan(plan, index) {
+  const fallbackPlan =
+    PLANS.find(
+      (candidate) =>
+        normalizePlanName(candidate.name) === normalizePlanName(plan?.name),
+    ) ?? PLANS[index];
+
+  const hasHighlightedFlag =
+    plan && Object.prototype.hasOwnProperty.call(plan, "highlighted");
+  const planFeatures =
+    Array.isArray(plan?.features) && plan.features.length > 0
+      ? plan.features
+      : (fallbackPlan?.features ?? []);
+
+  return {
+    ...fallbackPlan,
+    ...plan,
+    name: plan?.name || fallbackPlan?.name || `Plan ${index + 1}`,
+    description:
+      plan?.description ||
+      fallbackPlan?.description ||
+      "Premium access with additional Amigo credits.",
+    features: planFeatures,
+    highlighted: hasHighlightedFlag
+      ? normalizeHighlightedFlag(plan.highlighted)
+      : Boolean(fallbackPlan?.highlighted),
+    billing_amount:
+      plan?.billing_amount ??
+      fallbackPlan?.billing_amount ??
+      getBillingAmount(plan),
+  };
+}
+
+function getDefaultSelectedPlanKey(plans) {
+  const defaultPlan =
+    plans.find((plan) => plan.highlighted && getBillingAmount(plan) > 0) ||
+    plans.find((plan) => getBillingAmount(plan) > 0) ||
+    plans[0] ||
+    null;
+
+  if (!defaultPlan) {
+    return null;
+  }
+
+  return getPlanKey(defaultPlan, plans.indexOf(defaultPlan));
+}
 
 const PLANS = [
   {
@@ -459,6 +577,71 @@ export default function PlusSubscriptionPage() {
       }
 
       toast.error(getClientErrorMessage(error, "Unable to complete purchase"));
+    }
+  }
+
+  const primaryButtonLabel = purchaseSummary
+    ? "Start Chatting"
+    : isPurchasing
+      ? "Processing dummy payment..."
+      : selectedPlan
+        ? isSelectedPlanPaid
+          ? `Purchase ${selectedPlan.name}`
+          : `${selectedPlan.name} Is Included`
+        : isPlansLoading
+          ? "Loading Plans..."
+          : "Select A Plan";
+
+  const secondaryButtonLabel = purchaseSummary
+    ? "View Updated Credits"
+    : "Maybe Later";
+
+  const selectedPlan =
+    plans.find((plan, index) => getPlanKey(plan, index) === selectedPlanKey) ??
+    null;
+  const selectedPlanPrice = getBillingAmount(selectedPlan);
+  const isSelectedPlanPaid = selectedPlanPrice > 0;
+
+  async function handlePurchase() {
+    if (!selectedPlan) {
+      toast.error("Select a plan to continue");
+      return;
+    }
+
+    if (!isSelectedPlanPaid) {
+      toast.error(`${selectedPlan.name} is already included`);
+      return;
+    }
+
+    setIsPurchasing(true);
+    setPurchaseSummary(null);
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 900));
+
+      const response = await appFetch("/api/settings/subscription/purchase", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          plan: selectedPlan,
+        }),
+      });
+
+      setPurchaseSummary(response);
+      toast.success(
+        response.message || `${selectedPlan.name} activated successfully`,
+      );
+    } catch (error) {
+      if (error?.status === 401) {
+        router.replace("/sign-in");
+        return;
+      }
+
+      toast.error(error.message || "Unable to complete purchase");
+    } finally {
+      setIsPurchasing(false);
     }
   }
 
