@@ -183,6 +183,43 @@ const MENU_ITEMS = [
     ),
   },
   {
+    label: "Credits",
+    hint: null,
+    danger: false,
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="48"
+        height="48"
+        viewBox="0 0 48 48"
+        fill="none"
+      >
+        <rect opacity="0.08" width="48" height="48" rx="8" fill="#00D061" />
+        <path
+          d="M16 19C16 17.939 16.421 16.922 17.172 16.172C17.922 15.421 18.939 15 20 15H28C29.061 15 30.078 15.421 30.828 16.172C31.579 16.922 32 17.939 32 19C32 20.061 31.579 21.078 30.828 21.828C30.078 22.579 29.061 23 28 23H20C18.939 23 17.922 22.579 17.172 21.828C16.421 21.078 16 20.061 16 19Z"
+          stroke="#00D061"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M19 29C19 27.939 19.421 26.922 20.172 26.172C20.922 25.421 21.939 25 23 25H31C32.061 25 33.078 25.421 33.828 26.172C34.579 26.922 35 27.939 35 29C35 30.061 34.579 31.078 33.828 31.828C33.078 32.579 32.061 33 31 33H23C21.939 33 20.922 32.579 20.172 31.828C19.421 31.078 19 30.061 19 29Z"
+          stroke="#00D061"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M22 19H26M25 29H29"
+          stroke="#00D061"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    ),
+  },
+  {
     label: "Subscriptions",
     hint: null,
     danger: false,
@@ -570,6 +607,7 @@ const MENU_ROUTES = {
   History: "/settings/history",
   "Banks & Cards": "/settings/banks-cards",
   "Payment Methods": "/settings/payment-methods",
+  Credits: "/settings/credits",
   Subscriptions: "/settings/subscriptions",
   "Personal Info": "/personal-information",
   Security: "/settings/security",
@@ -600,10 +638,10 @@ const QUICK_ACCESS_ITEMS = [
     href: "/settings/security",
   },
   {
-    label: "Plans",
-    caption: "See premium perks",
-    value: "Plus",
-    href: "/plus-subscription",
+    label: "Credits",
+    caption: "View balance",
+    value: "Live",
+    href: "/settings/credits",
   },
   {
     label: "Chat",

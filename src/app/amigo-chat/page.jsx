@@ -1,8 +1,12 @@
- "use client";
+"use client";
 
 import FeatureShowcaseCard from "@/components/app/FeatureShowcaseCard";
 import StepPageShell from "@/components/app/StepPageShell";
-import { useRef, useState } from "react";
+import { appFetch } from "@/lib/api/internal";
+import { extractCreditBalance, formatCreditAmount } from "@/lib/utills/credit";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 
 const QUICK_PROMPTS = [
   "Plan my week in 5 steps",
@@ -10,6 +14,10 @@ const QUICK_PROMPTS = [
   "Turn notes into flashcards",
   "Summarize a long article",
 ];
+
+const CREDIT_LIMIT_MESSAGE =
+  "You have reached your chat credit limit. Purchase a plan to continue with Amigo.";
+const PURCHASE_PLAN_PATH = "/plus-subscription";
 
 const INITIAL_MESSAGES = [
   {
@@ -29,11 +37,44 @@ const INITIAL_MESSAGES = [
   },
 ];
 
+async function requestCreditBalance() {
+  return appFetch("/api/credit/balance", {
+    cache: "no-store",
+  });
+}
+
+function isCreditLimitError(error) {
+  if (error?.status === 402 || error?.data?.code === "CREDIT_LIMIT_REACHED") {
+    return true;
+  }
+
+  const message = [error?.message, error?.data?.message]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  return (
+    message.includes("token limit") ||
+    message.includes("credit limit") ||
+    message.includes("not enough credits") ||
+    message.includes("insufficient credits")
+  );
+}
+
+function getCreditLimitMessage(error) {
+  return error?.data?.message || error?.message || CREDIT_LIMIT_MESSAGE;
+}
+
 export default function AmigoChatPage() {
+  const router = useRouter();
   const [messages, setMessages] = useState(INITIAL_MESSAGES);
   const [composer, setComposer] = useState("");
   const [isReplying, setIsReplying] = useState(false);
+  const [creditBalance, setCreditBalance] = useState(null);
+  const [isBalanceLoading, setIsBalanceLoading] = useState(true);
+  const [purchasePromptMessage, setPurchasePromptMessage] = useState("");
   const nextMessageId = useRef(INITIAL_MESSAGES.length + 1);
+  const isCreditDepleted = creditBalance !== null && creditBalance <= 0;
 
   const createMessage = (role, text) => ({
     id: nextMessageId.current++,
@@ -41,10 +82,99 @@ export default function AmigoChatPage() {
     text,
   });
 
+  const loadCreditBalance = async ({ silent = false } = {}) => {
+    try {
+      const response = await requestCreditBalance();
+
+      setCreditBalance(extractCreditBalance(response));
+    } catch (error) {
+      if (error?.status === 401) {
+        router.replace("/sign-in");
+        return;
+      }
+
+      if (!silent) {
+        toast.error(error.message || "Unable to load credit balance");
+      }
+    } finally {
+      setIsBalanceLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function initialLoadCreditBalance() {
+      try {
+        const response = await requestCreditBalance();
+
+        if (!isMounted) {
+          return;
+        }
+
+        setCreditBalance(extractCreditBalance(response));
+      } catch (error) {
+        if (!isMounted) {
+          return;
+        }
+
+        if (error?.status === 401) {
+          router.replace("/sign-in");
+          return;
+        }
+
+        toast.error(error.message || "Unable to load credit balance");
+      } finally {
+        if (isMounted) {
+          setIsBalanceLoading(false);
+        }
+      }
+    }
+
+    initialLoadCreditBalance();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [router]);
+
+  useEffect(() => {
+    if (isCreditDepleted) {
+      setPurchasePromptMessage((currentMessage) =>
+        currentMessage || CREDIT_LIMIT_MESSAGE,
+      );
+      return;
+    }
+
+    if (creditBalance !== null && creditBalance > 0) {
+      setPurchasePromptMessage("");
+    }
+  }, [creditBalance, isCreditDepleted]);
+
+  const promptPlanPurchase = async (message, draftMessage = "") => {
+    const nextMessage = message || CREDIT_LIMIT_MESSAGE;
+
+    setPurchasePromptMessage(nextMessage);
+
+    if (draftMessage) {
+      setComposer((currentMessage) =>
+        currentMessage.trim() ? currentMessage : draftMessage,
+      );
+    }
+
+    toast.error(nextMessage);
+    await loadCreditBalance({ silent: true });
+  };
+
   const sendMessage = async (nextMessage) => {
     const text = nextMessage.trim();
 
     if (!text || isReplying) {
+      return;
+    }
+
+    if (isCreditDepleted) {
+      await promptPlanPurchase(CREDIT_LIMIT_MESSAGE, text);
       return;
     }
 
@@ -58,11 +188,9 @@ export default function AmigoChatPage() {
     setComposer("");
     setIsReplying(true);
 
-    try {
-      console.log(text);
-      console.log(history);
+    let typingInterval;
 
-      
+    try {
       const response = await fetch("/api/chat/stream", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -70,17 +198,31 @@ export default function AmigoChatPage() {
           message: text,
           chat_history: history,
           plan_level: "premium",
-          remaining_tokens: 1000,
         }),
       });
 
-      if (!response.ok) throw new Error("Failed to connect to Amigo");
+      if (!response.ok) {
+        let errorData = {};
+
+        try {
+          errorData = await response.json();
+        } catch {
+          errorData = {};
+        }
+
+        throw {
+          message: errorData?.message || "Failed to connect to Amigo",
+          status: response.status,
+          data: errorData,
+        };
+      }
+
       if (!response.body) throw new Error("No response body");
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       const assistantMessage = createMessage("assistant", "");
-      
+
       setMessages((currentMessages) => [...currentMessages, assistantMessage]);
 
       let accumulatedText = "";
@@ -88,14 +230,14 @@ export default function AmigoChatPage() {
       let isStreamDone = false;
 
       // Start the typing animation loop
-      const typingInterval = setInterval(() => {
+      typingInterval = setInterval(() => {
         if (displayedText.length < accumulatedText.length) {
           // Find the next word or character to add
-          // We can add one character at a time for smoothness, 
+          // We can add one character at a time for smoothness,
           // or chunks of characters if we are falling too far behind.
           const diff = accumulatedText.length - displayedText.length;
           const increment = diff > 50 ? 10 : diff > 20 ? 5 : 2; // Speed up if lagging
-          
+
           displayedText = accumulatedText.substring(0, displayedText.length + increment);
 
           setMessages((currentMessages) => {
@@ -119,18 +261,22 @@ export default function AmigoChatPage() {
         }
 
         const chunk = decoder.decode(value, { stream: true });
-        const metadataIndex = chunk.indexOf("\n\n{");
-        
-        if (metadataIndex !== -1) {
-          accumulatedText += chunk.substring(0, metadataIndex);
-          isStreamDone = true;
-          break;
-        } else {
-          accumulatedText += chunk;
-        }
+        accumulatedText += chunk;
       }
+
+      await loadCreditBalance({ silent: true });
     } catch (error) {
       console.error("Chat error:", error);
+
+      if (isCreditLimitError(error)) {
+        setMessages((currentMessages) =>
+          currentMessages.filter((message) => message.id !== userMessage.id),
+        );
+        await promptPlanPurchase(getCreditLimitMessage(error), text);
+        return;
+      }
+
+      toast.error(error.message || "Unable to connect to Amigo");
       setMessages((currentMessages) => [
         ...currentMessages,
         createMessage(
@@ -139,6 +285,7 @@ export default function AmigoChatPage() {
         ),
       ]);
     } finally {
+      clearInterval(typingInterval);
       setIsReplying(false);
     }
   };
@@ -155,13 +302,72 @@ export default function AmigoChatPage() {
         compact
       />
 
+      <div className="mb-4 rounded-[22px] border border-[#E8F6EE] bg-[#F8FFFB] px-4 py-4">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#7E8A83]">
+              Available Credits
+            </p>
+            <p className="mt-2 text-[24px] font-semibold leading-8 text-[#0F0F0F]">
+              {isBalanceLoading
+                ? "Loading..."
+                : creditBalance === null
+                  ? "Unavailable"
+                  : formatCreditAmount(creditBalance)}
+            </p>
+          </div>
+          <div className="rounded-full bg-[#E8FFF1] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#00A84D]">
+            Live
+          </div>
+        </div>
+        <p className="mt-3 font-satoshi text-[14px] leading-6 text-[#555]">
+          Amigo now reads this balance before each chat and deducts usage from
+          the AI response metadata after the reply completes.
+        </p>
+      </div>
+
+      {purchasePromptMessage || isCreditDepleted ? (
+        <div className="mb-4 rounded-[24px] border border-[#FFD9B8] bg-[linear-gradient(135deg,#FFF5EA_0%,#FFFFFF_100%)] px-4 py-4 shadow-[0_12px_30px_rgba(15,15,15,0.04)]">
+          <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#C56B1F]">
+            Purchase Required
+          </p>
+          <h2 className="mt-2 text-[20px] font-semibold leading-7 text-[#0F0F0F]">
+            Your credits are used up
+          </h2>
+          <p className="mt-2 font-satoshi text-[14px] leading-6 text-[#5F4A33]">
+            {purchasePromptMessage || CREDIT_LIMIT_MESSAGE}
+          </p>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={() => router.push(PURCHASE_PLAN_PATH)}
+              className="rounded-full bg-[#0F0F0F] px-4 py-2.5 text-[14px] font-semibold text-white"
+            >
+              View Plans
+            </button>
+            <button
+              type="button"
+              onClick={() => loadCreditBalance()}
+              className="rounded-full bg-white px-4 py-2.5 text-[14px] font-semibold text-[#0F0F0F] shadow-[0_10px_24px_rgba(15,15,15,0.05)]"
+            >
+              Refresh Balance
+            </button>
+          </div>
+        </div>
+      ) : null}
+
       <div className="mb-4 flex flex-wrap gap-2">
         {QUICK_PROMPTS.map((prompt) => (
           <button
             key={prompt}
             type="button"
             onClick={() => sendMessage(prompt)}
-            className="rounded-full bg-[#F4F7F5] px-4 py-2 text-[13px] font-semibold text-[#0F0F0F] transition-all hover:bg-[#E8FFF1]"
+            disabled={isReplying || isCreditDepleted}
+            className={`rounded-full px-4 py-2 text-[13px] font-semibold transition-all ${
+              isReplying || isCreditDepleted
+                ? "bg-[#EDF2EE] text-[#93A099]"
+                : "bg-[#F4F7F5] text-[#0F0F0F] hover:bg-[#E8FFF1]"
+            }`}
           >
             {prompt}
           </button>
@@ -206,6 +412,7 @@ export default function AmigoChatPage() {
           <textarea
             rows={3}
             value={composer}
+            disabled={isReplying || isCreditDepleted}
             onChange={(event) => setComposer(event.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
@@ -213,20 +420,32 @@ export default function AmigoChatPage() {
                 sendMessage(composer);
               }
             }}
-            placeholder="Ask Amigo anything..."
-            className="w-full resize-none rounded-[18px] bg-[#F6FBF8] px-4 py-4 font-satoshi text-[15px] leading-6 text-[#0F0F0F] outline-none placeholder:text-[#8A968F]"
+            placeholder={
+              isCreditDepleted
+                ? "Purchase a plan or refresh your balance to keep chatting."
+                : "Ask Amigo anything..."
+            }
+            className="w-full resize-none rounded-[18px] bg-[#F6FBF8] px-4 py-4 font-satoshi text-[15px] leading-6 text-[#0F0F0F] outline-none placeholder:text-[#8A968F] disabled:cursor-not-allowed disabled:bg-[#F1F5F2] disabled:text-[#7E8A83]"
           />
 
           <div className="mt-3 flex items-center justify-between gap-3">
             <p className="font-satoshi text-[13px] leading-5 text-[#555]">
-              Powered by Santum AI Counseling service.
+              {isCreditDepleted
+                ? "Purchase a plan to unlock more Amigo chats."
+                : "Powered by Santum AI Counseling service."}
             </p>
             <button
               type="button"
               onClick={() => sendMessage(composer)}
-              disabled={!composer.trim() || isReplying}
+              disabled={
+                !composer.trim() ||
+                isReplying ||
+                isCreditDepleted
+              }
               className={`rounded-full px-5 py-3 text-[14px] font-semibold transition-all ${
-                !composer.trim() || isReplying
+                !composer.trim() ||
+                isReplying ||
+                isCreditDepleted
                   ? "bg-[#CBEEDB] text-white"
                   : "bg-[#00D061] text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)]"
               }`}
