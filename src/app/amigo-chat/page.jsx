@@ -497,12 +497,68 @@ export default function AmigoChatPage() {
       }
 
       if (!silent) {
-        toast.error(getClientErrorMessage(error, "Unable to load credit balance"));
+        toast.error(
+          getClientErrorMessage(error, "Unable to load credit balance"),
+        );
       }
 
       return null;
     }
   };
+
+  const ensureChatId = async () => {
+    if (requestedChatId) {
+      return requestedChatId;
+    }
+
+    if (createChatPromiseRef.current) {
+      return createChatPromiseRef.current;
+    }
+
+    if (!profilePhone) {
+      throw { message: "Your profile is still loading. Please try again." };
+    }
+
+    createChatPromiseRef.current = createChat({
+      user: profilePhone,
+      planType: PLAN_LEVEL,
+    })
+      .unwrap()
+      .then((chat) => {
+        const nextChatId = String(chat?._id ?? chat?.id ?? "");
+
+        if (!nextChatId) {
+          throw { message: "Unable to initialize a new conversation" };
+        }
+
+        router.replace(`/amigo-chat?chat=${nextChatId}`);
+        return nextChatId;
+      })
+      .finally(() => {
+        createChatPromiseRef.current = null;
+      });
+
+    return createChatPromiseRef.current;
+  };
+
+  const initializeChat = useEffectEvent(() => {
+    ensureChatId().catch((error) => {
+      toast.error(getClientErrorMessage(error, "Unable to start a new chat"));
+    });
+  });
+
+  useEffect(() => {
+    if (!profileError) {
+      return;
+    }
+
+    if (isUnauthorizedError(profileError)) {
+      router.replace("/sign-in");
+      return;
+    }
+
+    toast.error(getClientErrorMessage(profileError, "Unable to load profile"));
+  }, [profileError, router]);
 
   useEffect(() => {
     if (!balanceError) {
@@ -518,6 +574,51 @@ export default function AmigoChatPage() {
       getClientErrorMessage(balanceError, "Unable to load credit balance"),
     );
   }, [balanceError, router]);
+
+  useEffect(() => {
+    if (!chatError) {
+      return;
+    }
+
+    if (isUnauthorizedError(chatError)) {
+      router.replace("/sign-in");
+      return;
+    }
+
+    if (chatError?.status === 404) {
+      toast.error("This conversation was not found or has already been deleted.");
+      router.replace("/settings/history");
+      return;
+    }
+
+    toast.error(getClientErrorMessage(chatError, "Unable to load this conversation"));
+  }, [chatError, router]);
+
+  useEffect(() => {
+    if (!storedMessagesError) {
+      return;
+    }
+
+    if (isUnauthorizedError(storedMessagesError)) {
+      router.replace("/sign-in");
+      return;
+    }
+
+    toast.error(
+      getClientErrorMessage(
+        storedMessagesError,
+        "Unable to load this conversation",
+      ),
+    );
+  }, [router, storedMessagesError]);
+
+  useEffect(() => {
+    if (requestedChatId || !profilePhone) {
+      return;
+    }
+
+    initializeChat();
+  }, [profilePhone, requestedChatId]);
 
   useEffect(() => {
     if (isCreditDepleted) {
