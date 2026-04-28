@@ -817,8 +817,16 @@ export default function HomeScreen() {
 
       await createChat({
         user: profilePhone,
+        planType: "premium",
       }).unwrap();
-      router.push("/amigo-chat");
+
+      const chatId = String(chat?._id ?? chat?.id ?? "");
+
+      if (!chatId) {
+        throw { message: "Unable to open a new conversation" };
+      }
+
+      router.push(`/amigo-chat?chat=${chatId}`);
     } catch (error) {
       console.log(error);
       toast.error(getClientErrorMessage(error, "Unable to start a new chat"));
