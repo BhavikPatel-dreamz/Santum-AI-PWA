@@ -1,7 +1,13 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { Bell, ChevronRightIcon, Edit2Icon, Settings, X } from "lucide-react";
+import {
+  Bell,
+  ChevronRightIcon,
+  Edit2Icon,
+  Settings,
+  X,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
@@ -813,18 +819,25 @@ export default function HomeScreen() {
   const displayName =
     [profile?.first_name, profile?.last_name].filter(Boolean).join(" ") ||
     profile?.name ||
-    "Jessica Smith";
-  const firstName =
-    profile?.first_name ||
-    displayName.split(" ").filter(Boolean)[0] ||
-    "Jessica";
+    "";
+  const firstName = profile?.first_name || "";
   const emailAddress =
-    profile?.email || profile?.user_email || "jessica_smith@mail.com";
+    profile?.email || profile?.user_email || "example@mail.com";
   const navigateTo = (href) => {
     setDrawerOpen(false);
     setLogoutOpen(false);
     router.push(href);
   };
+  const themeLabel = isDark ? "Dark mode" : "Light mode";
+  const themeStatus = isUsingSystemTheme
+    ? "Using your device preference"
+    : "Saved for this browser";
+  const drawerHoverClass = isDark
+    ? "hover:bg-white/5 active:bg-white/10"
+    : "hover:bg-[#f9fffe] active:bg-[#E4FFEE]";
+  const dangerHoverClass = isDark
+    ? "hover:bg-[#35191d] active:bg-[#431f24]"
+    : "hover:bg-red-50 active:bg-red-100";
 
   return (
     <div className="theme-shell min-h-dvh flex justify-center transition-colors duration-300">
