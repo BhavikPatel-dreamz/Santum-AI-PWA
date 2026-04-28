@@ -54,6 +54,28 @@ const REMAINING_TOKEN_PATHS = [
   ["metadata", "tokens_remaining"],
 ];
 
+const PLAN_CREDIT_PATHS = [
+  ["credits"],
+  ["credit_amount"],
+  ["credit_balance"],
+  ["included_credits"],
+  ["monthly_credits"],
+  ["token_allowance"],
+  ["tokens"],
+  ["topup_amount"],
+  ["data", "credits"],
+  ["data", "credit_amount"],
+  ["data", "included_credits"],
+  ["data", "monthly_credits"],
+  ["metadata", "credits"],
+  ["metadata", "credit_amount"],
+];
+
+const DEFAULT_PLAN_CREDIT_AMOUNTS = {
+  plus: 100,
+  team: 300,
+};
+
 function getValueAtPath(payload, path) {
   return path.reduce(
     (currentValue, key) =>
@@ -107,6 +129,45 @@ export function extractRemainingTokens(payload) {
   return getFirstNumericValue(payload, REMAINING_TOKEN_PATHS);
 }
 
+export function extractPlanCreditAmount(payload) {
+  return getFirstNumericValue(payload, PLAN_CREDIT_PATHS);
+}
+
+export function resolvePurchaseCreditAmount(plan) {
+  const explicitCreditAmount = extractPlanCreditAmount(plan);
+
+  if (explicitCreditAmount !== null) {
+    return explicitCreditAmount;
+  }
+
+  const normalizedName =
+    typeof plan?.name === "string" ? plan.name.trim().toLowerCase() : "";
+
+  if (
+    normalizedName.includes("free") ||
+    normalizedName.includes("starter") ||
+    normalizedName.includes("basic")
+  ) {
+    return 0;
+  }
+
+  for (const [planName, amount] of Object.entries(DEFAULT_PLAN_CREDIT_AMOUNTS)) {
+    if (normalizedName.includes(planName)) {
+      return amount;
+    }
+  }
+
+  const billingAmount = normalizeCreditValue(
+    plan?.billing_amount ?? plan?.price ?? plan?.amount,
+  );
+
+  if (billingAmount === null || billingAmount <= 0) {
+    return 0;
+  }
+
+  return Math.max(Math.round(billingAmount * 10), 50);
+}
+
 export function extractChatCreditDebit(payload, openingBalance = null) {
   const usedTokens = extractUsedTokens(payload);
 
@@ -141,4 +202,13 @@ export function formatCreditAmount(value, { compact = false } = {}) {
 
 export function buildChatCreditReference() {
   return `chat_${Date.now()}`;
+}
+
+export function buildPlanPurchaseReference(planName) {
+  const normalizedName =
+    typeof planName === "string" && planName.trim()
+      ? planName.trim().toLowerCase().replace(/[^a-z0-9]+/g, "_")
+      : "plan";
+
+  return `subscription_${normalizedName}_${Date.now()}`;
 }

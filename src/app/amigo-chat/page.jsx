@@ -6,6 +6,7 @@ import { appFetch } from "@/lib/api/internal";
 import { extractCreditBalance, formatCreditAmount } from "@/lib/utills/credit";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
 import toast from "react-hot-toast";
 
 const QUICK_PROMPTS = [
@@ -67,7 +68,7 @@ function getCreditLimitMessage(error) {
 
 export default function AmigoChatPage() {
   const router = useRouter();
-  const [messages, setMessages] = useState(INITIAL_MESSAGES);
+  const [messages, setMessages] = useState([]);
   const [composer, setComposer] = useState("");
   const [isReplying, setIsReplying] = useState(false);
   const [creditBalance, setCreditBalance] = useState(null);
@@ -388,9 +389,9 @@ export default function AmigoChatPage() {
                     : "theme-surface rounded-bl-[8px] text-[#0F0F0F] shadow-[0_10px_24px_rgba(15,15,15,0.05)]"
                 }`}
               >
-                <p className="font-satoshi text-[15px] leading-6 whitespace-pre-wrap">
-                  {message.text}
-                </p>
+                <div className="font-satoshi text-[15px] leading-6 whitespace-pre-wrap">
+                  <ReactMarkdown>{message.text}</ReactMarkdown>
+                </div>
               </div>
             </div>
           ))}
