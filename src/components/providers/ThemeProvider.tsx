@@ -3,8 +3,8 @@
 import {
   createContext,
   useContext,
-  useEffect,
   useEffectEvent,
+  useLayoutEffect,
   useState,
 } from "react";
 import {
@@ -68,29 +68,34 @@ function applyTheme(theme: ThemeName) {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [themePreference, setThemePreference] = useState<ThemePreference>(() =>
-    readStoredTheme(),
-  );
-  const [systemTheme, setSystemTheme] = useState<ThemeName>(
-    () => readDocumentTheme() ?? readSystemTheme(),
-  );
+  const [themePreference, setThemePreference] = useState<ThemePreference>(null);
+  const [systemTheme, setSystemTheme] = useState<ThemeName>("light");
 
   const theme = themePreference ?? systemTheme;
   const syncSystemTheme = useEffectEvent((matches: boolean) => {
     setSystemTheme(matches ? "dark" : "light");
   });
+  const syncThemeFromBrowser = useEffectEvent(() => {
+    const storedTheme = readStoredTheme();
+    const resolvedSystemTheme = readDocumentTheme() ?? readSystemTheme();
 
-  useEffect(() => {
+    setThemePreference(storedTheme);
+    setSystemTheme(resolvedSystemTheme);
+    applyTheme(storedTheme ?? resolvedSystemTheme);
+  });
+
+  useLayoutEffect(() => {
     applyTheme(theme);
   }, [theme]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (typeof window === "undefined") {
       return undefined;
     }
 
+    syncThemeFromBrowser();
+
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    syncSystemTheme(mediaQuery.matches);
 
     const handleChange = (event: MediaQueryListEvent) => {
       syncSystemTheme(event.matches);
