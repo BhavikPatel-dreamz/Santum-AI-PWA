@@ -1,4 +1,4 @@
- "use client";
+"use client";
 
 import FeatureShowcaseCard from "@/components/app/FeatureShowcaseCard";
 import StepPageShell from "@/components/app/StepPageShell";
@@ -324,6 +324,90 @@ export default function AmigoChatPage() {
     await loadCreditBalance({ silent: true });
   };
 
+  const loadCreditBalance = async ({ silent = false } = {}) => {
+    try {
+      const response = await requestCreditBalance();
+
+      setCreditBalance(extractCreditBalance(response));
+    } catch (error) {
+      if (error?.status === 401) {
+        router.replace("/sign-in");
+        return;
+      }
+
+      if (!silent) {
+        toast.error(error.message || "Unable to load credit balance");
+      }
+    } finally {
+      setIsBalanceLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function initialLoadCreditBalance() {
+      try {
+        const response = await requestCreditBalance();
+
+        if (!isMounted) {
+          return;
+        }
+
+        setCreditBalance(extractCreditBalance(response));
+      } catch (error) {
+        if (!isMounted) {
+          return;
+        }
+
+        if (error?.status === 401) {
+          router.replace("/sign-in");
+          return;
+        }
+
+        toast.error(error.message || "Unable to load credit balance");
+      } finally {
+        if (isMounted) {
+          setIsBalanceLoading(false);
+        }
+      }
+    }
+
+    initialLoadCreditBalance();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [router]);
+
+  useEffect(() => {
+    if (isCreditDepleted) {
+      setPurchasePromptMessage((currentMessage) =>
+        currentMessage || CREDIT_LIMIT_MESSAGE,
+      );
+      return;
+    }
+
+    if (creditBalance !== null && creditBalance > 0) {
+      setPurchasePromptMessage("");
+    }
+  }, [creditBalance, isCreditDepleted]);
+
+  const promptPlanPurchase = async (message, draftMessage = "") => {
+    const nextMessage = message || CREDIT_LIMIT_MESSAGE;
+
+    setPurchasePromptMessage(nextMessage);
+
+    if (draftMessage) {
+      setComposer((currentMessage) =>
+        currentMessage.trim() ? currentMessage : draftMessage,
+      );
+    }
+
+    toast.error(nextMessage);
+    await loadCreditBalance({ silent: true });
+  };
+
   const sendMessage = async (nextMessage) => {
     const text = nextMessage.trim();
 
@@ -450,6 +534,8 @@ export default function AmigoChatPage() {
       } catch (refetchError) {
         console.error("Unable to refresh stored chat messages:", refetchError);
       }
+
+      await loadCreditBalance({ silent: true });
     } catch (error) {
       console.error("Chat error:", error);
 
