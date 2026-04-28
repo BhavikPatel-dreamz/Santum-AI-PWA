@@ -13,7 +13,10 @@ export default function LoadingScreen({ onDone }) {
   }, [onDone]);
 
   return (
-    <div className="fixed inset-0 bg-white flex items-center justify-center overflow-hidden" style={{ zIndex: 99999 }}>
+    <div
+      className="theme-surface fixed inset-0 flex items-center justify-center overflow-hidden transition-colors duration-300"
+      style={{ zIndex: 99999 }}
+    >
       {/* Top-left dot pattern */}
       <div className="absolute top-0 left-0 w-36 h-36 opacity-20">
         <Image
@@ -46,10 +49,10 @@ export default function LoadingScreen({ onDone }) {
           />
         </div>
 
-        <h1 className="text-5xl font-bold leading-[60px] text-[#0f0f0f] pt-4 pb-2 font-[Poppins]">
+        <h1 className="theme-text-primary text-5xl font-bold leading-[60px] pt-4 pb-2 font-[Poppins]">
           Amigo GPT
         </h1>
-        <p className="text-lg font-medium text-[#555555] leading-6 font-[Poppins]">
+        <p className="theme-text-secondary text-lg font-medium leading-6 font-[Poppins]">
           Where Intelligence Meets Innovation
         </p>
       </div>

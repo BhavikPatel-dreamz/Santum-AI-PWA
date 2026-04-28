@@ -1,11 +1,14 @@
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import LoadingScreenWrapper from "@/components/onboarding/LoadingScreenWrapper";
+import { PageTransitionProvider } from "@/components/providers/PageTransitionProvider";
+import { ReduxProvider } from "@/components/providers/ReduxProvider";
+import { getThemeInitScript } from "@/lib/theme";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
+import Script from "next/script";
 import { Suspense } from "react";
-import "./globals.css";
-import { ReduxProvider } from "@/components/providers/ReduxProvider";
-import { PageTransitionProvider } from "@/components/providers/PageTransitionProvider";
-import LoadingScreenWrapper from "@/components/onboarding/LoadingScreenWrapper"; // ← new wrapper
 import { Toaster } from "react-hot-toast";
+import "./globals.css";
 
 const poppins = Poppins({
   variable: "--font-poppins-ui",
@@ -25,33 +28,42 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${poppins.variable} h-full antialiased`}>
+    <html
+      lang="en"
+      data-theme="light"
+      suppressHydrationWarning
+      className={`${poppins.variable} h-full antialiased`}
+    >
       <body className="min-h-full flex flex-col font-poppins">
+        <Script id="theme-init" strategy="beforeInteractive">
+          {getThemeInitScript()}
+        </Script>
         <ReduxProvider>
-          {/* LoadingScreenWrapper manages its own dismissal via onDone */}
-          <LoadingScreenWrapper />
-          <PageTransitionProvider>
-            <Suspense>
-              <main className="flex-1">{children}</main>
-              <Toaster
-                position="top-center"
-                toastOptions={{
-                  success: {
-                    style: {
-                      background: "#00D061",
-                      color: "#fff",
+          <ThemeProvider>
+            <LoadingScreenWrapper />
+            <PageTransitionProvider>
+              <Suspense>
+                <main className="flex-1">{children}</main>
+                <Toaster
+                  position="top-center"
+                  toastOptions={{
+                    success: {
+                      style: {
+                        background: "#00D061",
+                        color: "#fff",
+                      },
                     },
-                  },
-                  error: {
-                    style: {
-                      background: "#ffecec",
-                      color: "#d32f2f",
+                    error: {
+                      style: {
+                        background: "#ffecec",
+                        color: "#d32f2f",
+                      },
                     },
-                  },
-                }}
-              />
-            </Suspense>
-          </PageTransitionProvider>
+                  }}
+                />
+              </Suspense>
+            </PageTransitionProvider>
+          </ThemeProvider>
         </ReduxProvider>
       </body>
     </html>

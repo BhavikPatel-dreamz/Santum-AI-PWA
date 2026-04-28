@@ -15,12 +15,12 @@ function SectionHeading({ title, description }) {
   return (
     <div className="mb-4">
       {title ? (
-        <h3 className="text-[20px] font-semibold leading-7 text-[#0F0F0F]">
+        <h3 className="theme-text-primary text-[20px] font-semibold leading-7">
           {title}
         </h3>
       ) : null}
       {description ? (
-        <p className="mt-1 font-satoshi text-[15px] leading-6 text-[#555]">
+        <p className="theme-text-secondary mt-1 font-satoshi text-[15px] leading-6">
           {description}
         </p>
       ) : null}
@@ -34,11 +34,11 @@ function Toggle({ enabled, onToggle }) {
       type="button"
       onClick={onToggle}
       className={`relative h-[30px] w-[54px] rounded-full transition-all duration-300 ${
-        enabled ? "bg-[#00D061]" : "bg-[#E8E8E8]"
+        enabled ? "bg-[#00D061]" : "theme-surface-secondary"
       }`}
     >
       <span
-        className={`absolute top-[3px] h-6 w-6 rounded-full bg-white shadow-sm transition-all duration-300 ${
+        className={`theme-surface absolute top-[3px] h-6 w-6 rounded-full shadow-sm transition-all duration-300 ${
           enabled ? "left-[26px]" : "left-[3px]"
         }`}
       />
@@ -51,7 +51,7 @@ function ActionButton({ action, onClick, fullWidth = false }) {
     "flex items-center justify-center rounded-[14px] px-5 py-4 text-[16px] font-semibold transition-all duration-200";
   const variantClassName =
     action.variant === "secondary"
-      ? "bg-[#F4F7F5] text-[#0F0F0F] hover:bg-[#E7F9EF]"
+      ? "theme-secondary-button hover:opacity-90"
       : "bg-[#00D061] text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)] hover:bg-[#00b856]";
 
   return (
@@ -125,12 +125,12 @@ export default function SettingsDetailPage({ content }) {
             {section.items.map((item) => (
               <div
                 key={item.label}
-                className="rounded-[20px] border border-[#E8F6EE] bg-[#F8FFFB] px-3 py-4 text-center"
+                className="theme-card-muted rounded-[20px] border px-3 py-4 text-center"
               >
-                <p className="text-[20px] font-semibold leading-7 text-[#0F0F0F]">
+                <p className="theme-text-primary text-[20px] font-semibold leading-7">
                   {item.value}
                 </p>
-                <p className="mt-1 font-satoshi text-[13px] leading-5 text-[#555]">
+                <p className="theme-text-secondary mt-1 font-satoshi text-[13px] leading-5">
                   {item.label}
                 </p>
               </div>
@@ -149,13 +149,13 @@ export default function SettingsDetailPage({ content }) {
             {section.items.map((item) => (
               <div
                 key={`${item.title}-${item.meta || ""}`}
-                className="rounded-[22px] border border-[#EEF6F1] bg-white px-4 py-4 shadow-[0_12px_30px_rgba(15,15,15,0.04)]"
+                className="theme-card rounded-[22px] border px-4 py-4"
               >
                 <div className="flex items-start gap-3">
                   <div className="mt-1 h-2.5 w-2.5 rounded-full bg-[#00D061]" />
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h4 className="text-[16px] font-semibold leading-6 text-[#0F0F0F]">
+                      <h4 className="theme-text-primary text-[16px] font-semibold leading-6">
                         {item.title}
                       </h4>
                       {item.badge ? (
@@ -164,7 +164,7 @@ export default function SettingsDetailPage({ content }) {
                         </span>
                       ) : null}
                     </div>
-                    <p className="mt-1 font-satoshi text-[14px] leading-6 text-[#555]">
+                    <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6">
                       {item.description}
                     </p>
                     {item.meta ? (
@@ -190,13 +190,13 @@ export default function SettingsDetailPage({ content }) {
             {section.items.map((item) => (
               <div
                 key={item.key}
-                className="flex items-start justify-between gap-4 rounded-[22px] border border-[#EEF6F1] bg-white px-4 py-4 shadow-[0_12px_30px_rgba(15,15,15,0.04)]"
+                className="theme-card flex items-start justify-between gap-4 rounded-[22px] border px-4 py-4"
               >
                 <div>
-                  <h4 className="text-[16px] font-semibold leading-6 text-[#0F0F0F]">
+                  <h4 className="theme-text-primary text-[16px] font-semibold leading-6">
                     {item.label}
                   </h4>
-                  <p className="mt-1 font-satoshi text-[14px] leading-6 text-[#555]">
+                  <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6">
                     {item.description}
                   </p>
                 </div>
@@ -238,7 +238,7 @@ export default function SettingsDetailPage({ content }) {
                   className={`w-full rounded-[22px] border px-4 py-4 text-left transition-all duration-200 ${
                     isSelected
                       ? "border-[#00D061] bg-[#F2FFF7] shadow-[0_12px_30px_rgba(0,208,97,0.12)]"
-                      : "border-[#EEF6F1] bg-white"
+                      : "theme-card"
                   }`}
                 >
                   <div className="flex items-start gap-3">
@@ -246,16 +246,16 @@ export default function SettingsDetailPage({ content }) {
                       className={`mt-1 flex h-6 w-6 items-center justify-center rounded-full border ${
                         isSelected
                           ? "border-[#00D061] bg-[#00D061] text-white"
-                          : "border-[#D8E6DD] bg-white text-transparent"
+                          : "theme-surface theme-border border text-transparent"
                       }`}
                     >
                       <Check size={14} />
                     </div>
                     <div>
-                      <h4 className="text-[16px] font-semibold leading-6 text-[#0F0F0F]">
+                      <h4 className="theme-text-primary text-[16px] font-semibold leading-6">
                         {item.label}
                       </h4>
-                      <p className="mt-1 font-satoshi text-[14px] leading-6 text-[#555]">
+                      <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6">
                         {item.description}
                       </p>
                     </div>
@@ -278,14 +278,14 @@ export default function SettingsDetailPage({ content }) {
               return (
                 <div
                   key={item.question}
-                  className="overflow-hidden rounded-[22px] border border-[#EEF6F1] bg-white shadow-[0_12px_30px_rgba(15,15,15,0.04)]"
+                  className="theme-card overflow-hidden rounded-[22px] border"
                 >
                   <button
                     type="button"
                     onClick={() => setFaqOpen(isOpen ? -1 : itemIndex)}
                     className="flex w-full items-center justify-between gap-4 px-4 py-4 text-left"
                   >
-                    <span className="text-[16px] font-semibold leading-6 text-[#0F0F0F]">
+                    <span className="theme-text-primary text-[16px] font-semibold leading-6">
                       {item.question}
                     </span>
                     <ChevronDown
@@ -296,7 +296,7 @@ export default function SettingsDetailPage({ content }) {
                     />
                   </button>
                   {isOpen ? (
-                    <p className="border-t border-[#EEF6F1] px-4 py-4 font-satoshi text-[14px] leading-6 text-[#555]">
+                    <p className="theme-border theme-text-secondary border-t px-4 py-4 font-satoshi text-[14px] leading-6">
                       {item.answer}
                     </p>
                   ) : null}
@@ -317,12 +317,12 @@ export default function SettingsDetailPage({ content }) {
             {section.items.map((item, itemIndex) => (
               <div
                 key={item}
-                className="flex gap-4 rounded-[22px] border border-[#EEF6F1] bg-white px-4 py-4 shadow-[0_12px_30px_rgba(15,15,15,0.04)]"
+                className="theme-card flex gap-4 rounded-[22px] border px-4 py-4"
               >
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#E8FFF1] text-[15px] font-semibold text-[#00A84D]">
                   {itemIndex + 1}
                 </div>
-                <p className="pt-1 font-satoshi text-[15px] leading-6 text-[#0F0F0F]">
+                <p className="theme-text-primary pt-1 font-satoshi text-[15px] leading-6">
                   {item}
                 </p>
               </div>
@@ -341,12 +341,12 @@ export default function SettingsDetailPage({ content }) {
             {section.items.map((item) => (
               <div
                 key={item.heading}
-                className="rounded-[22px] border border-[#EEF6F1] bg-[#FAFFFC] px-4 py-4"
+                className="theme-card-muted rounded-[22px] border px-4 py-4"
               >
-                <h4 className="text-[16px] font-semibold leading-6 text-[#0F0F0F]">
+                <h4 className="theme-text-primary text-[16px] font-semibold leading-6">
                   {item.heading}
                 </h4>
-                <p className="mt-2 font-satoshi text-[14px] leading-6 text-[#555]">
+                <p className="theme-text-secondary mt-2 font-satoshi text-[14px] leading-6">
                   {item.body}
                 </p>
               </div>
@@ -374,7 +374,7 @@ export default function SettingsDetailPage({ content }) {
                     className={`rounded-full px-3 py-2 text-[13px] font-semibold transition-all ${
                       isSelected
                         ? "bg-[#00D061] text-white"
-                        : "bg-[#F4F7F5] text-[#0F0F0F]"
+                        : "theme-secondary-button"
                     }`}
                   >
                     {category}
@@ -384,13 +384,13 @@ export default function SettingsDetailPage({ content }) {
             </div>
           ) : null}
 
-          <div className="rounded-[24px] border border-[#EEF6F1] bg-white p-4 shadow-[0_12px_30px_rgba(15,15,15,0.04)]">
+          <div className="theme-card rounded-[24px] border p-4">
             <textarea
               rows={6}
               value={feedbackText}
               onChange={(event) => setFeedbackText(event.target.value)}
               placeholder={section.placeholder}
-              className="w-full resize-none rounded-[18px] bg-[#F6FBF8] px-4 py-4 font-satoshi text-[15px] leading-6 text-[#0F0F0F] outline-none placeholder:text-[#8A968F]"
+              className="theme-input-surface w-full resize-none rounded-[18px] px-4 py-4 font-satoshi text-[15px] leading-6 outline-none"
             />
 
             <button
@@ -456,12 +456,12 @@ export default function SettingsDetailPage({ content }) {
             {section.items.map((item) => (
               <div
                 key={item.title}
-                className="rounded-[22px] border border-[#FFE2E4] bg-[#FFF7F7] px-4 py-4"
+                className="theme-danger-card rounded-[22px] border px-4 py-4"
               >
-                <h4 className="text-[16px] font-semibold leading-6 text-[#B42318]">
+                <h4 className="theme-danger-title text-[16px] font-semibold leading-6">
                   {item.title}
                 </h4>
-                <p className="mt-2 font-satoshi text-[14px] leading-6 text-[#7A2E2E]">
+                <p className="theme-danger-copy mt-2 font-satoshi text-[14px] leading-6">
                   {item.description}
                 </p>
                 <button
@@ -469,7 +469,7 @@ export default function SettingsDetailPage({ content }) {
                   onClick={() =>
                     toast.success(`${item.buttonLabel} is staged as a demo action.`)
                   }
-                  className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[13px] font-semibold text-[#B42318]"
+                  className="theme-surface theme-danger-title mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] font-semibold"
                 >
                   {item.buttonLabel}
                   <ChevronRight size={14} />
