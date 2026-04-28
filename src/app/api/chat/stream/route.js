@@ -1,4 +1,8 @@
 import { NextResponse } from "next/server";
+import { connectDB } from "@/lib/db";
+import { isValidObjectId } from "mongoose";
+import { Chat } from "@/models/chat.model";
+import { Message } from "@/models/message.model";
 import {
   apiFetchWithAuth,
   assertApiSuccess,
@@ -57,6 +61,18 @@ function createCreditNote(message) {
 
   const trimmedMessage = message.trim().replace(/\s+/g, " ");
   return `Chat credit usage for: ${trimmedMessage.slice(0, 80)}`;
+}
+
+function buildChatTitle(message) {
+  if (typeof message !== "string" || !message.trim()) {
+    return "New conversation";
+  }
+
+  return message.trim().replace(/\s+/g, " ").slice(0, 60);
+}
+
+function normalizePlanLevel(level) {
+  return ["free", "standard", "premium"].includes(level) ? level : "free";
 }
 
 function parseChatMetadata(rawMetadata) {
@@ -127,6 +143,47 @@ async function reduceCreditsAfterChat({ amount, message }) {
   );
 }
 
+async function persistChatConversation({
+  chatId,
+  userMessage,
+  assistantMessage,
+  planLevel,
+}) {
+  if (!chatId || !userMessage?.trim() || !assistantMessage?.trim()) {
+    return;
+  }
+
+  await connectDB();
+
+  const chat = await Chat.findById(chatId).select("title");
+
+  if (!chat) {
+    throw { status: 404, message: "Chat not found for message persistence" };
+  }
+
+  await Message.insertMany([
+    {
+      chatId,
+      role: "user",
+      content: userMessage.trim(),
+    },
+    {
+      chatId,
+      role: "assistant",
+      content: assistantMessage.trim(),
+    },
+  ]);
+
+  await Chat.findByIdAndUpdate(chatId, {
+    isEmpty: false,
+    planType: normalizePlanLevel(planLevel),
+    lastMessage: assistantMessage.trim(),
+    lastMessageRole: "assistant",
+    ...(chat.title ? {} : { title: buildChatTitle(userMessage) }),
+    $unset: { expireAt: "" },
+  });
+}
+
 export async function POST(req) {
   try {
     const token = await getAuthToken();
@@ -134,6 +191,32 @@ export async function POST(req) {
 
     if (!token) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    if (!body?.chatId) {
+      return NextResponse.json(
+        { message: "chatId is required to stream and persist a conversation" },
+        { status: 400 },
+      );
+    }
+
+    if (!body?.message?.trim()) {
+      return NextResponse.json(
+        { message: "message is required to stream a conversation" },
+        { status: 400 },
+      );
+    }
+
+    if (!isValidObjectId(body.chatId)) {
+      return NextResponse.json({ message: "Chat not found" }, { status: 404 });
+    }
+
+    await connectDB();
+
+    const existingChat = await Chat.findById(body.chatId).select("_id");
+
+    if (!existingChat) {
+      return NextResponse.json({ message: "Chat not found" }, { status: 404 });
     }
 
     const availableBalance = await loadCreditBalance();
@@ -182,6 +265,7 @@ export async function POST(req) {
 
     let textBuffer = "";
     let metadataBuffer = "";
+    let assistantReply = "";
     let isReadingMetadata = false;
 
     const transformedStream = new ReadableStream({
@@ -208,6 +292,7 @@ export async function POST(req) {
               const textPortion = textBuffer.slice(0, metadataIndex);
 
               if (textPortion) {
+                assistantReply += textPortion;
                 controller.enqueue(encoder.encode(textPortion));
               }
 
@@ -221,6 +306,7 @@ export async function POST(req) {
               const safeText = textBuffer.slice(0, -2);
 
               if (safeText) {
+                assistantReply += safeText;
                 controller.enqueue(encoder.encode(safeText));
               }
 
@@ -239,6 +325,7 @@ export async function POST(req) {
           }
 
           if (!isReadingMetadata && textBuffer) {
+            assistantReply += textBuffer;
             controller.enqueue(encoder.encode(textBuffer));
           }
 
@@ -252,6 +339,17 @@ export async function POST(req) {
             });
           } catch (creditError) {
             console.error("Unable to reduce chat credits:", creditError);
+          }
+
+          try {
+            await persistChatConversation({
+              chatId: body.chatId,
+              userMessage: body?.message,
+              assistantMessage: assistantReply,
+              planLevel: body?.plan_level,
+            });
+          } catch (persistenceError) {
+            console.error("Unable to persist chat conversation:", persistenceError);
           }
 
           controller.close();
