@@ -799,31 +799,29 @@ export default function HomeScreen() {
 
   const handleLogout = async () => {
     try {
-      await appFetch("/api/auth/logout", {
-        method: "POST",
-      });
+      await logout().unwrap();
       toast.success("Logged out successfully");
       router.replace("/sign-in");
     } catch (error) {
       console.log(error);
-      toast.error(error.message || "Unable to log out");
+      toast.error(getClientErrorMessage(error, "Unable to log out"));
     }
   };
 
   const handleStartChat = async () => {
     try {
-      await appFetch("/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user: profile.phone,
-        }),
-      });
+      if (!profilePhone) {
+        toast.error("Your profile is still loading. Please try again.");
+        return;
+      }
+
+      await createChat({
+        user: profilePhone,
+      }).unwrap();
       router.push("/amigo-chat");
     } catch (error) {
       console.log(error);
+      toast.error(getClientErrorMessage(error, "Unable to start a new chat"));
     }
   };
 

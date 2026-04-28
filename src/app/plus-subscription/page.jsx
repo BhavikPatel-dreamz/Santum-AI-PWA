@@ -398,65 +398,32 @@ export default function PlusSubscriptionPage() {
     : "Maybe Later";
 
   useEffect(() => {
-    let isMounted = true;
-
-    async function loadSubscription() {
-      try {
-        const data = await appFetch("/api/settings/subscription", {
-          cache: "no-store",
-        });
-
-        if (!isMounted) {
-          return;
-        }
-
-        const nextPlans =
-          Array.isArray(data) && data.length > 0
-            ? data.map(enrichPlan)
-            : PLANS.map(enrichPlan);
-
-        setPlans(nextPlans);
-        setSelectedPlanKey((currentSelectedPlanKey) =>
-          nextPlans.some(
-            (plan, index) => getPlanKey(plan, index) === currentSelectedPlanKey,
-          )
-            ? currentSelectedPlanKey
-            : getDefaultSelectedPlanKey(nextPlans),
-        );
-      } catch (error) {
-        if (!isMounted) {
-          return;
-        }
-
-        if (error?.status === 401) {
-          router.replace("/sign-in");
-          return;
-        }
-
-        const fallbackPlans = PLANS.map(enrichPlan);
-        setPlans(fallbackPlans);
-        setSelectedPlanKey(getDefaultSelectedPlanKey(fallbackPlans));
-        toast.error(
-          error.message ||
-            "Unable to load live plans. Showing demo plans instead.",
-        );
-      } finally {
-        if (isMounted) {
-          setIsPlansLoading(false);
-        }
-      }
+    if (!plansError) {
+      return;
     }
 
-    loadSubscription();
+    if (isUnauthorizedError(plansError)) {
+      router.replace("/sign-in");
+      return;
+    }
 
-    return () => {
-      isMounted = false;
-    };
-  }, [router]);
+    toast.error(
+      getClientErrorMessage(
+        plansError,
+        "Unable to load live plans. Showing demo plans instead.",
+      ),
+    );
+  }, [plansError, router]);
+  const resolvedSelectedPlanKey = plans.some(
+    (plan, index) => getPlanKey(plan, index) === selectedPlanKey,
+  )
+    ? selectedPlanKey
+    : getDefaultSelectedPlanKey(plans);
 
   const selectedPlan =
-    plans.find((plan, index) => getPlanKey(plan, index) === selectedPlanKey) ??
-    null;
+    plans.find(
+      (plan, index) => getPlanKey(plan, index) === resolvedSelectedPlanKey,
+    ) ?? null;
   const selectedPlanPrice = getBillingAmount(selectedPlan);
   const isSelectedPlanPaid = selectedPlanPrice > 0;
 
@@ -471,35 +438,26 @@ export default function PlusSubscriptionPage() {
       return;
     }
 
-    setIsPurchasing(true);
     setPurchaseSummary(null);
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 900));
 
-      const response = await appFetch("/api/settings/subscription/purchase", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          plan: selectedPlan,
-        }),
-      });
+      const response = await purchaseSubscription({
+        plan: selectedPlan,
+      }).unwrap();
 
       setPurchaseSummary(response);
       toast.success(
         response.message || `${selectedPlan.name} activated successfully`,
       );
     } catch (error) {
-      if (error?.status === 401) {
+      if (isUnauthorizedError(error)) {
         router.replace("/sign-in");
         return;
       }
 
-      toast.error(error.message || "Unable to complete purchase");
-    } finally {
-      setIsPurchasing(false);
+      toast.error(getClientErrorMessage(error, "Unable to complete purchase"));
     }
   }
 

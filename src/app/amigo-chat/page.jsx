@@ -326,59 +326,36 @@ export default function AmigoChatPage() {
 
   const loadCreditBalance = async ({ silent = false } = {}) => {
     try {
-      const response = await requestCreditBalance();
-
-      setCreditBalance(extractCreditBalance(response));
+      const response = await refetchBalance().unwrap();
+      return extractCreditBalance(response);
     } catch (error) {
-      if (error?.status === 401) {
+      if (isUnauthorizedError(error)) {
         router.replace("/sign-in");
-        return;
+        return null;
       }
 
       if (!silent) {
-        toast.error(error.message || "Unable to load credit balance");
+        toast.error(getClientErrorMessage(error, "Unable to load credit balance"));
       }
-    } finally {
-      setIsBalanceLoading(false);
+
+      return null;
     }
   };
 
   useEffect(() => {
-    let isMounted = true;
-
-    async function initialLoadCreditBalance() {
-      try {
-        const response = await requestCreditBalance();
-
-        if (!isMounted) {
-          return;
-        }
-
-        setCreditBalance(extractCreditBalance(response));
-      } catch (error) {
-        if (!isMounted) {
-          return;
-        }
-
-        if (error?.status === 401) {
-          router.replace("/sign-in");
-          return;
-        }
-
-        toast.error(error.message || "Unable to load credit balance");
-      } finally {
-        if (isMounted) {
-          setIsBalanceLoading(false);
-        }
-      }
+    if (!balanceError) {
+      return;
     }
 
-    initialLoadCreditBalance();
+    if (isUnauthorizedError(balanceError)) {
+      router.replace("/sign-in");
+      return;
+    }
 
-    return () => {
-      isMounted = false;
-    };
-  }, [router]);
+    toast.error(
+      getClientErrorMessage(balanceError, "Unable to load credit balance"),
+    );
+  }, [balanceError, router]);
 
   useEffect(() => {
     if (isCreditDepleted) {
