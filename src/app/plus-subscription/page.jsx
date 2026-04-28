@@ -2,6 +2,7 @@
 
 import FeatureShowcaseCard from "@/components/app/FeatureShowcaseCard";
 import StepPageShell from "@/components/app/StepPageShell";
+import { useTheme } from "@/components/providers/ThemeProvider";
 import { appFetch } from "@/lib/api/internal";
 import { formatCreditAmount } from "@/lib/utills/credit";
 import { Check } from "lucide-react";
@@ -128,6 +129,46 @@ function getDefaultSelectedPlanKey(plans) {
   return getPlanKey(defaultPlan, plans.indexOf(defaultPlan));
 }
 
+function getBenefitsPanelClasses(isDark) {
+  return isDark
+    ? "border border-[#27322d] bg-[linear-gradient(135deg,#17211c_0%,#101713_100%)] text-white shadow-[0_20px_40px_rgba(0,0,0,0.25)]"
+    : "bg-[#0F0F0F] text-white";
+}
+
+function getPlanCardClasses({ isDark, isSelected, isHighlighted }) {
+  if (isSelected) {
+    return isDark
+      ? "border-[#2FD97C] bg-[linear-gradient(135deg,#183324_0%,#112119_55%,#1a2a21_100%)] shadow-[0_16px_36px_rgba(0,0,0,0.28)]"
+      : "border-[#00D061] bg-[linear-gradient(135deg,#F3FFF8_0%,#FFFFFF_100%)] shadow-[0_16px_36px_rgba(0,208,97,0.12)]";
+  }
+
+  if (isHighlighted) {
+    return isDark
+      ? "border-[#294536] bg-[linear-gradient(135deg,#151d19_0%,#112018_100%)] shadow-[0_14px_32px_rgba(0,0,0,0.2)]"
+      : "border-[#D6F5E4] bg-[linear-gradient(135deg,#FCFFFD_0%,#FFFFFF_100%)]";
+  }
+
+  return isDark
+    ? "theme-card border shadow-[0_14px_32px_rgba(0,0,0,0.2)]"
+    : "border-[#EEF6F1] bg-white shadow-[0_12px_30px_rgba(15,15,15,0.04)]";
+}
+
+function getPricePillClasses(isDark) {
+  return isDark
+    ? "border border-[#2F3A34] bg-[#0B1210] text-white"
+    : "bg-[#0F0F0F] text-white";
+}
+
+function getSelectedBadgeClasses(isDark) {
+  return isDark ? "bg-white text-[#07110D]" : "bg-[#0F0F0F] text-white";
+}
+
+function getPurchaseSummaryClasses(isDark) {
+  return isDark
+    ? "border-[#28523B] bg-[linear-gradient(135deg,#102118_0%,#17251D_100%)]"
+    : "border-[#BDECCE] bg-[#F3FFF8]";
+}
+
 export default function PlusSubscriptionPage() {
   const [plans, setPlans] = useState([]);
   const [isPlansLoading, setIsPlansLoading] = useState(true);
@@ -135,6 +176,7 @@ export default function PlusSubscriptionPage() {
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [purchaseSummary, setPurchaseSummary] = useState(null);
   const router = useRouter();
+  const { isDark } = useTheme();
 
   useEffect(() => {
     let isMounted = true;
@@ -270,7 +312,11 @@ export default function PlusSubscriptionPage() {
         compact
       />
 
-      <div className="mb-6 rounded-[24px] bg-[#0F0F0F] px-5 py-5 text-white">
+      <div
+        className={`mb-6 rounded-[24px] px-5 py-5 ${getBenefitsPanelClasses(
+          isDark,
+        )}`}
+      >
         <p className="text-[12px] font-semibold uppercase tracking-[0.2em] text-white/70">
           What changes with Plus
         </p>
@@ -297,18 +343,18 @@ export default function PlusSubscriptionPage() {
                 setSelectedPlanKey(planKey);
                 setPurchaseSummary(null);
               }}
-              className={`w-full rounded-[26px] border px-5 py-5 text-left shadow-[0_12px_30px_rgba(15,15,15,0.04)] transition-all ${
-                isSelected
-                  ? "border-[#00D061] bg-[linear-gradient(135deg,#F3FFF8_0%,#FFFFFF_100%)] shadow-[0_16px_36px_rgba(0,208,97,0.12)]"
-                  : plan.highlighted
-                    ? "border-[#D6F5E4] bg-[linear-gradient(135deg,#FCFFFD_0%,#FFFFFF_100%)]"
-                    : "border-[#EEF6F1] bg-white"
-              }`}
+              className={`w-full rounded-[26px] border px-5 py-5 text-left transition-all ${getPlanCardClasses(
+                {
+                  isDark,
+                  isSelected,
+                  isHighlighted: plan.highlighted,
+                },
+              )}`}
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="text-[22px] font-semibold leading-8 text-[#0F0F0F]">
+                    <h3 className="theme-text-primary text-[22px] font-semibold leading-8">
                       {plan.name}
                     </h3>
                     {plan.highlighted ? (
@@ -317,16 +363,24 @@ export default function PlusSubscriptionPage() {
                       </span>
                     ) : null}
                     {isSelected ? (
-                      <span className="rounded-full bg-[#0F0F0F] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
+                      <span
+                        className={`rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] ${getSelectedBadgeClasses(
+                          isDark,
+                        )}`}
+                      >
                         Selected
                       </span>
                     ) : null}
                   </div>
-                  <p className="mt-1 font-satoshi text-[14px] leading-6 text-[#555]">
+                  <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6">
                     {plan.description}
                   </p>
                 </div>
-                <div className="rounded-[18px] bg-[#0F0F0F] px-4 py-3 text-center text-white">
+                <div
+                  className={`rounded-[18px] px-4 py-3 text-center ${getPricePillClasses(
+                    isDark,
+                  )}`}
+                >
                   <p className="text-[20px] font-semibold leading-7">
                     {getBillingAmount(plan) === 0
                       ? "Free"
@@ -339,10 +393,10 @@ export default function PlusSubscriptionPage() {
                 <div className="mt-4 space-y-3">
                   {plan.features.map((feature) => (
                     <div key={feature} className="flex items-center gap-3">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#E8FFF1] text-[#00A84D]">
+                      <div className="theme-pill flex h-7 w-7 items-center justify-center rounded-full">
                         <Check size={14} />
                       </div>
-                      <span className="font-satoshi text-[15px] leading-6 text-[#0F0F0F]">
+                      <span className="theme-text-primary font-satoshi text-[15px] leading-6">
                         {feature}
                       </span>
                     </div>
@@ -355,18 +409,22 @@ export default function PlusSubscriptionPage() {
       </div>
 
       {purchaseSummary ? (
-        <div className="mt-6 rounded-3xl border border-[#BDECCE] bg-[#F3FFF8] px-5 py-5">
+        <div
+          className={`mt-6 rounded-3xl border px-5 py-5 ${getPurchaseSummaryClasses(
+            isDark,
+          )}`}
+        >
           <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#00A84D]">
             Dummy payment complete
           </p>
-          <h3 className="mt-2 text-[22px] font-semibold leading-8 text-[#0F0F0F]">
+          <h3 className="theme-text-primary mt-2 text-[22px] font-semibold leading-8">
             {purchaseSummary.plan_name} is active and credits were added.
           </h3>
-          <p className="mt-3 font-satoshi text-[15px] leading-6 text-[#555]">
+          <p className="theme-text-secondary mt-3 font-satoshi text-[15px] leading-6">
             Added {formatCreditAmount(purchaseSummary.credits_added)} credits to
             your account through the live increase endpoint.
           </p>
-          <p className="mt-2 font-satoshi text-[15px] leading-6 text-[#555]">
+          <p className="theme-text-secondary mt-2 font-satoshi text-[15px] leading-6">
             Updated balance:{" "}
             {Number.isFinite(purchaseSummary.updated_balance)
               ? formatCreditAmount(purchaseSummary.updated_balance)
@@ -396,7 +454,7 @@ export default function PlusSubscriptionPage() {
               ? router.push("/settings/credits")
               : router.push("/home")
           }
-          className="rounded-[14px] bg-[#F4F7F5] px-5 py-4 text-[16px] font-semibold text-[#0F0F0F]"
+          className="theme-secondary-button rounded-[14px] px-5 py-4 text-[16px] font-semibold"
         >
           {secondaryButtonLabel}
         </button>
