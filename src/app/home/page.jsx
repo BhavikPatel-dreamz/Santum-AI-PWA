@@ -1,13 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import {
-  Bell,
-  ChevronRightIcon,
-  Edit2Icon,
-  Settings,
-  X,
-} from "lucide-react";
+import { Bell, ChevronRightIcon, Edit2Icon, Settings, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useTheme } from "@/components/providers/ThemeProvider";
@@ -737,6 +731,23 @@ export default function HomeScreen() {
     }
   };
 
+  const handleStartChat = async () => {
+    try {
+      await appFetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user: profile.phone,
+        }),
+      });
+      router.push("/amigo-chat");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const displayName =
     [profile?.first_name, profile?.last_name].filter(Boolean).join(" ") ||
     profile?.name ||
@@ -929,7 +940,9 @@ export default function HomeScreen() {
                     type="button"
                     onClick={() => router.push(card.href)}
                     className={`mt-4 inline-flex items-center rounded-full px-4 py-2 text-[13px] font-semibold ${
-                      isDark ? "bg-[#00D061] text-[#07110d]" : "bg-[#0F0F0F] text-white"
+                      isDark
+                        ? "bg-[#00D061] text-[#07110d]"
+                        : "bg-[#0F0F0F] text-white"
                     }`}
                   >
                     {card.cta}
@@ -944,7 +957,7 @@ export default function HomeScreen() {
         <div className="fixed bottom-5 left-0 right-0 mx-auto max-w-[600px] px-4 z-10">
           <button
             type="button"
-            onClick={() => router.push("/amigo-chat")}
+            onClick={() => handleStartChat()}
             className="w-full max-w-[343px] mx-auto flex items-center justify-center h-[56px] rounded-[12px] bg-[#00D061] text-white text-[18px] font-medium shadow-[0_4px_20px_rgba(0,208,97,0.4)] transition-all active:scale-[0.98] hover:opacity-92"
           >
             Start Chat with Amigo
@@ -970,12 +983,8 @@ export default function HomeScreen() {
           } theme-surface-elevated`}
         >
           {/* Drawer header */}
-          <div
-            className="theme-border-strong flex items-center justify-between border-b-2 px-4 py-4"
-          >
-            <h5
-              className="theme-text-primary text-[18px] font-medium"
-            >
+          <div className="theme-border-strong flex items-center justify-between border-b-2 px-4 py-4">
+            <h5 className="theme-text-primary text-[18px] font-medium">
               Settings
             </h5>
             <button
@@ -988,17 +997,13 @@ export default function HomeScreen() {
           </div>
 
           {/* Profile row */}
-          <div
-            className="theme-border-strong flex items-center justify-between border-b-2 px-4 py-4"
-          >
+          <div className="theme-border-strong flex items-center justify-between border-b-2 px-4 py-4">
             <div className="flex items-center gap-4">
               <div className="theme-surface-soft flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full text-[28px] transition-colors duration-300">
                 👩
               </div>
               <div>
-                <p
-                  className="theme-text-primary text-[16px] font-medium"
-                >
+                <p className="theme-text-primary text-[16px] font-medium">
                   {displayName}
                 </p>
                 <p className="text-[14px] text-[#555]">{emailAddress}</p>
@@ -1078,9 +1083,7 @@ export default function HomeScreen() {
             })}
 
             {/* Dark mode toggle row */}
-            <div
-              className="theme-border-strong flex items-center justify-between border-b-2 px-4 py-3"
-            >
+            <div className="theme-border-strong flex items-center justify-between border-b-2 px-4 py-3">
               <div className="flex items-center gap-4">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -1113,10 +1116,7 @@ export default function HomeScreen() {
                   </p>
                 </div>
               </div>
-              <DarkModeToggle
-                dark={isDark}
-                onToggle={toggleTheme}
-              />
+              <DarkModeToggle dark={isDark} onToggle={toggleTheme} />
             </div>
           </div>
         </div>
