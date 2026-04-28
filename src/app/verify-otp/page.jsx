@@ -4,17 +4,36 @@ import { useEffect, useRef, useState } from "react";
 import HeaderSection from "../../components/UI/HeaderSection";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { appFetch } from "../../lib/api/internal";
+import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
+import { useVerifyMobileMutation } from "@/lib/store";
 import { maskPhoneNumber, OTP_PHONE_STORAGE_KEY } from "../../lib/utills/phone";
 import Image from "next/image";
 
 export default function OtpPage() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-  const [loading, setLoading] = useState(false);
   const [resendTimer, setResendTimer] = useState(30);
   const inputRefs = useRef([]);
-  const [maskedPhone, setMaskedPhone] = useState("");
+  const [maskedPhone] = useState(() => {
+    if (typeof window === "undefined") {
+      return "";
+    }
+
+    try {
+      const storedPhone = sessionStorage.getItem(OTP_PHONE_STORAGE_KEY);
+
+      if (!storedPhone) {
+        return "";
+      }
+
+      const { mobile, dialCode } = JSON.parse(storedPhone);
+      return maskPhoneNumber(mobile, dialCode);
+    } catch (error) {
+      console.error("Unable to load pending OTP phone:", error);
+      return "";
+    }
+  });
   const router = useRouter();
+  const [verifyMobile, { isLoading }] = useVerifyMobileMutation();
   
   const canResend = resendTimer === 0;
 
@@ -29,21 +48,6 @@ export default function OtpPage() {
 
     return () => clearTimeout(timeoutId);
   }, [canResend, resendTimer]);
-
-  useEffect(() => {
-    try {
-      const storedPhone = sessionStorage.getItem(OTP_PHONE_STORAGE_KEY);
-
-      if (!storedPhone) {
-        return;
-      }
-
-      const { mobile, dialCode } = JSON.parse(storedPhone);
-      setMaskedPhone(maskPhoneNumber(mobile, dialCode));
-    } catch (error) {
-      console.error("Unable to load pending OTP phone:", error);
-    }
-  }, []);
 
   const handleChange = (index, value) => {
     if (!/^\d?$/.test(value)) {
@@ -98,17 +102,9 @@ export default function OtpPage() {
   const handleVerify = async () => {
     try {
       const otpValue = otp.join("");
-      setLoading(true);
-
-      const data = await appFetch("/api/auth/verify-mobile", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          otp: otpValue,
-        }),
-      });
+      const data = await verifyMobile({
+        otp: otpValue,
+      }).unwrap();
       if (data.success) sessionStorage.removeItem(OTP_PHONE_STORAGE_KEY);
 
       toast.success(data.message || "OTP verified successfully");
@@ -116,14 +112,12 @@ export default function OtpPage() {
     } catch (error) {
       console.error("Verify Error:", error);
 
-      if (error?.status === 401) {
+      if (isUnauthorizedError(error)) {
         router.replace("/sign-in");
         return;
       }
 
-      toast.error(error.message || "Something went wrong");
-    } finally {
-      setLoading(false);
+      toast.error(getClientErrorMessage(error));
     }
   };
 
@@ -200,7 +194,7 @@ export default function OtpPage() {
           <button
             type="button"
             onClick={handleVerify}
-            disabled={!isComplete || loading}
+            disabled={!isComplete || isLoading}
             className={`w-full max-w-[343px] flex items-center justify-center mx-auto py-4 rounded-[14px] text-white text-[18px] font-semibold tracking-wide transition-all duration-200
               ${
                 isComplete
@@ -208,7 +202,7 @@ export default function OtpPage() {
                   : "bg-[#A8F0CB] cursor-not-allowed"
               }`}
           >
-            {loading ? (
+            {isLoading ? (
               <div className="flex items-center gap-3">
                 <div className="w-5 h-5 border-[3px] border-white border-t-transparent rounded-full animate-spin" />
                 <span>Verifying...</span>

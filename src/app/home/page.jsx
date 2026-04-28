@@ -4,8 +4,13 @@ import { useEffect, useState } from "react";
 import { Bell, ChevronRightIcon, Edit2Icon, Settings, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
+import {
+  useCreateChatMutation,
+  useGetProfileQuery,
+  useLogoutMutation,
+} from "@/lib/store";
 import { useTheme } from "@/components/providers/ThemeProvider";
-import { appFetch } from "../../lib/api/internal";
 
 const CollapseIcon = () => (
   <svg
@@ -701,50 +706,53 @@ const DarkModeToggle = ({ dark, onToggle }) => (
 export default function HomeScreen() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
-  const [profile, setProfile] = useState({});
   const { isDark, isUsingSystemTheme, toggleTheme } = useTheme();
   const router = useRouter();
+  const { data: profileData, error: profileError } = useGetProfileQuery();
+  const [logout] = useLogoutMutation();
+  const [createChat] = useCreateChatMutation();
+  const profile = profileData ?? {};
+  const profilePhone =
+    profile?.phone || profile?.mobile || profile?.user_phone || "";
 
   useEffect(() => {
-    (async () => {
-      try {
-        const data = await appFetch("/api/user/profile", {
-          cache: "no-store",
-        });
-        setProfile(data.data.user);
-      } catch {
-        toast.error("Failed to load profile");
-      }
-    })();
-  }, []);
+    if (!profileError) {
+      return;
+    }
+
+    if (isUnauthorizedError(profileError)) {
+      router.replace("/sign-in");
+      return;
+    }
+
+    toast.error(getClientErrorMessage(profileError, "Failed to load profile"));
+  }, [profileError, router]);
 
   const handleLogout = async () => {
     try {
-      await appFetch("/api/auth/logout", {
-        method: "POST",
-      });
+      await logout().unwrap();
       toast.success("Logged out successfully");
       router.replace("/sign-in");
     } catch (error) {
       console.log(error);
-      toast.error(error.message || "Unable to log out");
+      toast.error(getClientErrorMessage(error, "Unable to log out"));
     }
   };
 
   const handleStartChat = async () => {
     try {
-      await appFetch("/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user: profile.phone,
-        }),
-      });
+      if (!profilePhone) {
+        toast.error("Your profile is still loading. Please try again.");
+        return;
+      }
+
+      await createChat({
+        user: profilePhone,
+      }).unwrap();
       router.push("/amigo-chat");
     } catch (error) {
       console.log(error);
+      toast.error(getClientErrorMessage(error, "Unable to start a new chat"));
     }
   };
 

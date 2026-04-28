@@ -3,7 +3,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import HeaderSection from "../../components/UI/HeaderSection";
 import toast from "react-hot-toast";
-import { appFetch } from "../../lib/api/internal";
+import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
+import { useUpdateInterestsMutation } from "@/lib/store";
 
 const interests = [
   { id: 1, label: "History", checked: false },
@@ -31,42 +32,32 @@ const interests = [
 
 const Page = () => {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState(
     interests.filter((interest) => interest.checked).map((interest) => interest.id),
   );
+  const [updateInterests, { isLoading }] = useUpdateInterestsMutation();
 
   const handleSubmit = async () => {
     try {
-      setLoading(true);
-
       const selectedInterests = selected
         .map((id) => interests.find((interest) => interest.id === id)?.label)
         .filter(Boolean);
 
-      const res = await appFetch("/api/user/profile/interests", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          interests: selectedInterests,
-        }),
-      });
+      const res = await updateInterests({
+        interests: selectedInterests,
+      }).unwrap();
 
       toast.success(res.message || "Interests saved");
       router.push("/reasons");
     } catch (error) {
       console.error("Interests Error:", error);
 
-      if (error?.status === 401) {
+      if (isUnauthorizedError(error)) {
         router.replace("/sign-in");
         return;
       }
 
-      toast.error(error.message || "Something went wrong");
-    } finally {
-      setLoading(false);
+      toast.error(getClientErrorMessage(error));
     }
   };
 
@@ -125,16 +116,16 @@ const Page = () => {
             </button>
 
             <button
-              disabled={selected.length < 3 || loading}
+              disabled={selected.length < 3 || isLoading}
               onClick={handleSubmit}
               className="w-[163px] h-[48px] flex items-center justify-center rounded-[8px] text-white text-[18px] font-medium font-poppins transition-all"
               style={{
                 background: "linear-gradient(135deg, #23cf67 0%, #1ab856 100%)",
                 boxShadow: "0 4px 20px #23cf6740",
-                opacity: selected.length < 3 || loading ? 0.7 : 1,
+                opacity: selected.length < 3 || isLoading ? 0.7 : 1,
               }}
             >
-              {loading ? (
+              {isLoading ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
                 "Continue"

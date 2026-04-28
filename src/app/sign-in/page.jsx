@@ -7,7 +7,8 @@ import SocialButtons from "../../components/UI/SocialButtons";
 import { Eye, EyeOff, LockIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { appFetch } from "../../lib/api/internal";
+import { getClientErrorMessage } from "@/lib/api/error";
+import { useLoginMutation } from "@/lib/store";
 
 export const validateInternationalPhone = (number) => {
   const cleaned = number.trim().replace(/[^\d+]/g, "");
@@ -18,7 +19,6 @@ export const validateInternationalPhone = (number) => {
 
 export default function SignInPage() {
   const [phone, setPhone] = useState("");
-  const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState(COUNTRIES[0]);
@@ -27,6 +27,7 @@ export default function SignInPage() {
   const dropdownRef = useRef(null);
 
   const router = useRouter();
+  const [login, { isLoading }] = useLoginMutation();
 
   const filtered = COUNTRIES.filter((c) =>
     c.name.toLowerCase().includes(search.toLowerCase()),
@@ -45,32 +46,23 @@ export default function SignInPage() {
 
   const handleSubmit = async () => {
     try {
-      setLoading(true);
-
       if (!phone) return toast.error("PhoneNo is required");
       if (!password) return toast.error("Password is required");
       const isNumberVerify = validateInternationalPhone(`${phone}`);
 
       if (!isNumberVerify) return toast.error("Enter valid number");
 
-      const data = await appFetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          mobile: `${selectedCountry.dial}${phone}`,
-          password,
-        }),
-      });
+      const data = await login({
+        mobile: `${selectedCountry.dial}${phone}`,
+        password,
+      }).unwrap();
 
       toast.success(data.message || "Signed in successfully");
       router.replace("/home");
     } catch (error) {
       console.log("Error:", error);
-      toast.error(error.message || "Something went wrong");
+      toast.error(getClientErrorMessage(error));
     } finally {
-      setLoading(false);
       setDropdownOpen(false);
       setSearch("");
     }
@@ -203,11 +195,11 @@ export default function SignInPage() {
 
           {/* Sign In button */}
           <button
-            disabled={loading}
+            disabled={isLoading}
             onClick={handleSubmit}
             className="w-full py-4 rounded-[14px] flex items-center justify-center bg-[#00D061] text-white text-[18px] font-semibold tracking-wide hover:bg-[#00b856] hover:shadow-[0_6px_20px_rgba(0,208,97,0.40)] hover:-translate-y-px active:translate-y-0 transition-all duration-200 mb-6"
           >
-            {loading ? (
+            {isLoading ? (
               <div className="flex items-center gap-3">
                 <div className="w-5 h-5 border-[3px] border-white border-t-transparent rounded-full animate-spin" />
                 <span>Signing in...</span>

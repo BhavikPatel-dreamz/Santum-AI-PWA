@@ -2,7 +2,8 @@
 
 import FeatureShowcaseCard from "@/components/app/FeatureShowcaseCard";
 import StepPageShell from "@/components/app/StepPageShell";
-import { appFetch } from "@/lib/api/internal";
+import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
+import { useGetCreditBalanceQuery } from "@/lib/store";
 import { extractCreditBalance, formatCreditAmount } from "@/lib/utills/credit";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -38,12 +39,6 @@ const INITIAL_MESSAGES = [
   },
 ];
 
-async function requestCreditBalance() {
-  return appFetch("/api/credit/balance", {
-    cache: "no-store",
-  });
-}
-
 function isCreditLimitError(error) {
   if (error?.status === 402 || error?.data?.code === "CREDIT_LIMIT_REACHED") {
     return true;
@@ -71,10 +66,18 @@ export default function AmigoChatPage() {
   const [messages, setMessages] = useState([]);
   const [composer, setComposer] = useState("");
   const [isReplying, setIsReplying] = useState(false);
-  const [creditBalance, setCreditBalance] = useState(null);
-  const [isBalanceLoading, setIsBalanceLoading] = useState(true);
   const [purchasePromptMessage, setPurchasePromptMessage] = useState("");
   const nextMessageId = useRef(INITIAL_MESSAGES.length + 1);
+  const {
+    data: balanceResponse,
+    error: balanceError,
+    isLoading: isBalanceLoading,
+    refetch: refetchBalance,
+  } = useGetCreditBalanceQuery(undefined, {
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+  });
+  const creditBalance = extractCreditBalance(balanceResponse);
   const isCreditDepleted = creditBalance !== null && creditBalance <= 0;
 
   const createMessage = (role, text) => ({
@@ -85,59 +88,36 @@ export default function AmigoChatPage() {
 
   const loadCreditBalance = async ({ silent = false } = {}) => {
     try {
-      const response = await requestCreditBalance();
-
-      setCreditBalance(extractCreditBalance(response));
+      const response = await refetchBalance().unwrap();
+      return extractCreditBalance(response);
     } catch (error) {
-      if (error?.status === 401) {
+      if (isUnauthorizedError(error)) {
         router.replace("/sign-in");
-        return;
+        return null;
       }
 
       if (!silent) {
-        toast.error(error.message || "Unable to load credit balance");
+        toast.error(getClientErrorMessage(error, "Unable to load credit balance"));
       }
-    } finally {
-      setIsBalanceLoading(false);
+
+      return null;
     }
   };
 
   useEffect(() => {
-    let isMounted = true;
-
-    async function initialLoadCreditBalance() {
-      try {
-        const response = await requestCreditBalance();
-
-        if (!isMounted) {
-          return;
-        }
-
-        setCreditBalance(extractCreditBalance(response));
-      } catch (error) {
-        if (!isMounted) {
-          return;
-        }
-
-        if (error?.status === 401) {
-          router.replace("/sign-in");
-          return;
-        }
-
-        toast.error(error.message || "Unable to load credit balance");
-      } finally {
-        if (isMounted) {
-          setIsBalanceLoading(false);
-        }
-      }
+    if (!balanceError) {
+      return;
     }
 
-    initialLoadCreditBalance();
+    if (isUnauthorizedError(balanceError)) {
+      router.replace("/sign-in");
+      return;
+    }
 
-    return () => {
-      isMounted = false;
-    };
-  }, [router]);
+    toast.error(
+      getClientErrorMessage(balanceError, "Unable to load credit balance"),
+    );
+  }, [balanceError, router]);
 
   useEffect(() => {
     if (isCreditDepleted) {
@@ -277,7 +257,7 @@ export default function AmigoChatPage() {
         return;
       }
 
-      toast.error(error.message || "Unable to connect to Amigo");
+      toast.error(getClientErrorMessage(error, "Unable to connect to Amigo"));
       setMessages((currentMessages) => [
         ...currentMessages,
         createMessage(
