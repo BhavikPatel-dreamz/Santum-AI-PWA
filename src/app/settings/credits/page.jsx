@@ -2,18 +2,13 @@
 
 import FeatureShowcaseCard from "@/components/app/FeatureShowcaseCard";
 import StepPageShell from "@/components/app/StepPageShell";
-import { appFetch } from "@/lib/api/internal";
+import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
+import { useGetCreditBalanceQuery } from "@/lib/store";
 import { extractCreditBalance, formatCreditAmount } from "@/lib/utills/credit";
 import { RefreshCcw } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import toast from "react-hot-toast";
-
-async function requestBalance() {
-  return appFetch("/api/credit/balance", {
-    cache: "no-store",
-  });
-}
 
 function formatSyncTime(date) {
   if (!date) {
@@ -28,67 +23,48 @@ function formatSyncTime(date) {
 
 export default function CreditsSettingsPage() {
   const router = useRouter();
-  const [balanceResponse, setBalanceResponse] = useState(null);
-  const [lastUpdatedAt, setLastUpdatedAt] = useState(null);
-  const [isBalanceLoading, setIsBalanceLoading] = useState(true);
+  const {
+    data: balanceResponse,
+    error,
+    isLoading,
+    isFetching,
+    fulfilledTimeStamp,
+    refetch,
+  } = useGetCreditBalanceQuery(undefined, {
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+  });
 
   useEffect(() => {
-    let isMounted = true;
-
-    async function loadBalance() {
-      try {
-        const data = await requestBalance();
-
-        if (!isMounted) {
-          return;
-        }
-
-        setBalanceResponse(data);
-        setLastUpdatedAt(new Date());
-      } catch (error) {
-        if (!isMounted) {
-          return;
-        }
-
-        if (error?.status === 401) {
-          router.replace("/sign-in");
-          return;
-        }
-
-        toast.error(error.message || "Unable to load credit balance");
-      } finally {
-        if (isMounted) {
-          setIsBalanceLoading(false);
-        }
-      }
+    if (!error) {
+      return;
     }
 
-    loadBalance();
+    if (isUnauthorizedError(error)) {
+      router.replace("/sign-in");
+      return;
+    }
 
-    return () => {
-      isMounted = false;
-    };
-  }, [router]);
+    toast.error(getClientErrorMessage(error, "Unable to load credit balance"));
+  }, [error, router]);
 
   const creditBalance = extractCreditBalance(balanceResponse);
+  const lastUpdatedAt = fulfilledTimeStamp ? new Date(fulfilledTimeStamp) : null;
+  const isBalanceLoading = isLoading || isFetching;
 
   const refreshBalance = async () => {
-    setIsBalanceLoading(true);
-
     try {
-      const data = await requestBalance();
-      setBalanceResponse(data);
-      setLastUpdatedAt(new Date());
+      await refetch().unwrap();
       toast.success("Credit balance refreshed");
     } catch (error) {
-      if (error?.status === 401) {
+      if (isUnauthorizedError(error)) {
         router.replace("/sign-in");
         return;
       }
 
-      toast.error(error.message || "Unable to refresh credit balance");
-    } finally {
-      setIsBalanceLoading(false);
+      toast.error(
+        getClientErrorMessage(error, "Unable to refresh credit balance"),
+      );
     }
   };
 

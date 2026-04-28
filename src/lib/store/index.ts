@@ -1,20 +1,16 @@
-import { configureStore } from '@reduxjs/toolkit';
-import { postsApi } from './apis/posts';
-import { usersApi } from './apis/users';
+import { configureStore } from "@reduxjs/toolkit";
+import { appApi } from "./apis/app";
 
 export const store = configureStore({
   reducer: {
-    [postsApi.reducerPath]: postsApi.reducer,
-    [usersApi.reducerPath]: usersApi.reducer,
+    [appApi.reducerPath]: appApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware()
-      .concat(postsApi.middleware)
-      .concat(usersApi.middleware),
+    getDefaultMiddleware().concat(appApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
-export * from './apis';
-export * from './hooks';
+export * from "./apis";
+export * from "./hooks";

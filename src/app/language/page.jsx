@@ -3,7 +3,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import HeaderSection from "../../components/UI/HeaderSection";
 import toast from "react-hot-toast";
-import { appFetch } from "../../lib/api/internal";
+import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
+import { useUpdatePreferredLanguageMutation } from "@/lib/store";
 
 const LANGUAGES = [
   "English",
@@ -19,36 +20,27 @@ const LANGUAGES = [
 
 const Page = () => {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState("English");
+  const [updatePreferredLanguage, { isLoading }] =
+    useUpdatePreferredLanguageMutation();
 
   const handleSubmit = async () => {
     try {
-      setLoading(true);
-
-      const res = await appFetch("/api/user/profile/language", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          preferredLanguage: selected,
-        }),
-      });
+      const res = await updatePreferredLanguage({
+        preferredLanguage: selected,
+      }).unwrap();
 
       toast.success(res.message || "Language updated");
       router.push("/intrest");
     } catch (error) {
       console.error("Language Error:", error);
 
-      if (error?.status === 401) {
+      if (isUnauthorizedError(error)) {
         router.replace("/sign-in");
         return;
       }
 
-      toast.error(error.message || "Something went wrong");
-    } finally {
-      setLoading(false);
+      toast.error(getClientErrorMessage(error));
     }
   };
 
@@ -104,7 +96,7 @@ const Page = () => {
                 boxShadow: "0 4px 20px #23cf6740",
               }}
             >
-              {loading ? (
+              {isLoading ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
                 "Next"

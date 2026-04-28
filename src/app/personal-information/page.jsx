@@ -4,7 +4,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import HeaderSection from "../../components/UI/HeaderSection";
 import toast from "react-hot-toast";
-import { appFetch } from "../../lib/api/internal";
+import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
+import { useUpdateBasicProfileMutation } from "@/lib/store";
 
 /* ── Reusable floating-label input ── */
 function FloatingInput({ id, label, value, onChange, type = "text" }) {
@@ -45,39 +46,30 @@ export default function PersonalInformationPage() {
     lastName: "",
     dob: "",
   });
-  const [loading, setLoading] = useState(false);
+  const [updateBasicProfile, { isLoading }] = useUpdateBasicProfileMutation();
 
   const handleContinue = async () => {
     try {
       const errorMsg = validateForm(form);
       if (errorMsg) return toast.error(errorMsg);
 
-      setLoading(true);
-      await appFetch("/api/user/profile/basic", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          firstName: form.firstName,
-          lastName: form.lastName,
-          dob: form.dob,
-        }),
-      });
+      await updateBasicProfile({
+        firstName: form.firstName,
+        lastName: form.lastName,
+        dob: form.dob,
+      }).unwrap();
 
       toast.success("Profile saved");
 
       router.push("/language");
     } catch (error) {
       console.log(error);
-      if (error?.status === 401) {
+      if (isUnauthorizedError(error)) {
         router.replace("/sign-in");
         return;
       }
 
-      toast.error(error?.message || "Something went wrong");
-    } finally {
-      setLoading(false);
+      toast.error(getClientErrorMessage(error));
     }
   };
 
@@ -201,7 +193,7 @@ export default function PersonalInformationPage() {
               onClick={handleContinue}
               className="w-full max-w-[343px] flex items-center justify-center mx-auto block py-[18px] rounded-[12px] bg-[#00D061] text-white text-[18px] font-medium leading-6 text-center transition-all duration-200 hover:bg-[#00b856] hover:shadow-[0_6px_20px_rgba(0,208,97,0.40)] hover:-translate-y-px active:translate-y-0"
             >
-              {loading ? (
+              {isLoading ? (
               <div className="flex items-center gap-3">
                 <div className="w-5 h-5 border-[3px] border-white border-t-transparent rounded-full animate-spin" />
                 <span>Continuing...</span>

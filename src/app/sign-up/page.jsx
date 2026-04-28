@@ -8,7 +8,8 @@ import SocialButtons from "../../components/UI/SocialButtons";
 import { validateInternationalPhone } from "../sign-in/page";
 import { Eye, EyeOff, LockIcon } from "lucide-react";
 import toast from "react-hot-toast";
-import { appFetch } from "../../lib/api/internal";
+import { getClientErrorMessage } from "@/lib/api/error";
+import { useRegisterMutation } from "@/lib/store";
 import {
   normalizePhoneNumber,
   OTP_PHONE_STORAGE_KEY,
@@ -17,7 +18,6 @@ import {
 export default function SignUpPage() {
   const router = useRouter();
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -30,6 +30,7 @@ export default function SignUpPage() {
   const filtered = COUNTRIES.filter((c) =>
     c.name.toLowerCase().includes(search.toLowerCase()),
   );
+  const [register, { isLoading }] = useRegisterMutation();
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -70,7 +71,6 @@ export default function SignUpPage() {
 
   const handleSubmit = async () => {
     try {
-      setLoading(true);
       const fullPhone = normalizePhoneNumber(`${selectedCountry.dial}${phone}`);
 
       if (!phone) return toast.error("Phone number is required");
@@ -90,16 +90,10 @@ export default function SignUpPage() {
         return toast.error("Enter valid number");
       }
 
-      const data = await appFetch("/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          mobile: fullPhone,
-          password,
-        }),
-      });
+      const data = await register({
+        mobile: fullPhone,
+        password,
+      }).unwrap();
 
       if (data.success) {
         toast.success(data.message || "Account created successfully");
@@ -114,9 +108,8 @@ export default function SignUpPage() {
       }
     } catch (error) {
       console.log("Error:", error);
-      toast.error(error.message || "Something went wrong");
+      toast.error(getClientErrorMessage(error));
     } finally {
-      setLoading(false);
       setDropdownOpen(false);
       setSearch("");
     }
@@ -262,11 +255,11 @@ export default function SignUpPage() {
 
           {/* Sign Up button */}
           <button
-            disabled={loading}
+            disabled={isLoading}
             onClick={() => handleSubmit()}
             className="w-full py-4 rounded-[14px] flex items-center justify-center bg-[#00D061] text-white text-[18px] font-semibold tracking-wide hover:bg-[#00b856] hover:shadow-[0_6px_20px_rgba(0,208,97,0.40)] hover:-translate-y-px active:translate-y-0 transition-all duration-200 mb-6"
           >
-            {loading ? (
+            {isLoading ? (
               <div className="flex items-center gap-3">
                 <div className="w-5 h-5 border-[3px] border-white border-t-transparent rounded-full animate-spin" />
                 <span>Signing up...</span>
