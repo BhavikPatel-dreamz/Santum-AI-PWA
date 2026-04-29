@@ -8,6 +8,7 @@ import {
   useGetChatsQuery,
   useGetProfileQuery,
 } from "@/lib/store";
+import { getProfilePhone } from "@/lib/utills/profile";
 import { MessageSquare, RefreshCcw, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -63,8 +64,7 @@ function getChatTitle(chat) {
 export default function ChatHistoryPage() {
   const router = useRouter();
   const { data: profile, error: profileError } = useGetProfileQuery();
-  const profilePhone =
-    profile?.phone || profile?.mobile || profile?.user_phone || "";
+  const profilePhone = getProfilePhone(profile);
   const {
     data: chats = [],
     error: chatsError,
