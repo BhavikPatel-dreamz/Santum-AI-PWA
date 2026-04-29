@@ -57,12 +57,22 @@ function noStoreGet(url: string) {
   };
 }
 
-function extractProfile(payload: ApiRecord | null | undefined) {
-  if (!payload || typeof payload !== "object") {
+function extractProfile(payload: unknown): ApiRecord | null {
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
     return null;
   }
 
-  return payload.user ?? payload.data ?? payload;
+  const record = payload as ApiRecord;
+
+  if (record.user && typeof record.user === "object" && !Array.isArray(record.user)) {
+    return record.user as ApiRecord;
+  }
+
+  if (record.data && typeof record.data === "object" && !Array.isArray(record.data)) {
+    return record.data as ApiRecord;
+  }
+
+  return record;
 }
 
 function extractPlans(payload: unknown): ApiList {
