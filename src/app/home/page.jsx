@@ -650,10 +650,10 @@ const QUICK_ACCESS_ITEMS = [
     href: "/settings/credits",
   },
   {
-    label: "Chat",
-    caption: "Start fresh",
-    value: "Now",
-    href: "/amigo-chat",
+    label: "Plans",
+    caption: "See premium perks",
+    value: "Plus",
+    href: "/plus-subscription",
   },
 ];
 
@@ -764,13 +764,6 @@ export default function HomeScreen() {
     }
   };
 
-  const displayName =
-    [profile?.first_name, profile?.last_name].filter(Boolean).join(" ") ||
-    profile?.name ||
-    "";
-  const firstName = profile?.first_name || "";
-  const emailAddress =
-    profile?.email || profile?.user_email || "example@mail.com";
   const navigateTo = (href) => {
     setDrawerOpen(false);
     setLogoutOpen(false);
