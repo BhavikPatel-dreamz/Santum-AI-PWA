@@ -62,7 +62,7 @@ function extractProfile(payload: ApiRecord | null | undefined) {
     return null;
   }
 
-  return payload.data?.user ?? payload.user ?? payload.data ?? payload;
+  return payload.user ?? payload.data ?? payload;
 }
 
 function extractPlans(payload: unknown): ApiList {
