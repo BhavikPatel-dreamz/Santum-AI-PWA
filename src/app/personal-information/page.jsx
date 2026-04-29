@@ -414,7 +414,6 @@ export default function PersonalInformationPage() {
                 API.
               </p>
             </div>
-          </section>
 
             <div className="space-y-4">
               <FloatingInput
