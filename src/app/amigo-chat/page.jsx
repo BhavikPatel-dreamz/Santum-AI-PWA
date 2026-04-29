@@ -429,7 +429,9 @@ export default function AmigoChatPage() {
       return;
     }
 
-    toast.error(getClientErrorMessage(chatError, "Unable to load this conversation"));
+    toast.error(
+      getClientErrorMessage(chatError, "Unable to load this conversation"),
+    );
   }, [chatError, router]);
 
   useEffect(() => {
@@ -460,8 +462,8 @@ export default function AmigoChatPage() {
 
   useEffect(() => {
     if (isCreditDepleted) {
-      setPurchasePromptMessage((currentMessage) =>
-        currentMessage || CREDIT_LIMIT_MESSAGE,
+      setPurchasePromptMessage(
+        (currentMessage) => currentMessage || CREDIT_LIMIT_MESSAGE,
       );
       return;
     }
