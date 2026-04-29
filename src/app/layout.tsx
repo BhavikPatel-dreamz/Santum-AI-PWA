@@ -1,7 +1,7 @@
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
-import LoadingScreenWrapper from "@/components/onboarding/LoadingScreenWrapper";
-import { PageTransitionProvider } from "@/components/providers/PageTransitionProvider";
-import { ReduxProvider } from "@/components/providers/ReduxProvider";
+// import LoadingScreenWrapper from "@/components/onboarding/LoadingScreenWrapper";
+// import { PageTransitionProvider } from "@/components/providers/PageTransitionProvider";
+// import { ReduxProvider } from "@/components/providers/ReduxProvider";
 import { getThemeInitScript } from "@/lib/theme";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
