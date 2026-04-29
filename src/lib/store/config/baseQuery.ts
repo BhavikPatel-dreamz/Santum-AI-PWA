@@ -7,10 +7,11 @@ import {
 
 export type AppApiError = FetchBaseQueryError & {
   message?: string;
-  data?: {
-    message?: string;
-    [key: string]: unknown;
-  };
+};
+
+type AppApiErrorData = {
+  message?: string;
+  [key: string]: unknown;
 };
 
 const rawBaseQuery = fetchBaseQuery({
@@ -25,15 +26,14 @@ export const baseQuery: BaseQueryFn<string | FetchArgs, unknown, AppApiError> =
     if (result.error) {
       const errorData =
         result.error.data && typeof result.error.data === "object"
-          ? result.error.data
+          ? (result.error.data as AppApiErrorData)
           : undefined;
 
       return {
         error: {
           ...result.error,
-          data: errorData as AppApiError["data"],
           message:
-            (errorData as AppApiError["data"] | undefined)?.message ||
+            errorData?.message ||
             ("error" in result.error ? result.error.error : undefined) ||
             "Something went wrong",
         },
