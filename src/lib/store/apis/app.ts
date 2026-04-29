@@ -176,7 +176,14 @@ export const appApi = createApi({
     }),
     getProfile: builder.query<ApiRecord | null, void>({
       query: () => noStoreGet("/user/profile"),
-      transformResponse: (response: ApiRecord) => extractProfile(response),
+      transformResponse: (response: unknown) => {
+        const payload =
+          response && typeof response === "object" && "data" in (response as ApiRecord)
+            ? (response as ApiRecord).data
+            : response;
+
+        return extractProfile(payload);
+      },
       providesTags: ["Profile"],
     }),
     updateBasicProfile: builder.mutation<ApiRecord, BasicProfilePayload>({

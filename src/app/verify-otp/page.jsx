@@ -132,7 +132,7 @@ export default function OtpPage() {
           <div className="flex flex-col items-center text-center">
             <div className="mb-8 mt-2 flex aspect-square w-full max-w-[343px] items-center justify-center bg-[#d9d9d9]">
               <Image
-                src="/icons/Artboard 2@2x-100.jpg"
+                src="/icons/artboard-2.jpg"
                 alt="Verification illustration"
                 width={343}
                 height={343}
