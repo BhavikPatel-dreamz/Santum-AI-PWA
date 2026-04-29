@@ -220,7 +220,7 @@ export default function ChatHistoryPage() {
                       {formatChatTimestamp(chat.updatedAt)}
                     </span>
                   </div>
-                  <p className="mt-2 font-satoshi text-[14px] leading-6 text-[#555]">
+                  <p className="mt-2 font-satoshi text-[14px] leading-6 text-[#555] truncate">
                     {chat.lastMessage || "This conversation is ready to reopen."}
                   </p>
                 </button>

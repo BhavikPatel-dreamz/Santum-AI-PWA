@@ -650,10 +650,10 @@ const QUICK_ACCESS_ITEMS = [
     href: "/settings/credits",
   },
   {
-    label: "Chat",
-    caption: "Start fresh",
-    value: "Now",
-    href: "/amigo-chat",
+    label: "Plans",
+    caption: "See premium perks",
+    value: "Plus",
+    href: "/plus-subscription",
   },
 ];
 
@@ -764,13 +764,6 @@ export default function HomeScreen() {
     }
   };
 
-  const displayName =
-    [profile?.first_name, profile?.last_name].filter(Boolean).join(" ") ||
-    profile?.name ||
-    "";
-  const firstName = profile?.first_name || "";
-  const emailAddress =
-    profile?.email || profile?.user_email || "example@mail.com";
   const navigateTo = (href) => {
     setDrawerOpen(false);
     setLogoutOpen(false);
@@ -786,19 +779,6 @@ export default function HomeScreen() {
   const dangerHoverClass = isDark
     ? "hover:bg-[#35191d] active:bg-[#431f24]"
     : "hover:bg-red-50 active:bg-red-100";
-
-  const handleLogout = async () => {
-    try {
-      await appFetch("/api/auth/logout", {
-        method: "POST",
-      });
-      toast.success("Logged out successfully");
-      router.replace("/sign-in");
-    } catch (error) {
-      console.log(error);
-      toast.error(error.message || "Unable to log out");
-    }
-  };
 
   const displayName =
     [profile?.first_name, profile?.last_name].filter(Boolean).join(" ") ||
