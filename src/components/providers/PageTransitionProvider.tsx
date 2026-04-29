@@ -27,9 +27,13 @@ export function PageTransitionProvider({ children }: { children: React.ReactNode
       return;
     }
 
-    setIsLoading(true);
-    const timer = setTimeout(() => setIsLoading(false), 800); // shorter for snappier UX
-    return () => clearTimeout(timer);
+    const startTimer = setTimeout(() => setIsLoading(true), 0);
+    const stopTimer = setTimeout(() => setIsLoading(false), 800); // shorter for snappier UX
+
+    return () => {
+      clearTimeout(startTimer);
+      clearTimeout(stopTimer);
+    };
   }, [pathname]);
 
   return (
@@ -80,7 +84,7 @@ function PageTransitionLoader({ isLoading }: { isLoading: boolean }) {
       `}</style>
 
       <div
-        className="fixed inset-0 z-[9999] flex items-center justify-center bg-white"
+        className="theme-surface fixed inset-0 z-[9999] flex items-center justify-center transition-colors duration-300"
         style={{ opacity: isLoading ? 1 : 0, pointerEvents: isLoading ? "auto" : "none" }}
       >
         <div className="fingerprint-loader-shape" />

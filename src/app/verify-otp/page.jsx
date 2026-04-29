@@ -1,195 +1,218 @@
 "use client";
 
-import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import HeaderSection from "../../components/UI/HeaderSection";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
+import { useVerifyMobileMutation } from "@/lib/store";
+import { maskPhoneNumber, OTP_PHONE_STORAGE_KEY } from "../../lib/utills/phone";
+import Image from "next/image";
 
 export default function OtpPage() {
-    const router = useRouter();
-    const [otp, setOtp] = useState(["", "", "", ""]);
-    const [resendTimer, setResendTimer] = useState(30);
-    const inputRefs = useRef([]);
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [resendTimer, setResendTimer] = useState(30);
+  const inputRefs = useRef([]);
+  const [maskedPhone] = useState(() => {
+    if (typeof window === "undefined") {
+      return "";
+    }
 
-    const maskedPhone = "*** *** **65";
-    const canResend = resendTimer === 0;
+    try {
+      const storedPhone = sessionStorage.getItem(OTP_PHONE_STORAGE_KEY);
 
-    useEffect(() => {
-        if (canResend) {
-            return;
-        }
+      if (!storedPhone) {
+        return "";
+      }
 
-        const timeoutId = setTimeout(() => {
-            setResendTimer((currentValue) => currentValue - 1);
-        }, 1000);
+      const { mobile, dialCode } = JSON.parse(storedPhone);
+      return maskPhoneNumber(mobile, dialCode);
+    } catch (error) {
+      console.error("Unable to load pending OTP phone:", error);
+      return "";
+    }
+  });
+  const router = useRouter();
+  const [verifyMobile, { isLoading }] = useVerifyMobileMutation();
+  
+  const canResend = resendTimer === 0;
 
-        return () => clearTimeout(timeoutId);
-    }, [canResend, resendTimer]);
+  useEffect(() => {
+    if (canResend) {
+      return;
+    }
 
-    const handleChange = (index, value) => {
-        if (!/^\d?$/.test(value)) {
-            return;
-        }
+    const timeoutId = setTimeout(() => {
+      setResendTimer((currentValue) => currentValue - 1);
+    }, 1000);
 
-        const nextOtp = [...otp];
-        nextOtp[index] = value;
-        setOtp(nextOtp);
+    return () => clearTimeout(timeoutId);
+  }, [canResend, resendTimer]);
 
-        if (value && index < otp.length - 1) {
-            inputRefs.current[index + 1]?.focus();
-        }
-    };
+  const handleChange = (index, value) => {
+    if (!/^\d?$/.test(value)) {
+      return;
+    }
 
-    const handleKeyDown = (index, event) => {
-        if (event.key === "Backspace" && !otp[index] && index > 0) {
-            inputRefs.current[index - 1]?.focus();
-        }
-    };
+    const nextOtp = [...otp];
+    nextOtp[index] = value;
+    setOtp(nextOtp);
 
-    const handlePaste = (event) => {
-        const pastedValue = event.clipboardData
-            .getData("text")
-            .replace(/\D/g, "")
-            .slice(0, otp.length);
+    if (value && index < otp.length - 1) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
 
-        if (!pastedValue) {
-            return;
-        }
+  const handleKeyDown = (index, event) => {
+    if (event.key === "Backspace" && !otp[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
 
-        const nextOtp = Array(otp.length).fill("");
-        pastedValue.split("").forEach((character, index) => {
-            nextOtp[index] = character;
-        });
+  const handlePaste = (event) => {
+    const pastedValue = event.clipboardData
+      .getData("text")
+      .replace(/\D/g, "")
+      .slice(0, otp.length);
 
-        setOtp(nextOtp);
-        inputRefs.current[Math.min(pastedValue.length, otp.length - 1)]?.focus();
-        event.preventDefault();
-    };
+    if (!pastedValue) {
+      return;
+    }
 
-    const handleResend = () => {
-        if (!canResend) {
-            return;
-        }
+    const nextOtp = Array(otp.length).fill("");
+    pastedValue.split("").forEach((character, index) => {
+      nextOtp[index] = character;
+    });
 
-        setOtp(["", "", "", ""]);
-        setResendTimer(30);
-        inputRefs.current[0]?.focus();
-    };
+    setOtp(nextOtp);
+    inputRefs.current[Math.min(pastedValue.length, otp.length - 1)]?.focus();
+    event.preventDefault();
+  };
 
-    const isComplete = otp.every((digit) => digit !== "");
+  const handleResend = () => {
+    if (!canResend) {
+      return;
+    }
 
-    return (
-        <div className="min-h-dvh bg-white">
-            <div className="mx-auto flex min-h-dvh w-full max-w-[600px] flex-col bg-white">
-                <header className="relative h-[120px] overflow-hidden bg-[#23cf67] px-5 pt-6">
-                    <Image
-                        src="/icons/let-you-screen-main-img.jpg"
-                        alt=""
-                        width={480}
-                        height={108}
-                        priority
-                        unoptimized
-                        sizes="(max-width: 480px) 100vw, 480px"
-                        className="absolute inset-0 top-0 w-[60%] mx-auto object-cover"
-                    />
+    setOtp(["", "", "", "", "", ""]);
+    setResendTimer(30);
+    inputRefs.current[0]?.focus();
+  };
 
-                    <div className="relative z-10 flex items-center gap-3 pt-1">
-                        <button
-                            type="button"
-                            onClick={() => router.back()}
-                            aria-label="Go back"
-                            className="flex h-9 w-9 items-center justify-center rounded-[10px] border border-white/80 bg-white/10 text-white transition-colors hover:bg-white/15"
-                        >
-                            <svg
-                                width="18"
-                                height="18"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2.3"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <polyline points="15 18 9 12 15 6" />
-                                <line x1="9" y1="12" x2="20" y2="12" />
-                            </svg>
-                        </button>
-                        <h1 className="text-[18px] font-medium leading-6 text-white">
-                            Verify Phone Number
-                        </h1>
-                    </div>
-                </header>
+  const handleVerify = async () => {
+    try {
+      const otpValue = otp.join("");
+      const data = await verifyMobile({
+        otp: otpValue,
+      }).unwrap();
+      if (data.success) sessionStorage.removeItem(OTP_PHONE_STORAGE_KEY);
 
-                <section className="relative -mt-10 flex flex-1 flex-col rounded-t-[32px] bg-white pb-10 pt-3">
-                    <div className="flex flex-col items-center text-center">
-                        <div className="mb-8 mt-2 flex aspect-square w-full max-w-[343px] items-center justify-center bg-[#d9d9d9]">
-                            <span className="text-[22px] font-semibold tracking-[0.02em] text-[#616161]">
-                                343 x 343
-                            </span>
-                        </div>
+      toast.success(data.message || "OTP verified successfully");
+      router.replace("/personal-information");
+    } catch (error) {
+      console.error("Verify Error:", error);
 
-                        <p className="mb-8 font-satoshi text-[18px] leading-6 text-center text-[#555]">
-                            Please enter the verification code we sent to your mobile{" "}
-                            <span>{maskedPhone}</span>
-                        </p>
+      if (isUnauthorizedError(error)) {
+        router.replace("/sign-in");
+        return;
+      }
 
-                        <div
-                            className="mb-7 flex items-center justify-center gap-[10px]"
-                            onPaste={handlePaste}
-                        >
-                            {otp.map((digit, index) => (
-                                <input
-                                    key={index}
-                                    ref={(element) => {
-                                        inputRefs.current[index] = element;
-                                    }}
-                                    type="tel"
-                                    inputMode="numeric"
-                                    maxLength={1}
-                                    value={digit}
-                                    onChange={(event) => handleChange(index, event.target.value)}
-                                    onKeyDown={(event) => handleKeyDown(index, event)}
-                                    aria-label={`OTP digit ${index + 1}`}
-                                    className={`h-[52px] w-[52px] rounded-full border text-center text-[22px] font-semibold text-[#1a2d21] outline-none transition-all duration-200 ${digit
-                                        ? "border-[#23cf67] bg-[#dffbec]"
-                                        : "border-transparent bg-[#e5fff1] focus:border-[#23cf67] focus:bg-[#f2fff8]"
-                                        }`}
-                                />
-                            ))}
-                        </div>
+      toast.error(getClientErrorMessage(error));
+    }
+  };
 
-                        <p className="px-4 text-center text-[18px] leading-6 text-[#555] font-satoshi">
-                            Not yet get?{" "}
-                            <button
-                                type="button"
-                                onClick={handleResend}
-                                disabled={!canResend}
-                                aria-label={
-                                    canResend
-                                        ? "Resend OTP"
-                                        : `Resend OTP available in ${resendTimer} seconds`
-                                }
-                                className="font-semibold text-[#0F0F0F] disabled:opacity-100"
-                            >
-                                Resend OTP
-                            </button>
-                        </p>
-                    </div>
+  const isComplete = otp.every((digit) => digit !== "");
 
-                    <div className="flex-1" />
+  return (
+    <div className="min-h-dvh bg-white">
+      <div className="mx-auto flex min-h-dvh w-full max-w-[600px] flex-col bg-white">
+        <HeaderSection title={"Verify Phone Number"} />
 
-                    <button
-                        type="button"
-                        disabled={!isComplete}
-                        className={`w-full max-w-[343px] mx-auto py-4 rounded-[14px] text-white text-[18px] font-semibold tracking-wide transition-all duration-200
-              ${isComplete
-                                ? "bg-[#00D061] hover:bg-[#00b856] hover:shadow-[0_6px_20px_rgba(0,208,97,0.40)] hover:-translate-y-px active:translate-y-0"
-                                : "bg-[#A8F0CB] cursor-not-allowed"
-                            }`}
-                    >
-                        Verify
-                    </button>
-                </section>
-            </div >
-        </div >
-    );
+        <section className="relative -mt-10 flex flex-1 flex-col rounded-t-[32px] bg-white pb-10 pt-3">
+          <div className="flex flex-col items-center text-center">
+            <div className="mb-8 mt-2 flex aspect-square w-full max-w-[343px] items-center justify-center bg-[#d9d9d9]">
+              <Image
+                src="/icons/Artboard 2@2x-100.jpg"
+                alt="Verification illustration"
+                width={343}
+                height={343}
+                className="h-auto w-full"
+              />
+            </div>
+
+            <p className="mb-8 font-satoshi text-[18px] leading-6 text-center text-[#555]">
+              Please enter the verification code we sent to your mobile{" "}
+              <span>{maskedPhone}</span>
+            </p>
+
+            <div
+              className="mb-7 flex items-center justify-center gap-[10px]"
+              onPaste={handlePaste}
+            >
+              {otp.map((digit, index) => (
+                <input
+                  key={index}
+                  ref={(element) => {
+                    inputRefs.current[index] = element;
+                  }}
+                  type="tel"
+                  inputMode="numeric"
+                  maxLength={1}
+                  value={digit}
+                  onChange={(event) => handleChange(index, event.target.value)}
+                  onKeyDown={(event) => handleKeyDown(index, event)}
+                  aria-label={`OTP digit ${index + 1}`}
+                  className={`h-[52px] w-[52px] rounded-full border text-center text-[22px] font-semibold text-[#1a2d21] outline-none transition-all duration-200 ${
+                    digit
+                      ? "border-[#23cf67] bg-[#dffbec]"
+                      : "border-transparent bg-[#e5fff1] focus:border-[#23cf67] focus:bg-[#f2fff8]"
+                  }`}
+                />
+              ))}
+            </div>
+
+            <p className="px-4 text-center text-[18px] leading-6 text-[#555] font-satoshi">
+              Not yet get?{" "}
+              <button
+                type="button"
+                onClick={handleResend}
+                disabled={!canResend}
+                aria-label={
+                  canResend
+                    ? "Resend OTP"
+                    : `Resend OTP available in ${resendTimer} seconds`
+                }
+                className="font-semibold text-[#0F0F0F] disabled:opacity-100"
+              >
+                Resend OTP
+              </button>
+            </p>
+          </div>
+
+          <div className="flex-1" />
+
+          <button
+            type="button"
+            onClick={handleVerify}
+            disabled={!isComplete || isLoading}
+            className={`w-full max-w-[343px] flex items-center justify-center mx-auto py-4 rounded-[14px] text-white text-[18px] font-semibold tracking-wide transition-all duration-200
+              ${
+                isComplete
+                  ? "bg-[#00D061] hover:bg-[#00b856] hover:shadow-[0_6px_20px_rgba(0,208,97,0.40)] hover:-translate-y-px active:translate-y-0"
+                  : "bg-[#A8F0CB] cursor-not-allowed"
+              }`}
+          >
+            {isLoading ? (
+              <div className="flex items-center gap-3">
+                <div className="w-5 h-5 border-[3px] border-white border-t-transparent rounded-full animate-spin" />
+                <span>Verifying...</span>
+              </div>
+            ) : (
+              "Verify"
+            )}
+          </button>
+        </section>
+      </div>
+    </div>
+  );
 }

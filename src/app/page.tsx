@@ -7,19 +7,19 @@ const OnboardingSlide = dynamic(() => import("../components/onboarding/Onboardin
 
 const slides = [
   {
-    image: "/icons/Image.png",
+    image: "/icons/Artboard 2@2x-100.jpg",
     title: "Welcome to Amigo, Great Friend to Chat",
     desc: "Proin molestie pulvinar vitae enim erat morbi eu. Malesuada eros nisi augue.",
     btnLabel: "Next",
   },
   {
-    image: "/icons/robot-slider-img2.png",
+    image: "/icons/Artboard 2@2x-100.jpg",
     title: "The Intelligent Way to Get Started",
     desc: "Quisque blandit risus duis odio. In pretium nibh velit a aenean vitae porta euismod.",
     btnLabel: "Next",
   },
   {
-    image: "/icons/robot-slider-img3.png",
+    image: "/icons/Artboard 2@2x-100.jpg",
     title: "Accelerate Your Learning with Amigo",
     desc: "Pulvinar in et eu volutpat mauris viverra ut orci. Lacus placerat volutpat pharetra a.",
     btnLabel: "Get Started",
