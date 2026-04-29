@@ -97,10 +97,7 @@ export default function AmigoChatPage() {
   const [hasDraftMessages, setHasDraftMessages] = useState(false);
   const createChatPromiseRef = useRef(null);
 
-  const {
-    data: profile,
-    error: profileError,
-  } = useGetProfileQuery();
+  const { data: profile, error: profileError } = useGetProfileQuery();
   const {
     data: balanceResponse,
     error: balanceError,
@@ -261,12 +258,16 @@ export default function AmigoChatPage() {
     }
 
     if (chatError?.status === 404) {
-      toast.error("This conversation was not found or has already been deleted.");
+      toast.error(
+        "This conversation was not found or has already been deleted.",
+      );
       router.replace("/settings/history");
       return;
     }
 
-    toast.error(getClientErrorMessage(chatError, "Unable to load this conversation"));
+    toast.error(
+      getClientErrorMessage(chatError, "Unable to load this conversation"),
+    );
   }, [chatError, router]);
 
   useEffect(() => {
@@ -297,8 +298,8 @@ export default function AmigoChatPage() {
 
   useEffect(() => {
     if (isCreditDepleted) {
-      setPurchasePromptMessage((currentMessage) =>
-        currentMessage || CREDIT_LIMIT_MESSAGE,
+      setPurchasePromptMessage(
+        (currentMessage) => currentMessage || CREDIT_LIMIT_MESSAGE,
       );
       return;
     }
@@ -640,7 +641,10 @@ export default function AmigoChatPage() {
   };
 
   return (
-    <StepPageShell title="Chat With Amigo" contentClassName="overflow-hidden pb-6">
+    <StepPageShell
+      title="Chat With Amigo"
+      contentClassName="overflow-hidden pb-6"
+    >
       <FeatureShowcaseCard
         badge="Assistant Live"
         title="A calmer chat space built around quick momentum"
