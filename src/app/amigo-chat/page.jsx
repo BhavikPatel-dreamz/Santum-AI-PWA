@@ -13,6 +13,7 @@ import {
   useGetProfileQuery,
 } from "@/lib/store";
 import { extractCreditBalance, formatCreditAmount } from "@/lib/utills/credit";
+import { getProfilePhone } from "@/lib/utills/profile";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
@@ -127,8 +128,7 @@ export default function AmigoChatPage() {
   });
   const [createChat] = useCreateChatMutation();
 
-  const profilePhone =
-    profile?.phone || profile?.mobile || profile?.user_phone || "";
+  const profilePhone = getProfilePhone(profile);
   const creditBalance = extractCreditBalance(balanceResponse);
   const isCreditDepleted = creditBalance !== null && creditBalance <= 0;
   const isConversationLoading =

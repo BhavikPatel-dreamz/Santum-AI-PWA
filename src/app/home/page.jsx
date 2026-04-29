@@ -10,6 +10,14 @@ import {
   useGetProfileQuery,
   useLogoutMutation,
 } from "@/lib/store";
+import {
+  buildProfileInitials,
+  getProfileEmail,
+  getProfileFirstName,
+  getProfileFullName,
+  getProfileLastName,
+  getProfilePhone,
+} from "@/lib/utills/profile";
 import { useTheme } from "@/components/providers/ThemeProvider";
 
 const CollapseIcon = () => (
@@ -712,8 +720,7 @@ export default function HomeScreen() {
   const [logout] = useLogoutMutation();
   const [createChat] = useCreateChatMutation();
   const profile = profileData ?? {};
-  const profilePhone =
-    profile?.phone || profile?.mobile || profile?.user_phone || "";
+  const profilePhone = getProfilePhone(profile);
 
   useEffect(() => {
     if (!profileError) {
@@ -780,16 +787,15 @@ export default function HomeScreen() {
     ? "hover:bg-[#35191d] active:bg-[#431f24]"
     : "hover:bg-red-50 active:bg-red-100";
 
-  const displayName =
-    [profile?.first_name, profile?.last_name].filter(Boolean).join(" ") ||
-    profile?.name ||
-    "Jessica Smith";
-  const firstName =
-    profile?.first_name ||
-    displayName.split(" ").filter(Boolean)[0] ||
-    "Jessica";
-  const emailAddress =
-    profile?.email || profile?.user_email || "jessica_smith@mail.com";
+  const displayName = getProfileFullName(profile) || "Amigo member";
+  const firstName = getProfileFirstName(profile) || "Friend";
+  const emailAddress = getProfileEmail(profile);
+  const contactLine =
+    emailAddress || profilePhone || "Managed from your Santum account";
+  const profileInitials = buildProfileInitials(
+    getProfileFirstName(profile) || displayName.split(" ").filter(Boolean)[0],
+    getProfileLastName(profile) || displayName.split(" ").filter(Boolean)[1],
+  );
 
   return (
     <div className="theme-shell min-h-dvh flex justify-center transition-colors duration-300">
@@ -1020,13 +1026,15 @@ export default function HomeScreen() {
           <div className="theme-border-strong flex items-center justify-between border-b-2 px-4 py-4">
             <div className="flex items-center gap-4">
               <div className="theme-surface-soft flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full text-[28px] transition-colors duration-300">
-                👩
+                <span className="text-[20px] font-semibold text-[#00A84D]">
+                  {profileInitials}
+                </span>
               </div>
               <div>
                 <p className="theme-text-primary text-[16px] font-medium">
                   {displayName}
                 </p>
-                <p className="text-[14px] text-[#555]">{emailAddress}</p>
+                <p className="text-[14px] text-[#555]">{contactLine}</p>
               </div>
             </div>
             <button

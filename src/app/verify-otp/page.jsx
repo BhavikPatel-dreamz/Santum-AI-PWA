@@ -108,7 +108,7 @@ export default function OtpPage() {
       if (data.success) sessionStorage.removeItem(OTP_PHONE_STORAGE_KEY);
 
       toast.success(data.message || "OTP verified successfully");
-      router.replace("/personal-information");
+      router.replace("/personal-information?source=onboarding");
     } catch (error) {
       console.error("Verify Error:", error);
 

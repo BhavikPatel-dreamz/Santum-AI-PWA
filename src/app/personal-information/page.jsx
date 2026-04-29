@@ -1,210 +1,594 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import HeaderSection from "../../components/UI/HeaderSection";
-import toast from "react-hot-toast";
+import FeatureShowcaseCard from "@/components/app/FeatureShowcaseCard";
+import StepPageShell from "@/components/app/StepPageShell";
 import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
-import { useUpdateBasicProfileMutation } from "@/lib/store";
+import {
+  PROFILE_INTERESTS,
+  PROFILE_LANGUAGES,
+} from "@/lib/content/profile-options";
+import {
+  useGetProfileQuery,
+  useUpdateBasicProfileMutation,
+  useUpdateInterestsMutation,
+  useUpdatePreferredLanguageMutation,
+} from "@/lib/store";
+import {
+  buildProfileInitials,
+  getProfileDob,
+  getProfileEmail,
+  getProfileFirstName,
+  getProfileFullName,
+  getProfileInterests,
+  getProfileLastName,
+  getProfilePhone,
+  getProfilePreferredLanguage,
+} from "@/lib/utills/profile";
+import { CheckCircle2, Mail, Phone } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
-/* ── Reusable floating-label input ── */
-function FloatingInput({ id, label, value, onChange, type = "text" }) {
+const EMPTY_PROFILE_FORM = {
+  firstName: "",
+  lastName: "",
+  dob: "",
+  preferredLanguage: PROFILE_LANGUAGES[0],
+  interests: [],
+};
+
+function FloatingInput({
+  id,
+  label,
+  value,
+  onChange,
+  type = "text",
+  disabled = false,
+}) {
   return (
-    <div className="relative mb-[15px]">
+    <div className="relative">
       <input
         id={id}
         type={type}
         value={value}
         onChange={onChange}
         placeholder=" "
-        required
-        className="peer block w-full h-[64px] text-[#555] bg-[#F5F5F5] rounded-[12px] outline-none pl-4 pt-5 text-[18px]"
+        disabled={disabled}
+        className={`peer block h-[64px] w-full rounded-[18px] border px-4 pt-5 text-[17px] outline-none transition-all ${
+          disabled
+            ? "border-[#E6ECE8] bg-[#F6FAF7] text-[#7E8A83]"
+            : "border-[#E6ECE8] bg-white text-[#0F0F0F] focus:border-[#00D061] focus:shadow-[0_0_0_4px_rgba(0,208,97,0.08)]"
+        }`}
       />
-      <label className="absolute left-4 top-1/2 -translate-y-1/2 text-[#555] transition-all peer-focus:top-3 peer-focus:text-xs peer-focus:text-[#00D061] peer-[&:not(:placeholder-shown)]:top-3 peer-[&:not(:placeholder-shown)]:text-xs">
+      <label
+        htmlFor={id}
+        className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[15px] text-[#6E7A73] transition-all peer-focus:top-3 peer-focus:translate-y-0 peer-focus:text-[12px] peer-focus:text-[#00A84D] peer-[&:not(:placeholder-shown)]:top-3 peer-[&:not(:placeholder-shown)]:translate-y-0 peer-[&:not(:placeholder-shown)]:text-[12px]"
+      >
         {label}
       </label>
     </div>
   );
 }
 
-function validateForm(form) {
-  if (!form.firstName.trim()) return "First name is required";
-  if (!form.lastName.trim()) return "Last name is required";
-  if (!form.dob) return "Date of birth is required";
+function buildProfileForm(profile) {
+  return {
+    firstName: getProfileFirstName(profile),
+    lastName: getProfileLastName(profile),
+    dob: getProfileDob(profile),
+    preferredLanguage:
+      getProfilePreferredLanguage(profile) || PROFILE_LANGUAGES[0],
+    interests: getProfileInterests(profile),
+  };
+}
 
-  const age = new Date().getFullYear() - new Date(form.dob).getFullYear();
+function normalizeInterests(values) {
+  return [...new Set(values.map((value) => value.trim()).filter(Boolean))];
+}
 
-  if (age < 13) return "You must be at least 13 years old";
+function normalizeFormState(form) {
+  return {
+    firstName: form.firstName.trim(),
+    lastName: form.lastName.trim(),
+    dob: form.dob,
+    preferredLanguage: form.preferredLanguage.trim(),
+    interests: normalizeInterests(form.interests).sort((left, right) =>
+      left.localeCompare(right),
+    ),
+  };
+}
+
+function hasMatchingInterests(leftValues, rightValues) {
+  if (leftValues.length !== rightValues.length) {
+    return false;
+  }
+
+  return leftValues.every((value, index) => value === rightValues[index]);
+}
+
+function validateBasicProfile(form) {
+  if (!form.firstName.trim()) {
+    return "First name is required";
+  }
+
+  if (!form.lastName.trim()) {
+    return "Last name is required";
+  }
+
+  if (!form.dob) {
+    return "Date of birth is required";
+  }
+
+  const birthDate = new Date(form.dob);
+
+  if (Number.isNaN(birthDate.getTime())) {
+    return "Enter a valid date of birth";
+  }
+
+  const ageDifference = Date.now() - birthDate.getTime();
+  const ageDate = new Date(ageDifference);
+  const age = Math.abs(ageDate.getUTCFullYear() - 1970);
+
+  if (age < 13) {
+    return "You must be at least 13 years old";
+  }
 
   return null;
 }
 
+function SelectionChip({ label, isSelected, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`rounded-full border px-4 py-2 text-[14px] font-medium transition-all ${
+        isSelected
+          ? "border-[#00D061] bg-[#EFFFF6] text-[#087C3A] shadow-[0_10px_24px_rgba(0,208,97,0.12)]"
+          : "border-[#E3ECE6] bg-white text-[#0F0F0F] hover:border-[#BDECCE] hover:bg-[#F8FFF9]"
+      }`}
+    >
+      {label}
+    </button>
+  );
+}
+
 export default function PersonalInformationPage() {
   const router = useRouter();
-  const [form, setForm] = useState({
-    firstName: "",
-    lastName: "",
-    dob: "",
+  const searchParams = useSearchParams();
+  const isOnboarding = searchParams.get("source") === "onboarding";
+  const [draftForm, setDraftForm] = useState(null);
+  const [savedBaseline, setSavedBaseline] = useState(null);
+
+  const {
+    data: profile,
+    error: profileError,
+    isLoading: isProfileLoading,
+  } = useGetProfileQuery(undefined, {
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
   });
-  const [updateBasicProfile, { isLoading }] = useUpdateBasicProfileMutation();
+  const [updateBasicProfile, { isLoading: isSavingBasic }] =
+    useUpdateBasicProfileMutation();
+  const [updatePreferredLanguage, { isLoading: isSavingLanguage }] =
+    useUpdatePreferredLanguageMutation();
+  const [updateInterests, { isLoading: isSavingInterests }] =
+    useUpdateInterestsMutation();
+  const profileForm = buildProfileForm(profile);
+  const form = draftForm ?? profileForm;
+  const baseline = savedBaseline ?? profileForm;
+  const didInitialize = !isProfileLoading;
 
-  const handleContinue = async () => {
+  useEffect(() => {
+    if (!profileError) {
+      return;
+    }
+
+    if (isUnauthorizedError(profileError)) {
+      router.replace("/sign-in");
+      return;
+    }
+
+    toast.error(getClientErrorMessage(profileError, "Unable to load profile"));
+  }, [profileError, router]);
+
+  const normalizedCurrent = normalizeFormState(form);
+  const normalizedBaseline = normalizeFormState(baseline);
+  const isBasicChanged =
+    normalizedCurrent.firstName !== normalizedBaseline.firstName ||
+    normalizedCurrent.lastName !== normalizedBaseline.lastName ||
+    normalizedCurrent.dob !== normalizedBaseline.dob;
+  const isLanguageChanged =
+    normalizedCurrent.preferredLanguage !== normalizedBaseline.preferredLanguage;
+  const isInterestsChanged = !hasMatchingInterests(
+    normalizedCurrent.interests,
+    normalizedBaseline.interests,
+  );
+  const hasProfileChanges =
+    isBasicChanged || isLanguageChanged || isInterestsChanged;
+  const isSavingProfile =
+    isSavingBasic || isSavingLanguage || isSavingInterests;
+
+  const profileName =
+    [normalizedCurrent.firstName, normalizedCurrent.lastName]
+      .filter(Boolean)
+      .join(" ") ||
+    getProfileFullName(profile) ||
+    "Your Santum profile";
+  const emailAddress = getProfileEmail(profile);
+  const phoneNumber = getProfilePhone(profile);
+  const profileInitials = buildProfileInitials(
+    normalizedCurrent.firstName,
+    normalizedCurrent.lastName,
+  );
+  const completionScore = [
+    Boolean(normalizedCurrent.firstName && normalizedCurrent.lastName),
+    Boolean(normalizedCurrent.dob),
+    Boolean(normalizedCurrent.preferredLanguage),
+    normalizedCurrent.interests.length > 0,
+  ].filter(Boolean).length;
+
+  const updateField = (field, value) => {
+    setDraftForm((currentForm) => ({
+      ...(currentForm ?? profileForm ?? EMPTY_PROFILE_FORM),
+      [field]: value,
+    }));
+  };
+
+  const toggleInterest = (interest) => {
+    setDraftForm((currentForm) => {
+      const nextForm = currentForm ?? profileForm ?? EMPTY_PROFILE_FORM;
+      const isSelected = nextForm.interests.includes(interest);
+
+      return {
+        ...nextForm,
+        interests: isSelected
+          ? nextForm.interests.filter((value) => value !== interest)
+          : [...nextForm.interests, interest],
+      };
+    });
+  };
+
+  const finishProfileFlow = () => {
+    if (isOnboarding) {
+      router.replace("/reasons");
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    const basicValidationMessage = validateBasicProfile(normalizedCurrent);
+
+    if (isOnboarding && basicValidationMessage) {
+      toast.error(basicValidationMessage);
+      return;
+    }
+
+    if (!hasProfileChanges) {
+      if (isOnboarding) {
+        finishProfileFlow();
+        return;
+      }
+
+      toast.success("Your profile is already up to date");
+      return;
+    }
+
+    if (isBasicChanged && basicValidationMessage) {
+      toast.error(basicValidationMessage);
+      return;
+    }
+
+    if (isInterestsChanged && normalizedCurrent.interests.length === 0) {
+      toast.error("Choose at least one interest before saving this section");
+      return;
+    }
+
     try {
-      const errorMsg = validateForm(form);
-      if (errorMsg) return toast.error(errorMsg);
+      if (isBasicChanged) {
+        await updateBasicProfile({
+          firstName: normalizedCurrent.firstName,
+          lastName: normalizedCurrent.lastName,
+          dob: normalizedCurrent.dob,
+        }).unwrap();
+      }
 
-      await updateBasicProfile({
-        firstName: form.firstName,
-        lastName: form.lastName,
-        dob: form.dob,
-      }).unwrap();
+      if (isLanguageChanged) {
+        await updatePreferredLanguage({
+          preferredLanguage: normalizedCurrent.preferredLanguage,
+        }).unwrap();
+      }
 
-      toast.success("Profile saved");
+      if (isInterestsChanged) {
+        await updateInterests({
+          interests: normalizedCurrent.interests,
+        }).unwrap();
+      }
 
-      router.push("/language");
+      setSavedBaseline(normalizedCurrent);
+      setDraftForm(normalizedCurrent);
+
+      if (isOnboarding) {
+        toast.success("Profile completed");
+      } else {
+        toast.success("Profile changes saved");
+      }
+
+      finishProfileFlow();
     } catch (error) {
-      console.log(error);
       if (isUnauthorizedError(error)) {
         router.replace("/sign-in");
         return;
       }
 
-      toast.error(getClientErrorMessage(error));
+      toast.error(getClientErrorMessage(error, "Unable to save profile"));
     }
   };
 
   return (
-    <>
-      <div className="min-h-dvh bg-white">
-        <div className="mx-auto flex min-h-dvh w-full max-w-[600px] flex-col bg-white">
-          <HeaderSection title={"Personal Information"} />
+    <StepPageShell
+      title={isOnboarding ? "Complete Profile" : "My Profile"}
+      contentClassName="overflow-y-auto pb-24"
+    >
+      <FeatureShowcaseCard
+        badge={isOnboarding ? "Welcome" : "Account"}
+        title={
+          isOnboarding
+            ? "Finish one clean profile setup before your first full session"
+            : "Keep your Santum profile complete, readable, and ready"
+        }
+        description={
+          isOnboarding
+            ? "Basic details, language, and interests now live in one place instead of three separate steps."
+            : "This profile module loads your saved data first, then lets you update the fields the current API supports."
+        }
+        imageSrc="/icons/logo.png"
+        imageAlt="Profile overview"
+        className="mb-6"
+        compact
+      />
 
-          {/* ── White card section ── */}
-          <section className="relative -mt-6 flex flex-1 flex-col items-center rounded-t-[32px] bg-white px-5 pb-28 pt-6 overflow-y-auto">
-            {/* Avatar upload — .camera_main */}
-            {/* <div className="relative flex items-center justify-center mb-6"> */}
-            {/* .circle-img-girl */}
-            {/* <div className="w-[120px] h-[120px] rounded-full overflow-hidden mt-[10px]">
-                                {avatar ? (
-                                    <img src={avatar} alt="Profile" className="w-full h-full object-cover" />
-                                ) : (
-                                    <div className="w-full h-full bg-[#F5F5F5] flex items-center justify-center">
-                                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none"
-                                            stroke="#AAAAAA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                                            <circle cx="12" cy="7" r="4" />
-                                        </svg>
-                                    </div>
-                                )}
-                            </div> */}
+      <div className="theme-card mb-6 rounded-[26px] border px-5 py-5">
+        <div className="flex items-center gap-4">
+          <div className="flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-full bg-[#E8FFF1] text-[24px] font-semibold text-[#00A84D]">
+            {profileInitials}
+          </div>
+          <div className="min-w-0">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#00A84D]">
+              Profile Overview
+            </p>
+            <h2 className="mt-2 truncate text-[24px] font-semibold leading-8 text-[#0F0F0F]">
+              {profileName}
+            </h2>
+            <p className="mt-1 font-satoshi text-[14px] leading-6 text-[#5F6B65]">
+              {emailAddress ||
+                phoneNumber ||
+                "Contact details are managed from your Santum account"}
+            </p>
+          </div>
+        </div>
 
-            {/* Camera button — .ri-camera-line / upload-button */}
-            {/* <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="absolute right-0 bottom-[22px] cursor-pointer"
-                aria-label="Upload profile picture"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="40"
-                  height="40"
-                  viewBox="0 0 40 40"
-                  fill="none"
-                >
-                  <circle cx="20" cy="20" r="20" fill="#0F0F0F" />
-                  <path
-                    d="M13 15H14C14.5304 15 15.0391 14.7893 15.4142 14.4142C15.7893 14.0391 16 13.5304 16 13C16 12.7348 16.1054 12.4804 16.2929 12.2929C16.4804 12.1054 16.7348 12 17 12H23C23.2652 12 23.5196 12.1054 23.7071 12.2929C23.8946 12.4804 24 12.7348 24 13C24 13.5304 24.2107 14.0391 24.5858 14.4142C24.9609 14.7893 25.4696 15 26 15H27C27.5304 15 28.0391 15.2107 28.4142 15.5858C28.7893 15.9609 29 16.4696 29 17V26C29 26.5304 28.7893 27.0391 28.4142 27.4142C28.0391 27.7893 27.5304 28 27 28H13C12.4696 28 11.9609 27.7893 11.5858 27.4142C11.2107 27.0391 11 26.5304 11 26V17C11 16.4696 11.2107 15.9609 11.5858 15.5858C11.9609 15.2107 12.4696 15 13 15"
-                    stroke="white"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M20 24C21.6569 24 23 22.6569 23 21C23 19.3431 21.6569 18 20 18C18.3431 18 17 19.3431 17 21C17 22.6569 18.3431 24 20 24Z"
-                    stroke="white"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </button> */}
+        <div className="mt-5 grid grid-cols-3 gap-3">
+          <div className="rounded-[20px] bg-[#F7FBF8] px-3 py-4 text-center">
+            <p className="text-[20px] font-semibold leading-7 text-[#0F0F0F]">
+              {completionScore}/4
+            </p>
+            <p className="mt-1 font-satoshi text-[12px] leading-5 text-[#5F6B65]">
+              Complete
+            </p>
+          </div>
+          <div className="rounded-[20px] bg-[#F7FBF8] px-3 py-4 text-center">
+            <p className="text-[20px] font-semibold leading-7 text-[#0F0F0F]">
+              {normalizedCurrent.preferredLanguage || "--"}
+            </p>
+            <p className="mt-1 font-satoshi text-[12px] leading-5 text-[#5F6B65]">
+              Language
+            </p>
+          </div>
+          <div className="rounded-[20px] bg-[#F7FBF8] px-3 py-4 text-center">
+            <p className="text-[20px] font-semibold leading-7 text-[#0F0F0F]">
+              {normalizedCurrent.interests.length}
+            </p>
+            <p className="mt-1 font-satoshi text-[12px] leading-5 text-[#5F6B65]">
+              Interests
+            </p>
+          </div>
+        </div>
+      </div>
 
-            {/* Hidden file input */}
-            {/* <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleFileChange}
-              />
-            </div> */}
+      {isProfileLoading && !didInitialize ? (
+        <div className="theme-card rounded-[26px] border px-5 py-8 text-center">
+          <p className="font-satoshi text-[15px] leading-6 text-[#5F6B65]">
+            Loading your saved profile details...
+          </p>
+        </div>
+      ) : (
+        <>
+          <div className="theme-card mb-5 rounded-[26px] border px-5 py-5">
+            <div className="mb-4">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#00A84D]">
+                Basic Details
+              </p>
+              <h3 className="mt-2 text-[22px] font-semibold leading-8 text-[#0F0F0F]">
+                Name and date of birth
+              </h3>
+              <p className="mt-2 font-satoshi text-[14px] leading-6 text-[#5F6B65]">
+                These fields are fully editable with the current Santum profile
+                API.
+              </p>
+            </div>
 
-            {/* Form fields — .new_password_input */}
-            <div className="w-full">
+            <div className="space-y-4">
               <FloatingInput
                 id="first-name"
                 label="First Name"
                 value={form.firstName}
-                onChange={(e) =>
-                  setForm({ ...form, firstName: e.target.value })
+                onChange={(event) =>
+                  updateField("firstName", event.target.value)
                 }
               />
-
               <FloatingInput
                 id="last-name"
                 label="Last Name"
                 value={form.lastName}
-                onChange={(e) => setForm({ ...form, lastName: e.target.value })}
+                onChange={(event) => updateField("lastName", event.target.value)}
               />
+              <FloatingInput
+                id="dob"
+                label="Date of Birth"
+                type="date"
+                value={form.dob}
+                onChange={(event) => updateField("dob", event.target.value)}
+              />
+            </div>
+          </div>
 
-              {/* Date of Birth — masked text input */}
-              <div className="relative mb-[15px]">
-                <input
-                  type="date"
-                  autoComplete="off"
-                  required
-                  value={form.dob}
-                  onChange={(e) => {
-                    setForm({ ...form, dob: e.target.value });
-                  }}
-                  placeholder=" "
-                  maxLength={10}
-                  inputMode="numeric"
-                  className="peer block w-full h-[64px] bg-[#F5F5F5] border-none rounded-[12px] outline-none pl-4 pr-[50px] pt-5 pb-0 text-[#0F0F0F] font-satoshi text-[18px] font-medium leading-6 transition-all duration-300"
-                />
-                <label
-                  htmlFor="dob"
-                  className="absolute z-10 left-[16px] text-[#555] font-satoshi font-medium leading-5 transition-all duration-300 cursor-text pointer-events-none top-1/2 -translate-y-1/2 text-[16px] peer-focus:top-[14px] peer-focus:-translate-y-0 peer-focus:text-[12px] peer-focus:text-[#00D061] peer-[&:not(:placeholder-shown)]:top-[14px] peer-[&:not(:placeholder-shown)]:-translate-y-0 peer-[&:not(:placeholder-shown)]:text-[12px] peer-[&:not(:placeholder-shown)]:text-[#00D061]"
-                >
-                  Date of Birth (DD/MM/YYYY)
-                </label>
-                {/* <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                                    <CalendarIcon/>
-                                </div> */}
+          <div className="theme-card mb-5 rounded-[26px] border px-5 py-5">
+            <div className="mb-4">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#00A84D]">
+                Contact Details
+              </p>
+              <h3 className="mt-2 text-[22px] font-semibold leading-8 text-[#0F0F0F]">
+                Visible here, managed from your account source
+              </h3>
+              <p className="mt-2 font-satoshi text-[14px] leading-6 text-[#5F6B65]">
+                Email and mobile currently come from your signed-in Santum
+                account. This module shows them clearly but does not overwrite
+                them locally without a dedicated backend update route.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="rounded-[22px] border border-[#E6ECE8] bg-[#F8FBF9] px-4 py-4">
+                <div className="mb-3 flex items-center gap-2 text-[#5F6B65]">
+                  <Mail size={16} />
+                  <span className="text-[12px] font-semibold uppercase tracking-[0.16em]">
+                    Email
+                  </span>
+                </div>
+                <p className="text-[15px] font-medium leading-6 text-[#0F0F0F]">
+                  {emailAddress || "No email returned by the current profile API"}
+                </p>
+              </div>
+              <div className="rounded-[22px] border border-[#E6ECE8] bg-[#F8FBF9] px-4 py-4">
+                <div className="mb-3 flex items-center gap-2 text-[#5F6B65]">
+                  <Phone size={16} />
+                  <span className="text-[12px] font-semibold uppercase tracking-[0.16em]">
+                    Mobile
+                  </span>
+                </div>
+                <p className="text-[15px] font-medium leading-6 text-[#0F0F0F]">
+                  {phoneNumber || "No mobile number returned by the current profile API"}
+                </p>
               </div>
             </div>
-          </section>
+          </div>
 
-          {/* ── Continue button — fixed bottom ── */}
-          <div className="fixed bottom-5 left-1/2 -translate-x-1/2 w-full max-w-[600px] px-5 z-10">
-            <button
-              type="button"
-              onClick={handleContinue}
-              className="w-full max-w-[343px] flex items-center justify-center mx-auto block py-[18px] rounded-[12px] bg-[#00D061] text-white text-[18px] font-medium leading-6 text-center transition-all duration-200 hover:bg-[#00b856] hover:shadow-[0_6px_20px_rgba(0,208,97,0.40)] hover:-translate-y-px active:translate-y-0"
-            >
-              {isLoading ? (
-              <div className="flex items-center gap-3">
-                <div className="w-5 h-5 border-[3px] border-white border-t-transparent rounded-full animate-spin" />
-                <span>Continuing...</span>
+          <div className="theme-card mb-5 rounded-[26px] border px-5 py-5">
+            <div className="mb-4">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#00A84D]">
+                Preferred Language
+              </p>
+              <h3 className="mt-2 text-[22px] font-semibold leading-8 text-[#0F0F0F]">
+                Save the language you want to use most
+              </h3>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              {PROFILE_LANGUAGES.map((language) => (
+                <SelectionChip
+                  key={language}
+                  label={language}
+                  isSelected={form.preferredLanguage === language}
+                  onClick={() => updateField("preferredLanguage", language)}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="theme-card rounded-[26px] border px-5 py-5">
+            <div className="mb-4 flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#00A84D]">
+                  Interests
+                </p>
+                <h3 className="mt-2 text-[22px] font-semibold leading-8 text-[#0F0F0F]">
+                  Keep your preference set relevant
+                </h3>
               </div>
-            ) : (
-              "Continue"
-            )}
-            </button>
+              <span className="rounded-full bg-[#E8FFF1] px-3 py-1 text-[12px] font-semibold text-[#00A84D]">
+                {normalizedCurrent.interests.length} selected
+              </span>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              {PROFILE_INTERESTS.map((interest) => (
+                <SelectionChip
+                  key={interest}
+                  label={interest}
+                  isSelected={form.interests.includes(interest)}
+                  onClick={() => toggleInterest(interest)}
+                />
+              ))}
+            </div>
+
+            <div className="mt-4 rounded-[20px] bg-[#F8FBF9] px-4 py-4">
+              <p className="font-satoshi text-[14px] leading-6 text-[#5F6B65]">
+                Select at least one interest if you want this section updated.
+                If you are returning from onboarding, saving here will replace
+                the old separate language and interest steps.
+              </p>
+            </div>
+          </div>
+        </>
+      )}
+
+      <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+        {!isOnboarding ? (
+          <button
+            type="button"
+            onClick={() => router.push("/home")}
+            className="theme-secondary-button rounded-[14px] px-5 py-4 text-[16px] font-semibold"
+          >
+            Back To Home
+          </button>
+        ) : null}
+
+        <button
+          type="button"
+          onClick={handleSaveProfile}
+          disabled={!didInitialize || isSavingProfile}
+          className={`rounded-[14px] px-5 py-4 text-[16px] font-semibold text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)] ${
+            isSavingProfile || !didInitialize
+              ? "bg-[#A8F0CB]"
+              : "bg-[#00D061]"
+          } ${isOnboarding ? "sm:col-span-2" : ""}`}
+        >
+          {isSavingProfile ? (
+            <span className="inline-flex items-center gap-3">
+              <span className="h-5 w-5 rounded-full border-[3px] border-white border-t-transparent animate-spin" />
+              Saving profile...
+            </span>
+          ) : isOnboarding ? (
+            "Finish Profile Setup"
+          ) : hasProfileChanges ? (
+            "Save Profile Changes"
+          ) : (
+            "Profile Is Up To Date"
+          )}
+        </button>
+      </div>
+
+      {!isOnboarding ? (
+        <div className="mt-4 rounded-[22px] border border-[#D9EFE3] bg-[#F4FFF8] px-4 py-4">
+          <div className="flex items-start gap-3">
+            <CheckCircle2 className="mt-0.5 text-[#00A84D]" size={18} />
+            <p className="font-satoshi text-[14px] leading-6 text-[#35624A]">
+              This page now acts as the main profile module for the PWA. Basic
+              details, language, and interests are editable here, while email
+              and phone stay visible until the backend exposes dedicated update
+              endpoints for them.
+            </p>
           </div>
         </div>
-      </div>
-    </>
+      ) : null}
+    </StepPageShell>
   );
 }
