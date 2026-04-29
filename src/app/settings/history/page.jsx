@@ -117,7 +117,9 @@ export default function ChatHistoryPage() {
       await deleteChat(chatId).unwrap();
       toast.success("Conversation deleted");
     } catch (error) {
-      toast.error(getClientErrorMessage(error, "Unable to delete conversation"));
+      toast.error(
+        getClientErrorMessage(error, "Unable to delete conversation"),
+      );
     }
   };
 
@@ -221,7 +223,8 @@ export default function ChatHistoryPage() {
                     </span>
                   </div>
                   <p className="mt-2 font-satoshi text-[14px] leading-6 text-[#555] truncate">
-                    {chat.lastMessage || "This conversation is ready to reopen."}
+                    {chat.lastMessage ||
+                      "This conversation is ready to reopen."}
                   </p>
                 </button>
 
