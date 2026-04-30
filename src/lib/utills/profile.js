@@ -145,10 +145,49 @@ export function getProfileEmail(profile) {
   );
 }
 
+export function getProfileId(profile) {
+  return normalizeTextValue(
+    getFirstValue(profile, [
+      "id",
+      "_id",
+      "ID",
+      "user_id",
+      "userId",
+      "wp_user_id",
+      "wpUserId",
+      "customer_id",
+      "customerId",
+    ]),
+  );
+}
+
 export function getProfilePhone(profile) {
   return normalizeTextValue(
     getFirstValue(profile, ["phone", "mobile", "user_phone", "phone_number"]),
   );
+}
+
+export function getProfileIdentityKey(profile) {
+  
+  const profileId = getProfileId(profile);
+
+  if (profileId) {
+    return `profile:${profileId}`;
+  }
+
+  const phone = getProfilePhone(profile);
+
+  if (phone) {
+    return `phone:${phone}`;
+  }
+
+  const email = getProfileEmail(profile);
+
+  if (email) {
+    return `email:${email.toLowerCase()}`;
+  }
+
+  return "";
 }
 
 export function getProfileDob(profile) {

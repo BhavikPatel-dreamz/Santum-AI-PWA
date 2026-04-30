@@ -1,15 +1,18 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Bell, ChevronRightIcon, Edit2Icon, Settings, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import MoodCheckInCard from "@/components/app/MoodCheckInCard";
 import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
 import {
-  useCreateChatMutation,
+  useGetMoodCheckInQuery,
   useGetProfileQuery,
   useLogoutMutation,
+  useUpsertMoodCheckInMutation,
 } from "@/lib/store";
+import { getTodayMoodDateKey } from "@/lib/utills/mood";
 import {
   buildProfileInitials,
   getProfileEmail,
@@ -714,13 +717,27 @@ const DarkModeToggle = ({ dark, onToggle }) => (
 export default function HomeScreen() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
+  const [todayMoodDateKey] = useState(() => getTodayMoodDateKey());
   const { isDark, isUsingSystemTheme, toggleTheme } = useTheme();
   const router = useRouter();
+  const moodCheckInRef = useRef(null);
   const { data: profileData, error: profileError } = useGetProfileQuery();
   const [logout] = useLogoutMutation();
-  const [createChat] = useCreateChatMutation();
+  const {
+    data: todayMoodCheckIn,
+    error: moodCheckInError,
+    isLoading: isMoodCheckInLoading,
+  } = useGetMoodCheckInQuery(todayMoodDateKey, {
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+  });
+  const [upsertMoodCheckIn, { isLoading: isSavingMoodCheckIn }] =
+    useUpsertMoodCheckInMutation();
   const profile = profileData ?? {};
   const profilePhone = getProfilePhone(profile);
+  const hasTodayMoodCheckIn =
+    Boolean(todayMoodCheckIn) &&
+    todayMoodCheckIn?.dateKey === todayMoodDateKey;
 
   useEffect(() => {
     if (!profileError) {
@@ -735,6 +752,24 @@ export default function HomeScreen() {
     toast.error(getClientErrorMessage(profileError, "Failed to load profile"));
   }, [profileError, router]);
 
+  useEffect(() => {
+    if (!moodCheckInError) {
+      return;
+    }
+
+    if (isUnauthorizedError(moodCheckInError)) {
+      router.replace("/sign-in");
+      return;
+    }
+
+    toast.error(
+      getClientErrorMessage(
+        moodCheckInError,
+        "Unable to load today's mood check-in",
+      ),
+    );
+  }, [moodCheckInError, router]);
+
   const handleLogout = async () => {
     try {
       await logout().unwrap();
@@ -746,34 +781,60 @@ export default function HomeScreen() {
     }
   };
 
-  // const handleStartChat = async () => {
-  //   try {
-  //     if (!profilePhone) {
-  //       toast.error("Your profile is still loading. Please try again.");
-  //       return;
-  //     }
+  const focusMoodCheckIn = () => {
+    moodCheckInRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+  };
 
-  //     const chat = await createChat({
-  //       user: profilePhone,
-  //       planType: "premium",
-  //     }).unwrap();
+  const handleSaveMoodCheckIn = async (values) => {
+    try {
+      await upsertMoodCheckIn({
+        dateKey: todayMoodDateKey,
+        happiness: values.happiness,
+        stress: values.stress,
+        energy: values.energy,
+      }).unwrap();
+      toast.success("Mood check-in saved for today");
+    } catch (error) {
+      if (isUnauthorizedError(error)) {
+        router.replace("/sign-in");
+        return;
+      }
 
-  //     const chatId = String(chat?._id ?? chat?.id ?? "");
+      toast.error(
+        getClientErrorMessage(error, "Unable to save your mood check-in"),
+      );
+    }
+  };
 
-  //     if (!chatId) {
-  //       throw { message: "Unable to open a new conversation" };
-  //     }
+  const handleOpenChat = () => {
+    setDrawerOpen(false);
+    setLogoutOpen(false);
 
-  //     router.push(`/amigo-chat`);
-  //   } catch (error) {
-  //     console.log(error);
-  //     toast.error(getClientErrorMessage(error, "Unable to start a new chat"));
-  //   }
-  // };
+    if (
+      !isMoodCheckInLoading &&
+      !moodCheckInError &&
+      !hasTodayMoodCheckIn
+    ) {
+      focusMoodCheckIn();
+      toast.error("Complete today's mood check-in before starting a chat.");
+      return;
+    }
+
+    router.push("/amigo-chat");
+  };
 
   const navigateTo = (href) => {
     setDrawerOpen(false);
     setLogoutOpen(false);
+
+    if (href === "/amigo-chat") {
+      handleOpenChat();
+      return;
+    }
+
     router.push(href);
   };
   const themeLabel = isDark ? "Dark mode" : "Light mode";
@@ -906,6 +967,26 @@ export default function HomeScreen() {
             </div>
           </div>
 
+          <div ref={moodCheckInRef} className="mb-5">
+            {isMoodCheckInLoading && !todayMoodCheckIn ? (
+              <div className="theme-card rounded-[24px] border px-4 py-4 shadow-[0_12px_30px_rgba(15,15,15,0.04)]">
+                <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#00A84D]">
+                  Mood Check-In
+                </p>
+                <p className="mt-3 text-[15px] font-medium text-[#0F0F0F]">
+                  Checking whether you&apos;ve already checked in today...
+                </p>
+              </div>
+            ) : (
+              <MoodCheckInCard
+                key={`home-mood-${todayMoodCheckIn?.updatedAt ?? todayMoodDateKey}-${hasTodayMoodCheckIn ? "saved" : "draft"}`}
+                entry={hasTodayMoodCheckIn ? todayMoodCheckIn : null}
+                isSaving={isSavingMoodCheckIn}
+                onSubmit={handleSaveMoodCheckIn}
+              />
+            )}
+          </div>
+
           <div className="mb-5">
             <div className="mb-3 flex items-center justify-between">
               <div>
@@ -964,7 +1045,7 @@ export default function HomeScreen() {
                   </p>
                   <button
                     type="button"
-                    onClick={() => router.push(card.href)}
+                    onClick={() => navigateTo(card.href)}
                     className={`mt-4 inline-flex items-center rounded-full px-4 py-2 text-[13px] font-semibold ${
                       isDark
                         ? "bg-[#00D061] text-[#07110d]"
@@ -983,7 +1064,7 @@ export default function HomeScreen() {
         <div className="fixed bottom-5 left-0 right-0 mx-auto max-w-[600px] px-4 z-10">
           <button
             type="button"
-            onClick={() => router.push(`/amigo-chat`)}
+            onClick={handleOpenChat}
             className="w-full max-w-[343px] mx-auto flex items-center justify-center h-[56px] rounded-[12px] bg-[#00D061] text-white text-[18px] font-medium shadow-[0_4px_20px_rgba(0,208,97,0.4)] transition-all active:scale-[0.98] hover:opacity-92"
           >
             Start Chat with Amigo
