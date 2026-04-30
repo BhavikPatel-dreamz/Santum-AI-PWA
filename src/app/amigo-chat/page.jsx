@@ -324,66 +324,6 @@ export default function AmigoChatPage() {
     await loadCreditBalance({ silent: true });
   };
 
-  const loadCreditBalance = async ({ silent = false } = {}) => {
-    try {
-      const response = await refetchBalance().unwrap();
-      return extractCreditBalance(response);
-    } catch (error) {
-      if (isUnauthorizedError(error)) {
-        router.replace("/sign-in");
-        return null;
-      }
-
-      if (!silent) {
-        toast.error(
-          getClientErrorMessage(error, "Unable to load credit balance"),
-        );
-      }
-
-      return null;
-    }
-  };
-
-  const ensureChatId = async () => {
-    if (requestedChatId) {
-      return requestedChatId;
-    }
-
-    if (createChatPromiseRef.current) {
-      return createChatPromiseRef.current;
-    }
-
-    if (!profilePhone) {
-      throw { message: "Your profile is still loading. Please try again." };
-    }
-
-    createChatPromiseRef.current = createChat({
-      user: profilePhone,
-      planType: PLAN_LEVEL,
-    })
-      .unwrap()
-      .then((chat) => {
-        const nextChatId = String(chat?._id ?? chat?.id ?? "");
-
-        if (!nextChatId) {
-          throw { message: "Unable to initialize a new conversation" };
-        }
-
-        router.replace(`/amigo-chat?chat=${nextChatId}`);
-        return nextChatId;
-      })
-      .finally(() => {
-        createChatPromiseRef.current = null;
-      });
-
-    return createChatPromiseRef.current;
-  };
-
-  const initializeChat = useEffectEvent(() => {
-    ensureChatId().catch((error) => {
-      toast.error(getClientErrorMessage(error, "Unable to start a new chat"));
-    });
-  });
 
   useEffect(() => {
     if (!profileError) {
@@ -635,20 +575,6 @@ export default function AmigoChatPage() {
     }
   }, [creditBalance, isCreditDepleted]);
 
-  const promptPlanPurchase = async (message, draftMessage = "") => {
-    const nextMessage = message || CREDIT_LIMIT_MESSAGE;
-
-    setPurchasePromptMessage(nextMessage);
-
-    if (draftMessage) {
-      setComposer((currentMessage) =>
-        currentMessage.trim() ? currentMessage : draftMessage,
-      );
-    }
-
-    toast.error(nextMessage);
-    await loadCreditBalance({ silent: true });
-  };
 
   const sendMessage = async (nextMessage) => {
     const text = nextMessage.trim();
