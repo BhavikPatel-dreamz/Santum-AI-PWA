@@ -787,88 +787,15 @@ export default function HomeScreen() {
     ? "hover:bg-[#35191d] active:bg-[#431f24]"
     : "hover:bg-red-50 active:bg-red-100";
 
-  const handleLogout = async () => {
-    try {
-      await logout().unwrap();
-      toast.success("Logged out successfully");
-      router.replace("/sign-in");
-    } catch (error) {
-      console.log(error);
-      toast.error(getClientErrorMessage(error, "Unable to log out"));
-    }
-  };
-
-  const handleStartChat = async () => {
-    try {
-      if (!profilePhone) {
-        toast.error("Your profile is still loading. Please try again.");
-        return;
-      }
-
-      await createChat({
-        user: profilePhone,
-        planType: "premium",
-      }).unwrap();
-
-      const chatId = String(chat?._id ?? chat?.id ?? "");
-
-      if (!chatId) {
-        throw { message: "Unable to open a new conversation" };
-      }
-
-      router.push(`/amigo-chat?chat=${chatId}`);
-    } catch (error) {
-      console.log(error);
-      toast.error(getClientErrorMessage(error, "Unable to start a new chat"));
-    }
-  };
-
-  const displayName =
-    [profile?.first_name, profile?.last_name].filter(Boolean).join(" ") ||
-    profile?.name ||
-    "";
-  const firstName = profile?.first_name || "";
-  const emailAddress =
-    profile?.email || profile?.user_email || "example@mail.com";
-  const navigateTo = (href) => {
-    setDrawerOpen(false);
-    setLogoutOpen(false);
-    router.push(href);
-  };
-  const themeLabel = isDark ? "Dark mode" : "Light mode";
-  const themeStatus = isUsingSystemTheme
-    ? "Using your device preference"
-    : "Saved for this browser";
-  const drawerHoverClass = isDark
-    ? "hover:bg-white/5 active:bg-white/10"
-    : "hover:bg-[#f9fffe] active:bg-[#E4FFEE]";
-  const dangerHoverClass = isDark
-    ? "hover:bg-[#35191d] active:bg-[#431f24]"
-    : "hover:bg-red-50 active:bg-red-100";
-
-  const handleLogout = async () => {
-    try {
-      await appFetch("/api/auth/logout", {
-        method: "POST",
-      });
-      toast.success("Logged out successfully");
-      router.replace("/sign-in");
-    } catch (error) {
-      console.log(error);
-      toast.error(error.message || "Unable to log out");
-    }
-  };
-
-  const displayName =
-    [profile?.first_name, profile?.last_name].filter(Boolean).join(" ") ||
-    profile?.name ||
-    "Jessica Smith";
-  const firstName =
-    profile?.first_name ||
-    displayName.split(" ").filter(Boolean)[0] ||
-    "Jessica";
-  const emailAddress =
-    profile?.email || profile?.user_email || "jessica_smith@mail.com";
+  const displayName = getProfileFullName(profile) || "Amigo member";
+  const firstName = getProfileFirstName(profile) || "Friend";
+  const emailAddress = getProfileEmail(profile);
+  const contactLine =
+    emailAddress || profilePhone || "Managed from your Santum account";
+  const profileInitials = buildProfileInitials(
+    getProfileFirstName(profile) || displayName.split(" ").filter(Boolean)[0],
+    getProfileLastName(profile) || displayName.split(" ").filter(Boolean)[1],
+  );
 
   return (
     <div className="theme-shell min-h-dvh flex justify-center transition-colors duration-300">
