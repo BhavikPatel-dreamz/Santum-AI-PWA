@@ -9,9 +9,6 @@ import Script from "next/script";
 import { Suspense } from "react";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
-import { ReduxProvider } from "@/components/providers/ReduxProvider";
-import { PageTransitionProvider } from "@/components/providers/PageTransitionProvider";
-import LoadingScreenWrapper from "@/components/onboarding/LoadingScreenWrapper"; // ← new wrapper
 
 const poppins = Poppins({
   variable: "--font-poppins-ui",

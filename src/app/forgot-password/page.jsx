@@ -23,22 +23,6 @@ const RECOVERY_OPTIONS = [
   },
 ];
 
-const RECOVERY_OPTIONS = [
-  {
-    id: "sms",
-    title: "Recover with SMS",
-    description: "Send a short code to your verified mobile number.",
-    value: "+91 ****** 65",
-    icon: MessageSquare,
-  },
-  {
-    id: "email",
-    title: "Recover with Email",
-    description: "Use your email inbox when you cannot access your phone.",
-    value: "je*****@mail.com",
-    icon: Mail,
-  },
-];
 
 export default function ForgetPasswordPage() {
   const router = useRouter();
