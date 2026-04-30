@@ -27,6 +27,13 @@ type InterestsPayload = {
   interests: string[];
 };
 
+type UpsertMoodCheckInPayload = {
+  dateKey: string;
+  happiness: number;
+  stress: number;
+  energy: number;
+};
+
 type CreateChatPayload = {
   user: string;
   title?: string;
@@ -150,6 +157,32 @@ function extractMessages(payload: unknown): ApiList {
   return Array.isArray(payload) ? (payload as ApiList) : [];
 }
 
+function extractMoodCheckIn(payload: unknown): ApiRecord | null {
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+    return null;
+  }
+
+  const record = payload as ApiRecord;
+
+  if ("entry" in record) {
+    return record.entry &&
+      typeof record.entry === "object" &&
+      !Array.isArray(record.entry)
+      ? (record.entry as ApiRecord)
+      : null;
+  }
+
+  if ("data" in record) {
+    return record.data &&
+      typeof record.data === "object" &&
+      !Array.isArray(record.data)
+      ? (record.data as ApiRecord)
+      : null;
+  }
+
+  return record;
+}
+
 export const appApi = createApi({
   reducerPath: "appApi",
   baseQuery,
@@ -161,6 +194,10 @@ export const appApi = createApi({
     "Chats",
     "Chat",
     "Messages",
+    "Chats",
+    "Chat",
+    "Messages",
+    "Mood",
   ],
   endpoints: (builder) => ({
     login: builder.mutation<ApiRecord, LoginPayload>({
@@ -237,6 +274,28 @@ export const appApi = createApi({
         body,
       }),
       invalidatesTags: ["Profile"],
+    }),
+    getMoodCheckIn: builder.query<ApiRecord | null, string>({
+      query: (dateKey) =>
+        noStoreGet(`/mood-checkin?date=${encodeURIComponent(dateKey)}`),
+      transformResponse: (response: unknown) => extractMoodCheckIn(response),
+      providesTags: (result, error, dateKey) => [{ type: "Mood", id: dateKey }],
+    }),
+    upsertMoodCheckIn: builder.mutation<ApiRecord, UpsertMoodCheckInPayload>({
+      query: ({ dateKey, happiness, stress, energy }) => ({
+        url: "/mood-checkin",
+        method: "POST",
+        body: {
+          date: dateKey,
+          happiness,
+          stress,
+          energy,
+        },
+      }),
+      transformResponse: (response: unknown) => extractMoodCheckIn(response) ?? {},
+      invalidatesTags: (result, error, { dateKey }) => [
+        { type: "Mood", id: dateKey },
+      ],
     }),
     getCreditBalance: builder.query<ApiRecord, void>({
       query: () => noStoreGet("/credit/balance"),
@@ -338,6 +397,8 @@ export const {
   useUpdateBasicProfileMutation,
   useUpdatePreferredLanguageMutation,
   useUpdateInterestsMutation,
+  useGetMoodCheckInQuery,
+  useUpsertMoodCheckInMutation,
   useGetCreditBalanceQuery,
   useGetSubscriptionPlansQuery,
   useGetSubscriptionStatusQuery,

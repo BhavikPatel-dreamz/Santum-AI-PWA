@@ -14,6 +14,10 @@ import {
   extractChatCreditDebit,
   extractCreditBalance,
 } from "../../../../lib/utills/credit";
+import {
+  buildMoodAssistantContext,
+  sanitizeMoodCheckInEntry,
+} from "../../../../lib/utills/mood";
 
 const STREAM_METADATA_SEPARATOR = "\n\n{";
 const CREDIT_LIMIT_MESSAGE =
@@ -447,6 +451,25 @@ export async function POST(req) {
         ? existingChat.summerized.trim()
         : "";
     const recentHistory = buildRecentHistory(body?.chat_history);
+    const normalizedMoodCheckIn = sanitizeMoodCheckInEntry(
+      body?.mood_context,
+      typeof body?.mood_date === "string" ? body.mood_date.trim() : "",
+    );
+    const moodContext =
+      normalizedMoodCheckIn.data &&
+      normalizedMoodCheckIn.data.dateKey ===
+        (typeof body?.mood_date === "string" ? body.mood_date.trim() : "")
+        ? normalizedMoodCheckIn.data
+        : null;
+    const aiChatHistory = moodContext
+      ? [
+          {
+            role: "system",
+            content: buildMoodAssistantContext(moodContext),
+          },
+          ...recentHistory,
+        ]
+      : recentHistory;
     const summaryArchive = buildSummaryArchive(body?.chat_history);
     const shouldGenerateAiTitle = existingChat?.isAiTitleGenerated !== true;
     let didPersistConversation = false;
@@ -502,9 +525,12 @@ export async function POST(req) {
       },
       body: JSON.stringify({
         ...body,
-        chat_history: recentHistory,
+        chat_history: aiChatHistory,
         existing_summary: existingSummary,
         remaining_tokens: availableTokens,
+        happiness: moodContext.happiness,
+        stress: moodContext.stress,
+        energy: moodContext.energy,
       }),
     });
 

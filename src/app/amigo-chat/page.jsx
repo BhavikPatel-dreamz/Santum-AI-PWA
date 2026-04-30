@@ -1,6 +1,7 @@
 "use client";
 
 import FeatureShowcaseCard from "@/components/app/FeatureShowcaseCard";
+import MoodCheckInCard from "@/components/app/MoodCheckInCard";
 import StepPageShell from "@/components/app/StepPageShell";
 import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
 import {
@@ -10,10 +11,13 @@ import {
   useGetChatQuery,
   useGetChatMessagesQuery,
   useGetCreditBalanceQuery,
+  useGetMoodCheckInQuery,
   useGetProfileQuery,
   useGetSubscriptionStatusQuery,
+  useUpsertMoodCheckInMutation,
 } from "@/lib/store";
 import { extractCreditBalance, formatCreditAmount } from "@/lib/utills/credit";
+import { getTodayMoodDateKey } from "@/lib/utills/mood";
 import { getProfilePhone } from "@/lib/utills/profile";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
@@ -124,6 +128,7 @@ export default function AmigoChatPage() {
   const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
   const requestedChatId = searchParams.get("chat");
+  const [todayMoodDateKey] = useState(() => getTodayMoodDateKey());
   const [composer, setComposer] = useState("");
   const [isReplying, setIsReplying] = useState(false);
   const [purchasePromptMessage, setPurchasePromptMessage] = useState("");
@@ -167,7 +172,17 @@ export default function AmigoChatPage() {
     refetchOnFocus: true,
     refetchOnReconnect: true,
   });
+  const {
+    data: todayMoodCheckIn,
+    error: moodCheckInError,
+    isLoading: isMoodCheckInLoading,
+  } = useGetMoodCheckInQuery(todayMoodDateKey, {
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+  });
   const [createChat] = useCreateChatMutation();
+  const [upsertMoodCheckIn, { isLoading: isSavingMoodCheckIn }] =
+    useUpsertMoodCheckInMutation();
 
   const profilePhone = getProfilePhone(profile);
   const activePlanLevel =
@@ -176,6 +191,13 @@ export default function AmigoChatPage() {
       : DEFAULT_PLAN_LEVEL;
   const creditBalance = extractCreditBalance(balanceResponse);
   const isCreditDepleted = creditBalance !== null && creditBalance <= 0;
+  const hasTodayMoodCheckIn =
+    Boolean(todayMoodCheckIn) &&
+    todayMoodCheckIn?.dateKey === todayMoodDateKey;
+  const isMoodCheckInRequired =
+    isMoodCheckInLoading || !hasTodayMoodCheckIn;
+  const areChatActionsDisabled =
+    isReplying || isCreditDepleted || isMoodCheckInRequired;
   const isConversationLoading =
     Boolean(requestedChatId) &&
     !hasDraftMessages &&
@@ -300,6 +322,11 @@ export default function AmigoChatPage() {
     }
 
     if (isUnauthorizedError(subscriptionStatusError)) {
+    if (!moodCheckInError) {
+      return;
+    }
+
+    if (isUnauthorizedError(moodCheckInError)) {
       router.replace("/sign-in");
       return;
     }
@@ -311,6 +338,11 @@ export default function AmigoChatPage() {
       ),
     );
   }, [router, subscriptionStatusError]);
+        moodCheckInError,
+        "Unable to load today's mood check-in",
+      ),
+    );
+  }, [moodCheckInError, router]);
 
   useEffect(() => {
     if (!balanceError) {
@@ -404,6 +436,27 @@ export default function AmigoChatPage() {
     await loadCreditBalance({ silent: true });
   };
 
+  const handleSaveMoodCheckIn = async (values) => {
+    try {
+      await upsertMoodCheckIn({
+        dateKey: todayMoodDateKey,
+        happiness: values.happiness,
+        stress: values.stress,
+        energy: values.energy,
+      }).unwrap();
+      toast.success("Mood check-in saved. You can start chatting now.");
+    } catch (error) {
+      if (isUnauthorizedError(error)) {
+        router.replace("/sign-in");
+        return;
+      }
+
+      toast.error(
+        getClientErrorMessage(error, "Unable to save your mood check-in"),
+      );
+    }
+  };
+
 
   const sendMessage = async (nextMessage) => {
     const text = nextMessage.trim();
@@ -414,6 +467,13 @@ export default function AmigoChatPage() {
 
     if (isSubscriptionStatusLoading) {
       toast.error("Membership status is still syncing. Please wait a moment.");
+    if (isMoodCheckInLoading) {
+      toast.error("Checking today's mood check-in. Please wait a moment.");
+      return;
+    }
+
+    if (!hasTodayMoodCheckIn) {
+      toast.error("Complete today's mood check-in before chatting with Amigo.");
       return;
     }
 
@@ -447,6 +507,9 @@ export default function AmigoChatPage() {
           message: text,
           chat_history: buildRecentContext(baseMessages),
           plan_level: activePlanLevel,
+          plan_level: PLAN_LEVEL,
+          mood_date: todayMoodDateKey,
+          mood_context: todayMoodCheckIn,
         }),
       });
 
@@ -644,15 +707,39 @@ export default function AmigoChatPage() {
         </div>
       ) : null}
 
+      {isMoodCheckInLoading && !todayMoodCheckIn ? (
+        <div className="theme-card mb-4 rounded-[24px] border px-4 py-4 shadow-[0_12px_30px_rgba(15,15,15,0.04)]">
+          <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#00A84D]">
+            Mood Check-In
+          </p>
+          <p className="mt-3 text-[15px] font-medium text-[#0F0F0F]">
+            Checking today&apos;s mood check-in before chat starts...
+          </p>
+        </div>
+      ) : null}
+
+      {!isMoodCheckInLoading && !hasTodayMoodCheckIn ? (
+        <MoodCheckInCard
+          key={`chat-mood-${todayMoodDateKey}`}
+          className="mb-4"
+          entry={null}
+          isSaving={isSavingMoodCheckIn}
+          onSubmit={handleSaveMoodCheckIn}
+          description="Before we start, take 10 seconds to share how today feels so Amigo can respond with better tone and pacing."
+          submitLabel="Save and unlock chat"
+          showUpdateAction={false}
+        />
+      ) : null}
+
       <div className="mb-4 flex flex-wrap gap-2">
         {QUICK_PROMPTS.map((prompt) => (
           <button
             key={prompt}
             type="button"
             onClick={() => sendMessage(prompt)}
-            disabled={isReplying || isCreditDepleted}
+            disabled={areChatActionsDisabled}
             className={`rounded-full px-4 py-2 text-[13px] font-semibold transition-all ${
-              isReplying || isCreditDepleted
+              areChatActionsDisabled
                 ? "bg-[#EDF2EE] text-[#93A099]"
                 : "bg-[#F4F7F5] text-[#0F0F0F] hover:bg-[#E8FFF1]"
             }`}
@@ -719,7 +806,7 @@ export default function AmigoChatPage() {
           <textarea
             rows={3}
             value={composer}
-            disabled={isReplying || isCreditDepleted}
+            disabled={areChatActionsDisabled}
             onChange={(event) => setComposer(event.target.value)}
             onKeyDown={(event) => {
               if (event.key === "Enter" && !event.shiftKey) {
@@ -728,7 +815,11 @@ export default function AmigoChatPage() {
               }
             }}
             placeholder={
-              isCreditDepleted
+              isMoodCheckInLoading
+                ? "Checking today's mood check-in..."
+                : !hasTodayMoodCheckIn
+                  ? "Complete today's mood check-in to unlock chat."
+                  : isCreditDepleted
                 ? "Purchase a plan or refresh your balance to keep chatting."
                 : "Ask Amigo anything..."
             }
@@ -737,16 +828,20 @@ export default function AmigoChatPage() {
 
           <div className="mt-3 flex items-center justify-between gap-3">
             <p className="font-satoshi text-[13px] leading-5 text-[#555]">
-              {isCreditDepleted
+              {isMoodCheckInLoading
+                ? "Checking today's mood check-in before chat unlocks."
+                : !hasTodayMoodCheckIn
+                  ? "Share your mood first so Amigo can personalize the conversation."
+                  : isCreditDepleted
                 ? "Purchase a plan to unlock more Amigo chats."
                 : "Powered by Santum AI Counseling service."}
             </p>
             <button
               type="button"
               onClick={() => sendMessage(composer)}
-              disabled={!composer.trim() || isReplying || isCreditDepleted}
+              disabled={!composer.trim() || areChatActionsDisabled}
               className={`rounded-full px-5 py-3 text-[14px] font-semibold transition-all ${
-                !composer.trim() || isReplying || isCreditDepleted
+                !composer.trim() || areChatActionsDisabled
                   ? "bg-[#CBEEDB] text-white"
                   : "bg-[#00D061] text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)]"
               }`}
