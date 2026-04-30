@@ -5,27 +5,41 @@ import StepPageShell from "@/components/app/StepPageShell";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
 import {
+  useGetCreditBalanceQuery,
   useGetSubscriptionPlansQuery,
-  usePurchaseSubscriptionMutation,
+  useGetSubscriptionStatusQuery,
 } from "@/lib/store";
-import { formatCreditAmount } from "@/lib/utills/credit";
+import { extractCreditBalance, formatCreditAmount } from "@/lib/utills/credit";
+import {
+  getPlanCheckoutUrl,
+  getPlanId,
+  getPlanName,
+  getPlanPrice,
+  getPlanTokenLimit,
+  isSamePlan,
+  normalizePlanName,
+} from "@/lib/utills/subscription";
 import { Check } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 import toast from "react-hot-toast";
+
+const CHECKOUT_SYNC_STORAGE_KEY = "santum-membership-checkout";
+const SYNC_POLLING_INTERVAL = 10000;
 
 const PLANS = [
   {
-    name: "Starter",
+    name: "Free Membership",
     billing_amount: 0,
     description:
       "A friendly everyday chat companion with the core Amigo experience.",
     features: ["Basic chat", "Saved preferences", "Profile setup"],
     highlighted: false,
+    tokens: 200,
   },
   {
-    name: "Plus",
-    billing_amount: 9,
+    name: "Premium Membership",
+    billing_amount: 100,
     description:
       "The best fit for power users who want faster replies and more workspace control.",
     features: [
@@ -34,20 +48,9 @@ const PLANS = [
       "Premium prompt packs",
     ],
     highlighted: true,
-  },
-  {
-    name: "Team",
-    billing_amount: 24,
-    description:
-      "A simple shared setup for collaborative work, approvals, and support.",
-    features: ["Shared spaces", "Team prompt presets", "Priority support"],
-    highlighted: false,
+    tokens: 20000,
   },
 ];
-
-function normalizePlanName(name) {
-  return typeof name === "string" ? name.trim().toLowerCase() : "";
-}
 
 function normalizeHighlightedFlag(value) {
   if (typeof value === "boolean") {
@@ -65,9 +68,75 @@ function normalizeHighlightedFlag(value) {
   return false;
 }
 
+function readCheckoutSyncState() {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  try {
+    const rawState = window.localStorage.getItem(CHECKOUT_SYNC_STORAGE_KEY);
+
+    if (!rawState) {
+      return null;
+    }
+
+    const parsedState = JSON.parse(rawState);
+
+    if (!parsedState || typeof parsedState !== "object") {
+      return null;
+    }
+
+    return {
+      checkoutUrl:
+        typeof parsedState.checkoutUrl === "string"
+          ? parsedState.checkoutUrl
+          : "",
+      expectedPlanId:
+        typeof parsedState.expectedPlanId === "string"
+          ? parsedState.expectedPlanId
+          : "",
+      expectedPlanName:
+        typeof parsedState.expectedPlanName === "string"
+          ? parsedState.expectedPlanName
+          : "",
+      previousPlanId:
+        typeof parsedState.previousPlanId === "string"
+          ? parsedState.previousPlanId
+          : "",
+      startedAt:
+        typeof parsedState.startedAt === "number"
+          ? parsedState.startedAt
+          : Date.now(),
+    };
+  } catch {
+    return null;
+  }
+}
+
+function persistCheckoutSyncState(value) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  window.localStorage.setItem(
+    CHECKOUT_SYNC_STORAGE_KEY,
+    JSON.stringify(value),
+  );
+}
+
+function clearCheckoutSyncState() {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  window.localStorage.removeItem(CHECKOUT_SYNC_STORAGE_KEY);
+}
+
 function getPlanKey(plan, index) {
-  if (plan?.id !== undefined && plan?.id !== null) {
-    return String(plan.id);
+  const planId = getPlanId(plan);
+
+  if (planId) {
+    return planId;
   }
 
   if (typeof plan?.slug === "string" && plan.slug.trim()) {
@@ -79,11 +148,6 @@ function getPlanKey(plan, index) {
   }
 
   return `plan-${index}`;
-}
-
-function getBillingAmount(plan) {
-  const parsedAmount = Number(plan?.billing_amount ?? plan?.price ?? 0);
-  return Number.isFinite(parsedAmount) ? parsedAmount : 0;
 }
 
 function enrichPlan(plan, index) {
@@ -103,11 +167,11 @@ function enrichPlan(plan, index) {
   return {
     ...fallbackPlan,
     ...plan,
-    name: plan?.name || fallbackPlan?.name || `Plan ${index + 1}`,
+    name: getPlanName(plan) || fallbackPlan?.name || `Plan ${index + 1}`,
     description:
       plan?.description ||
       fallbackPlan?.description ||
-      "Premium access with additional Amigo credits.",
+      "Complete checkout on Santum.net, then return here to refresh access.",
     features: planFeatures,
     highlighted: hasHighlightedFlag
       ? normalizeHighlightedFlag(plan.highlighted)
@@ -115,14 +179,24 @@ function enrichPlan(plan, index) {
     billing_amount:
       plan?.billing_amount ??
       fallbackPlan?.billing_amount ??
-      getBillingAmount(plan),
+      getPlanPrice(plan),
+    tokens: getPlanTokenLimit(plan) ?? fallbackPlan?.tokens ?? null,
   };
 }
 
-function getDefaultSelectedPlanKey(plans) {
+function findPlanByReference(plans, reference) {
+  if (!reference || !Array.isArray(plans) || plans.length === 0) {
+    return null;
+  }
+
+  return plans.find((plan) => isSamePlan(plan, reference)) ?? null;
+}
+
+function getDefaultSelectedPlanKey(plans, preferredReference) {
   const defaultPlan =
-    plans.find((plan) => plan.highlighted && getBillingAmount(plan) > 0) ||
-    plans.find((plan) => getBillingAmount(plan) > 0) ||
+    findPlanByReference(plans, preferredReference) ||
+    plans.find((plan) => Boolean(plan.highlighted)) ||
+    plans.find((plan) => getPlanPrice(plan) > 0) ||
     plans[0] ||
     null;
 
@@ -173,21 +247,81 @@ function getPurchaseSummaryClasses(isDark) {
     : "border-[#BDECCE] bg-[#F3FFF8]";
 }
 
+function buildPurchaseSummary({
+  balanceResponse,
+  fallbackPlanName,
+  subscriptionStatus,
+}) {
+  const updatedBalance = extractCreditBalance(balanceResponse);
+
+  return {
+    plan_name:
+      subscriptionStatus?.active_plan_name || fallbackPlanName || "Membership",
+    plan_tokens: Number.isFinite(subscriptionStatus?.active_plan_tokens)
+      ? subscriptionStatus.active_plan_tokens
+      : null,
+    updated_balance: updatedBalance,
+  };
+}
+
+function didActivateExpectedPlan(checkoutState, subscriptionStatus) {
+  if (!checkoutState || !subscriptionStatus) {
+    return false;
+  }
+
+  const activePlanId =
+    typeof subscriptionStatus?.active_plan_id === "string"
+      ? subscriptionStatus.active_plan_id.trim()
+      : "";
+
+  if (checkoutState.expectedPlanId && activePlanId) {
+    return checkoutState.expectedPlanId === activePlanId;
+  }
+
+  return (
+    normalizePlanName(subscriptionStatus?.active_plan_name) ===
+    normalizePlanName(checkoutState.expectedPlanName)
+  );
+}
+
 export default function PlusSubscriptionPage() {
   const [selectedPlanKey, setSelectedPlanKey] = useState(null);
+  const [pendingCheckout, setPendingCheckout] = useState(null);
   const [purchaseSummary, setPurchaseSummary] = useState(null);
+  const [isManualSyncing, setIsManualSyncing] = useState(false);
   const router = useRouter();
   const { isDark } = useTheme();
   const {
     data: plansData,
     error: plansError,
     isLoading: isPlansLoading,
+    isFetching: isPlansFetching,
+    refetch: refetchPlans,
   } = useGetSubscriptionPlansQuery(undefined, {
     refetchOnFocus: true,
     refetchOnReconnect: true,
   });
-  const [purchaseSubscription, { isLoading: isPurchasing }] =
-    usePurchaseSubscriptionMutation();
+  const {
+    data: subscriptionStatus,
+    error: subscriptionStatusError,
+    isFetching: isStatusFetching,
+    refetch: refetchSubscriptionStatus,
+  } = useGetSubscriptionStatusQuery(undefined, {
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+    pollingInterval: pendingCheckout ? SYNC_POLLING_INTERVAL : 0,
+    skipPollingIfUnfocused: true,
+  });
+  const {
+    error: balanceError,
+    isFetching: isBalanceFetching,
+    refetch: refetchBalance,
+  } = useGetCreditBalanceQuery(undefined, {
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+    pollingInterval: pendingCheckout ? SYNC_POLLING_INTERVAL : 0,
+    skipPollingIfUnfocused: true,
+  });
 
   const hasLivePlans = Array.isArray(plansData) && plansData.length > 0;
   const shouldUseFallbackPlans =
@@ -197,6 +331,10 @@ export default function PlusSubscriptionPage() {
     : shouldUseFallbackPlans
       ? PLANS.map(enrichPlan)
       : [];
+
+  useEffect(() => {
+    setPendingCheckout(readCheckoutSyncState());
+  }, []);
 
   useEffect(() => {
     if (!plansError) {
@@ -211,79 +349,254 @@ export default function PlusSubscriptionPage() {
     toast.error(
       getClientErrorMessage(
         plansError,
-        "Unable to load live plans. Showing demo plans instead.",
+        "Unable to load live plans. Showing fallback plans instead.",
       ),
     );
   }, [plansError, router]);
+
+  useEffect(() => {
+    if (!subscriptionStatusError) {
+      return;
+    }
+
+    if (isUnauthorizedError(subscriptionStatusError)) {
+      router.replace("/sign-in");
+      return;
+    }
+
+    toast.error(
+      getClientErrorMessage(
+        subscriptionStatusError,
+        "Unable to load subscription status",
+      ),
+    );
+  }, [router, subscriptionStatusError]);
+
+  useEffect(() => {
+    if (!balanceError) {
+      return;
+    }
+
+    if (isUnauthorizedError(balanceError)) {
+      router.replace("/sign-in");
+      return;
+    }
+
+    toast.error(
+      getClientErrorMessage(balanceError, "Unable to refresh credit balance"),
+    );
+  }, [balanceError, router]);
+
+  const activePlanReference = subscriptionStatus ?? null;
+  const preferredReference = pendingCheckout
+    ? {
+        active_plan_id: pendingCheckout.expectedPlanId,
+        active_plan_name: pendingCheckout.expectedPlanName,
+      }
+    : activePlanReference;
   const resolvedSelectedPlanKey = plans.some(
     (plan, index) => getPlanKey(plan, index) === selectedPlanKey,
   )
     ? selectedPlanKey
-    : getDefaultSelectedPlanKey(plans);
+    : getDefaultSelectedPlanKey(plans, preferredReference);
 
   const selectedPlan =
     plans.find(
       (plan, index) => getPlanKey(plan, index) === resolvedSelectedPlanKey,
     ) ?? null;
-  const selectedPlanPrice = getBillingAmount(selectedPlan);
-  const isSelectedPlanPaid = selectedPlanPrice > 0;
+  const selectedPlanCheckoutUrl = getPlanCheckoutUrl(selectedPlan);
+  const selectedPlanTokenLimit = selectedPlan
+    ? getPlanTokenLimit(selectedPlan)
+    : null;
+  const isSelectedPlanActive = Boolean(
+    selectedPlan && isSamePlan(selectedPlan, activePlanReference),
+  );
+  const isSyncingCheckout =
+    isManualSyncing ||
+    (Boolean(pendingCheckout) &&
+      (isPlansFetching || isStatusFetching || isBalanceFetching));
 
-  async function handlePurchase() {
+  async function syncMembership({ silent = false } = {}) {
+    const checkoutState = pendingCheckout ?? readCheckoutSyncState();
+
+    if (!checkoutState) {
+      return false;
+    }
+
+    setIsManualSyncing(true);
+
+    try {
+      const [, statusResult, balanceResult] = await Promise.allSettled([
+        refetchPlans().unwrap(),
+        refetchSubscriptionStatus().unwrap(),
+        refetchBalance().unwrap(),
+      ]);
+
+      if (statusResult.status === "rejected") {
+        throw statusResult.reason;
+      }
+
+      const nextStatus = statusResult.value;
+      const nextBalance =
+        balanceResult.status === "fulfilled" ? balanceResult.value : null;
+
+      if (!didActivateExpectedPlan(checkoutState, nextStatus)) {
+        if (!silent) {
+          toast("Membership status refreshed. Complete checkout on Santum.net, then return here.");
+        }
+
+        return false;
+      }
+
+      clearCheckoutSyncState();
+      setPendingCheckout(null);
+
+      const nextSummary = buildPurchaseSummary({
+        balanceResponse: nextBalance,
+        fallbackPlanName: checkoutState.expectedPlanName,
+        subscriptionStatus: nextStatus,
+      });
+
+      setPurchaseSummary(nextSummary);
+      toast.success(`${nextSummary.plan_name} membership is now active`);
+      return true;
+    } catch (error) {
+      if (isUnauthorizedError(error)) {
+        router.replace("/sign-in");
+        return false;
+      }
+
+      if (!silent) {
+        toast.error(
+          getClientErrorMessage(error, "Unable to sync membership status"),
+        );
+      }
+
+      return false;
+    } finally {
+      setIsManualSyncing(false);
+    }
+  }
+
+  const pollMembershipSync = useEffectEvent(() => {
+    void syncMembership({ silent: true });
+  });
+
+  useEffect(() => {
+    if (!pendingCheckout) {
+      return;
+    }
+
+    pollMembershipSync();
+
+    const intervalId = window.setInterval(() => {
+      pollMembershipSync();
+    }, SYNC_POLLING_INTERVAL);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, [pendingCheckout]);
+
+  function handleCheckoutRedirect() {
     if (!selectedPlan) {
       toast.error("Select a plan to continue");
       return;
     }
 
-    if (!isSelectedPlanPaid) {
-      toast.error(`${selectedPlan.name} is already included`);
+    if (!selectedPlanCheckoutUrl) {
+      toast.error("Checkout URL is not available for this plan yet");
       return;
     }
 
+    const checkoutState = {
+      checkoutUrl: selectedPlanCheckoutUrl,
+      expectedPlanId: getPlanId(selectedPlan),
+      expectedPlanName: getPlanName(selectedPlan),
+      previousPlanId:
+        typeof subscriptionStatus?.active_plan_id === "string"
+          ? subscriptionStatus.active_plan_id
+          : "",
+      startedAt: Date.now(),
+    };
+
+    persistCheckoutSyncState(checkoutState);
+    setPendingCheckout(checkoutState);
     setPurchaseSummary(null);
+    window.location.assign(selectedPlanCheckoutUrl);
+  }
 
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 900));
+  async function handlePrimaryAction() {
+    if (purchaseSummary || isSelectedPlanActive) {
+      router.push("/amigo-chat");
+      return;
+    }
 
-      const response = await purchaseSubscription({
-        plan: selectedPlan,
-      }).unwrap();
+    if (pendingCheckout) {
+      await syncMembership();
+      return;
+    }
 
-      setPurchaseSummary(response);
-      toast.success(
-        response.message || `${selectedPlan.name} activated successfully`,
-      );
-    } catch (error) {
-      if (isUnauthorizedError(error)) {
-        router.replace("/sign-in");
+    handleCheckoutRedirect();
+  }
+
+  function handleSecondaryAction() {
+    if (pendingCheckout) {
+      const checkoutUrl =
+        pendingCheckout.checkoutUrl || selectedPlanCheckoutUrl || null;
+
+      if (checkoutUrl) {
+        window.location.assign(checkoutUrl);
         return;
       }
 
-      toast.error(getClientErrorMessage(error, "Unable to complete purchase"));
+      router.push("/home");
+      return;
     }
+
+    if (purchaseSummary || isSelectedPlanActive) {
+      router.push("/settings/credits");
+      return;
+    }
+
+    router.push("/home");
   }
 
   const primaryButtonLabel = purchaseSummary
     ? "Start Chatting"
-    : isPurchasing
-      ? "Processing dummy payment..."
-      : selectedPlan
-        ? isSelectedPlanPaid
-          ? `Purchase ${selectedPlan.name}`
-          : `${selectedPlan.name} Is Included`
-        : isPlansLoading
-          ? "Loading Plans..."
-          : "Select A Plan";
+    : pendingCheckout
+      ? isSyncingCheckout
+        ? "Syncing Membership..."
+        : "Sync Membership"
+      : isSelectedPlanActive
+        ? "Start Chatting"
+        : selectedPlan
+          ? selectedPlanCheckoutUrl
+            ? "Continue On Santum.net"
+            : "Checkout Unavailable"
+          : isPlansLoading
+            ? "Loading Plans..."
+            : "Select A Plan";
 
-  const secondaryButtonLabel = purchaseSummary
-    ? "View Updated Credits"
-    : "Maybe Later";
+  const secondaryButtonLabel = pendingCheckout
+    ? "Open Santum.net Again"
+    : purchaseSummary || isSelectedPlanActive
+      ? "View Updated Credits"
+      : "Maybe Later";
+
+  const isPrimaryButtonDisabled =
+    !purchaseSummary &&
+    !pendingCheckout &&
+    (!selectedPlan ||
+      (!isSelectedPlanActive && !selectedPlanCheckoutUrl) ||
+      isPlansLoading);
 
   return (
     <StepPageShell title="Amigo GPT Plus" contentClassName="overflow-y-auto">
       <FeatureShowcaseCard
         badge="Upgrade"
-        title="Unlock the premium layer without losing the warmth of the base app"
-        description="This dummy plan page now runs a mocked checkout step and then tops up live credits through the authenticated purchase flow."
+        title="Choose your plan here, then finish membership on Santum.net"
+        description="This PWA only shows live plans and redirects to the Santum checkout URL. When you come back, membership status and token limits refresh automatically."
         imageSrc="/icons/plus-robort.png"
         imageAlt="Subscription robot"
         className="mb-6"
@@ -296,21 +609,24 @@ export default function PlusSubscriptionPage() {
         )}`}
       >
         <p className="text-[12px] font-semibold uppercase tracking-[0.2em] text-white/70">
-          What changes with Plus
+          How membership works
         </p>
         <h2 className="mt-3 text-[24px] font-semibold leading-8">
-          Faster help, deeper conversations, and cleaner control.
+          Pick a plan in the app, pay on the web, then sync back here.
         </h2>
         <p className="mt-3 font-satoshi text-[15px] leading-6 text-white/75">
-          Ideal for users who want Amigo to feel more like a daily workspace and
-          less like a casual one-off assistant.
+          The active plan, token allowance, and chat balance are pulled from
+          Santum after checkout so the PWA always reflects the latest
+          membership state.
         </p>
       </div>
 
       <div className="space-y-4">
-        {plans?.map((plan, index) => {
+        {plans.map((plan, index) => {
           const planKey = getPlanKey(plan, index);
-          const isSelected = planKey === selectedPlanKey;
+          const isSelected = planKey === resolvedSelectedPlanKey;
+          const isActivePlan = isSamePlan(plan, activePlanReference);
+          const planTokenLimit = getPlanTokenLimit(plan);
 
           return (
             <button
@@ -340,6 +656,11 @@ export default function PlusSubscriptionPage() {
                         Best Value
                       </span>
                     ) : null}
+                    {isActivePlan ? (
+                      <span className="rounded-full bg-[#0F0F0F] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
+                        Active
+                      </span>
+                    ) : null}
                     {isSelected ? (
                       <span
                         className={`rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] ${getSelectedBadgeClasses(
@@ -353,6 +674,11 @@ export default function PlusSubscriptionPage() {
                   <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6">
                     {plan.description}
                   </p>
+                  <p className="theme-text-primary mt-3 text-[12px] font-semibold uppercase tracking-[0.16em]">
+                    {planTokenLimit === null
+                      ? "Token allowance syncs after checkout"
+                      : `${formatCreditAmount(planTokenLimit)} tokens included`}
+                  </p>
                 </div>
                 <div
                   className={`rounded-[18px] px-4 py-3 text-center ${getPricePillClasses(
@@ -360,9 +686,9 @@ export default function PlusSubscriptionPage() {
                   )}`}
                 >
                   <p className="text-[20px] font-semibold leading-7">
-                    {getBillingAmount(plan) === 0
+                    {getPlanPrice(plan) === 0
                       ? "Free"
-                      : `$${getBillingAmount(plan)}/mo`}
+                      : `$${getPlanPrice(plan)}/mo`}
                   </p>
                 </div>
               </div>
@@ -386,6 +712,25 @@ export default function PlusSubscriptionPage() {
         })}
       </div>
 
+      {pendingCheckout && !purchaseSummary ? (
+        <div
+          className={`mt-6 rounded-3xl border px-5 py-5 ${getPurchaseSummaryClasses(
+            isDark,
+          )}`}
+        >
+          <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#00A84D]">
+            Checkout in progress
+          </p>
+          <h3 className="theme-text-primary mt-2 text-[22px] font-semibold leading-8">
+            Complete payment on Santum.net, then return here.
+          </h3>
+          <p className="theme-text-secondary mt-3 font-satoshi text-[15px] leading-6">
+            The PWA is polling for your updated membership and token balance.
+            You can also tap Sync Membership at any time after checkout.
+          </p>
+        </div>
+      ) : null}
+
       {purchaseSummary ? (
         <div
           className={`mt-6 rounded-3xl border px-5 py-5 ${getPurchaseSummaryClasses(
@@ -393,15 +738,20 @@ export default function PlusSubscriptionPage() {
           )}`}
         >
           <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#00A84D]">
-            Dummy payment complete
+            Membership synced
           </p>
           <h3 className="theme-text-primary mt-2 text-[22px] font-semibold leading-8">
-            {purchaseSummary.plan_name} is active and credits were added.
+            {purchaseSummary.plan_name} is now active.
           </h3>
           <p className="theme-text-secondary mt-3 font-satoshi text-[15px] leading-6">
-            Added {formatCreditAmount(purchaseSummary.credits_added)} credits to
-            your account through the live increase endpoint.
+            Subscription status was refreshed from Santum and the PWA picked up
+            your latest access automatically.
           </p>
+          {Number.isFinite(purchaseSummary.plan_tokens) ? (
+            <p className="theme-text-secondary mt-2 font-satoshi text-[15px] leading-6">
+              Plan tokens: {formatCreditAmount(purchaseSummary.plan_tokens)}
+            </p>
+          ) : null}
           <p className="theme-text-secondary mt-2 font-satoshi text-[15px] leading-6">
             Updated balance:{" "}
             {Number.isFinite(purchaseSummary.updated_balance)
@@ -411,27 +761,38 @@ export default function PlusSubscriptionPage() {
         </div>
       ) : null}
 
+      {!pendingCheckout && !purchaseSummary && isSelectedPlanActive ? (
+        <div
+          className={`mt-6 rounded-3xl border px-5 py-5 ${getPurchaseSummaryClasses(
+            isDark,
+          )}`}
+        >
+          <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#00A84D]">
+            Current membership
+          </p>
+          <h3 className="theme-text-primary mt-2 text-[22px] font-semibold leading-8">
+            {selectedPlan?.name || "Selected plan"} is already active.
+          </h3>
+          <p className="theme-text-secondary mt-3 font-satoshi text-[15px] leading-6">
+            {Number.isFinite(selectedPlanTokenLimit)
+              ? `${formatCreditAmount(selectedPlanTokenLimit)} tokens are assigned to this plan.`
+              : "Your current plan details are already synced in the PWA."}
+          </p>
+        </div>
+      ) : null}
+
       <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
         <button
           type="button"
-          onClick={
-            purchaseSummary ? () => router.push("/amigo-chat") : handlePurchase
-          }
-          disabled={
-            !purchaseSummary &&
-            (!selectedPlan || !isSelectedPlanPaid || isPurchasing)
-          }
+          onClick={handlePrimaryAction}
+          disabled={isPrimaryButtonDisabled || isSyncingCheckout}
           className="rounded-[14px] bg-[#00D061] px-5 py-4 text-[16px] font-semibold text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)] disabled:cursor-not-allowed disabled:opacity-60"
         >
           {primaryButtonLabel}
         </button>
         <button
           type="button"
-          onClick={() =>
-            purchaseSummary
-              ? router.push("/settings/credits")
-              : router.push("/home")
-          }
+          onClick={handleSecondaryAction}
           className="theme-secondary-button rounded-[14px] px-5 py-4 text-[16px] font-semibold"
         >
           {secondaryButtonLabel}

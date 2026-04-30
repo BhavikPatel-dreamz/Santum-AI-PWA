@@ -33,11 +33,6 @@ type CreateChatPayload = {
   model?: string;
   planType?: string;
 };
-
-type PurchaseSubscriptionPayload = {
-  plan: ApiRecord;
-};
-
 type UpdateChatPayload = {
   chatId: string;
   updates: ApiRecord;
@@ -95,6 +90,20 @@ function extractPlans(payload: unknown): ApiList {
   return [];
 }
 
+function extractRecord(payload: unknown): ApiRecord | null {
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+    return null;
+  }
+
+  const record = payload as ApiRecord;
+
+  if (record.data && typeof record.data === "object" && !Array.isArray(record.data)) {
+    return record.data as ApiRecord;
+  }
+
+  return record;
+}
+
 function extractChat(payload: unknown): ApiRecord | null {
   if (!payload || typeof payload !== "object") {
     return null;
@@ -144,7 +153,15 @@ function extractMessages(payload: unknown): ApiList {
 export const appApi = createApi({
   reducerPath: "appApi",
   baseQuery,
-  tagTypes: ["Profile", "Credits", "Plans", "Chats", "Chat", "Messages"],
+  tagTypes: [
+    "Profile",
+    "Credits",
+    "Plans",
+    "SubscriptionStatus",
+    "Chats",
+    "Chat",
+    "Messages",
+  ],
   endpoints: (builder) => ({
     login: builder.mutation<ApiRecord, LoginPayload>({
       query: (body) => ({
@@ -172,7 +189,15 @@ export const appApi = createApi({
         url: "/auth/logout",
         method: "POST",
       }),
-      invalidatesTags: ["Profile", "Credits", "Plans", "Chats", "Chat", "Messages"],
+      invalidatesTags: [
+        "Profile",
+        "Credits",
+        "Plans",
+        "SubscriptionStatus",
+        "Chats",
+        "Chat",
+        "Messages",
+      ],
     }),
     getProfile: builder.query<ApiRecord | null, void>({
       query: () => noStoreGet("/user/profile"),
@@ -222,16 +247,10 @@ export const appApi = createApi({
       transformResponse: (response: unknown) => extractPlans(response),
       providesTags: ["Plans"],
     }),
-    purchaseSubscription: builder.mutation<
-      ApiRecord,
-      PurchaseSubscriptionPayload
-    >({
-      query: (body) => ({
-        url: "/settings/subscription/purchase",
-        method: "POST",
-        body,
-      }),
-      invalidatesTags: ["Credits"],
+    getSubscriptionStatus: builder.query<ApiRecord | null, void>({
+      query: () => noStoreGet("/settings/subscription/status"),
+      transformResponse: (response: unknown) => extractRecord(response),
+      providesTags: ["SubscriptionStatus"],
     }),
     createChat: builder.mutation<ApiRecord, CreateChatPayload>({
       query: (body) => ({
@@ -321,7 +340,7 @@ export const {
   useUpdateInterestsMutation,
   useGetCreditBalanceQuery,
   useGetSubscriptionPlansQuery,
-  usePurchaseSubscriptionMutation,
+  useGetSubscriptionStatusQuery,
   useCreateChatMutation,
   useGetChatsQuery,
   useGetChatQuery,

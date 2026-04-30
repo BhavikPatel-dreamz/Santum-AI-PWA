@@ -162,8 +162,8 @@ export default function CreditsSettingsPage() {
             service returns.
           </p>
           <p className="mt-3 font-satoshi text-[15px] leading-6 text-[#555]">
-            Plan purchase top-ups should call the credit increase API from the
-            purchase confirmation flow, not from this screen.
+            Membership checkout happens on Santum.net. When you return to the
+            PWA, this balance refreshes from the authenticated API.
           </p>
         </div>
 

@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 
 export const AUTH_COOKIE_NAME = "token";
-export const AUTH_COOKIE_MAX_AGE = 60 * 60 * 24 * 4;
+export const AUTH_COOKIE_MAX_AGE = 60 * 60 * 24;
 
 function getCookieOptions(overrides = {}) {
   return {

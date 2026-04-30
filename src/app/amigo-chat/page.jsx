@@ -11,6 +11,7 @@ import {
   useGetChatMessagesQuery,
   useGetCreditBalanceQuery,
   useGetProfileQuery,
+  useGetSubscriptionStatusQuery,
 } from "@/lib/store";
 import { extractCreditBalance, formatCreditAmount } from "@/lib/utills/credit";
 import { getProfilePhone } from "@/lib/utills/profile";
@@ -29,9 +30,8 @@ const QUICK_PROMPTS = [
 const CREDIT_LIMIT_MESSAGE =
   "You have reached your chat credit limit. Purchase a plan to continue with Amigo.";
 const PURCHASE_PLAN_PATH = "/plus-subscription";
-const PLAN_LEVEL = "premium";
+const DEFAULT_PLAN_LEVEL = "free";
 const RECENT_MESSAGE_LIMIT = 10;
-const CHAT_SUMMARY_MESSAGE_ID = "chat-summary";
 const STARTER_MESSAGES = [
   {
     id: "starter-assistant",
@@ -133,6 +133,14 @@ export default function AmigoChatPage() {
 
   const { data: profile, error: profileError } = useGetProfileQuery();
   const {
+    data: subscriptionStatus,
+    error: subscriptionStatusError,
+    isLoading: isSubscriptionStatusLoading,
+  } = useGetSubscriptionStatusQuery(undefined, {
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+  });
+  const {
     data: balanceResponse,
     error: balanceError,
     isLoading: isBalanceLoading,
@@ -162,6 +170,10 @@ export default function AmigoChatPage() {
   const [createChat] = useCreateChatMutation();
 
   const profilePhone = getProfilePhone(profile);
+  const activePlanLevel =
+    typeof subscriptionStatus?.active_plan_level === "string"
+      ? subscriptionStatus.active_plan_level
+      : DEFAULT_PLAN_LEVEL;
   const creditBalance = extractCreditBalance(balanceResponse);
   const isCreditDepleted = creditBalance !== null && creditBalance <= 0;
   const isConversationLoading =
@@ -237,9 +249,13 @@ export default function AmigoChatPage() {
       throw { message: "Your profile is still loading. Please try again." };
     }
 
+    if (isSubscriptionStatusLoading) {
+      throw { message: "Membership status is still syncing. Please try again." };
+    }
+
     createChatPromiseRef.current = createChat({
       user: profilePhone,
-      planType: PLAN_LEVEL,
+      planType: activePlanLevel,
     })
       .unwrap()
       .then((chat) => {
@@ -277,6 +293,24 @@ export default function AmigoChatPage() {
 
     toast.error(getClientErrorMessage(profileError, "Unable to load profile"));
   }, [profileError, router]);
+
+  useEffect(() => {
+    if (!subscriptionStatusError) {
+      return;
+    }
+
+    if (isUnauthorizedError(subscriptionStatusError)) {
+      router.replace("/sign-in");
+      return;
+    }
+
+    toast.error(
+      getClientErrorMessage(
+        subscriptionStatusError,
+        "Unable to load membership status",
+      ),
+    );
+  }, [router, subscriptionStatusError]);
 
   useEffect(() => {
     if (!balanceError) {
@@ -335,12 +369,12 @@ export default function AmigoChatPage() {
   }, [router, storedMessagesError]);
 
   useEffect(() => {
-    if (requestedChatId || !profilePhone) {
+    if (requestedChatId || !profilePhone || isSubscriptionStatusLoading) {
       return;
     }
 
     initializeChat();
-  }, [profilePhone, requestedChatId]);
+  }, [isSubscriptionStatusLoading, profilePhone, requestedChatId]);
 
   useEffect(() => {
     if (isCreditDepleted) {
@@ -371,99 +405,15 @@ export default function AmigoChatPage() {
   };
 
 
-  useEffect(() => {
-    if (!profileError) {
-      return;
-    }
-
-    if (isUnauthorizedError(profileError)) {
-      router.replace("/sign-in");
-      return;
-    }
-
-    toast.error(getClientErrorMessage(profileError, "Unable to load profile"));
-  }, [profileError, router]);
-
-  useEffect(() => {
-    if (!balanceError) {
-      return;
-    }
-
-    if (isUnauthorizedError(balanceError)) {
-      router.replace("/sign-in");
-      return;
-    }
-
-    toast.error(
-      getClientErrorMessage(balanceError, "Unable to load credit balance"),
-    );
-  }, [balanceError, router]);
-
-  useEffect(() => {
-    if (!chatError) {
-      return;
-    }
-
-    if (isUnauthorizedError(chatError)) {
-      router.replace("/sign-in");
-      return;
-    }
-
-    if (chatError?.status === 404) {
-      toast.error("This conversation was not found or has already been deleted.");
-      router.replace("/settings/history");
-      return;
-    }
-
-    toast.error(
-      getClientErrorMessage(chatError, "Unable to load this conversation"),
-    );
-  }, [chatError, router]);
-
-  useEffect(() => {
-    if (!storedMessagesError) {
-      return;
-    }
-
-    if (isUnauthorizedError(storedMessagesError)) {
-      router.replace("/sign-in");
-      return;
-    }
-
-    toast.error(
-      getClientErrorMessage(
-        storedMessagesError,
-        "Unable to load this conversation",
-      ),
-    );
-  }, [router, storedMessagesError]);
-
-  useEffect(() => {
-    if (requestedChatId || !profilePhone) {
-      return;
-    }
-
-    initializeChat();
-  }, [profilePhone, requestedChatId]);
-
-  useEffect(() => {
-    if (isCreditDepleted) {
-      setPurchasePromptMessage(
-        (currentMessage) => currentMessage || CREDIT_LIMIT_MESSAGE,
-      );
-      return;
-    }
-
-    if (creditBalance !== null && creditBalance > 0) {
-      setPurchasePromptMessage("");
-    }
-  }, [creditBalance, isCreditDepleted]);
-
-
   const sendMessage = async (nextMessage) => {
     const text = nextMessage.trim();
 
     if (!text || isReplying) {
+      return;
+    }
+
+    if (isSubscriptionStatusLoading) {
+      toast.error("Membership status is still syncing. Please wait a moment.");
       return;
     }
 
@@ -496,7 +446,7 @@ export default function AmigoChatPage() {
           chatId,
           message: text,
           chat_history: buildRecentContext(baseMessages),
-          plan_level: PLAN_LEVEL,
+          plan_level: activePlanLevel,
         }),
       });
 
