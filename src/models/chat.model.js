@@ -14,6 +14,11 @@ const chatSchema = new Schema(
       type: String,
     },
 
+    isAiTitleGenerated: {
+      type: Boolean,
+      default: false,
+    },
+
     lastMessage: {
       type: String,
     },
@@ -25,6 +30,10 @@ const chatSchema = new Schema(
 
     model: {
       type: String, // gpt-4.1 or gpt-4.1-mini
+    },
+
+    summerized: {
+      type: String,
     },
 
     // Subscription Context

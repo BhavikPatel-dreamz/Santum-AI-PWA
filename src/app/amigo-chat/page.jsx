@@ -30,6 +30,8 @@ const CREDIT_LIMIT_MESSAGE =
   "You have reached your chat credit limit. Purchase a plan to continue with Amigo.";
 const PURCHASE_PLAN_PATH = "/plus-subscription";
 const PLAN_LEVEL = "premium";
+const RECENT_MESSAGE_LIMIT = 10;
+const CHAT_SUMMARY_MESSAGE_ID = "chat-summary";
 const STARTER_MESSAGES = [
   {
     id: "starter-assistant",
@@ -68,18 +70,49 @@ function mapStoredMessage(message) {
   };
 }
 
-function buildHistory(messages) {
+function isStarterMessage(message) {
+  return message?.id === "starter-assistant";
+}
+
+function buildRecentContext(messages) {
   return messages
     .filter(
       (message) =>
-        message?.id !== "starter-assistant" &&
+        !isStarterMessage(message) &&
         typeof message?.text === "string" &&
         message.text.trim(),
     )
+    .slice(-RECENT_MESSAGE_LIMIT)
     .map((message) => ({
       role: message.role === "user" ? "human" : "ai",
-      content: message.text,
+      content: message.text.trim(),
     }));
+}
+
+function buildVisibleMessages(messages, summaryText) {
+  const actualMessages = messages.filter((message) => !isStarterMessage(message));
+
+  if (actualMessages.length === 0) {
+    return messages;
+  }
+
+  const recentMessages = actualMessages.slice(-RECENT_MESSAGE_LIMIT);
+  const hasHiddenMessages = actualMessages.length > recentMessages.length;
+  const trimmedSummary =
+    typeof summaryText === "string" ? summaryText.trim() : "";
+
+  if (!hasHiddenMessages || !trimmedSummary) {
+    return recentMessages;
+  }
+
+  return [
+    // {
+    //   id: CHAT_SUMMARY_MESSAGE_ID,
+    //   role: "system",
+    //   text: trimmedSummary,
+    // },
+    ...recentMessages,
+  ];
 }
 
 function buildTempMessageId(prefix) {
@@ -139,8 +172,10 @@ export default function AmigoChatPage() {
     typeof activeChat?.title === "string" && activeChat.title.trim()
       ? activeChat.title.trim()
       : "Stored conversation";
+  const activeChatSummary =
+    typeof activeChat?.summerized === "string" ? activeChat.summerized.trim() : "";
 
-  const persistedMessages = useMemo(() => {
+  const persistedRawMessages = useMemo(() => {
     if (!requestedChatId) {
       return STARTER_MESSAGES;
     }
@@ -156,7 +191,18 @@ export default function AmigoChatPage() {
     return [];
   }, [activeChat?.isEmpty, requestedChatId, storedMessagesData]);
 
-  const messages = hasDraftMessages ? draftMessages : persistedMessages;
+  const persistedMessages = useMemo(
+    () => buildVisibleMessages(persistedRawMessages, activeChatSummary),
+    [activeChatSummary, persistedRawMessages],
+  );
+
+  const messages = useMemo(
+    () =>
+      hasDraftMessages
+        ? buildVisibleMessages(draftMessages, activeChatSummary)
+        : persistedMessages,
+    [activeChatSummary, draftMessages, hasDraftMessages, persistedMessages],
+  );
 
   const loadCreditBalance = async ({ silent = false } = {}) => {
     try {
@@ -369,7 +415,9 @@ export default function AmigoChatPage() {
       return;
     }
 
-    toast.error(getClientErrorMessage(chatError, "Unable to load this conversation"));
+    toast.error(
+      getClientErrorMessage(chatError, "Unable to load this conversation"),
+    );
   }, [chatError, router]);
 
   useEffect(() => {
@@ -400,8 +448,8 @@ export default function AmigoChatPage() {
 
   useEffect(() => {
     if (isCreditDepleted) {
-      setPurchasePromptMessage((currentMessage) =>
-        currentMessage || CREDIT_LIMIT_MESSAGE,
+      setPurchasePromptMessage(
+        (currentMessage) => currentMessage || CREDIT_LIMIT_MESSAGE,
       );
       return;
     }
@@ -430,13 +478,12 @@ export default function AmigoChatPage() {
 
     try {
       const chatId = await ensureChatId();
-      const baseMessages = hasDraftMessages ? draftMessages : persistedMessages;
+      const baseMessages = hasDraftMessages ? draftMessages : persistedRawMessages;
       const userMessage = {
         id: buildTempMessageId("user"),
         role: "user",
         text,
       };
-      const history = buildHistory(baseMessages);
 
       setDraftMessages([...baseMessages, userMessage]);
       setHasDraftMessages(true);
@@ -448,7 +495,7 @@ export default function AmigoChatPage() {
         body: JSON.stringify({
           chatId,
           message: text,
-          chat_history: history,
+          chat_history: buildRecentContext(baseMessages),
           plan_level: PLAN_LEVEL,
         }),
       });
@@ -527,6 +574,18 @@ export default function AmigoChatPage() {
           }),
         ).unwrap();
         dispatch(
+          appApi.endpoints.getChat.initiate(chatId, {
+            forceRefetch: true,
+          }),
+        );
+        setTimeout(() => {
+          dispatch(
+            appApi.endpoints.getChat.initiate(chatId, {
+              forceRefetch: true,
+            }),
+          );
+        }, 1200);
+        dispatch(
           appApi.util.invalidateTags([
             "Chats",
             { type: "Chat", id: chatId },
@@ -553,7 +612,7 @@ export default function AmigoChatPage() {
       toast.error(getClientErrorMessage(error, "Unable to connect to Amigo"));
       setHasDraftMessages(true);
       setDraftMessages((currentMessages) => [
-        ...(currentMessages.length > 0 ? currentMessages : persistedMessages),
+        ...(currentMessages.length > 0 ? currentMessages : persistedRawMessages),
         {
           id: buildTempMessageId("assistant-error"),
           role: "assistant",
