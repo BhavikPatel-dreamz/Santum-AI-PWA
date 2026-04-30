@@ -3,28 +3,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 
-const OnboardingSlide = dynamic(() => import("../components/onboarding/OnboardingSlide"), { ssr: false });
-
-const slides = [
-  {
-    image: "/icons/artboard-2.jpg",
-    title: "Welcome to Amigo, Great Friend to Chat",
-    desc: "Proin molestie pulvinar vitae enim erat morbi eu. Malesuada eros nisi augue.",
-    btnLabel: "Next",
-  },
-  {
-    image: "/icons/artboard-2.jpg",
-    title: "The Intelligent Way to Get Started",
-    desc: "Quisque blandit risus duis odio. In pretium nibh velit a aenean vitae porta euismod.",
-    btnLabel: "Next",
-  },
-  {
-    image: "/icons/artboard-2.jpg",
-    title: "Accelerate Your Learning with Amigo",
-    desc: "Pulvinar in et eu volutpat mauris viverra ut orci. Lacus placerat volutpat pharetra a.",
-    btnLabel: "Get Started",
-  },
-];
+const OnboardingSlide = dynamic(
+  () => import("../components/onboarding/OnboardingSlide"),
+  { ssr: false },
+);
 
 const AUTO_SLIDE_INTERVAL = 4000;
 const ANIM_DURATION = 320;
@@ -32,12 +14,40 @@ const ANIM_DURATION = 320;
 type Direction = "left" | "right";
 
 export default function RootPage() {
+  const [theme, setTheme] = useState<string | null>(null);
+  const slides = [
+    {
+      image:
+        theme == "dark" ? "/icons/artboard-3.png" : "/icons/artboard-2.jpg",
+      title: "Welcome to Amigo, Great Friend to Chat",
+      desc: "Proin molestie pulvinar vitae enim erat morbi eu. Malesuada eros nisi augue.",
+      btnLabel: "Next",
+    },
+    {
+      image:
+        theme == "dark" ? "/icons/artboard-3.png" : "/icons/artboard-2.jpg",
+      title: "The Intelligent Way to Get Started",
+      desc: "Quisque blandit risus duis odio. In pretium nibh velit a aenean vitae porta euismod.",
+      btnLabel: "Next",
+    },
+    {
+      image:
+        theme == "dark" ? "/icons/artboard-3.png" : "/icons/artboard-2.jpg",
+      title: "Accelerate Your Learning with Amigo",
+      desc: "Pulvinar in et eu volutpat mauris viverra ut orci. Lacus placerat volutpat pharetra a.",
+      btnLabel: "Get Started",
+    },
+  ];
   const [currentSlide, setCurrentSlide] = useState(0);
   const [animClass, setAnimClass] = useState("");
   const isAnimating = useRef(false);
   const router = useRouter();
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const autoSlideStopped = useRef(false);
+
+  useEffect(() => {
+    setTheme(localStorage.getItem("amigo-theme"));
+  }, []);
 
   const stopAutoSlide = useCallback(() => {
     autoSlideStopped.current = true;
@@ -47,24 +57,29 @@ export default function RootPage() {
     }
   }, []);
 
-  const goToSlide = useCallback((next: number, direction: Direction) => {
-    if (isAnimating.current || next === currentSlide) return;
-    isAnimating.current = true;
+  const goToSlide = useCallback(
+    (next: number, direction: Direction) => {
+      if (isAnimating.current || next === currentSlide) return;
+      isAnimating.current = true;
 
-    const exitClass = direction === "left" ? "slide-exit-left" : "slide-exit-right";
-    setAnimClass(exitClass);
-
-    setTimeout(() => {
-      setCurrentSlide(next);
-      const enterClass = direction === "left" ? "slide-enter-left" : "slide-enter-right";
-      setAnimClass(enterClass);
+      const exitClass =
+        direction === "left" ? "slide-exit-left" : "slide-exit-right";
+      setAnimClass(exitClass);
 
       setTimeout(() => {
-        setAnimClass("");
-        isAnimating.current = false;
+        setCurrentSlide(next);
+        const enterClass =
+          direction === "left" ? "slide-enter-left" : "slide-enter-right";
+        setAnimClass(enterClass);
+
+        setTimeout(() => {
+          setAnimClass("");
+          isAnimating.current = false;
+        }, ANIM_DURATION);
       }, ANIM_DURATION);
-    }, ANIM_DURATION);
-  }, [currentSlide]);
+    },
+    [currentSlide],
+  );
 
   const goNext = useCallback(() => {
     setCurrentSlide((prev: number) => {
@@ -87,14 +102,19 @@ export default function RootPage() {
 
   useEffect(() => {
     resetTimer();
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
   }, [resetTimer]);
 
-  const handleDotClick = useCallback((index: number) => {
-    stopAutoSlide();
-    const dir: Direction = index > currentSlide ? "left" : "right";
-    goToSlide(index, dir);
-  }, [currentSlide, stopAutoSlide, goToSlide]);
+  const handleDotClick = useCallback(
+    (index: number) => {
+      stopAutoSlide();
+      const dir: Direction = index > currentSlide ? "left" : "right";
+      goToSlide(index, dir);
+    },
+    [currentSlide, stopAutoSlide, goToSlide],
+  );
 
   const handleNext = useCallback(() => {
     if (currentSlide < slides.length - 1) {

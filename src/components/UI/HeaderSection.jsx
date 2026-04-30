@@ -1,12 +1,21 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const HeaderSection = ({ title }) => {
   const router = useRouter();
+  const [theme, setTheme] = useState(null);
+  useEffect(() => {
+    setTheme(localStorage.getItem("amigo-theme"));
+  }, []);
   return (
     <header className="relative h-[120px] overflow-hidden bg-[#23cf67] px-5 pt-6">
       <Image
-        src="/icons/let-you-screen-main-img.jpg"
+        src={
+          theme === "dark"
+            ? "/icons/let-you-screen-main-img-dark.jpg"
+            : "/icons/let-you-screen-main-img.jpg"
+        }
         alt=""
         width={480}
         height={108}

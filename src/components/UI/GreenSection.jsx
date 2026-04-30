@@ -1,16 +1,24 @@
 import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const GreenSection = ({ show = true }) => {
   const router = useRouter();
+  const [theme, setTheme] = useState(null);
+  useEffect(() => {
+    setTheme(localStorage.getItem("amigo-theme"));
+  }, []);
   return (
     <div>
       <div className="relative bg-[#00D061] h-94 flex items-end justify-center pb-12 overflow-hidden flex-shrink-0">
         {/* Circuit SVG background */}
         <Image
-          src="/icons/let-you-screen-main-img.jpg"
+          src={
+            theme === "dark"
+              ? "/icons/let-you-screen-main-img-dark.jpg"
+              : "/icons/let-you-screen-main-img.jpg"
+          }
           alt=""
           width={375}
           height={375}
