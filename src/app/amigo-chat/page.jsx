@@ -94,7 +94,9 @@ function buildRecentContext(messages) {
 }
 
 function buildVisibleMessages(messages, summaryText) {
-  const actualMessages = messages.filter((message) => !isStarterMessage(message));
+  const actualMessages = messages.filter(
+    (message) => !isStarterMessage(message),
+  );
 
   if (actualMessages.length === 0) {
     return messages;
@@ -192,10 +194,8 @@ export default function AmigoChatPage() {
   const creditBalance = extractCreditBalance(balanceResponse);
   const isCreditDepleted = creditBalance !== null && creditBalance <= 0;
   const hasTodayMoodCheckIn =
-    Boolean(todayMoodCheckIn) &&
-    todayMoodCheckIn?.dateKey === todayMoodDateKey;
-  const isMoodCheckInRequired =
-    isMoodCheckInLoading || !hasTodayMoodCheckIn;
+    Boolean(todayMoodCheckIn) && todayMoodCheckIn?.dateKey === todayMoodDateKey;
+  const isMoodCheckInRequired = isMoodCheckInLoading || !hasTodayMoodCheckIn;
   const areChatActionsDisabled =
     isReplying || isCreditDepleted || isMoodCheckInRequired;
   const isConversationLoading =
@@ -207,7 +207,9 @@ export default function AmigoChatPage() {
       ? activeChat.title.trim()
       : "Stored conversation";
   const activeChatSummary =
-    typeof activeChat?.summerized === "string" ? activeChat.summerized.trim() : "";
+    typeof activeChat?.summerized === "string"
+      ? activeChat.summerized.trim()
+      : "";
 
   const persistedRawMessages = useMemo(() => {
     if (!requestedChatId) {
@@ -272,7 +274,9 @@ export default function AmigoChatPage() {
     }
 
     if (isSubscriptionStatusLoading) {
-      throw { message: "Membership status is still syncing. Please try again." };
+      throw {
+        message: "Membership status is still syncing. Please try again.",
+      };
     }
 
     createChatPromiseRef.current = createChat({
@@ -322,11 +326,6 @@ export default function AmigoChatPage() {
     }
 
     if (isUnauthorizedError(subscriptionStatusError)) {
-    if (!moodCheckInError) {
-      return;
-    }
-
-    if (isUnauthorizedError(moodCheckInError)) {
       router.replace("/sign-in");
       return;
     }
@@ -338,6 +337,19 @@ export default function AmigoChatPage() {
       ),
     );
   }, [router, subscriptionStatusError]);
+
+  useEffect(() => {
+    if (!moodCheckInError) {
+      return;
+    }
+
+    if (isUnauthorizedError(moodCheckInError)) {
+      router.replace("/sign-in");
+      return;
+    }
+
+    toast.error(
+      getClientErrorMessage(
         moodCheckInError,
         "Unable to load today's mood check-in",
       ),
@@ -457,7 +469,6 @@ export default function AmigoChatPage() {
     }
   };
 
-
   const sendMessage = async (nextMessage) => {
     const text = nextMessage.trim();
 
@@ -467,390 +478,402 @@ export default function AmigoChatPage() {
 
     if (isSubscriptionStatusLoading) {
       toast.error("Membership status is still syncing. Please wait a moment.");
-    if (isMoodCheckInLoading) {
-      toast.error("Checking today's mood check-in. Please wait a moment.");
-      return;
-    }
-
-    if (!hasTodayMoodCheckIn) {
-      toast.error("Complete today's mood check-in before chatting with Amigo.");
-      return;
-    }
-
-    if (isCreditDepleted) {
-      await promptPlanPurchase(CREDIT_LIMIT_MESSAGE, text);
-      return;
-    }
-
-    setIsReplying(true);
-
-    let typingInterval;
-
-    try {
-      const chatId = await ensureChatId();
-      const baseMessages = hasDraftMessages ? draftMessages : persistedRawMessages;
-      const userMessage = {
-        id: buildTempMessageId("user"),
-        role: "user",
-        text,
-      };
-
-      setDraftMessages([...baseMessages, userMessage]);
-      setHasDraftMessages(true);
-      setComposer("");
-
-      const response = await fetch("/api/chat/stream", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chatId,
-          message: text,
-          chat_history: buildRecentContext(baseMessages),
-          plan_level: activePlanLevel,
-          plan_level: PLAN_LEVEL,
-          mood_date: todayMoodDateKey,
-          mood_context: todayMoodCheckIn,
-        }),
-      });
-
-      if (!response.ok) {
-        let errorData = {};
-
-        try {
-          errorData = await response.json();
-        } catch {
-          errorData = {};
-        }
-
-        throw {
-          message: errorData?.message || "Failed to connect to Amigo",
-          status: response.status,
-          data: errorData,
-        };
+      if (isMoodCheckInLoading) {
+        toast.error("Checking today's mood check-in. Please wait a moment.");
+        return;
       }
 
-      if (!response.body) throw new Error("No response body");
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      const assistantMessageId = buildTempMessageId("assistant");
-
-      setDraftMessages((currentMessages) => [
-        ...currentMessages,
-        { id: assistantMessageId, role: "assistant", text: "" },
-      ]);
-
-      let accumulatedText = "";
-      let displayedText = "";
-      let isStreamDone = false;
-
-      typingInterval = setInterval(() => {
-        if (displayedText.length < accumulatedText.length) {
-          const diff = accumulatedText.length - displayedText.length;
-          const increment = diff > 50 ? 10 : diff > 20 ? 5 : 2;
-
-          displayedText = accumulatedText.substring(
-            0,
-            displayedText.length + increment,
-          );
-
-          setDraftMessages((currentMessages) =>
-            currentMessages.map((message) =>
-              message.id === assistantMessageId
-                ? { ...message, text: displayedText }
-                : message,
-            ),
-          );
-        } else if (isStreamDone) {
-          clearInterval(typingInterval);
-        }
-      }, 30);
-
-      while (true) {
-        const { done, value } = await reader.read();
-
-        if (done) {
-          isStreamDone = true;
-          break;
-        }
-
-        const chunk = decoder.decode(value, { stream: true });
-        accumulatedText += chunk;
+      if (!hasTodayMoodCheckIn) {
+        toast.error(
+          "Complete today's mood check-in before chatting with Amigo.",
+        );
+        return;
       }
 
-      await loadCreditBalance({ silent: true });
+      if (isCreditDepleted) {
+        await promptPlanPurchase(CREDIT_LIMIT_MESSAGE, text);
+        return;
+      }
+
+      setIsReplying(true);
+
+      let typingInterval;
 
       try {
-        await dispatch(
-          appApi.endpoints.getChatMessages.initiate(chatId, {
-            forceRefetch: true,
+        const chatId = await ensureChatId();
+        const baseMessages = hasDraftMessages
+          ? draftMessages
+          : persistedRawMessages;
+        const userMessage = {
+          id: buildTempMessageId("user"),
+          role: "user",
+          text,
+        };
+
+        setDraftMessages([...baseMessages, userMessage]);
+        setHasDraftMessages(true);
+        setComposer("");
+
+        const response = await fetch("/api/chat/stream", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chatId,
+            message: text,
+            chat_history: buildRecentContext(baseMessages),
+            plan_level: activePlanLevel,
+            plan_level: PLAN_LEVEL,
+            mood_date: todayMoodDateKey,
+            mood_context: todayMoodCheckIn,
           }),
-        ).unwrap();
-        dispatch(
-          appApi.endpoints.getChat.initiate(chatId, {
-            forceRefetch: true,
-          }),
-        );
-        setTimeout(() => {
+        });
+
+        if (!response.ok) {
+          let errorData = {};
+
+          try {
+            errorData = await response.json();
+          } catch {
+            errorData = {};
+          }
+
+          throw {
+            message: errorData?.message || "Failed to connect to Amigo",
+            status: response.status,
+            data: errorData,
+          };
+        }
+
+        if (!response.body) throw new Error("No response body");
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        const assistantMessageId = buildTempMessageId("assistant");
+
+        setDraftMessages((currentMessages) => [
+          ...currentMessages,
+          { id: assistantMessageId, role: "assistant", text: "" },
+        ]);
+
+        let accumulatedText = "";
+        let displayedText = "";
+        let isStreamDone = false;
+
+        typingInterval = setInterval(() => {
+          if (displayedText.length < accumulatedText.length) {
+            const diff = accumulatedText.length - displayedText.length;
+            const increment = diff > 50 ? 10 : diff > 20 ? 5 : 2;
+
+            displayedText = accumulatedText.substring(
+              0,
+              displayedText.length + increment,
+            );
+
+            setDraftMessages((currentMessages) =>
+              currentMessages.map((message) =>
+                message.id === assistantMessageId
+                  ? { ...message, text: displayedText }
+                  : message,
+              ),
+            );
+          } else if (isStreamDone) {
+            clearInterval(typingInterval);
+          }
+        }, 30);
+
+        while (true) {
+          const { done, value } = await reader.read();
+
+          if (done) {
+            isStreamDone = true;
+            break;
+          }
+
+          const chunk = decoder.decode(value, { stream: true });
+          accumulatedText += chunk;
+        }
+
+        await loadCreditBalance({ silent: true });
+
+        try {
+          await dispatch(
+            appApi.endpoints.getChatMessages.initiate(chatId, {
+              forceRefetch: true,
+            }),
+          ).unwrap();
           dispatch(
             appApi.endpoints.getChat.initiate(chatId, {
               forceRefetch: true,
             }),
           );
-        }, 1200);
-        dispatch(
-          appApi.util.invalidateTags([
-            "Chats",
-            { type: "Chat", id: chatId },
-            { type: "Messages", id: chatId },
-          ]),
-        );
-        setHasDraftMessages(false);
-        setDraftMessages([]);
-      } catch (refetchError) {
-        console.error("Unable to refresh stored chat messages:", refetchError);
+          setTimeout(() => {
+            dispatch(
+              appApi.endpoints.getChat.initiate(chatId, {
+                forceRefetch: true,
+              }),
+            );
+          }, 1200);
+          dispatch(
+            appApi.util.invalidateTags([
+              "Chats",
+              { type: "Chat", id: chatId },
+              { type: "Messages", id: chatId },
+            ]),
+          );
+          setHasDraftMessages(false);
+          setDraftMessages([]);
+        } catch (refetchError) {
+          console.error(
+            "Unable to refresh stored chat messages:",
+            refetchError,
+          );
+        }
+
+        await loadCreditBalance({ silent: true });
+      } catch (error) {
+        console.error("Chat error:", error);
+
+        if (isCreditLimitError(error)) {
+          setHasDraftMessages(false);
+          setDraftMessages([]);
+          await promptPlanPurchase(getCreditLimitMessage(error), text);
+          return;
+        }
+
+        toast.error(getClientErrorMessage(error, "Unable to connect to Amigo"));
+        setHasDraftMessages(true);
+        setDraftMessages((currentMessages) => [
+          ...(currentMessages.length > 0
+            ? currentMessages
+            : persistedRawMessages),
+          {
+            id: buildTempMessageId("assistant-error"),
+            role: "assistant",
+            text: "Sorry, I'm having trouble connecting to Amigo right now. Please check your connection and try again.",
+          },
+        ]);
+      } finally {
+        clearInterval(typingInterval);
+        setIsReplying(false);
       }
-
-      await loadCreditBalance({ silent: true });
-    } catch (error) {
-      console.error("Chat error:", error);
-
-      if (isCreditLimitError(error)) {
-        setHasDraftMessages(false);
-        setDraftMessages([]);
-        await promptPlanPurchase(getCreditLimitMessage(error), text);
-        return;
-      }
-
-      toast.error(getClientErrorMessage(error, "Unable to connect to Amigo"));
-      setHasDraftMessages(true);
-      setDraftMessages((currentMessages) => [
-        ...(currentMessages.length > 0 ? currentMessages : persistedRawMessages),
-        {
-          id: buildTempMessageId("assistant-error"),
-          role: "assistant",
-          text: "Sorry, I'm having trouble connecting to Amigo right now. Please check your connection and try again.",
-        },
-      ]);
-    } finally {
-      clearInterval(typingInterval);
-      setIsReplying(false);
     }
-  };
 
-  return (
-    <StepPageShell
-      title="Chat With Amigo"
-      contentClassName="overflow-hidden pb-6"
-    >
-      <FeatureShowcaseCard
-        badge="Assistant Live"
-        title="A calmer chat space built around quick momentum"
-        description="Amigo is ready to help you brainstorm, organize, or explain something fast."
-        imageSrc="/icons/robot-slider-img3.png"
-        imageAlt="Chat companion"
-        className="mb-5"
-        compact
-      />
-
-      <div className="theme-card-muted mb-4 rounded-[22px] border px-4 py-4">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#7E8A83]">
-              Available Credits
-            </p>
-            <p className="mt-2 text-[24px] font-semibold leading-8 text-[#0F0F0F]">
-              {isBalanceLoading
-                ? "Loading..."
-                : creditBalance === null
-                  ? "Unavailable"
-                  : formatCreditAmount(creditBalance)}
-            </p>
-          </div>
-          <div className="rounded-full bg-[#E8FFF1] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#00A84D]">
-            Live
-          </div>
-        </div>
-        <p className="mt-3 font-satoshi text-[14px] leading-6 text-[#555]">
-          Amigo now reads this balance before each chat and stores each finished
-          reply back into your conversation history.
-        </p>
-      </div>
-
-      {purchasePromptMessage || isCreditDepleted ? (
-        <div className="mb-4 rounded-[24px] border border-[#FFD9B8] bg-[linear-gradient(135deg,#FFF5EA_0%,#FFFFFF_100%)] px-4 py-4 shadow-[0_12px_30px_rgba(15,15,15,0.04)]">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#C56B1F]">
-            Purchase Required
-          </p>
-          <h2 className="mt-2 text-[20px] font-semibold leading-7 text-[#0F0F0F]">
-            Your credits are used up
-          </h2>
-          <p className="mt-2 font-satoshi text-[14px] leading-6 text-[#5F4A33]">
-            {purchasePromptMessage || CREDIT_LIMIT_MESSAGE}
-          </p>
-          <div className="mt-4 flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={() => router.push(PURCHASE_PLAN_PATH)}
-              className="rounded-full bg-[#0F0F0F] px-4 py-2.5 text-[14px] font-semibold text-white"
-            >
-              View Plans
-            </button>
-            <button
-              type="button"
-              onClick={() => loadCreditBalance()}
-              className="theme-surface rounded-full px-4 py-2.5 text-[14px] font-semibold text-[#0F0F0F] shadow-[0_10px_24px_rgba(15,15,15,0.05)]"
-            >
-              Refresh Balance
-            </button>
-          </div>
-        </div>
-      ) : null}
-
-      {isMoodCheckInLoading && !todayMoodCheckIn ? (
-        <div className="theme-card mb-4 rounded-[24px] border px-4 py-4 shadow-[0_12px_30px_rgba(15,15,15,0.04)]">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#00A84D]">
-            Mood Check-In
-          </p>
-          <p className="mt-3 text-[15px] font-medium text-[#0F0F0F]">
-            Checking today&apos;s mood check-in before chat starts...
-          </p>
-        </div>
-      ) : null}
-
-      {!isMoodCheckInLoading && !hasTodayMoodCheckIn ? (
-        <MoodCheckInCard
-          key={`chat-mood-${todayMoodDateKey}`}
-          className="mb-4"
-          entry={null}
-          isSaving={isSavingMoodCheckIn}
-          onSubmit={handleSaveMoodCheckIn}
-          description="Before we start, take 10 seconds to share how today feels so Amigo can respond with better tone and pacing."
-          submitLabel="Save and unlock chat"
-          showUpdateAction={false}
+    return (
+      <StepPageShell
+        title="Chat With Amigo"
+        contentClassName="overflow-hidden pb-6"
+      >
+        <FeatureShowcaseCard
+          badge="Assistant Live"
+          title="A calmer chat space built around quick momentum"
+          description="Amigo is ready to help you brainstorm, organize, or explain something fast."
+          imageSrc="/icons/robot-slider-img3.png"
+          imageAlt="Chat companion"
+          className="mb-5"
+          compact
         />
-      ) : null}
 
-      <div className="mb-4 flex flex-wrap gap-2">
-        {QUICK_PROMPTS.map((prompt) => (
-          <button
-            key={prompt}
-            type="button"
-            onClick={() => sendMessage(prompt)}
-            disabled={areChatActionsDisabled}
-            className={`rounded-full px-4 py-2 text-[13px] font-semibold transition-all ${
-              areChatActionsDisabled
-                ? "bg-[#EDF2EE] text-[#93A099]"
-                : "bg-[#F4F7F5] text-[#0F0F0F] hover:bg-[#E8FFF1]"
-            }`}
-          >
-            {prompt}
-          </button>
-        ))}
-      </div>
-
-      <div className="flex flex-1 flex-col overflow-hidden rounded-[28px] bg-[#F8FFFB] p-4">
-        <div className="mb-3 flex items-center justify-between gap-3">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#7E8A83]">
-            {requestedChatId ? activeChatTitle : "Starting a new conversation"}
-          </p>
-          {isConversationLoading ? (
-            <span className="text-[12px] font-medium text-[#7E8A83]">
-              Loading history...
-            </span>
-          ) : null}
-        </div>
-
-        <div className="flex-1 space-y-4 overflow-y-auto pr-1">
-          {isConversationLoading ? (
-            <div className="theme-surface rounded-[22px] px-4 py-4 shadow-[0_10px_24px_rgba(15,15,15,0.05)]">
-              <p className="font-satoshi text-[14px] leading-6 text-[#555]">
-                Loading your saved conversation...
+        <div className="theme-card-muted mb-4 rounded-[22px] border px-4 py-4">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#7E8A83]">
+                Available Credits
+              </p>
+              <p className="mt-2 text-[24px] font-semibold leading-8 text-[#0F0F0F]">
+                {isBalanceLoading
+                  ? "Loading..."
+                  : creditBalance === null
+                    ? "Unavailable"
+                    : formatCreditAmount(creditBalance)}
               </p>
             </div>
-          ) : (
-            messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
+            <div className="rounded-full bg-[#E8FFF1] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#00A84D]">
+              Live
+            </div>
+          </div>
+          <p className="mt-3 font-satoshi text-[14px] leading-6 text-[#555]">
+            Amigo now reads this balance before each chat and stores each
+            finished reply back into your conversation history.
+          </p>
+        </div>
+
+        {purchasePromptMessage || isCreditDepleted ? (
+          <div className="mb-4 rounded-[24px] border border-[#FFD9B8] bg-[linear-gradient(135deg,#FFF5EA_0%,#FFFFFF_100%)] px-4 py-4 shadow-[0_12px_30px_rgba(15,15,15,0.04)]">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#C56B1F]">
+              Purchase Required
+            </p>
+            <h2 className="mt-2 text-[20px] font-semibold leading-7 text-[#0F0F0F]">
+              Your credits are used up
+            </h2>
+            <p className="mt-2 font-satoshi text-[14px] leading-6 text-[#5F4A33]">
+              {purchasePromptMessage || CREDIT_LIMIT_MESSAGE}
+            </p>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={() => router.push(PURCHASE_PLAN_PATH)}
+                className="rounded-full bg-[#0F0F0F] px-4 py-2.5 text-[14px] font-semibold text-white"
               >
+                View Plans
+              </button>
+              <button
+                type="button"
+                onClick={() => loadCreditBalance()}
+                className="theme-surface rounded-full px-4 py-2.5 text-[14px] font-semibold text-[#0F0F0F] shadow-[0_10px_24px_rgba(15,15,15,0.05)]"
+              >
+                Refresh Balance
+              </button>
+            </div>
+          </div>
+        ) : null}
+
+        {isMoodCheckInLoading && !todayMoodCheckIn ? (
+          <div className="theme-card mb-4 rounded-[24px] border px-4 py-4 shadow-[0_12px_30px_rgba(15,15,15,0.04)]">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#00A84D]">
+              Mood Check-In
+            </p>
+            <p className="mt-3 text-[15px] font-medium text-[#0F0F0F]">
+              Checking today&apos;s mood check-in before chat starts...
+            </p>
+          </div>
+        ) : null}
+
+        {!isMoodCheckInLoading && !hasTodayMoodCheckIn ? (
+          <MoodCheckInCard
+            key={`chat-mood-${todayMoodDateKey}`}
+            className="mb-4"
+            entry={null}
+            isSaving={isSavingMoodCheckIn}
+            onSubmit={handleSaveMoodCheckIn}
+            description="Before we start, take 10 seconds to share how today feels so Amigo can respond with better tone and pacing."
+            submitLabel="Save and unlock chat"
+            showUpdateAction={false}
+          />
+        ) : null}
+
+        <div className="mb-4 flex flex-wrap gap-2">
+          {QUICK_PROMPTS.map((prompt) => (
+            <button
+              key={prompt}
+              type="button"
+              onClick={() => sendMessage(prompt)}
+              disabled={areChatActionsDisabled}
+              className={`rounded-full px-4 py-2 text-[13px] font-semibold transition-all ${
+                areChatActionsDisabled
+                  ? "bg-[#EDF2EE] text-[#93A099]"
+                  : "bg-[#F4F7F5] text-[#0F0F0F] hover:bg-[#E8FFF1]"
+              }`}
+            >
+              {prompt}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex flex-1 flex-col overflow-hidden rounded-[28px] bg-[#F8FFFB] p-4">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#7E8A83]">
+              {requestedChatId
+                ? activeChatTitle
+                : "Starting a new conversation"}
+            </p>
+            {isConversationLoading ? (
+              <span className="text-[12px] font-medium text-[#7E8A83]">
+                Loading history...
+              </span>
+            ) : null}
+          </div>
+
+          <div className="flex-1 space-y-4 overflow-y-auto pr-1">
+            {isConversationLoading ? (
+              <div className="theme-surface rounded-[22px] px-4 py-4 shadow-[0_10px_24px_rgba(15,15,15,0.05)]">
+                <p className="font-satoshi text-[14px] leading-6 text-[#555]">
+                  Loading your saved conversation...
+                </p>
+              </div>
+            ) : (
+              messages.map((message) => (
                 <div
-                  className={`max-w-[85%] rounded-[22px] px-4 py-3 ${
-                    message.role === "user"
-                      ? "rounded-br-[8px] bg-[#00D061] text-white"
-                      : "theme-surface rounded-bl-[8px] text-[#0F0F0F] shadow-[0_10px_24px_rgba(15,15,15,0.05)]"
-                  }`}
+                  key={message.id}
+                  className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
                 >
-                  <div className="font-satoshi text-[15px] leading-6 whitespace-pre-wrap">
-                    <ReactMarkdown>{message.text}</ReactMarkdown>
+                  <div
+                    className={`max-w-[85%] rounded-[22px] px-4 py-3 ${
+                      message.role === "user"
+                        ? "rounded-br-[8px] bg-[#00D061] text-white"
+                        : "theme-surface rounded-bl-[8px] text-[#0F0F0F] shadow-[0_10px_24px_rgba(15,15,15,0.05)]"
+                    }`}
+                  >
+                    <div className="font-satoshi text-[15px] leading-6 whitespace-pre-wrap">
+                      <ReactMarkdown>{message.text}</ReactMarkdown>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+
+            {isReplying ? (
+              <div className="flex justify-start">
+                <div className="theme-surface rounded-[22px] rounded-bl-[8px] px-4 py-3 shadow-[0_10px_24px_rgba(15,15,15,0.05)]">
+                  <div className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-[#00D061] animate-bounce" />
+                    <span className="h-2 w-2 rounded-full bg-[#00D061] animate-bounce [animation-delay:120ms]" />
+                    <span className="h-2 w-2 rounded-full bg-[#00D061] animate-bounce [animation-delay:240ms]" />
                   </div>
                 </div>
               </div>
-            ))
-          )}
+            ) : null}
+          </div>
 
-          {isReplying ? (
-            <div className="flex justify-start">
-              <div className="theme-surface rounded-[22px] rounded-bl-[8px] px-4 py-3 shadow-[0_10px_24px_rgba(15,15,15,0.05)]">
-                <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-[#00D061] animate-bounce" />
-                  <span className="h-2 w-2 rounded-full bg-[#00D061] animate-bounce [animation-delay:120ms]" />
-                  <span className="h-2 w-2 rounded-full bg-[#00D061] animate-bounce [animation-delay:240ms]" />
-                </div>
-              </div>
-            </div>
-          ) : null}
-        </div>
-
-        <div className="theme-surface mt-4 rounded-[24px] p-3 shadow-[0_12px_30px_rgba(15,15,15,0.06)]">
-          <textarea
-            rows={3}
-            value={composer}
-            disabled={areChatActionsDisabled}
-            onChange={(event) => setComposer(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === "Enter" && !event.shiftKey) {
-                event.preventDefault();
-                sendMessage(composer);
+          <div className="theme-surface mt-4 rounded-[24px] p-3 shadow-[0_12px_30px_rgba(15,15,15,0.06)]">
+            <textarea
+              rows={3}
+              value={composer}
+              disabled={areChatActionsDisabled}
+              onChange={(event) => setComposer(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" && !event.shiftKey) {
+                  event.preventDefault();
+                  sendMessage(composer);
+                }
+              }}
+              placeholder={
+                isMoodCheckInLoading
+                  ? "Checking today's mood check-in..."
+                  : !hasTodayMoodCheckIn
+                    ? "Complete today's mood check-in to unlock chat."
+                    : isCreditDepleted
+                      ? "Purchase a plan or refresh your balance to keep chatting."
+                      : "Ask Amigo anything..."
               }
-            }}
-            placeholder={
-              isMoodCheckInLoading
-                ? "Checking today's mood check-in..."
-                : !hasTodayMoodCheckIn
-                  ? "Complete today's mood check-in to unlock chat."
-                  : isCreditDepleted
-                ? "Purchase a plan or refresh your balance to keep chatting."
-                : "Ask Amigo anything..."
-            }
-            className="theme-input-surface w-full resize-none rounded-[18px] px-4 py-4 font-satoshi text-[15px] leading-6 outline-none disabled:cursor-not-allowed disabled:bg-[#F1F5F2] disabled:text-[#7E8A83]"
-          />
+              className="theme-input-surface w-full resize-none rounded-[18px] px-4 py-4 font-satoshi text-[15px] leading-6 outline-none disabled:cursor-not-allowed disabled:bg-[#F1F5F2] disabled:text-[#7E8A83]"
+            />
 
-          <div className="mt-3 flex items-center justify-between gap-3">
-            <p className="font-satoshi text-[13px] leading-5 text-[#555]">
-              {isMoodCheckInLoading
-                ? "Checking today's mood check-in before chat unlocks."
-                : !hasTodayMoodCheckIn
-                  ? "Share your mood first so Amigo can personalize the conversation."
-                  : isCreditDepleted
-                ? "Purchase a plan to unlock more Amigo chats."
-                : "Powered by Santum AI Counseling service."}
-            </p>
-            <button
-              type="button"
-              onClick={() => sendMessage(composer)}
-              disabled={!composer.trim() || areChatActionsDisabled}
-              className={`rounded-full px-5 py-3 text-[14px] font-semibold transition-all ${
-                !composer.trim() || areChatActionsDisabled
-                  ? "bg-[#CBEEDB] text-white"
-                  : "bg-[#00D061] text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)]"
-              }`}
-            >
-              Send
-            </button>
+            <div className="mt-3 flex items-center justify-between gap-3">
+              <p className="font-satoshi text-[13px] leading-5 text-[#555]">
+                {isMoodCheckInLoading
+                  ? "Checking today's mood check-in before chat unlocks."
+                  : !hasTodayMoodCheckIn
+                    ? "Share your mood first so Amigo can personalize the conversation."
+                    : isCreditDepleted
+                      ? "Purchase a plan to unlock more Amigo chats."
+                      : "Powered by Santum AI Counseling service."}
+              </p>
+              <button
+                type="button"
+                onClick={() => sendMessage(composer)}
+                disabled={!composer.trim() || areChatActionsDisabled}
+                className={`rounded-full px-5 py-3 text-[14px] font-semibold transition-all ${
+                  !composer.trim() || areChatActionsDisabled
+                    ? "bg-[#CBEEDB] text-white"
+                    : "bg-[#00D061] text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)]"
+                }`}
+              >
+                Send
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    </StepPageShell>
-  );
+      </StepPageShell>
+    );
+  };
 }

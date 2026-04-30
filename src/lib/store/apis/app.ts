@@ -194,9 +194,6 @@ export const appApi = createApi({
     "Chats",
     "Chat",
     "Messages",
-    "Chats",
-    "Chat",
-    "Messages",
     "Mood",
   ],
   endpoints: (builder) => ({
