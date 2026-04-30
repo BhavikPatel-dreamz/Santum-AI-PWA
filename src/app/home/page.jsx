@@ -746,30 +746,30 @@ export default function HomeScreen() {
     }
   };
 
-  const handleStartChat = async () => {
-    try {
-      if (!profilePhone) {
-        toast.error("Your profile is still loading. Please try again.");
-        return;
-      }
+  // const handleStartChat = async () => {
+  //   try {
+  //     if (!profilePhone) {
+  //       toast.error("Your profile is still loading. Please try again.");
+  //       return;
+  //     }
 
-      const chat = await createChat({
-        user: profilePhone,
-        planType: "premium",
-      }).unwrap();
+  //     const chat = await createChat({
+  //       user: profilePhone,
+  //       planType: "premium",
+  //     }).unwrap();
 
-      const chatId = String(chat?._id ?? chat?.id ?? "");
+  //     const chatId = String(chat?._id ?? chat?.id ?? "");
 
-      if (!chatId) {
-        throw { message: "Unable to open a new conversation" };
-      }
+  //     if (!chatId) {
+  //       throw { message: "Unable to open a new conversation" };
+  //     }
 
-      router.push(`/amigo-chat?chat=${chatId}`);
-    } catch (error) {
-      console.log(error);
-      toast.error(getClientErrorMessage(error, "Unable to start a new chat"));
-    }
-  };
+  //     router.push(`/amigo-chat`);
+  //   } catch (error) {
+  //     console.log(error);
+  //     toast.error(getClientErrorMessage(error, "Unable to start a new chat"));
+  //   }
+  // };
 
   const navigateTo = (href) => {
     setDrawerOpen(false);
@@ -983,7 +983,7 @@ export default function HomeScreen() {
         <div className="fixed bottom-5 left-0 right-0 mx-auto max-w-[600px] px-4 z-10">
           <button
             type="button"
-            onClick={() => handleStartChat()}
+            onClick={() => router.push(`/amigo-chat`)}
             className="w-full max-w-[343px] mx-auto flex items-center justify-center h-[56px] rounded-[12px] bg-[#00D061] text-white text-[18px] font-medium shadow-[0_4px_20px_rgba(0,208,97,0.4)] transition-all active:scale-[0.98] hover:opacity-92"
           >
             Start Chat with Amigo

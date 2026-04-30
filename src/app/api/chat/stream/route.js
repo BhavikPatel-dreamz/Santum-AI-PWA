@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import { isValidObjectId } from "mongoose";
 import { Chat } from "@/models/chat.model";
@@ -18,6 +18,9 @@ import {
 const STREAM_METADATA_SEPARATOR = "\n\n{";
 const CREDIT_LIMIT_MESSAGE =
   "You have reached your chat credit limit. Purchase a plan to continue with Amigo.";
+const RECENT_HISTORY_LIMIT = 10;
+const NEW_MESSAGES_PER_TURN = 2;
+const DEFAULT_AI_API_URL = "http://localhost:8000";
 
 function createCreditLimitResponse(message = CREDIT_LIMIT_MESSAGE) {
   return NextResponse.json(
@@ -75,6 +78,111 @@ function normalizePlanLevel(level) {
   return ["free", "standard", "premium"].includes(level) ? level : "free";
 }
 
+function getAiApiUrl() {
+  return process.env.NEXT_PUBLIC_AI_API_URL || DEFAULT_AI_API_URL;
+}
+
+function extractTitleFromPayload(payload) {
+  if (!payload || typeof payload !== "object") {
+    return "";
+  }
+
+  if (typeof payload.title === "string") {
+    return payload.title.trim();
+  }
+
+  if (typeof payload.chat_title === "string") {
+    return payload.chat_title.trim();
+  }
+
+  if (
+    payload.data &&
+    typeof payload.data === "object" &&
+    typeof payload.data.title === "string"
+  ) {
+    return payload.data.title.trim();
+  }
+
+  return "";
+}
+
+function normalizeSummaryRole(role) {
+  if (role === "human" || role === "user") {
+    return "human";
+  }
+
+  if (role === "ai" || role === "assistant") {
+    return "ai";
+  }
+
+  if (role === "system") {
+    return "system";
+  }
+
+  return null;
+}
+
+function normalizeSummaryHistory(chatHistory) {
+  if (!Array.isArray(chatHistory)) {
+    return [];
+  }
+
+  return chatHistory.reduce((history, message) => {
+    const role = normalizeSummaryRole(message?.role);
+    const content =
+      typeof message?.content === "string"
+        ? message.content.trim()
+        : typeof message?.text === "string"
+          ? message.text.trim()
+          : "";
+
+    if (!role || !content) {
+      return history;
+    }
+
+    history.push({ role, content });
+    return history;
+  }, []);
+}
+
+function buildRecentHistory(chatHistory) {
+  return normalizeSummaryHistory(chatHistory).slice(-RECENT_HISTORY_LIMIT);
+}
+
+function buildSummaryArchive(chatHistory) {
+  const normalizedHistory = buildRecentHistory(chatHistory);
+  const overflowCount = Math.max(
+    normalizedHistory.length + NEW_MESSAGES_PER_TURN - RECENT_HISTORY_LIMIT,
+    0,
+  );
+
+  if (overflowCount <= 0) {
+    return [];
+  }
+
+  return normalizedHistory.slice(0, overflowCount);
+}
+
+function buildTitleHistory({ assistantMessage, chatHistory, userMessage }) {
+  const normalizedHistory = buildRecentHistory(chatHistory);
+
+  if (typeof userMessage === "string" && userMessage.trim()) {
+    normalizedHistory.push({
+      role: "human",
+      content: userMessage.trim(),
+    });
+  }
+
+  if (typeof assistantMessage === "string" && assistantMessage.trim()) {
+    normalizedHistory.push({
+      role: "ai",
+      content: assistantMessage.trim(),
+    });
+  }
+
+  return normalizedHistory.slice(-RECENT_HISTORY_LIMIT);
+}
+
 function parseChatMetadata(rawMetadata) {
   const trimmedMetadata = rawMetadata.trim();
 
@@ -114,7 +222,9 @@ async function loadCreditBalance() {
     "Unable to load credit balance",
   );
 
-  const balance = extractCreditBalance(balanceResponse?.data ?? balanceResponse);
+  const balance = extractCreditBalance(
+    balanceResponse?.data ?? balanceResponse,
+  );
 
   if (!Number.isFinite(balance)) {
     throw { status: 502, message: "Credit balance is unavailable" };
@@ -184,10 +294,121 @@ async function persistChatConversation({
   });
 }
 
+async function refreshChatSummary({
+  aiApiUrl,
+  archivedHistory,
+  chatId,
+  existingSummary,
+}) {
+  if (!chatId || archivedHistory.length === 0) {
+    return;
+  }
+
+  const summaryResponse = await fetch(`${aiApiUrl}/api/v1/summarize`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      chat_history: archivedHistory,
+      existing_summary: existingSummary || "",
+    }),
+  });
+
+  let summaryPayload = {};
+
+  try {
+    summaryPayload = await summaryResponse.json();
+  } catch {
+    summaryPayload = {};
+  }
+
+  if (!summaryResponse.ok) {
+    throw {
+      status: summaryResponse.status,
+      message: summaryPayload?.message || "AI summary API failed",
+      data: summaryPayload,
+    };
+  }
+
+  const nextSummary =
+    typeof summaryPayload?.summary === "string"
+      ? summaryPayload.summary.trim()
+      : "";
+
+  if (!nextSummary) {
+    return;
+  }
+
+  await connectDB();
+  await Chat.findByIdAndUpdate(chatId, {
+    summerized: nextSummary,
+    $unset: { expireAt: "" },
+  });
+}
+
+async function refreshChatTitle({
+  aiApiUrl,
+  chatId,
+  existingSummary,
+  titleHistory,
+}) {
+  if (!chatId || titleHistory.length === 0) {
+    return;
+  }
+
+  const titleResponse = await fetch(`${aiApiUrl}/api/v1/chat/title`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      chat_history: titleHistory,
+      existing_summary: existingSummary || "",
+    }),
+  });
+
+  let titlePayload = {};
+
+  try {
+    titlePayload = await titleResponse.json();
+  } catch {
+    titlePayload = {};
+  }
+
+  if (!titleResponse.ok) {
+    throw {
+      status: titleResponse.status,
+      message: titlePayload?.message || "AI title API failed",
+      data: titlePayload,
+    };
+  }
+
+  const nextTitle = extractTitleFromPayload(titlePayload);
+
+  if (!nextTitle) {
+    return;
+  }
+
+  await connectDB();
+  await Chat.findOneAndUpdate(
+    {
+      _id: chatId,
+      isAiTitleGenerated: { $ne: true },
+    },
+    {
+      title: nextTitle,
+      isAiTitleGenerated: true,
+      $unset: { expireAt: "" },
+    },
+  );
+}
+
 export async function POST(req) {
   try {
     const token = await getAuthToken();
     const body = await req.json();
+    const aiApiUrl = getAiApiUrl();
 
     if (!token) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -213,11 +434,59 @@ export async function POST(req) {
 
     await connectDB();
 
-    const existingChat = await Chat.findById(body.chatId).select("_id");
+    const existingChat = await Chat.findById(body.chatId).select(
+      "_id title summerized isAiTitleGenerated",
+    );
 
     if (!existingChat) {
       return NextResponse.json({ message: "Chat not found" }, { status: 404 });
     }
+
+    const existingSummary =
+      typeof existingChat?.summerized === "string"
+        ? existingChat.summerized.trim()
+        : "";
+    const recentHistory = buildRecentHistory(body?.chat_history);
+    const summaryArchive = buildSummaryArchive(body?.chat_history);
+    const shouldGenerateAiTitle = existingChat?.isAiTitleGenerated !== true;
+    let didPersistConversation = false;
+    let assistantReply = "";
+
+    after(async () => {
+      if (!didPersistConversation) {
+        return;
+      }
+
+      if (shouldGenerateAiTitle) {
+        try {
+          await refreshChatTitle({
+            aiApiUrl,
+            chatId: body.chatId,
+            existingSummary,
+            titleHistory: buildTitleHistory({
+              assistantMessage: assistantReply,
+              chatHistory: recentHistory,
+              userMessage: body?.message,
+            }),
+          });
+        } catch (titleError) {
+          console.error("Unable to refresh chat title:", titleError);
+        }
+      }
+
+      if (summaryArchive.length > 0) {
+        try {
+          await refreshChatSummary({
+            aiApiUrl,
+            archivedHistory: summaryArchive,
+            chatId: body.chatId,
+            existingSummary,
+          });
+        } catch (summaryError) {
+          console.error("Unable to refresh chat summary:", summaryError);
+        }
+      }
+    });
 
     const availableBalance = await loadCreditBalance();
     const availableTokens = Math.max(Math.floor(availableBalance), 0);
@@ -226,7 +495,6 @@ export async function POST(req) {
       return createCreditLimitResponse();
     }
 
-    const aiApiUrl = process.env.NEXT_PUBLIC_AI_API_URL || "http://localhost:8000";
     const aiRes = await fetch(`${aiApiUrl}/api/v1/chat/stream`, {
       method: "POST",
       headers: {
@@ -234,6 +502,8 @@ export async function POST(req) {
       },
       body: JSON.stringify({
         ...body,
+        chat_history: recentHistory,
+        existing_summary: existingSummary,
         remaining_tokens: availableTokens,
       }),
     });
@@ -265,7 +535,6 @@ export async function POST(req) {
 
     let textBuffer = "";
     let metadataBuffer = "";
-    let assistantReply = "";
     let isReadingMetadata = false;
 
     const transformedStream = new ReadableStream({
@@ -348,8 +617,12 @@ export async function POST(req) {
               assistantMessage: assistantReply,
               planLevel: body?.plan_level,
             });
+            didPersistConversation = true;
           } catch (persistenceError) {
-            console.error("Unable to persist chat conversation:", persistenceError);
+            console.error(
+              "Unable to persist chat conversation:",
+              persistenceError,
+            );
           }
 
           controller.close();
@@ -368,7 +641,7 @@ export async function POST(req) {
       headers: {
         "Content-Type": "text/event-stream; charset=utf-8",
         "Cache-Control": "no-cache, no-transform",
-        "Connection": "keep-alive",
+        Connection: "keep-alive",
         "X-Content-Type-Options": "nosniff",
       },
     });
