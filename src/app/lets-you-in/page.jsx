@@ -8,13 +8,13 @@ export default function LetsYouInPage() {
   const router = useRouter();
 
   return (
-    <div className="min-h-dvh flex flex-col items-center bg-white font-sans">
-      <div className="w-full max-w-[600px] flex flex-col min-h-dvh bg-[#E4FFEE] relative">
+    <div className="theme-auth-shell min-h-dvh flex flex-col items-center font-sans transition-colors duration-300">
+      <div className="theme-auth-frame relative flex min-h-dvh w-full max-w-[600px] flex-col transition-colors duration-300">
         {/* ── Top green section ── */}
         <GreenSection show={false} />
         {/* ── White card ── */}
-        <div className="relative z-10 w-[96%] mx-3 -mt-20 bg-white rounded-[28px] px-7 pt-8 pb-9 shadow-md">
-          <h2 className="text-[24px] font-semibold leading-9 text-[#0F0F0F] text-center mb-7">
+        <div className="theme-auth-card relative z-10 mx-3 -mt-20 w-[96%] rounded-[28px] px-7 pb-9 pt-8 transition-colors duration-300">
+          <h2 className="theme-text-primary mb-7 text-center text-[24px] font-semibold leading-9">
             Let&apos;s You In
           </h2>
 
@@ -23,22 +23,11 @@ export default function LetsYouInPage() {
 
           {/* OR divider */}
           <div className="flex items-center gap-3 mb-6">
-            <span className="flex-1 h-px bg-[#F5F5F5]" />
-            <span
-              className=" font-satoshi
-  inline-block 
-  text-[18px] 
-  leading-6 
-  text-center 
-text-[#555]
-  px-2 
-  relative 
-  z-1
-"
-            >
+            <span className="theme-auth-divider h-px flex-1" />
+            <span className="theme-text-secondary relative z-1 inline-block px-2 text-center font-satoshi text-[18px] leading-6">
               or
             </span>
-            <span className="flex-1 h-px bg-[#F5F5F5]" />
+            <span className="theme-auth-divider h-px flex-1" />
           </div>
 
           {/* Sign In With Password */}
@@ -55,11 +44,11 @@ text-[#555]
 
         {/* ── Footer ── */}
         <footer className="text-center py-6 pb-8 px-4 font-satoshi">
-          <p className="text-[18px] leading-6 text-[#555] text-center px-4">
+          <p className="theme-text-secondary px-4 text-center text-[18px] leading-6">
             Don&apos;t have an account?
             <Link
               href="/sign-up"
-              className="text-[#0F0F0F] font-semibold hover:underline px-1"
+              className="theme-text-primary px-1 font-semibold hover:underline"
             >
               Sign up
             </Link>

@@ -16,24 +16,24 @@ function PasswordField({
   onToggle,
 }) {
   return (
-    <div className="rounded-[24px] border border-[#EEF6F1] bg-white p-4 shadow-[0_12px_30px_rgba(15,15,15,0.04)]">
+    <div className="theme-card rounded-[24px] border p-4">
       <label
         htmlFor={id}
-        className="mb-3 block text-[13px] font-semibold uppercase tracking-[0.16em] text-[#7E8A83]"
+        className="theme-text-muted mb-3 block text-[13px] font-semibold uppercase tracking-[0.16em]"
       >
         {label}
       </label>
-      <div className="flex items-center gap-3 rounded-[18px] bg-[#F6FBF8] px-4 py-3.5">
+      <div className="theme-input-group flex items-center gap-3 rounded-[18px] px-4 py-3.5">
         <Lock size={18} className="text-[#00A84D]" />
         <input
           id={id}
           type={show ? "text" : "password"}
           value={value}
           onChange={onChange}
-          className="flex-1 bg-transparent text-[15px] text-[#0F0F0F] outline-none"
+          className="theme-input-field flex-1 text-[15px] outline-none"
           placeholder={label}
         />
-        <button type="button" onClick={onToggle} className="text-[#555]">
+        <button type="button" onClick={onToggle} className="theme-text-secondary">
           {show ? <EyeOff size={18} /> : <Eye size={18} />}
         </button>
       </div>
@@ -84,7 +84,7 @@ export default function CreateNewPasswordPage() {
       </div>
 
       {!isMatch && confirmPassword ? (
-        <p className="mt-3 font-satoshi text-[14px] leading-6 text-[#D92D20]">
+        <p className="theme-danger-title mt-3 font-satoshi text-[14px] leading-6">
           Passwords do not match yet.
         </p>
       ) : null}

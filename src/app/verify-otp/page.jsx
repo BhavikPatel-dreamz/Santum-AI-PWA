@@ -124,13 +124,13 @@ export default function OtpPage() {
   const isComplete = otp.every((digit) => digit !== "");
 
   return (
-    <div className="min-h-dvh bg-white">
-      <div className="mx-auto flex min-h-dvh w-full max-w-[600px] flex-col bg-white">
+    <div className="theme-shell min-h-dvh transition-colors duration-300">
+      <div className="theme-surface mx-auto flex min-h-dvh w-full max-w-[600px] flex-col transition-colors duration-300">
         <HeaderSection title={"Verify Phone Number"} />
 
-        <section className="relative -mt-10 flex flex-1 flex-col rounded-t-[32px] bg-white pb-10 pt-3">
+        <section className="theme-surface relative -mt-10 flex flex-1 flex-col rounded-t-[32px] pb-10 pt-3 transition-colors duration-300">
           <div className="flex flex-col items-center text-center">
-            <div className="mb-8 mt-2 flex aspect-square w-full max-w-[343px] items-center justify-center bg-[#d9d9d9]">
+            <div className="theme-static-panel mb-8 mt-2 flex aspect-square w-full max-w-[343px] items-center justify-center rounded-[24px] border">
               <Image
                 src="/icons/artboard-2.jpg"
                 alt="Verification illustration"
@@ -140,9 +140,9 @@ export default function OtpPage() {
               />
             </div>
 
-            <p className="mb-8 font-satoshi text-[18px] leading-6 text-center text-[#555]">
+            <p className="theme-text-secondary mb-8 text-center font-satoshi text-[18px] leading-6">
               Please enter the verification code we sent to your mobile{" "}
-              <span>{maskedPhone}</span>
+              <span className="theme-text-primary font-semibold">{maskedPhone}</span>
             </p>
 
             <div
@@ -162,16 +162,14 @@ export default function OtpPage() {
                   onChange={(event) => handleChange(index, event.target.value)}
                   onKeyDown={(event) => handleKeyDown(index, event)}
                   aria-label={`OTP digit ${index + 1}`}
-                  className={`h-[52px] w-[52px] rounded-full border text-center text-[22px] font-semibold text-[#1a2d21] outline-none transition-all duration-200 ${
-                    digit
-                      ? "border-[#23cf67] bg-[#dffbec]"
-                      : "border-transparent bg-[#e5fff1] focus:border-[#23cf67] focus:bg-[#f2fff8]"
+                  className={`theme-otp-input h-[52px] w-[52px] rounded-full border text-center text-[22px] font-semibold outline-none transition-all duration-200 ${
+                    digit ? "theme-otp-input-filled" : "theme-otp-input-empty"
                   }`}
                 />
               ))}
             </div>
 
-            <p className="px-4 text-center text-[18px] leading-6 text-[#555] font-satoshi">
+            <p className="theme-text-secondary px-4 text-center font-satoshi text-[18px] leading-6">
               Not yet get?{" "}
               <button
                 type="button"
@@ -182,7 +180,7 @@ export default function OtpPage() {
                     ? "Resend OTP"
                     : `Resend OTP available in ${resendTimer} seconds`
                 }
-                className="font-semibold text-[#0F0F0F] disabled:opacity-100"
+                className="theme-text-primary font-semibold disabled:opacity-100"
               >
                 Resend OTP
               </button>

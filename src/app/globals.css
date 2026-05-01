@@ -149,8 +149,113 @@ body {
   color: var(--app-text-primary);
 }
 
+.theme-input-group {
+  background-color: var(--app-input-bg);
+  border: 1px solid transparent;
+  color: var(--app-text-primary);
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    color 0.25s ease;
+}
+
+.theme-input-group:focus-within {
+  border-color: #00d061;
+  box-shadow: 0 0 0 4px rgba(0, 208, 97, 0.1);
+}
+
+.theme-input-field {
+  background-color: transparent;
+  caret-color: #00d061;
+  color: var(--app-text-primary);
+}
+
+.theme-input-field::placeholder {
+  color: var(--app-text-muted);
+}
+
+.theme-floating-input {
+  background-color: var(--app-surface);
+  border-color: var(--app-border-strong);
+  color: var(--app-text-primary);
+}
+
+.theme-floating-input:focus {
+  border-color: #00d061;
+  box-shadow: 0 0 0 4px rgba(0, 208, 97, 0.08);
+}
+
+.theme-floating-input:disabled {
+  background-color: var(--app-input-bg);
+  color: var(--app-text-muted);
+}
+
 .theme-input-surface::placeholder {
   color: var(--app-text-muted);
+}
+
+.theme-auth-shell {
+  background-color: var(--app-shell-bg);
+}
+
+.theme-auth-frame {
+  background-color: var(--app-surface-soft);
+}
+
+.theme-auth-card {
+  background-color: var(--app-surface);
+  border: 1px solid var(--app-border);
+  box-shadow: var(--app-card-shadow);
+}
+
+.theme-auth-dropdown {
+  background-color: var(--app-surface-elevated);
+  border: 1px solid var(--app-border);
+  box-shadow: var(--app-card-shadow);
+  color: var(--app-text-primary);
+}
+
+.theme-auth-divider {
+  background-color: var(--app-border-strong);
+}
+
+.theme-choice-chip {
+  background-color: var(--app-surface);
+  border-color: var(--app-border-strong);
+  color: var(--app-text-primary);
+}
+
+.theme-choice-chip-selected {
+  background-color: var(--app-text-primary);
+  border-color: var(--app-text-primary);
+  box-shadow: var(--app-card-shadow);
+  color: var(--app-surface);
+}
+
+.theme-static-panel {
+  background-color: var(--app-surface-muted);
+  border-color: var(--app-border-strong);
+}
+
+.theme-otp-input {
+  caret-color: #00d061;
+  color: var(--app-text-primary);
+}
+
+.theme-otp-input-empty {
+  background-color: var(--app-pill-bg);
+  border-color: transparent;
+}
+
+.theme-otp-input-empty:focus {
+  background-color: var(--app-surface-muted);
+  border-color: #23cf67;
+}
+
+.theme-otp-input-filled {
+  background-color: rgba(35, 207, 103, 0.14);
+  border-color: #23cf67;
 }
 
 .theme-pill {
@@ -183,8 +288,20 @@ html[data-theme="dark"] .text-\[\#7E8A83\] {
   color: var(--app-text-muted) !important;
 }
 
+html[data-theme="dark"] .text-black {
+  color: var(--app-text-primary) !important;
+}
+
+html[data-theme="dark"] .placeholder-\[\#AAAAAA\]::placeholder {
+  color: var(--app-text-muted) !important;
+}
+
 html[data-theme="dark"] .bg-\[\#E4FFEE\] {
   background-color: var(--app-surface-soft) !important;
+}
+
+html[data-theme="dark"] .bg-white {
+  background-color: var(--app-surface) !important;
 }
 
 html[data-theme="dark"] .bg-\[\#F8FFFB\] {
@@ -193,6 +310,10 @@ html[data-theme="dark"] .bg-\[\#F8FFFB\] {
 
 html[data-theme="dark"] .bg-\[\#F4F7F5\] {
   background-color: var(--app-surface-secondary) !important;
+}
+
+html[data-theme="dark"] .bg-\[\#F5F5F5\] {
+  background-color: var(--app-input-bg) !important;
 }
 
 html[data-theme="dark"] .bg-\[\#F2FFF7\] {
@@ -215,6 +336,20 @@ html[data-theme="dark"] .bg-\[\#F1F5F2\] {
   background-color: #25312c !important;
 }
 
+html[data-theme="dark"] .bg-gray-300 {
+  background-color: var(--app-border-strong) !important;
+}
+
+html[data-theme="dark"] .theme-choice-chip-selected {
+  background-color: #f5fbf7;
+  border-color: #f5fbf7;
+  color: #07110d;
+}
+
+html[data-theme="dark"] .theme-otp-input-filled {
+  background-color: rgba(35, 207, 103, 0.2);
+}
+
 html[data-theme="dark"] .text-\[\#00A84D\] {
   color: var(--app-pill-text) !important;
 }
@@ -229,6 +364,10 @@ html[data-theme="dark"] .border-\[\#EEF6F1\] {
 
 html[data-theme="dark"] .border-\[\#F5F5F5\] {
   border-color: var(--app-border-strong) !important;
+}
+
+html[data-theme="dark"] .border-gray-100 {
+  border-color: var(--app-border) !important;
 }
 
 .logo-home {

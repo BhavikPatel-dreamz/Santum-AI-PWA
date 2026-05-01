@@ -63,7 +63,7 @@ export default function CreatePinPage() {
         className="mb-6"
       />
 
-      <p className="mb-6 text-center font-satoshi text-[16px] leading-6 text-[#555]">
+      <p className="theme-text-secondary mb-6 text-center font-satoshi text-[16px] leading-6">
         Use a simple 4-digit PIN to protect your account when you reopen the app.
       </p>
 
@@ -84,16 +84,14 @@ export default function CreatePinPage() {
             onChange={(event) => handleChange(index, event.target.value)}
             onKeyDown={(event) => handleKeyDown(index, event)}
             aria-label={`PIN digit ${index + 1}`}
-            className={`h-[56px] w-[56px] rounded-full border text-center text-[22px] font-semibold text-[#1a2d21] outline-none transition-all duration-200 ${
-              digit
-                ? "border-[#23cf67] bg-[#dffbec]"
-                : "border-transparent bg-[#e5fff1] focus:border-[#23cf67] focus:bg-[#f2fff8]"
+            className={`theme-otp-input h-[56px] w-[56px] rounded-full border text-center text-[22px] font-semibold outline-none transition-all duration-200 ${
+              digit ? "theme-otp-input-filled" : "theme-otp-input-empty"
             }`}
           />
         ))}
       </div>
 
-      <p className="text-center font-satoshi text-[15px] leading-6 text-[#555]">
+      <p className="theme-text-secondary text-center font-satoshi text-[15px] leading-6">
         This is a dummy PIN step for now, but the UI is ready for a real secure flow.
       </p>
 

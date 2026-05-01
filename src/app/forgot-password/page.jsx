@@ -40,10 +40,10 @@ export default function ForgetPasswordPage() {
       />
 
       <div className="mb-4">
-        <h2 className="text-[20px] font-semibold leading-7 text-[#0F0F0F]">
+        <h2 className="theme-text-primary text-[20px] font-semibold leading-7">
           Pick a recovery path
         </h2>
-        <p className="mt-1 font-satoshi text-[15px] leading-6 text-[#555]">
+        <p className="theme-text-secondary mt-1 font-satoshi text-[15px] leading-6">
           We&apos;ll use this to send your verification code.
         </p>
       </div>
@@ -60,21 +60,23 @@ export default function ForgetPasswordPage() {
               onClick={() => setSelectedOption(option.id)}
               className={`w-full rounded-[26px] border px-4 py-4 text-left transition-all duration-200 ${
                 isSelected
-                  ? "border-[#00D061] bg-[#F2FFF7] shadow-[0_12px_30px_rgba(0,208,97,0.12)]"
-                  : "border-[#EEF6F1] bg-white shadow-[0_12px_30px_rgba(15,15,15,0.04)]"
+                  ? "theme-card-soft border-[#00D061] shadow-[0_12px_30px_rgba(0,208,97,0.12)]"
+                  : "theme-card"
               }`}
             >
               <div className="flex items-start gap-4">
                 <div
                   className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${
-                    isSelected ? "bg-[#00D061] text-white" : "bg-[#F4F7F5] text-[#0F0F0F]"
+                    isSelected
+                      ? "bg-[#00D061] text-white"
+                      : "theme-surface-secondary theme-text-primary"
                   }`}
                 >
                   <Icon size={20} />
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="text-[18px] font-semibold leading-7 text-[#0F0F0F]">
+                    <h3 className="theme-text-primary text-[18px] font-semibold leading-7">
                       {option.title}
                     </h3>
                     {isSelected ? (
@@ -83,7 +85,7 @@ export default function ForgetPasswordPage() {
                       </span>
                     ) : null}
                   </div>
-                  <p className="mt-1 font-satoshi text-[14px] leading-6 text-[#555]">
+                  <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6">
                     {option.description}
                   </p>
                   <p className="mt-3 text-[13px] font-semibold uppercase tracking-[0.16em] text-[#00A84D]">

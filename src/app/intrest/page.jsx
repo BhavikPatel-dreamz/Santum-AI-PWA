@@ -72,14 +72,14 @@ const Page = () => {
   };
 
   return (
-    <div className="min-h-dvh bg-white">
-      <div className="mx-auto flex min-h-dvh w-full max-w-[600px] flex-col bg-white">
+    <div className="theme-shell min-h-dvh transition-colors duration-300">
+      <div className="theme-surface mx-auto flex min-h-dvh w-full max-w-[600px] flex-col transition-colors duration-300">
         <HeaderSection title={"Choose Interests"} />
 
-        <section className="relative -mt-10 flex flex-1 flex-col rounded-t-[32px] bg-white pb-10 pt-8 px-5">
+        <section className="theme-surface relative -mt-10 flex flex-1 flex-col rounded-t-[32px] px-5 pb-10 pt-8 transition-colors duration-300">
           <p
             suppressHydrationWarning
-            className="text-[18px] leading-6 text-[#555] font-satoshi mb-6 text-center"
+            className="theme-text-secondary mb-6 text-center font-satoshi text-[18px] leading-6"
           >
             Choose 3 or more areas you are interested
           </p>
@@ -91,13 +91,9 @@ const Page = () => {
                 <button
                   key={interest.id}
                   onClick={() => handleSelect(interest.id)}
-                  className="text-center font-satoshi text-[14px] font-medium leading-[18px] rounded-[8px] border-2 px-[16px] py-[11px] transition-all active:scale-95"
-                  style={{
-                    background: isSelected ? "#111" : "#fff",
-                    borderColor: isSelected ? "#111" : "#F5F5F5",
-                    color: isSelected ? "#fff" : "#0F0F0F",
-                    boxShadow: isSelected ? "0 2px 8px #0002" : "none",
-                  }}
+                  className={`rounded-[8px] border-2 px-[16px] py-[11px] text-center font-satoshi text-[14px] font-medium leading-[18px] transition-all active:scale-95 ${
+                    isSelected ? "theme-choice-chip-selected" : "theme-choice-chip"
+                  }`}
                 >
                   {interest.label}
                 </button>
@@ -110,7 +106,7 @@ const Page = () => {
           <div className="flex justify-center gap-3 pt-6">
             <button
               onClick={() => router.push("/reasons")}
-              className="w-[163px] h-[48px] flex items-center justify-center rounded-[8px] bg-[#F5F5F5] text-[#0F0F0F] text-[18px] font-medium font-poppins transition-all active:scale-[0.98]"
+              className="theme-secondary-button flex h-[48px] w-[163px] items-center justify-center rounded-[8px] text-[18px] font-medium font-poppins transition-all active:scale-[0.98]"
             >
               Skip
             </button>

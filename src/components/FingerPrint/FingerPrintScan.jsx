@@ -3,9 +3,11 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import HeaderSection from "../UI/HeaderSection";
+import { useTheme } from "../providers/ThemeProvider";
 
 export default function FingerPrintScan() {
   const router = useRouter();
+  const { isDark } = useTheme();
   const [scanState, setScanState] = useState("idle");
   const [scanProgress, setScanProgress] = useState(0);
 
@@ -109,7 +111,9 @@ export default function FingerPrintScan() {
       ? "/icons/finger-print-img-green.png"
       : scanState === "scanning"
         ? "/icons/finger-print-img-green.png"
-        : "/icons/finger-print-img-black.png";
+        : isDark
+          ? "/icons/finger-print-img-green.png"
+          : "/icons/finger-print-img-black.png";
 
   const scanLineColor =
     scanState === "success"
@@ -165,14 +169,14 @@ export default function FingerPrintScan() {
         .fade-up { animation: fadeSlideUp 0.5s ease both; }
       `}</style>
 
-      <div className="min-h-dvh bg-white">
-        <div className="mx-auto flex min-h-dvh w-full max-w-[600px] flex-col bg-white">
+      <div className="theme-shell min-h-dvh transition-colors duration-300">
+        <div className="theme-surface mx-auto flex min-h-dvh w-full max-w-[600px] flex-col transition-colors duration-300">
           <HeaderSection title={"Set Up Fingerprint"} />
 
-          <section className="relative -mt-10 flex flex-1 flex-col rounded-t-[32px] bg-white pb-10 pt-3">
+          <section className="theme-surface relative -mt-10 flex flex-1 flex-col rounded-t-[32px] pb-10 pt-3 transition-colors duration-300">
             {/* ── Subtitle ── */}
             <div className="px-6 pt-5 pb-2">
-              <p className="text-[18px] leading-6 text-[#555] text-center font-satoshi">
+              <p className="theme-text-secondary text-center font-satoshi text-[18px] leading-6">
                 Add biometric unlock so returning to Amigo feels secure and effortless.
               </p>
             </div>
@@ -209,8 +213,12 @@ export default function FingerPrintScan() {
                     height: 210,
                     background:
                       scanState === "success"
-                        ? "linear-gradient(145deg, #f0fef5 0%, #e6faf0 100%)"
-                        : "linear-gradient(145deg, #f8f8f8 0%, #f0f0f0 100%)",
+                        ? isDark
+                          ? "linear-gradient(145deg, #173025 0%, #1e3e2f 100%)"
+                          : "linear-gradient(145deg, #f0fef5 0%, #e6faf0 100%)"
+                        : isDark
+                          ? "linear-gradient(145deg, #18221d 0%, #111916 100%)"
+                          : "linear-gradient(145deg, #f8f8f8 0%, #f0f0f0 100%)",
                     transition: "background 0.4s",
                   }}
                 >
@@ -280,7 +288,9 @@ export default function FingerPrintScan() {
                       ? "#16a34a"
                       : scanState === "error"
                         ? "#ef4444"
-                        : "#444",
+                        : isDark
+                          ? "#b8c4be"
+                          : "#444",
                 }}
               >
                 {scanState === "idle" &&
@@ -315,7 +325,7 @@ export default function FingerPrintScan() {
               <button
                 type="button"
                 onClick={() => router.push("/home")}
-                className="w-full text-center text-[18px] font-medium leading-6 text-[#0F0F0F] font-poppins py-1 transition-opacity active:opacity-60"
+                className="theme-text-primary w-full py-1 text-center font-poppins text-[18px] font-medium leading-6 transition-opacity active:opacity-60"
               >
                 Skip, I&apos;ll do this later
               </button>

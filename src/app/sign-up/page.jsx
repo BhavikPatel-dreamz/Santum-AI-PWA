@@ -116,20 +116,20 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="min-h-dvh flex flex-col items-center bg-white font-sans">
-      <div className="w-full max-w-[600px] flex flex-col min-h-dvh bg-[#E4FFEE] relative">
+    <div className="theme-auth-shell min-h-dvh flex flex-col items-center font-sans transition-colors duration-300">
+      <div className="theme-auth-frame relative flex min-h-dvh w-full max-w-[600px] flex-col transition-colors duration-300">
         {/* ── Top green section ── */}
         <GreenSection />
 
         {/* ── White card ── */}
-        <div className="relative z-10 w-[96%] mx-3 -mt-20 bg-white rounded-[28px] px-7 pt-8 pb-9 shadow-md">
-          <h2 className="text-[24px] font-semibold leading-9 text-[#0F0F0F] text-center mb-6">
+        <div className="theme-auth-card relative z-10 mx-3 -mt-20 w-[96%] rounded-[28px] px-7 pb-9 pt-8 transition-colors duration-300">
+          <h2 className="theme-text-primary mb-6 text-center text-[24px] font-semibold leading-9">
             Sign Up
           </h2>
 
           {/* Phone input with country picker */}
           <div className="relative mb-6" ref={dropdownRef}>
-            <div className="flex items-center bg-[#F5F5F5] rounded-[14px] px-4 py-3.5 mb-4">
+            <div className="theme-input-group mb-4 flex items-center rounded-[14px] px-4 py-3.5">
               {/* Country selector */}
               <button
                 type="button"
@@ -137,9 +137,9 @@ export default function SignUpPage() {
                   setDropdownOpen(!dropdownOpen);
                   setSearch("");
                 }}
-                className="flex items-center gap-1.5 mr-3 shrink-0"
+                className="theme-text-primary mr-3 flex shrink-0 items-center gap-1.5"
               >
-                <span className="text-[20px] text-[#555] leading-none">
+                <span className="theme-text-secondary text-[20px] leading-none">
                   {selectedCountry.flag}
                 </span>
                 <svg
@@ -147,7 +147,7 @@ export default function SignUpPage() {
                   height="14"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#0F0F0F"
+                  stroke="currentColor"
                   strokeWidth="2.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -161,13 +161,13 @@ export default function SignUpPage() {
                 placeholder="Enter Mobile Number"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="flex-1 bg-transparent outline-none text-[16px] text-[#0F0F0F] placeholder-[#AAAAAA]"
+                className="theme-input-field flex-1 text-[16px] outline-none"
               />
             </div>
 
             {/* Dropdown */}
             {dropdownOpen && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-[14px] shadow-[0_8px_30px_rgba(0,0,0,0.12)] z-50 overflow-hidden border border-gray-100 text-black">
+              <div className="theme-auth-dropdown absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-[14px] border transition-colors duration-300">
                 {/* Search box */}
                 <div className="px-3 pt-3 pb-2">
                   <input
@@ -175,7 +175,7 @@ export default function SignUpPage() {
                     placeholder="Search country..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="w-full bg-[#F5F5F5] rounded-[10px] px-3 py-2 text-[14px] outline-none placeholder-[#AAAAAA]"
+                    className="theme-input-surface w-full rounded-[10px] px-3 py-2 text-[14px] outline-none"
                     autoFocus
                   />
                 </div>
@@ -189,21 +189,21 @@ export default function SignUpPage() {
                         setDropdownOpen(false);
                         setSearch("");
                       }}
-                      className={`w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-[#F0FFF6] transition-colors ${selectedCountry.code === c.code ? "bg-[#F0FFF6]" : ""}`}
+                      className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-[rgba(0,208,97,0.08)] ${selectedCountry.code === c.code ? "theme-surface-soft" : ""}`}
                     >
-                      <span className="text-[20px] text-[#555] leading-none">
+                      <span className="theme-text-secondary text-[20px] leading-none">
                         {c.flag}
                       </span>
-                      <span className="flex-1 text-[14px] text-[#0F0F0F]">
+                      <span className="theme-text-primary flex-1 text-[14px]">
                         {c.name}
                       </span>
-                      <span className="text-[14px] text-[#555] font-medium">
+                      <span className="theme-text-secondary text-[14px] font-medium">
                         {c.dial}
                       </span>
                     </button>
                   ))}
                   {filtered.length === 0 && (
-                    <p className="text-center text-[14px] text-[#999] py-4">
+                    <p className="theme-text-muted py-4 text-center text-[14px]">
                       No results
                     </p>
                   )}
@@ -212,42 +212,42 @@ export default function SignUpPage() {
             )}
           </div>
 
-          <div className="flex items-center gap-3 bg-[#F5F5F5] rounded-[14px] px-4 py-3.5 mb-4">
-            <LockIcon className="text-[#555]" size={22} />
+          <div className="theme-input-group mb-4 flex items-center gap-3 rounded-[14px] px-4 py-3.5">
+            <LockIcon className="theme-text-secondary" size={22} />
 
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Your Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="flex-1 bg-transparent outline-none text-[16px] text-[#0F0F0F] placeholder-[#AAAAAA]"
+              className="theme-input-field flex-1 text-[16px] outline-none"
             />
 
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="text-[#555]"
+              className="theme-text-secondary"
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
 
           {/* confirm password */}
-          <div className="flex items-center gap-3 bg-[#F5F5F5] rounded-[14px] px-4 py-3.5 mb-4">
-            <LockIcon className="text-[#555]" size={22} />
+          <div className="theme-input-group mb-4 flex items-center gap-3 rounded-[14px] px-4 py-3.5">
+            <LockIcon className="theme-text-secondary" size={22} />
 
             <input
               type={showConfirmPassword ? "text" : "password"}
               placeholder="Confirm Password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="flex-1 bg-transparent outline-none text-[16px] text-[#0F0F0F] placeholder-[#AAAAAA]"
+              className="theme-input-field flex-1 text-[16px] outline-none"
             />
 
             <button
               type="button"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="text-[#555]"
+              className="theme-text-secondary"
             >
               {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
@@ -271,11 +271,11 @@ export default function SignUpPage() {
 
           {/* OR divider */}
           <div className="flex items-center gap-3 mb-6">
-            <span className="flex-1 h-px bg-[#F5F5F5]" />
-            <span className=" font-satoshi  inline-block text-[18px] leading-6 text-center text-[#555] px-2 relative z-1">
+            <span className="theme-auth-divider h-px flex-1" />
+            <span className="theme-text-secondary relative z-1 inline-block px-2 text-center font-satoshi text-[18px] leading-6">
               or continue with
             </span>
-            <span className="flex-1 h-px bg-[#F5F5F5]" />
+            <span className="theme-auth-divider h-px flex-1" />
           </div>
 
           {/* Social buttons */}
@@ -287,11 +287,11 @@ export default function SignUpPage() {
 
         {/* ── Footer ── */}
         <footer className="text-center py-6 pb-8 px-4 font-satoshi">
-          <p className="text-[17px] leading-6 text-[#555] text-center px-4">
+          <p className="theme-text-secondary px-4 text-center text-[17px] leading-6">
             Already have an account?{" "}
             <Link
               href="/sign-in"
-              className="text-[#0F0F0F] font-bold hover:underline"
+              className="theme-text-primary font-bold hover:underline"
             >
               Sign in
             </Link>

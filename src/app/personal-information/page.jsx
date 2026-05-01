@@ -54,15 +54,13 @@ function FloatingInput({
         onChange={onChange}
         placeholder=" "
         disabled={disabled}
-        className={`peer block h-[64px] w-full rounded-[18px] border px-4 pt-5 text-[17px] outline-none transition-all ${
-          disabled
-            ? "border-[#E6ECE8] bg-[#F6FAF7] text-[#7E8A83]"
-            : "border-[#E6ECE8] bg-white text-[#0F0F0F] focus:border-[#00D061] focus:shadow-[0_0_0_4px_rgba(0,208,97,0.08)]"
+        className={`theme-floating-input peer block h-[64px] w-full rounded-[18px] border px-4 pt-5 text-[17px] outline-none transition-all ${
+          disabled ? "cursor-not-allowed theme-text-muted" : ""
         }`}
       />
       <label
         htmlFor={id}
-        className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[15px] text-[#6E7A73] transition-all peer-focus:top-3 peer-focus:translate-y-0 peer-focus:text-[12px] peer-focus:text-[#00A84D] peer-[&:not(:placeholder-shown)]:top-3 peer-[&:not(:placeholder-shown)]:translate-y-0 peer-[&:not(:placeholder-shown)]:text-[12px]"
+        className="theme-text-muted pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[15px] transition-all peer-focus:top-3 peer-focus:translate-y-0 peer-focus:text-[12px] peer-focus:text-[#00A84D] peer-[&:not(:placeholder-shown)]:top-3 peer-[&:not(:placeholder-shown)]:translate-y-0 peer-[&:not(:placeholder-shown)]:text-[12px]"
       >
         {label}
       </label>
@@ -142,8 +140,8 @@ function SelectionChip({ label, isSelected, onClick }) {
       onClick={onClick}
       className={`rounded-full border px-4 py-2 text-[14px] font-medium transition-all ${
         isSelected
-          ? "border-[#00D061] bg-[#EFFFF6] text-[#087C3A] shadow-[0_10px_24px_rgba(0,208,97,0.12)]"
-          : "border-[#E3ECE6] bg-white text-[#0F0F0F] hover:border-[#BDECCE] hover:bg-[#F8FFF9]"
+          ? "theme-choice-chip-selected"
+          : "theme-choice-chip hover:opacity-90"
       }`}
     >
       {label}
@@ -347,17 +345,17 @@ export default function PersonalInformationPage() {
 
       <div className="theme-card mb-6 rounded-[26px] border px-5 py-5">
         <div className="flex items-center gap-4">
-          <div className="flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-full bg-[#E8FFF1] text-[24px] font-semibold text-[#00A84D]">
+          <div className="theme-pill flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-full text-[24px] font-semibold">
             {profileInitials}
           </div>
           <div className="min-w-0">
             <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#00A84D]">
               Profile Overview
             </p>
-            <h2 className="mt-2 truncate text-[24px] font-semibold leading-8 text-[#0F0F0F]">
+            <h2 className="theme-text-primary mt-2 truncate text-[24px] font-semibold leading-8">
               {profileName}
             </h2>
-            <p className="mt-1 font-satoshi text-[14px] leading-6 text-[#5F6B65]">
+            <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6">
               {emailAddress ||
                 phoneNumber ||
                 "Contact details are managed from your Santum account"}
@@ -366,27 +364,27 @@ export default function PersonalInformationPage() {
         </div>
 
         <div className="mt-5 grid grid-cols-3 gap-3">
-          <div className="rounded-[20px] bg-[#F7FBF8] px-3 py-4 text-center">
-            <p className="text-[20px] font-semibold leading-7 text-[#0F0F0F]">
+          <div className="theme-static-panel rounded-[20px] border px-3 py-4 text-center">
+            <p className="theme-text-primary text-[20px] font-semibold leading-7">
               {completionScore}/4
             </p>
-            <p className="mt-1 font-satoshi text-[12px] leading-5 text-[#5F6B65]">
+            <p className="theme-text-secondary mt-1 font-satoshi text-[12px] leading-5">
               Complete
             </p>
           </div>
-          <div className="rounded-[20px] bg-[#F7FBF8] px-3 py-4 text-center">
-            <p className="text-[20px] font-semibold leading-7 text-[#0F0F0F]">
+          <div className="theme-static-panel rounded-[20px] border px-3 py-4 text-center">
+            <p className="theme-text-primary text-[20px] font-semibold leading-7">
               {normalizedCurrent.preferredLanguage || "--"}
             </p>
-            <p className="mt-1 font-satoshi text-[12px] leading-5 text-[#5F6B65]">
+            <p className="theme-text-secondary mt-1 font-satoshi text-[12px] leading-5">
               Language
             </p>
           </div>
-          <div className="rounded-[20px] bg-[#F7FBF8] px-3 py-4 text-center">
-            <p className="text-[20px] font-semibold leading-7 text-[#0F0F0F]">
+          <div className="theme-static-panel rounded-[20px] border px-3 py-4 text-center">
+            <p className="theme-text-primary text-[20px] font-semibold leading-7">
               {normalizedCurrent.interests.length}
             </p>
-            <p className="mt-1 font-satoshi text-[12px] leading-5 text-[#5F6B65]">
+            <p className="theme-text-secondary mt-1 font-satoshi text-[12px] leading-5">
               Interests
             </p>
           </div>
@@ -395,7 +393,7 @@ export default function PersonalInformationPage() {
 
       {isProfileLoading && !didInitialize ? (
         <div className="theme-card rounded-[26px] border px-5 py-8 text-center">
-          <p className="font-satoshi text-[15px] leading-6 text-[#5F6B65]">
+          <p className="theme-text-secondary font-satoshi text-[15px] leading-6">
             Loading your saved profile details...
           </p>
         </div>
@@ -406,10 +404,10 @@ export default function PersonalInformationPage() {
               <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#00A84D]">
                 Basic Details
               </p>
-              <h3 className="mt-2 text-[22px] font-semibold leading-8 text-[#0F0F0F]">
+              <h3 className="theme-text-primary mt-2 text-[22px] font-semibold leading-8">
                 Name and date of birth
               </h3>
-              <p className="mt-2 font-satoshi text-[14px] leading-6 text-[#5F6B65]">
+              <p className="theme-text-secondary mt-2 font-satoshi text-[14px] leading-6">
                 These fields are fully editable with the current Santum profile
                 API.
               </p>
@@ -445,10 +443,10 @@ export default function PersonalInformationPage() {
               <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#00A84D]">
                 Contact Details
               </p>
-              <h3 className="mt-2 text-[22px] font-semibold leading-8 text-[#0F0F0F]">
+              <h3 className="theme-text-primary mt-2 text-[22px] font-semibold leading-8">
                 Visible here, managed from your account source
               </h3>
-              <p className="mt-2 font-satoshi text-[14px] leading-6 text-[#5F6B65]">
+              <p className="theme-text-secondary mt-2 font-satoshi text-[14px] leading-6">
                 Email and mobile currently come from your signed-in Santum
                 account. This module shows them clearly but does not overwrite
                 them locally without a dedicated backend update route.
@@ -456,25 +454,25 @@ export default function PersonalInformationPage() {
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="rounded-[22px] border border-[#E6ECE8] bg-[#F8FBF9] px-4 py-4">
-                <div className="mb-3 flex items-center gap-2 text-[#5F6B65]">
+              <div className="theme-static-panel rounded-[22px] border px-4 py-4">
+                <div className="theme-text-secondary mb-3 flex items-center gap-2">
                   <Mail size={16} />
                   <span className="text-[12px] font-semibold uppercase tracking-[0.16em]">
                     Email
                   </span>
                 </div>
-                <p className="text-[15px] font-medium leading-6 text-[#0F0F0F]">
+                <p className="theme-text-primary text-[15px] font-medium leading-6">
                   {emailAddress || "No email returned by the current profile API"}
                 </p>
               </div>
-              <div className="rounded-[22px] border border-[#E6ECE8] bg-[#F8FBF9] px-4 py-4">
-                <div className="mb-3 flex items-center gap-2 text-[#5F6B65]">
+              <div className="theme-static-panel rounded-[22px] border px-4 py-4">
+                <div className="theme-text-secondary mb-3 flex items-center gap-2">
                   <Phone size={16} />
                   <span className="text-[12px] font-semibold uppercase tracking-[0.16em]">
                     Mobile
                   </span>
                 </div>
-                <p className="text-[15px] font-medium leading-6 text-[#0F0F0F]">
+                <p className="theme-text-primary text-[15px] font-medium leading-6">
                   {phoneNumber || "No mobile number returned by the current profile API"}
                 </p>
               </div>
@@ -486,7 +484,7 @@ export default function PersonalInformationPage() {
               <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#00A84D]">
                 Preferred Language
               </p>
-              <h3 className="mt-2 text-[22px] font-semibold leading-8 text-[#0F0F0F]">
+              <h3 className="theme-text-primary mt-2 text-[22px] font-semibold leading-8">
                 Save the language you want to use most
               </h3>
             </div>
@@ -509,11 +507,11 @@ export default function PersonalInformationPage() {
                 <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#00A84D]">
                   Interests
                 </p>
-                <h3 className="mt-2 text-[22px] font-semibold leading-8 text-[#0F0F0F]">
+                <h3 className="theme-text-primary mt-2 text-[22px] font-semibold leading-8">
                   Keep your preference set relevant
                 </h3>
               </div>
-              <span className="rounded-full bg-[#E8FFF1] px-3 py-1 text-[12px] font-semibold text-[#00A84D]">
+              <span className="theme-pill rounded-full px-3 py-1 text-[12px] font-semibold">
                 {normalizedCurrent.interests.length} selected
               </span>
             </div>
@@ -529,8 +527,8 @@ export default function PersonalInformationPage() {
               ))}
             </div>
 
-            <div className="mt-4 rounded-[20px] bg-[#F8FBF9] px-4 py-4">
-              <p className="font-satoshi text-[14px] leading-6 text-[#5F6B65]">
+            <div className="theme-static-panel mt-4 rounded-[20px] border px-4 py-4">
+              <p className="theme-text-secondary font-satoshi text-[14px] leading-6">
                 Select at least one interest if you want this section updated.
                 If you are returning from onboarding, saving here will replace
                 the old separate language and interest steps.
@@ -577,10 +575,10 @@ export default function PersonalInformationPage() {
       </div>
 
       {!isOnboarding ? (
-        <div className="mt-4 rounded-[22px] border border-[#D9EFE3] bg-[#F4FFF8] px-4 py-4">
+        <div className="theme-card-soft theme-border mt-4 rounded-[22px] border px-4 py-4">
           <div className="flex items-start gap-3">
             <CheckCircle2 className="mt-0.5 text-[#00A84D]" size={18} />
-            <p className="font-satoshi text-[14px] leading-6 text-[#35624A]">
+            <p className="theme-text-secondary font-satoshi text-[14px] leading-6">
               This page now acts as the main profile module for the PWA. Basic
               details, language, and interests are editable here, while email
               and phone stay visible until the backend exposes dedicated update

@@ -14,8 +14,8 @@ function MoodSlider({ helperText, label, name, value, accentColor, onChange }) {
     <label className="block">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <p className="text-[15px] font-semibold text-[#0F0F0F]">{label}</p>
-          <p className="mt-1 font-satoshi text-[12px] leading-5 text-[#66756D]">
+          <p className="theme-text-primary text-[15px] font-semibold">{label}</p>
+          <p className="theme-text-secondary mt-1 font-satoshi text-[12px] leading-5">
             {helperText}
           </p>
         </div>
@@ -33,10 +33,10 @@ function MoodSlider({ helperText, label, name, value, accentColor, onChange }) {
         step="1"
         value={value}
         onChange={(event) => onChange(name, Number(event.target.value))}
-        className="mt-3 h-2 w-full cursor-pointer rounded-full bg-[#DCE8E1]"
+        className="theme-surface-secondary mt-3 h-2 w-full cursor-pointer rounded-full"
         style={{ accentColor }}
       />
-      <div className="mt-2 flex items-center justify-between text-[11px] font-medium text-[#8A9890]">
+      <div className="theme-text-muted mt-2 flex items-center justify-between text-[11px] font-medium">
         <span>{MOOD_SCORE_MIN}</span>
         <span>{MOOD_SCORE_MAX}</span>
       </div>
@@ -86,13 +86,13 @@ export default function MoodCheckInCard({
             <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#00A84D]">
               Mood Check-In
             </p>
-            <h3 className="mt-2 text-[20px] font-semibold leading-7 text-[#0F0F0F]">
+            <h3 className="theme-text-primary mt-2 text-[20px] font-semibold leading-7">
               {successTitle}
             </h3>
-            <p className="mt-2 font-satoshi text-[14px] leading-6 text-[#55645C]">
+            <p className="theme-text-secondary mt-2 font-satoshi text-[14px] leading-6">
               {successDescription}
             </p>
-            <p className="mt-3 text-[13px] font-medium text-[#0F0F0F]">
+            <p className="theme-text-primary mt-3 text-[13px] font-medium">
               {formatMoodSnapshot(entry)}
             </p>
           </div>
@@ -100,7 +100,7 @@ export default function MoodCheckInCard({
             <button
               type="button"
               onClick={() => setIsEditing(true)}
-              className="rounded-full bg-[#E8FFF1] px-3 py-2 text-[12px] font-semibold text-[#087C3A]"
+              className="theme-pill rounded-full px-3 py-2 text-[12px] font-semibold"
             >
               Update
             </button>
@@ -118,10 +118,10 @@ export default function MoodCheckInCard({
       <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#00A84D]">
         Mood Check-In
       </p>
-      <h3 className="mt-2 text-[20px] font-semibold leading-7 text-[#0F0F0F]">
+      <h3 className="theme-text-primary mt-2 text-[20px] font-semibold leading-7">
         {title}
       </h3>
-      <p className="mt-2 font-satoshi text-[14px] leading-6 text-[#55645C]">
+      <p className="theme-text-secondary mt-2 font-satoshi text-[14px] leading-6">
         {description}
       </p>
 
@@ -144,8 +144,8 @@ export default function MoodCheckInCard({
         disabled={isSaving}
         className={`mt-5 inline-flex w-full items-center justify-center rounded-[16px] px-4 py-3 text-[15px] font-semibold transition-all ${
           isSaving
-            ? "bg-[#CFE8DA] text-[#5C6C63]"
-            : "bg-[#0F0F0F] text-white hover:opacity-95 active:scale-[0.99]"
+            ? "theme-secondary-button theme-text-secondary"
+            : "bg-[#00D061] text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)] hover:opacity-95 active:scale-[0.99]"
         }`}
       >
         {isSaving ? "Saving check-in..." : submitLabel}

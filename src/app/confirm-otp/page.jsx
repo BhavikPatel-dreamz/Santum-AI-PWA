@@ -76,8 +76,9 @@ export default function ConfirmOtpPage() {
         className="mb-6"
       />
 
-      <p className="mb-6 text-center font-satoshi text-[16px] leading-6 text-[#555]">
-        The code was sent to <span className="font-semibold text-[#0F0F0F]">+91 ****** 65</span>
+      <p className="theme-text-secondary mb-6 text-center font-satoshi text-[16px] leading-6">
+        The code was sent to{" "}
+        <span className="theme-text-primary font-semibold">+91 ****** 65</span>
       </p>
 
       <div
@@ -97,26 +98,24 @@ export default function ConfirmOtpPage() {
             onChange={(event) => handleChange(index, event.target.value)}
             onKeyDown={(event) => handleKeyDown(index, event)}
             aria-label={`OTP digit ${index + 1}`}
-            className={`h-[56px] w-[56px] rounded-full border text-center text-[22px] font-semibold text-[#1a2d21] outline-none transition-all duration-200 ${
-              digit
-                ? "border-[#23cf67] bg-[#dffbec]"
-                : "border-transparent bg-[#e5fff1] focus:border-[#23cf67] focus:bg-[#f2fff8]"
+            className={`theme-otp-input h-[56px] w-[56px] rounded-full border text-center text-[22px] font-semibold outline-none transition-all duration-200 ${
+              digit ? "theme-otp-input-filled" : "theme-otp-input-empty"
             }`}
           />
         ))}
       </div>
 
-      <p className="text-center font-satoshi text-[15px] leading-6 text-[#555]">
+      <p className="theme-text-secondary text-center font-satoshi text-[15px] leading-6">
         {resendTimer > 0 ? (
           <>
             Code expires in{" "}
-            <span className="font-semibold text-[#0F0F0F]">{resendTimer}s</span>
+            <span className="theme-text-primary font-semibold">{resendTimer}s</span>
           </>
         ) : (
           <button
             type="button"
             onClick={() => setResendTimer(30)}
-            className="font-semibold text-[#0F0F0F]"
+            className="theme-text-primary font-semibold"
           >
             Resend code
           </button>
