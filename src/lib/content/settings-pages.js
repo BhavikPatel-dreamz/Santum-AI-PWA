@@ -256,69 +256,6 @@ export const SETTINGS_PAGE_CONTENT = {
       { label: "Contact Support", href: "/settings/contact-us", variant: "secondary" },
     ],
   },
-  "notification-options": {
-    title: "Notification Options",
-    badge: "Stay Updated",
-    heroTitle: "Shape the pace and type of alerts you receive",
-    description:
-      "A polished notification settings layer with room for future product, billing, and chat activity alerts.",
-    imageSrc: "/icons/robot-slider-img3.png",
-    imageAlt: "Notifications settings",
-    sections: [
-      {
-        type: "toggles",
-        title: "Push & Inbox Preferences",
-        items: [
-          {
-            key: "chatReplies",
-            label: "Chat reply alerts",
-            description: "See when an important response is ready to review.",
-            enabled: true,
-          },
-          {
-            key: "productNews",
-            label: "Product and release updates",
-            description: "Get the newest feature changes in a lightweight feed.",
-            enabled: true,
-          },
-          {
-            key: "billingUpdates",
-            label: "Billing updates",
-            description: "Know when renewals, invoices, or failures happen.",
-            enabled: true,
-          },
-          {
-            key: "quietHours",
-            label: "Quiet hours",
-            description: "Reduce notifications between 10 PM and 8 AM.",
-            enabled: false,
-          },
-        ],
-      },
-      {
-        type: "list",
-        title: "Delivery Channels",
-        items: [
-          {
-            title: "Push notifications",
-            description: "Best for time-sensitive updates while you are away.",
-          },
-          {
-            title: "In-app inbox",
-            description: "A cleaner archive for product and account changes.",
-          },
-          {
-            title: "Email fallback",
-            description: "Used only when something needs a longer summary.",
-          },
-        ],
-      },
-    ],
-    footerActions: [
-      { label: "Save Notification Rules", toast: "Notification options updated in demo mode.", variant: "primary" },
-      { label: "Open Inbox", href: "/notifications", variant: "secondary" },
-    ],
-  },
   currency: {
     title: "Currency",
     badge: "Regional Setup",

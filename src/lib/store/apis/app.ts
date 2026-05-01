@@ -183,6 +183,22 @@ function extractMoodCheckIn(payload: unknown): ApiRecord | null {
   return record;
 }
 
+function extractNotificationFeed(payload: unknown): ApiRecord {
+  const record = extractRecord(payload) ?? {};
+  const notifications = Array.isArray(record.notifications)
+    ? (record.notifications as ApiList)
+    : [];
+  const stats =
+    record.stats && typeof record.stats === "object" && !Array.isArray(record.stats)
+      ? (record.stats as ApiRecord)
+      : {};
+
+  return {
+    notifications,
+    stats,
+  };
+}
+
 export const appApi = createApi({
   reducerPath: "appApi",
   baseQuery,
@@ -195,6 +211,7 @@ export const appApi = createApi({
     "Chat",
     "Messages",
     "Mood",
+    "Notifications",
   ],
   endpoints: (builder) => ({
     login: builder.mutation<ApiRecord, LoginPayload>({
@@ -231,6 +248,7 @@ export const appApi = createApi({
         "Chats",
         "Chat",
         "Messages",
+        "Notifications",
       ],
     }),
     getProfile: builder.query<ApiRecord | null, void>({
@@ -293,6 +311,30 @@ export const appApi = createApi({
       invalidatesTags: (result, error, { dateKey }) => [
         { type: "Mood", id: dateKey },
       ],
+    }),
+    getNotifications: builder.query<ApiRecord, void>({
+      query: () => noStoreGet("/notifications"),
+      transformResponse: (response: unknown) => extractNotificationFeed(response),
+      providesTags: ["Notifications"],
+    }),
+    markAllNotificationsRead: builder.mutation<ApiRecord, void>({
+      query: () => ({
+        url: "/notifications",
+        method: "POST",
+        body: {
+          action: "mark-all-read",
+        },
+      }),
+      transformResponse: (response: unknown) => extractNotificationFeed(response),
+      invalidatesTags: ["Notifications"],
+    }),
+    markNotificationRead: builder.mutation<ApiRecord, string>({
+      query: (notificationId) => ({
+        url: `/notifications/${notificationId}`,
+        method: "PATCH",
+      }),
+      transformResponse: (response: unknown) => extractNotificationFeed(response),
+      invalidatesTags: ["Notifications"],
     }),
     getCreditBalance: builder.query<ApiRecord, void>({
       query: () => noStoreGet("/credit/balance"),
@@ -396,6 +438,9 @@ export const {
   useUpdateInterestsMutation,
   useGetMoodCheckInQuery,
   useUpsertMoodCheckInMutation,
+  useGetNotificationsQuery,
+  useMarkAllNotificationsReadMutation,
+  useMarkNotificationReadMutation,
   useGetCreditBalanceQuery,
   useGetSubscriptionPlansQuery,
   useGetSubscriptionStatusQuery,

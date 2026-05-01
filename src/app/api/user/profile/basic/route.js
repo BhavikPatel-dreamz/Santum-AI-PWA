@@ -1,10 +1,11 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import {
   apiFetchWithAuth,
   assertApiSuccess,
   createErrorResponse,
 } from "../../../../../lib/api/server";
 import { clearAuthCookie } from "../../../../../lib/auth/session";
+import { createNotificationForCurrentUser } from "../../../../../lib/notifications/server";
 
 export async function POST(req) {
   try {
@@ -29,6 +30,30 @@ export async function POST(req) {
       }),
       "Unable to save profile",
     );
+
+    after(async () => {
+      try {
+        await createNotificationForCurrentUser({
+          type: "profile_updated",
+          category: "account",
+          title: "Profile details updated",
+          description:
+            "Your basic profile details were saved successfully in the app.",
+          actionHref: "/personal-information",
+          actionLabel: "Open profile",
+          priority: "low",
+          metadata: {
+            first_name: body.firstName,
+            last_name: body.lastName,
+          },
+        });
+      } catch (notificationError) {
+        console.error(
+          "Unable to create profile update notification:",
+          notificationError,
+        );
+      }
+    });
 
     return NextResponse.json({
       success: true,

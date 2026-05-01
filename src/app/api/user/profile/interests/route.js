@@ -1,10 +1,11 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import {
   apiFetchWithAuth,
   assertApiSuccess,
   createErrorResponse,
 } from "../../../../../lib/api/server";
 import { clearAuthCookie } from "../../../../../lib/auth/session";
+import { createNotificationForCurrentUser } from "../../../../../lib/notifications/server";
 
 export async function POST(req) {
   try {
@@ -29,6 +30,28 @@ export async function POST(req) {
       }),
       "Unable to save interests",
     );
+
+    after(async () => {
+      try {
+        await createNotificationForCurrentUser({
+          type: "interests_updated",
+          category: "account",
+          title: "Interests updated",
+          description: `Your app interests were refreshed with ${body.interests.length} saved selections.`,
+          actionHref: "/personal-information",
+          actionLabel: "Review profile",
+          priority: "low",
+          metadata: {
+            interests: body.interests,
+          },
+        });
+      } catch (notificationError) {
+        console.error(
+          "Unable to create interests update notification:",
+          notificationError,
+        );
+      }
+    });
 
     return NextResponse.json({
       success: true,

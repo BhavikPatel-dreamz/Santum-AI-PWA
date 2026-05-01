@@ -2,112 +2,43 @@
 
 import FeatureShowcaseCard from "@/components/app/FeatureShowcaseCard";
 import StepPageShell from "@/components/app/StepPageShell";
-import { Bell, Gift, MessageSquare } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-
-const NOTIFICATION_OPTIONS = [
-  {
-    id: "replies",
-    title: "Helpful reply alerts",
-    description: "Stay updated when Amigo has something worth checking.",
-    icon: MessageSquare,
-  },
-  {
-    id: "offers",
-    title: "Offers and plan updates",
-    description: "See premium trials, plan changes, and limited-time perks.",
-    icon: Gift,
-  },
-  {
-    id: "product",
-    title: "Product news",
-    description: "Hear about new features, fixes, and polished upgrades.",
-    icon: Bell,
-  },
-];
 
 export default function NotificationSetupPage() {
   const router = useRouter();
-  const [enabledOptions, setEnabledOptions] = useState({
-    replies: true,
-    offers: false,
-    product: true,
-  });
 
   return (
-    <StepPageShell title="Stay In The Loop" contentClassName="overflow-y-auto">
+    <StepPageShell title="Notifications" contentClassName="overflow-y-auto">
       <FeatureShowcaseCard
-        badge="Notifications"
-        title="Choose the updates that deserve your attention"
-        description="This onboarding step now feels like part of the product, not a recycled placeholder screen."
+        badge="In-App Inbox"
+        title="Updates appear automatically inside your Amigo inbox"
+        description="This app no longer asks people to manage notification switches. Billing, token, and account updates are shown in the in-app notifications feed when they matter."
         imageSrc="/icons/robot-slider-img3.png"
-        imageAlt="Notification preferences"
+        imageAlt="Notification inbox"
         className="mb-6"
       />
 
-      <div className="space-y-3">
-        {NOTIFICATION_OPTIONS.map((option) => {
-          const Icon = option.icon;
-          const isEnabled = enabledOptions[option.id];
-
-          return (
-            <button
-              key={option.id}
-              type="button"
-              onClick={() =>
-                setEnabledOptions((currentOptions) => ({
-                  ...currentOptions,
-                  [option.id]: !currentOptions[option.id],
-                }))
-              }
-              className={`flex w-full items-start justify-between gap-4 rounded-[24px] border px-4 py-4 text-left transition-all duration-200 ${
-                isEnabled
-                  ? "border-[#00D061] bg-[#F2FFF7] shadow-[0_12px_30px_rgba(0,208,97,0.12)]"
-                  : "theme-card"
-              }`}
-            >
-              <div className="flex items-start gap-4">
-                <div
-                  className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${
-                    isEnabled ? "bg-[#00D061] text-white" : "bg-[#F4F7F5] text-[#0F0F0F]"
-                  }`}
-                >
-                  <Icon size={20} />
-                </div>
-                <div>
-                  <h3 className="text-[18px] font-semibold leading-7 text-[#0F0F0F]">
-                    {option.title}
-                  </h3>
-                  <p className="mt-1 font-satoshi text-[14px] leading-6 text-[#555]">
-                    {option.description}
-                  </p>
-                </div>
-              </div>
-
-              <div
-                className={`relative h-[30px] w-[54px] rounded-full transition-all duration-300 ${
-                  isEnabled ? "bg-[#00D061]" : "bg-[#E8E8E8]"
-                }`}
-              >
-                <span
-                  className={`absolute top-[3px] h-6 w-6 rounded-full bg-white shadow-sm transition-all duration-300 ${
-                    isEnabled ? "left-[26px]" : "left-[3px]"
-                  }`}
-                />
-              </div>
-            </button>
-          );
-        })}
+      <div className="theme-card rounded-[24px] border px-5 py-5">
+        <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#00A84D]">
+          How it works
+        </p>
+        <h2 className="mt-3 text-[22px] font-semibold leading-8 text-[#0F0F0F]">
+          Important updates are handled automatically.
+        </h2>
+        <p className="mt-3 font-satoshi text-[15px] leading-6 text-[#555]">
+          If a payment fails, a subscription renews, tokens reset, or your
+          account activity changes, the update is saved to the in-app inbox for
+          you to review later.
+        </p>
       </div>
 
       <div className="mt-auto grid grid-cols-1 gap-3 pt-6 sm:grid-cols-2">
         <button
           type="button"
-          onClick={() => router.push("/create-pin")}
+          onClick={() => router.push("/notifications")}
           className="theme-secondary-button rounded-[14px] px-5 py-4 text-[16px] font-semibold"
         >
-          Skip
+          Open Inbox
         </button>
         <button
           type="button"

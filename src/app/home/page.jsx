@@ -8,6 +8,7 @@ import MoodCheckInCard from "@/components/app/MoodCheckInCard";
 import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
 import {
   useGetMoodCheckInQuery,
+  useGetNotificationsQuery,
   useGetProfileQuery,
   useLogoutMutation,
   useUpsertMoodCheckInMutation,
@@ -357,29 +358,6 @@ const MENU_ITEMS = [
     ),
   },
   {
-    label: "Notification Options",
-    hint: null,
-    danger: false,
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="48"
-        height="48"
-        viewBox="0 0 48 48"
-        fill="none"
-      >
-        <rect opacity="0.08" width="48" height="48" rx="8" fill="#00D061" />
-        <path
-          d="M22 17C22 16.47 22.211 15.961 22.586 15.586C22.961 15.211 23.47 15 24 15C24.53 15 25.039 15.211 25.414 15.586C25.789 15.961 26 16.47 26 17C27.148 17.543 28.127 18.388 28.832 19.445C29.537 20.502 29.94 21.731 30 23V26C30.075 26.622 30.295 27.217 30.643 27.738C30.99 28.259 31.455 28.691 32 29H16C16.545 28.691 17.01 28.259 17.357 27.738C17.705 27.217 17.925 26.622 18 26V23C18.06 21.731 18.463 20.502 19.168 19.445C19.873 18.388 20.852 17.543 22 17M21 29V30C21 30.796 21.316 31.559 21.879 32.121C22.441 32.684 23.204 33 24 33C24.796 33 25.559 32.684 26.121 32.121C26.684 31.559 27 30.796 27 30V29"
-          stroke="#00D061"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    ),
-  },
-  {
     label: "Language",
     hint: "English (US)",
     danger: false,
@@ -629,7 +607,6 @@ const MENU_ROUTES = {
   "Personal Info": "/personal-information",
   Security: "/settings/security",
   "Marketing Preferences": "/settings/marketing-preferences",
-  "Notification Options": "/settings/notification-options",
   Language: "/language",
   Currency: "/settings/currency",
   FAQs: "/settings/faqs",
@@ -678,7 +655,7 @@ const TODAY_CARDS = [
   {
     title: "Settings pass is ready",
     description:
-      "Language, notifications, and security pages now have full themed screens.",
+      "Language, inbox, and security pages now have full themed screens.",
     cta: "Review",
     href: "/settings/security",
   },
@@ -722,6 +699,10 @@ export default function HomeScreen() {
   const router = useRouter();
   const moodCheckInRef = useRef(null);
   const { data: profileData, error: profileError } = useGetProfileQuery();
+  const { data: notificationsFeed } = useGetNotificationsQuery(undefined, {
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+  });
   const [logout] = useLogoutMutation();
   const {
     data: todayMoodCheckIn,
@@ -735,6 +716,10 @@ export default function HomeScreen() {
     useUpsertMoodCheckInMutation();
   const profile = profileData ?? {};
   const profilePhone = getProfilePhone(profile);
+  const unreadNotificationCount =
+    typeof notificationsFeed?.stats?.unread === "number"
+      ? notificationsFeed.stats.unread
+      : 0;
   const hasTodayMoodCheckIn =
     Boolean(todayMoodCheckIn) &&
     todayMoodCheckIn?.dateKey === todayMoodDateKey;
@@ -896,9 +881,11 @@ export default function HomeScreen() {
                 onClick={() => router.push("/notifications")}
               >
                 <Bell />
-                <span className="absolute -top-1 -right-1 w-[18px] h-[18px] bg-[#FF484D] rounded-full flex items-center justify-center text-white text-[10px] font-medium">
-                  5
-                </span>
+                {unreadNotificationCount > 0 ? (
+                  <span className="absolute -top-1 -right-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#FF484D] px-1 text-[10px] font-medium text-white">
+                    {unreadNotificationCount > 99 ? "99+" : unreadNotificationCount}
+                  </span>
+                ) : null}
               </button>
               {/* Hex / settings */}
               <button

@@ -82,7 +82,7 @@ export default function ReasonScreen() {
       <div className="mt-auto grid grid-cols-1 gap-3 pt-6 sm:grid-cols-2">
         <button
           type="button"
-          onClick={() => router.push("/notification")}
+          onClick={() => router.push("/create-pin")}
           className="rounded-[14px] bg-[#F4F7F5] px-5 py-4 text-[16px] font-semibold text-[#0F0F0F]"
         >
           Skip
@@ -90,7 +90,7 @@ export default function ReasonScreen() {
         <button
           type="button"
           disabled={!anyChecked}
-          onClick={() => router.push("/notification")}
+          onClick={() => router.push("/create-pin")}
           className={`rounded-[14px] px-5 py-4 text-[16px] font-semibold text-white ${
             anyChecked ? "bg-[#00D061]" : "bg-[#A8F0CB]"
           }`}

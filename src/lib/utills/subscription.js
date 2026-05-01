@@ -71,6 +71,50 @@ const PLAN_LEVEL_KEYS = [
   "planType",
 ];
 
+const SUBSCRIPTION_STATUS_KEYS = [
+  "membership_status",
+  "membershipStatus",
+  "subscription_status",
+  "subscriptionStatus",
+  "plan_status",
+  "planStatus",
+  "status",
+  "state",
+];
+
+const PAYMENT_STATUS_KEYS = [
+  "payment_status",
+  "paymentStatus",
+  "billing_status",
+  "billingStatus",
+  "invoice_status",
+  "invoiceStatus",
+  "renewal_status",
+  "renewalStatus",
+];
+
+const RENEWAL_DATE_KEYS = [
+  "next_billing_date",
+  "nextBillingDate",
+  "renewal_date",
+  "renewalDate",
+  "renewed_at",
+  "renewedAt",
+  "billing_date",
+  "billingDate",
+];
+
+const EXPIRY_DATE_KEYS = [
+  "expires_at",
+  "expiresAt",
+  "expiry_date",
+  "expiryDate",
+  "expiration_date",
+  "expirationDate",
+  "end_date",
+  "endDate",
+];
+
 function normalizeTextValue(value) {
   if (typeof value === "string") {
     const trimmedValue = value.trim();
@@ -119,6 +163,12 @@ function normalizeFlagValue(value) {
   }
 
   return null;
+}
+
+function normalizeStatusToken(value) {
+  return normalizeTextValue(value)
+    .toLowerCase()
+    .replace(/[\s-]+/g, "_");
 }
 
 function dedupe(values) {
@@ -223,6 +273,20 @@ function collectScalarValues(record, keys) {
   }
 
   return values;
+}
+
+function getFirstRecordValue(records, keys, normalizer = normalizeTextValue) {
+  for (const record of records) {
+    const value = collectScalarValues(record, keys)
+      .map((candidate) => normalizer(candidate))
+      .find(Boolean);
+
+    if (value) {
+      return value;
+    }
+  }
+
+  return "";
 }
 
 export function normalizePlanName(value) {
@@ -410,14 +474,29 @@ export function isSamePlan(plan, reference = {}) {
   return Boolean(planName && referenceName && planName === referenceName);
 }
 
-export function buildSubscriptionStatus({ plans, profile }) {
+export function buildSubscriptionSnapshot({ plans, profile }) {
   const activePlan = resolveActiveSubscriptionPlan({ plans, profile });
+  const planRecords = activePlan
+    ? [activePlan, ...collectPlanRecords(profile)]
+    : collectPlanRecords(profile);
   const activePlanId = activePlan ? getPlanId(activePlan) : null;
   const activePlanName = activePlan ? getPlanName(activePlan) : null;
   const activePlanLevel = activePlan ? getPlanLevel(activePlan) : "free";
   const activePlanTokens = activePlan ? getPlanTokenLimit(activePlan) : null;
   const activePlanCheckoutUrl = activePlan ? getPlanCheckoutUrl(activePlan) : null;
   const isPaidActive = activePlan ? getPlanPrice(activePlan) > 0 : false;
+  const subscriptionStatus = getFirstRecordValue(
+    planRecords,
+    SUBSCRIPTION_STATUS_KEYS,
+    normalizeStatusToken,
+  );
+  const paymentStatus = getFirstRecordValue(
+    planRecords,
+    PAYMENT_STATUS_KEYS,
+    normalizeStatusToken,
+  );
+  const renewalDate = getFirstRecordValue(planRecords, RENEWAL_DATE_KEYS);
+  const expiryDate = getFirstRecordValue(planRecords, EXPIRY_DATE_KEYS);
 
   return {
     has_active_plan: Boolean(activePlan),
@@ -427,5 +506,13 @@ export function buildSubscriptionStatus({ plans, profile }) {
     active_plan_tokens: Number.isFinite(activePlanTokens) ? activePlanTokens : null,
     active_plan_checkout_url: activePlanCheckoutUrl,
     is_paid_active: isPaidActive,
+    subscription_status: subscriptionStatus || null,
+    payment_status: paymentStatus || null,
+    renewal_date: renewalDate || null,
+    expiry_date: expiryDate || null,
   };
+}
+
+export function buildSubscriptionStatus({ plans, profile }) {
+  return buildSubscriptionSnapshot({ plans, profile });
 }

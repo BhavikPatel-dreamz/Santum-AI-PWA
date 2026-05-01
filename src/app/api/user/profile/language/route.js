@@ -1,10 +1,11 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import {
   apiFetchWithAuth,
   assertApiSuccess,
   createErrorResponse,
 } from "../../../../../lib/api/server";
 import { clearAuthCookie } from "../../../../../lib/auth/session";
+import { createNotificationForCurrentUser } from "../../../../../lib/notifications/server";
 
 export async function POST(req) {
   try {
@@ -27,6 +28,28 @@ export async function POST(req) {
       }),
       "Unable to update language",
     );
+
+    after(async () => {
+      try {
+        await createNotificationForCurrentUser({
+          type: "language_updated",
+          category: "account",
+          title: "Preferred language updated",
+          description: `Your preferred language is now set to ${body.preferredLanguage}.`,
+          actionHref: "/personal-information",
+          actionLabel: "Open profile",
+          priority: "low",
+          metadata: {
+            preferred_language: body.preferredLanguage,
+          },
+        });
+      } catch (notificationError) {
+        console.error(
+          "Unable to create language update notification:",
+          notificationError,
+        );
+      }
+    });
 
     return NextResponse.json({
       success: true,
