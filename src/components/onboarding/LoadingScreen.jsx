@@ -18,13 +18,12 @@ export default function LoadingScreen({ onDone }) {
       style={{ zIndex: 99999 }}
     >
       {/* Top-left dot pattern */}
-      <div className="absolute top-0 left-0 w-36 h-36 opacity-20">
+      <div className="absolute top-0 left-0 w-full h-1/2 opacity-30">
         <Image
           src="/icons/dots_pattern.png"
           alt=""
           fill
-          sizes="144px"
-          className="object-contain"
+          className="object-cover"
           loading="eager"
         />
       </div>
@@ -58,13 +57,12 @@ export default function LoadingScreen({ onDone }) {
       </div>
 
       {/* Bottom-right dot pattern */}
-      <div className="absolute bottom-0 right-0 w-36 h-36 opacity-20">
+      <div className="absolute bottom-0 right-0 w-full h-1/2 opacity-30">
         <Image
           src="/icons/dots_pattern_bottom.png"
           alt=""
           fill
-          sizes="144px"
-          className="object-contain"
+          className="object-cover"
         />
       </div>
 
