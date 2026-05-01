@@ -46,6 +46,11 @@ export default function RootPage() {
   const autoSlideStopped = useRef(false);
 
   useEffect(() => {
+    if (localStorage.getItem("onboarding_done") === "true")
+      router.replace("/lets-you-in");
+  }, []);
+
+  useEffect(() => {
     setTheme(localStorage.getItem("amigo-theme"));
   }, []);
 

@@ -16,16 +16,16 @@ export default function FeatureShowcaseCard({
       <Image
         src="/icons/dots_pattern.png"
         alt=""
-        width={120}
-        height={120}
-        className="pointer-events-none absolute right-0 top-0 w-24 opacity-35"
+        width={100}
+        height={100}
+        className="pointer-events-none absolute right-0 top-0 w-full opacity-35"
       />
       <Image
         src="/icons/dots_pattern_bottom.png"
         alt=""
-        width={120}
-        height={120}
-        className="pointer-events-none absolute bottom-0 left-0 w-24 opacity-35"
+        width={100}
+        height={100}
+        className="pointer-events-none absolute bottom-0 left-0 w-full opacity-35"
       />
 
       <span className="inline-flex rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/90">
