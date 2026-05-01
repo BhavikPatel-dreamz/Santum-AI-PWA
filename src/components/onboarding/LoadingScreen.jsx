@@ -53,7 +53,7 @@ export default function LoadingScreen({ onDone }) {
           Amigo GPT
         </h1>
         <p className="theme-text-secondary text-lg font-medium leading-6 font-[Poppins]">
-          Where Intelligence Meets Innovation
+          Calm support for everyday emotional wellbeing
         </p>
       </div>
 

@@ -10,34 +10,42 @@ const OnboardingSlide = dynamic(
 
 const AUTO_SLIDE_INTERVAL = 4000;
 const ANIM_DURATION = 320;
+const ONBOARDING_SLIDES = [
+  {
+    darkImage: "/icons/artboard-3.png",
+    lightImage: "/icons/artboard-2.jpg",
+    title: "Welcome to Amigo, your calm space to talk",
+    desc: "Text-based support for emotional wellbeing, reflection, and everyday moments that feel hard to carry alone.",
+    btnLabel: "Next",
+  },
+  {
+    darkImage: "/icons/artboard-3.png",
+    lightImage: "/icons/artboard-2.jpg",
+    title: "Support that adapts to how today feels",
+    desc: "Mood check-ins help Amigo respond with steadier tone, gentler pacing, and more relevant encouragement.",
+    btnLabel: "Next",
+  },
+  {
+    darkImage: "/icons/artboard-3.png",
+    lightImage: "/icons/artboard-2.jpg",
+    title: "Build healthier reflection habits with Amigo",
+    desc: "Save conversations, return to past sessions, and create a private routine for emotional check-ins and support.",
+    btnLabel: "Get Started",
+  },
+];
 
 type Direction = "left" | "right";
 
 export default function RootPage() {
-  const [theme, setTheme] = useState<string | null>(null);
-  const slides = [
-    {
-      image:
-        theme == "dark" ? "/icons/artboard-3.png" : "/icons/artboard-2.jpg",
-      title: "Welcome to Amigo, Great Friend to Chat",
-      desc: "Proin molestie pulvinar vitae enim erat morbi eu. Malesuada eros nisi augue.",
-      btnLabel: "Next",
-    },
-    {
-      image:
-        theme == "dark" ? "/icons/artboard-3.png" : "/icons/artboard-2.jpg",
-      title: "The Intelligent Way to Get Started",
-      desc: "Quisque blandit risus duis odio. In pretium nibh velit a aenean vitae porta euismod.",
-      btnLabel: "Next",
-    },
-    {
-      image:
-        theme == "dark" ? "/icons/artboard-3.png" : "/icons/artboard-2.jpg",
-      title: "Accelerate Your Learning with Amigo",
-      desc: "Pulvinar in et eu volutpat mauris viverra ut orci. Lacus placerat volutpat pharetra a.",
-      btnLabel: "Get Started",
-    },
-  ];
+  const [theme] = useState<string | null>(() =>
+    typeof window === "undefined" ? null : localStorage.getItem("amigo-theme"),
+  );
+  const slides = ONBOARDING_SLIDES.map(
+    ({ darkImage, lightImage, ...slideContent }) => ({
+      ...slideContent,
+      image: theme === "dark" ? darkImage : lightImage,
+    }),
+  );
   const [currentSlide, setCurrentSlide] = useState(0);
   const [animClass, setAnimClass] = useState("");
   const isAnimating = useRef(false);
@@ -48,11 +56,7 @@ export default function RootPage() {
   useEffect(() => {
     if (localStorage.getItem("onboarding_done") === "true")
       router.replace("/lets-you-in");
-  }, []);
-
-  useEffect(() => {
-    setTheme(localStorage.getItem("amigo-theme"));
-  }, []);
+  }, [router]);
 
   const stopAutoSlide = useCallback(() => {
     autoSlideStopped.current = true;
@@ -88,8 +92,8 @@ export default function RootPage() {
 
   const goNext = useCallback(() => {
     setCurrentSlide((prev: number) => {
-      const next = prev < slides.length - 1 ? prev + 1 : prev;
-      if (next === slides.length - 1 && timerRef.current) {
+      const next = prev < ONBOARDING_SLIDES.length - 1 ? prev + 1 : prev;
+      if (next === ONBOARDING_SLIDES.length - 1 && timerRef.current) {
         clearInterval(timerRef.current);
         timerRef.current = null;
       }
@@ -122,7 +126,7 @@ export default function RootPage() {
   );
 
   const handleNext = useCallback(() => {
-    if (currentSlide < slides.length - 1) {
+    if (currentSlide < ONBOARDING_SLIDES.length - 1) {
       stopAutoSlide();
       goToSlide(currentSlide + 1, "left");
     } else {
@@ -159,7 +163,7 @@ export default function RootPage() {
       <OnboardingSlide
         {...slides[currentSlide]}
         currentDot={currentSlide}
-        totalDots={slides.length}
+        totalDots={ONBOARDING_SLIDES.length}
         animClass={animClass}
         onNext={handleNext}
         onDotClick={handleDotClick}

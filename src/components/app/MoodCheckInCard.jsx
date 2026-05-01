@@ -50,10 +50,12 @@ export default function MoodCheckInCard({
   onSubmit,
   className = "",
   title = "How are you feeling today?",
-  description = "A quick check-in helps Amigo adapt its tone before you chat.",
+  description =
+    "A quick check-in helps Amigo respond with more care, steadier tone, and better pacing.",
   submitLabel = "Save today's check-in",
   successTitle = "You've checked in today ✅",
-  successDescription = "Thanks for sharing how you feel. Amigo can use this when it responds today.",
+  successDescription =
+    "Thanks for sharing how you feel. Amigo can use this to support you more thoughtfully today.",
   showUpdateAction = true,
 }) {
   const [isEditing, setIsEditing] = useState(!entry);

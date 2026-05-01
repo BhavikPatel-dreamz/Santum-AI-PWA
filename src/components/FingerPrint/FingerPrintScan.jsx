@@ -48,11 +48,11 @@ export default function FingerPrintScan() {
         const createdCredential = await navigator.credentials.create({
           publicKey: {
             challenge: generateRandomChallenge(),
-            rp: { name: "Demo App", id: window.location.hostname },
+            rp: { name: "Amigo App", id: window.location.hostname },
             user: {
               id: crypto.getRandomValues(new Uint8Array(16)),
-              name: "demo@example.com",
-              displayName: "Demo User",
+              name: "member@amigo.local",
+              displayName: "Amigo Member",
             },
             pubKeyCredParams: [{ type: "public-key", alg: -7 }],
             timeout: 60000,

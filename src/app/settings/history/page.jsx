@@ -128,7 +128,7 @@ export default function ChatHistoryPage() {
       <FeatureShowcaseCard
         badge="Conversation Memory"
         title="Return to any real conversation in seconds"
-        description="Your finished Amigo chats are now saved in MongoDB and can be reopened from this history screen."
+        description="Your finished Amigo support conversations are saved automatically and can be reopened from this history screen."
         imageSrc="/icons/robot-slider-img2.png"
         imageAlt="Chat history preview"
         className="mb-6"
@@ -197,8 +197,8 @@ export default function ChatHistoryPage() {
             No saved chats yet
           </h3>
           <p className="mt-2 font-satoshi text-[14px] leading-6 text-[#555]">
-            Start a conversation with Amigo and it will appear here once the
-            reply is finished and stored.
+            Start a support conversation with Amigo and it will appear here
+            once the reply is finished and stored.
           </p>
         </div>
       ) : (
@@ -249,7 +249,7 @@ export default function ChatHistoryPage() {
           onClick={() => router.push("/amigo-chat")}
           className="rounded-[14px] bg-[#00D061] px-5 py-4 text-[16px] font-semibold text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)]"
         >
-          Start Fresh Chat
+          Start New Chat
         </button>
         <button
           type="button"

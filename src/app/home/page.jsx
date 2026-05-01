@@ -894,10 +894,10 @@ export default function HomeScreen() {
               </span>
             </h2>
             <h3 className="text-white text-[18px] font-semibold leading-6 mt-3">
-              Let&apos;s Have Fun with Amigo!
+              Let&apos;s check in with Amigo.
             </h3>
             <p className="text-[16px] font-satoshi font-medium leading-[24px] pb-3 text-white mt-2 mb-3">
-              Start a conversation with Amigo right now!
+              Start a supportive conversation whenever you need space to reflect.
             </p>
           </div>
         </div>
@@ -912,7 +912,7 @@ export default function HomeScreen() {
                   Amigo GPT Plus
                 </h4>
                 <p className="text-[#555] text-[14px] font-medium leading-6 mt-1 max-w-[180px]">
-                  Unlock Amigo premium to unlock all features.
+                  Unlock deeper support features, faster replies, and more conversation continuity.
                 </p>
               </div>
               <button
@@ -920,7 +920,7 @@ export default function HomeScreen() {
                 onClick={() => router.push("/plus-subscription")}
                 className="theme-surface mt-4 self-start rounded-[8px] px-4 py-[10px] text-[14px] font-semibold text-[#00D061] transition-all duration-300 active:scale-[0.97]"
               >
-                Upgrades
+                View Plans
               </button>
             </div>
             {/* Robot placeholder */}
@@ -997,7 +997,7 @@ export default function HomeScreen() {
             onClick={handleOpenChat}
             className="w-full max-w-[343px] mx-auto flex items-center justify-center h-[56px] rounded-[12px] bg-[#00D061] text-white text-[18px] font-medium shadow-[0_4px_20px_rgba(0,208,97,0.4)] transition-all active:scale-[0.98] hover:opacity-92"
           >
-            Start Chat with Amigo
+            Start Support Chat
           </button>
         </div>
 

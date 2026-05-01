@@ -6,12 +6,12 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const REASONS = [
-  { id: 1, label: "Generate creative text formats" },
-  { id: 2, label: "Access smarter everyday answers" },
-  { id: 3, label: "Use a calmer, friendlier AI layout" },
-  { id: 4, label: "Explore productivity workflows" },
-  { id: 5, label: "Try premium-style assistant features" },
-  { id: 6, label: "Just curious and testing things out" },
+  { id: 1, label: "Feel heard when emotions are heavy" },
+  { id: 2, label: "Build a healthier reflection habit" },
+  { id: 3, label: "Get calm support around hard conversations" },
+  { id: 4, label: "Track mood patterns over time" },
+  { id: 5, label: "Access deeper support with premium features" },
+  { id: 6, label: "See whether this kind of support fits me" },
 ];
 
 export default function ReasonScreen() {
@@ -30,8 +30,8 @@ export default function ReasonScreen() {
     <StepPageShell title="Why Amigo?" contentClassName="overflow-y-auto">
       <FeatureShowcaseCard
         badge="Personalization"
-        title="Tell us what brought you here so the product can feel smarter"
-        description="These selections are still dummy, but the step now fits neatly into your onboarding journey."
+        title="Tell us what brought you here so support can feel more personal"
+        description="Your choices help shape tone, starter prompts, and the kinds of emotional support we highlight first."
         imageSrc="/icons/robot-slider-img2.png"
         imageAlt="Onboarding personalization"
         className="mb-6"
@@ -42,7 +42,7 @@ export default function ReasonScreen() {
           Pick what matters most
         </h2>
         <p className="theme-text-secondary mt-1 font-satoshi text-[15px] leading-6">
-          This helps shape the tone of suggestions and starter prompts later on.
+          This helps Amigo adapt your first conversations and suggested check-ins.
         </p>
       </div>
 

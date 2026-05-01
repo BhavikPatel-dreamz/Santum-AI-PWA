@@ -33,7 +33,7 @@ export default function ForgetPasswordPage() {
       <FeatureShowcaseCard
         badge="Recovery"
         title="Choose the quickest way to recover your account"
-        description="This screen uses dummy contact methods for now, but the flow is ready to match the rest of your app."
+        description="Masked recovery options help protect your account details while you reset access."
         imageSrc="/icons/robot-slider-img2.png"
         imageAlt="Recovery assistant"
         className="mb-6"

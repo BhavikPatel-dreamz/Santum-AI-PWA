@@ -108,7 +108,7 @@ export async function POST(request) {
           category: "wellness",
           title: "Today's mood check-in is saved",
           description:
-            "Amigo can use your latest mood context in future chats and check-ins.",
+            "Amigo can use your latest mood context to support future chats with better tone and pacing.",
           actionHref: "/home",
           actionLabel: "Open home",
           priority: "low",

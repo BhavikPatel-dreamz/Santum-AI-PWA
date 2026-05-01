@@ -1,161 +1,179 @@
 export const SETTINGS_PAGE_CONTENT = {
   "banks-cards": {
-    title: "Banks & Cards",
-    badge: "Wallet Hub",
-    heroTitle: "Keep every card neatly in one secure place",
+    title: "Billing Methods",
+    badge: "Membership Billing",
+    heroTitle: "Keep your renewal methods organized and easy to review",
     description:
-      "A clean dummy wallet view with balances, expiry dates, and trusted institutions styled to match the app.",
+      "Use this space to review the cards or accounts linked to Amigo memberships and chat-credit top-ups.",
     imageSrc: "/icons/plus-robort.png",
-    imageAlt: "Wallet robot",
+    imageAlt: "Billing methods",
     sections: [
       {
         type: "list",
-        title: "Saved Cards",
+        title: "Saved Methods",
         items: [
           {
-            title: "Amigo Black Card",
-            description: "Primary spending card ending in 4821",
-            meta: "Expires 09/28",
+            title: "Primary debit card",
+            description: "Used for membership renewals and one-tap credit top-ups.",
+            meta: "Ending in 4821",
             badge: "Default",
           },
           {
-            title: "Travel Rewards Visa",
-            description: "Used for flights, hotels, and reward points",
-            meta: "Expires 01/29",
+            title: "UPI AutoPay",
+            description: "Available for recurring membership charges when enabled.",
+            meta: "Ready",
           },
         ],
       },
       {
         type: "list",
-        title: "Linked Banks",
+        title: "Billing Notes",
         items: [
           {
-            title: "Kotak Mahindra Bank",
-            description: "Checking account linked for top-ups and withdrawals",
-            meta: "Synced 15 min ago",
+            title: "Secure checkout",
+            description: "Payments are completed on Santum.net before the PWA syncs the latest membership state.",
           },
           {
-            title: "HDFC Salary Account",
-            description: "Available as a backup payout destination",
-            meta: "Healthy connection",
+            title: "Receipts and renewals",
+            description: "Membership renewals and balance changes are reflected in your notification inbox.",
           },
         ],
       },
     ],
     footerActions: [
-      { label: "Add Dummy Card", toast: "Dummy card added to your wallet.", variant: "primary" },
-      { label: "Payment Methods", href: "/settings/payment-methods", variant: "secondary" },
+      {
+        label: "Add Billing Method",
+        toast: "Billing method saved in this session.",
+        variant: "primary",
+      },
+      {
+        label: "Payment Preferences",
+        href: "/settings/payment-methods",
+        variant: "secondary",
+      },
     ],
   },
   "payment-methods": {
-    title: "Payment Methods",
+    title: "Payment Preferences",
     badge: "Checkout Ready",
-    heroTitle: "Choose how Amigo should charge and pay",
+    heroTitle: "Choose how Amigo should handle renewals and receipts",
     description:
-      "A smoother payment surface for subscriptions, add-ons, and future wallet flows.",
+      "These settings shape recurring membership charges, low-balance reminders, and receipt delivery.",
     imageSrc: "/icons/robot-slider-img3.png",
-    imageAlt: "Payment method preview",
+    imageAlt: "Payment preferences",
     sections: [
       {
         type: "list",
         title: "Available Methods",
         items: [
           {
-            title: "Instant Wallet",
-            description: "Fastest checkout using your in-app balance",
-            meta: "Preferred",
-            badge: "Recommended",
-          },
-          {
             title: "UPI AutoPay",
-            description: "Hands-free renewals for Amigo Plus and future plans",
-            meta: "Active",
+            description: "A smooth option for recurring membership renewals.",
+            meta: "Recommended",
+            badge: "Fastest",
           },
           {
-            title: "Debit / Credit Card",
-            description: "Fallback method for subscriptions and premium add-ons",
-            meta: "2 cards saved",
+            title: "Debit or credit card",
+            description: "Reliable fallback for memberships and chat-credit purchases.",
+            meta: "Saved",
+          },
+          {
+            title: "Netbanking",
+            description: "Helpful when you prefer manual checkout on the web.",
+            meta: "Available at checkout",
           },
         ],
       },
       {
         type: "toggles",
-        title: "Payment Preferences",
+        title: "Billing Preferences",
         items: [
           {
             key: "autopay",
-            label: "Auto-pay recurring plans",
-            description: "Let active subscriptions renew automatically.",
+            label: "Auto-renew active membership",
+            description: "Let your current plan renew without interrupting support access.",
             enabled: true,
           },
           {
             key: "lowBalance",
-            label: "Warn when wallet is low",
-            description: "Receive a prompt before a payment fails.",
+            label: "Warn when balance runs low",
+            description: "Get notified before credits are too low for another chat.",
             enabled: true,
           },
           {
             key: "receipts",
-            label: "Email detailed receipts",
-            description: "Share plan and billing details to your inbox.",
+            label: "Send detailed receipts",
+            description: "Share billing summaries and plan updates to your chosen inbox.",
             enabled: false,
           },
         ],
       },
     ],
     footerActions: [
-      { label: "Save Preferences", toast: "Payment preferences updated in demo mode.", variant: "primary" },
-      { label: "Back To Wallet", href: "/settings/banks-cards", variant: "secondary" },
+      {
+        label: "Save Preferences",
+        toast: "Payment preferences saved in this session.",
+        variant: "primary",
+      },
+      {
+        label: "Back To Billing",
+        href: "/settings/banks-cards",
+        variant: "secondary",
+      },
     ],
   },
   subscriptions: {
     title: "Subscriptions",
     badge: "Plan Control",
-    heroTitle: "Track every plan, renewal, and premium perk",
+    heroTitle: "Track your membership, renewal cycle, and support access",
     description:
-      "This dummy subscription center shows how plan management can feel more intentional inside your current theme.",
+      "Review your current plan, understand what it unlocks, and jump back to live membership checkout when needed.",
     imageSrc: "/icons/plus-robort.png",
-    imageAlt: "Subscription preview",
+    imageAlt: "Membership overview",
     sections: [
       {
         type: "stats",
         title: "Current Snapshot",
         items: [
           { label: "Plan", value: "Free" },
-          { label: "Renewal", value: "May 12" },
-          { label: "Saved", value: "18%" },
+          { label: "Renewal", value: "Monthly" },
+          { label: "Check-ins", value: "Daily" },
         ],
       },
       {
         type: "list",
-        title: "Included In Plus",
+        title: "What Premium Adds",
         items: [
           {
             title: "Longer conversations",
-            description: "Keep more context available in each discussion.",
+            description: "Keep more context available while you unpack harder moments.",
           },
           {
-            title: "Priority replies",
-            description: "Move premium users to the faster response lane.",
+            title: "Priority responses",
+            description: "Move active members into a faster reply lane.",
           },
           {
-            title: "Workspace presets",
-            description: "Save tones, prompts, and reusable command packs.",
+            title: "Guided reflections",
+            description: "Unlock deeper prompts and calmer support flows.",
           },
         ],
       },
     ],
     footerActions: [
-      { label: "Upgrade To Plus", href: "/plus-subscription", variant: "primary" },
+      {
+        label: "Upgrade To Plus",
+        href: "/plus-subscription",
+        variant: "primary",
+      },
       { label: "Home", href: "/home", variant: "secondary" },
     ],
   },
   security: {
     title: "Security",
     badge: "Account Shield",
-    heroTitle: "Layer up protection without losing the friendly flow",
+    heroTitle: "Protect private conversations without making access feel heavy",
     description:
-      "A calm, modern security hub for PINs, passkeys, biometrics, and alerts.",
+      "A calm security hub for PINs, biometrics, alerts, and account-protection habits.",
     imageSrc: "/icons/finger-print-img-green.png",
     imageAlt: "Security fingerprint",
     sections: [
@@ -165,17 +183,17 @@ export const SETTINGS_PAGE_CONTENT = {
         items: [
           {
             title: "4-digit security PIN",
-            description: "Used when you return to sensitive areas of the app.",
+            description: "Adds a quick privacy check before returning to sensitive screens.",
             meta: "Suggested next step",
           },
           {
             title: "Fingerprint unlock",
-            description: "Fast sign-in on supported devices with local biometrics.",
+            description: "Use local biometrics on supported devices for faster re-entry.",
             meta: "Device ready",
           },
           {
             title: "New device alerts",
-            description: "Get notified when the account is opened somewhere new.",
+            description: "Get notified when your account is opened somewhere new.",
             meta: "Enabled",
             badge: "Live",
           },
@@ -193,14 +211,14 @@ export const SETTINGS_PAGE_CONTENT = {
           },
           {
             key: "weeklyDigest",
-            label: "Weekly activity digest",
-            description: "Receive a simple recap of account activity.",
+            label: "Weekly account summary",
+            description: "Receive a simple recap of recent account activity.",
             enabled: false,
           },
           {
             key: "biometricPrompt",
             label: "Prompt for biometrics on app open",
-            description: "Add an extra step before conversations appear.",
+            description: "Add another layer before private conversations appear.",
             enabled: true,
           },
         ],
@@ -208,60 +226,72 @@ export const SETTINGS_PAGE_CONTENT = {
     ],
     footerActions: [
       { label: "Create PIN", href: "/create-pin", variant: "primary" },
-      { label: "Scan Fingerprint", href: "/finger-scan", variant: "secondary" },
+      {
+        label: "Scan Fingerprint",
+        href: "/finger-scan",
+        variant: "secondary",
+      },
     ],
   },
   "marketing-preferences": {
-    title: "Marketing Preferences",
+    title: "Message Preferences",
     badge: "Message Control",
     heroTitle: "Choose the updates that actually feel useful",
     description:
-      "A friendlier preferences page for product drops, offers, launches, and curated ideas.",
+      "Control which product, wellbeing, and membership messages you want to receive from Amigo.",
     imageSrc: "/icons/robot-slider-img2.png",
-    imageAlt: "Marketing preferences",
+    imageAlt: "Message preferences",
     sections: [
       {
         type: "toggles",
-        title: "Channels & Topics",
+        title: "Channels And Topics",
         items: [
           {
             key: "featureDrops",
             label: "Feature announcements",
-            description: "Hear about important launches and big product changes.",
+            description: "Hear about important product changes and major releases.",
             enabled: true,
           },
           {
             key: "promos",
-            label: "Offers and limited-time plans",
-            description: "Receive promo pricing and invitation-only upgrades.",
+            label: "Membership offers",
+            description: "Receive pricing updates or limited membership campaigns.",
             enabled: true,
           },
           {
             key: "tips",
-            label: "Weekly prompt tips",
-            description: "Small ideas to get more out of Amigo every week.",
+            label: "Weekly reflection tips",
+            description: "Get small ideas for journaling, emotional check-ins, and calmer routines.",
             enabled: false,
           },
           {
             key: "partnerNews",
-            label: "Partner announcements",
-            description: "Optional news from integrations and ecosystem launches.",
+            label: "Community updates",
+            description: "Optional news about guided programs, resources, or partner initiatives.",
             enabled: false,
           },
         ],
       },
     ],
     footerActions: [
-      { label: "Save Choices", toast: "Marketing preferences saved for the demo.", variant: "primary" },
-      { label: "Contact Support", href: "/settings/contact-us", variant: "secondary" },
+      {
+        label: "Save Choices",
+        toast: "Message preferences saved in this session.",
+        variant: "primary",
+      },
+      {
+        label: "Contact Support",
+        href: "/settings/contact-us",
+        variant: "secondary",
+      },
     ],
   },
   currency: {
     title: "Currency",
     badge: "Regional Setup",
-    heroTitle: "Preview pricing in the currency that feels natural to you",
+    heroTitle: "Choose the currency that feels most natural for billing",
     description:
-      "A simple selector for plans, credits, and receipts while backend localization is still in progress.",
+      "This affects how plans, credits, and receipts are presented inside the membership flow.",
     imageSrc: "/icons/robot-slider-img2.png",
     imageAlt: "Currency selection",
     sections: [
@@ -273,36 +303,40 @@ export const SETTINGS_PAGE_CONTENT = {
         items: [
           {
             label: "USD",
-            description: "Best for current global pricing previews.",
+            description: "Useful for global pricing and cross-border billing.",
           },
           {
             label: "INR",
-            description: "Useful for local plan positioning and invoices.",
+            description: "Helpful when you prefer local pricing and invoices.",
           },
           {
             label: "EUR",
-            description: "Cleaner for European team and subscription demos.",
+            description: "A clean fit for European billing and receipts.",
           },
           {
             label: "GBP",
-            description: "Handy for UK testing and proposal screens.",
+            description: "A good match for UK-based membership payments.",
           },
         ],
       },
     ],
     footerActions: [
-      { label: "Update Currency", toast: "Preferred currency updated for the demo.", variant: "primary" },
+      {
+        label: "Update Currency",
+        toast: "Preferred currency updated in this session.",
+        variant: "primary",
+      },
       { label: "View Plans", href: "/plus-subscription", variant: "secondary" },
     ],
   },
   faqs: {
     title: "FAQs",
     badge: "Quick Answers",
-    heroTitle: "Make help feel fast, calm, and self-serve",
+    heroTitle: "Make support feel clear, calm, and easy to self-serve",
     description:
-      "This FAQ layout gives your support content a real product surface instead of a wall of plain text.",
+      "Short answers for common questions about support chats, privacy, memberships, and safety.",
     imageSrc: "/icons/plus-robort.png",
-    imageAlt: "Help and faq",
+    imageAlt: "Help and FAQ",
     sections: [
       {
         type: "faq",
@@ -310,55 +344,63 @@ export const SETTINGS_PAGE_CONTENT = {
           {
             question: "Can I chat with Amigo without buying a plan?",
             answer:
-              "Yes. The base experience stays open in this demo, while premium plans unlock faster replies and extra workspace tools.",
+              "Yes. Access depends on your active plan and available chat credits, and the core experience can still work on the free tier when credits are available.",
+          },
+          {
+            question: "Is Amigo a replacement for therapy or emergency care?",
+            answer:
+              "No. Amigo is designed for everyday emotional support and reflection, not emergency or crisis response. If you are in immediate danger or need urgent help, contact local emergency services or a licensed crisis resource right away.",
           },
           {
             question: "Will my chat history stay synced across devices?",
             answer:
-              "Your saved conversations now load from the real history screen, so returning to the same account should keep recent chats available across sessions.",
+              "Your saved conversations are tied to your account, so returning on the same account should keep recent sessions available across supported devices.",
           },
           {
-            question: "How does biometric unlock fit into the app?",
+            question: "How do mood check-ins affect replies?",
             answer:
-              "Biometrics are presented as an optional comfort-and-security layer on top of your sign-in and PIN flow.",
-          },
-          {
-            question: "Can I change my language or currency later?",
-            answer:
-              "Yes. Those preferences live in settings and can be updated at any time without affecting your core profile.",
+              "Mood check-ins help Amigo adapt tone, pacing, and encouragement so the conversation feels more appropriate for your day.",
           },
         ],
       },
     ],
     footerActions: [
-      { label: "Still Need Help?", href: "/settings/contact-us", variant: "primary" },
-      { label: "Send Feedback", href: "/settings/send-feedback", variant: "secondary" },
+      {
+        label: "Still Need Help?",
+        href: "/settings/contact-us",
+        variant: "primary",
+      },
+      {
+        label: "Send Feedback",
+        href: "/settings/send-feedback",
+        variant: "secondary",
+      },
     ],
   },
   "privacy-policy": {
     title: "Data & Privacy Policy",
     badge: "Trust Layer",
-    heroTitle: "Show users what you collect without the legal wall",
+    heroTitle: "Explain how support data is handled without hiding it in legal language",
     description:
-      "A readable privacy summary with enough structure to feel trustworthy, even before final legal copy lands.",
+      "A readable privacy summary for profile data, mood check-ins, conversation history, and account controls.",
     imageSrc: "/icons/finger-print-img-white.png",
     imageAlt: "Privacy shield",
     sections: [
       {
         type: "text",
-        title: "How This Demo Handles Data",
+        title: "How Amigo Handles Data",
         items: [
           {
             heading: "Profile basics",
-            body: "Name, language, interests, and onboarding preferences are presented as lightweight user data for the UI flow.",
+            body: "Name, language, and interests help tailor onboarding, settings, and the overall support experience.",
           },
           {
             heading: "Conversation context",
-            body: "Chats, saved prompts, and quick summaries are displayed as placeholders so the screens feel production-ready.",
+            body: "Saved chats and summaries help you return to past reflections and let the app keep a lighter sense of continuity.",
           },
           {
-            heading: "Security preferences",
-            body: "PIN and biometric surfaces are shown as opt-in controls designed to protect access on shared devices.",
+            heading: "Mood check-ins",
+            body: "Daily mood scores help Amigo adjust tone, pacing, and support style before a conversation starts.",
           },
         ],
       },
@@ -368,30 +410,34 @@ export const SETTINGS_PAGE_CONTENT = {
         items: [
           {
             title: "Clarity first",
-            description: "Tell people what happens, why it matters, and where they can change it.",
+            description: "Tell people what is stored, why it matters, and where they can change it.",
           },
           {
             title: "Control by default",
-            description: "Settings pages should make edits obvious and reversible.",
+            description: "Make key account, security, and messaging choices easy to review and update.",
           },
           {
-            title: "Minimal surprise",
-            description: "Sensitive actions should always be explained before they happen.",
+            title: "Respect sensitive moments",
+            description: "Private conversation features should never feel surprising or careless.",
           },
         ],
       },
     ],
     footerActions: [
-      { label: "Contact About Privacy", href: "/settings/contact-us", variant: "primary" },
+      {
+        label: "Contact About Privacy",
+        href: "/settings/contact-us",
+        variant: "primary",
+      },
       { label: "Back To Settings", href: "/home", variant: "secondary" },
     ],
   },
   "about-amigo": {
     title: "About Amigo GPT",
     badge: "Product Story",
-    heroTitle: "A warmer AI companion built around clarity and flow",
+    heroTitle: "A calmer AI companion for text-based emotional wellbeing support",
     description:
-      "This page introduces the product, the release state, and the personality behind the current experience.",
+      "Amigo is designed to offer supportive conversation, gentle reflection, and a more human-feeling daily check-in flow.",
     imageSrc: "/icons/logo.png",
     imageAlt: "Amigo logo",
     sections: [
@@ -408,23 +454,27 @@ export const SETTINGS_PAGE_CONTENT = {
         type: "steps",
         title: "What Amigo Is Designed To Do",
         items: [
-          "Make AI onboarding feel less technical and more human.",
-          "Support fast conversations, guided prompts, and simple personalization.",
-          "Create room for security, subscriptions, and team-friendly polish.",
+          "Offer gentle text-based support for everyday emotional wellbeing.",
+          "Use mood check-ins to adapt tone before a conversation begins.",
+          "Keep private, mobile-friendly conversations accessible inside a standalone PWA.",
         ],
       },
     ],
     footerActions: [
-      { label: "Send Product Feedback", href: "/settings/send-feedback", variant: "primary" },
+      {
+        label: "Send Product Feedback",
+        href: "/settings/send-feedback",
+        variant: "primary",
+      },
       { label: "Back To Home", href: "/home", variant: "secondary" },
     ],
   },
   "send-feedback": {
     title: "Send Feedback",
     badge: "Your Voice",
-    heroTitle: "Capture ideas, friction, and feature requests in one place",
+    heroTitle: "Capture what felt supportive, unclear, or emotionally off",
     description:
-      "A simple in-app feedback form that feels native to the theme and useful even with dummy handling.",
+      "Use feedback to improve reply quality, safety, onboarding clarity, and the overall wellbeing experience.",
     imageSrc: "/icons/robot-slider-img3.png",
     imageAlt: "Feedback form",
     sections: [
@@ -433,26 +483,32 @@ export const SETTINGS_PAGE_CONTENT = {
         key: "feedback",
         title: "What should we improve?",
         placeholder:
-          "Tell us what felt great, what felt confusing, or what you want next...",
+          "Tell us what felt helpful, what felt confusing, or what would make support feel safer and more human...",
         submitLabel: "Submit Feedback",
-        submitToast: "Feedback saved locally for the demo.",
-        categories: ["Design", "Speed", "Chat Quality", "Payments", "Security"],
+        submitToast: "Feedback captured in this session.",
+        categories: [
+          "Support Quality",
+          "Design",
+          "Speed",
+          "Billing",
+          "Trust & Safety",
+        ],
       },
       {
         type: "list",
-        title: "You Can Use Feedback For",
+        title: "Useful Feedback Topics",
         items: [
           {
-            title: "Bug reports",
-            description: "Flag broken navigation, visual bugs, or incomplete states.",
+            title: "Reply quality",
+            description: "Share when a response felt especially helpful, flat, or off-target.",
           },
           {
             title: "Feature ideas",
-            description: "Suggest new chat tools, assistant modes, or account controls.",
+            description: "Suggest new tools for reflection, mood tracking, or support routines.",
           },
           {
-            title: "UX polish",
-            description: "Share friction points in onboarding or settings flows.",
+            title: "Trust and safety",
+            description: "Flag moments where wording, pacing, or product behavior should feel more careful.",
           },
         ],
       },
@@ -464,9 +520,9 @@ export const SETTINGS_PAGE_CONTENT = {
   "contact-us": {
     title: "Contact Us",
     badge: "Support Team",
-    heroTitle: "Offer multiple ways to reach the team without making support feel cold",
+    heroTitle: "Offer clear paths to help without making support feel cold",
     description:
-      "This dummy contact hub makes escalation feel intentional and accessible inside the app.",
+      "Reach the team for billing questions, account issues, product concerns, or care-experience feedback.",
     imageSrc: "/icons/robot-slider-img2.png",
     imageAlt: "Contact support",
     sections: [
@@ -475,20 +531,20 @@ export const SETTINGS_PAGE_CONTENT = {
         title: "Support Channels",
         items: [
           {
-            title: "Live chat support",
-            description: "Typical response time under 10 minutes during work hours.",
-            meta: "Mon-Fri",
-            badge: "Fastest",
+            title: "In-app support",
+            description: "The fastest path for account access, billing, and app-navigation issues.",
+            meta: "Fastest",
+            badge: "Recommended",
           },
           {
-            title: "Email support",
-            description: "best for billing questions, larger bug reports, and attachments",
-            meta: "support@amigo.app",
+            title: "Care experience review",
+            description: "Use this for feedback on tone, reply quality, or how emotionally safe the app feels.",
+            meta: "Thoughtful follow-up",
           },
           {
-            title: "Priority callback",
-            description: "Book a short product call for enterprise or partnership questions.",
-            meta: "By request",
+            title: "Membership and billing help",
+            description: "Best for plan questions, credit issues, or checkout follow-up.",
+            meta: "Business hours",
           },
         ],
       },
@@ -496,23 +552,27 @@ export const SETTINGS_PAGE_CONTENT = {
         type: "steps",
         title: "What Happens Next",
         items: [
-          "Your request is tagged by topic and urgency.",
-          "We guide you toward the fastest matching support channel.",
-          "Complex issues roll into a tracked product or engineering follow-up.",
+          "Your request is grouped by topic and urgency.",
+          "The team directs you to the fastest helpful path.",
+          "Complex issues can roll into a tracked product or support follow-up.",
         ],
       },
     ],
     footerActions: [
-      { label: "Open Feedback Form", href: "/settings/send-feedback", variant: "primary" },
+      {
+        label: "Open Feedback Form",
+        href: "/settings/send-feedback",
+        variant: "primary",
+      },
       { label: "Back To FAQs", href: "/settings/faqs", variant: "secondary" },
     ],
   },
   "invite-friends": {
     title: "Invite Friends",
-    badge: "Growth Loop",
-    heroTitle: "Turn referrals into a screen people actually want to share",
+    badge: "Share Support",
+    heroTitle: "Make referrals feel warm, clear, and easy to pass along",
     description:
-      "A friendlier invite flow with a clear code, a simple reward, and enough warmth to feel believable.",
+      "Invite someone who might benefit from a calmer space for reflection and everyday emotional support.",
     imageSrc: "/icons/friend10.jpg",
     imageAlt: "Invite friends",
     sections: [
@@ -520,7 +580,8 @@ export const SETTINGS_PAGE_CONTENT = {
         type: "referral",
         title: "Your Invite Code",
         code: "AMIGO-2026",
-        reward: "Give friends 14 days of Plus preview and unlock bonus prompts for yourself.",
+        reward:
+          "Give friends 14 days of guided support features and unlock bonus reflections for yourself.",
       },
       {
         type: "steps",
@@ -528,21 +589,26 @@ export const SETTINGS_PAGE_CONTENT = {
         items: [
           "Share the code with a friend.",
           "They sign up and complete onboarding.",
-          "Both sides unlock the demo reward automatically.",
+          "Referral rewards unlock automatically once the eligibility steps are met.",
         ],
       },
     ],
     footerActions: [
-      { label: "Copy Invite Code", copyText: "AMIGO-2026", toast: "Invite code copied.", variant: "primary" },
+      {
+        label: "Copy Invite Code",
+        copyText: "AMIGO-2026",
+        toast: "Invite code copied.",
+        variant: "primary",
+      },
       { label: "Back To Home", href: "/home", variant: "secondary" },
     ],
   },
   "account-management": {
     title: "Delete or Deactivate Account",
     badge: "Sensitive Action",
-    heroTitle: "Make hard account decisions feel clear and reversible where possible",
+    heroTitle: "Make hard account decisions feel clear and carefully explained",
     description:
-      "This screen frames destructive actions carefully so users understand the difference between pausing and fully leaving.",
+      "This screen helps people understand the difference between taking a break, exporting data, and leaving permanently.",
     imageSrc: "/icons/finger-print-img-black.png",
     imageAlt: "Account control",
     sections: [
@@ -552,17 +618,17 @@ export const SETTINGS_PAGE_CONTENT = {
         items: [
           {
             title: "Deactivate account for 30 days",
-            description: "Hide your account temporarily and keep the option to return.",
+            description: "Hide your account temporarily while keeping the option to return.",
             buttonLabel: "Deactivate",
           },
           {
             title: "Export my chat archive",
-            description: "Prepare a downloadable copy of your saved conversations and settings.",
+            description: "Prepare a downloadable copy of saved conversations and account preferences.",
             buttonLabel: "Request Export",
           },
           {
             title: "Delete account permanently",
-            description: "Remove access and begin a permanent account removal workflow.",
+            description: "Remove access and begin a permanent account-removal workflow.",
             buttonLabel: "Delete Forever",
           },
         ],
@@ -583,7 +649,11 @@ export const SETTINGS_PAGE_CONTENT = {
       },
     ],
     footerActions: [
-      { label: "Talk To Support First", href: "/settings/contact-us", variant: "primary" },
+      {
+        label: "Talk To Support First",
+        href: "/settings/contact-us",
+        variant: "primary",
+      },
       { label: "Back To Security", href: "/settings/security", variant: "secondary" },
     ],
   },

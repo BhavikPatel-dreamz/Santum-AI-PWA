@@ -57,7 +57,7 @@ export default function CreatePinPage() {
       <FeatureShowcaseCard
         badge="Secure Access"
         title="Add a quick PIN for sensitive parts of the app"
-        description="This keeps the security story moving naturally from onboarding into fingerprint setup."
+        description="A short PIN adds another layer of privacy before reopening sensitive conversations."
         imageSrc="/icons/finger-print-img-green.png"
         imageAlt="PIN setup"
         className="mb-6"
@@ -92,7 +92,7 @@ export default function CreatePinPage() {
       </div>
 
       <p className="theme-text-secondary text-center font-satoshi text-[15px] leading-6">
-        This is a dummy PIN step for now, but the UI is ready for a real secure flow.
+        You can pair this with fingerprint unlock on supported devices.
       </p>
 
       <button

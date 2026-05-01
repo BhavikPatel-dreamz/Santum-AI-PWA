@@ -11,8 +11,8 @@ export default function NotificationSetupPage() {
     <StepPageShell title="Notifications" contentClassName="overflow-y-auto">
       <FeatureShowcaseCard
         badge="In-App Inbox"
-        title="Updates appear automatically inside your Amigo inbox"
-        description="This app no longer asks people to manage notification switches. Billing, token, and account updates are shown in the in-app notifications feed when they matter."
+        title="Important updates appear automatically inside your Amigo inbox"
+        description="Membership, credit, mood check-in, and account updates are shown in the in-app notifications feed when they matter most."
         imageSrc="/icons/robot-slider-img3.png"
         imageAlt="Notification inbox"
         className="mb-6"
@@ -26,9 +26,9 @@ export default function NotificationSetupPage() {
           Important updates are handled automatically.
         </h2>
         <p className="mt-3 font-satoshi text-[15px] leading-6 text-[#555]">
-          If a payment fails, a subscription renews, tokens reset, or your
-          account activity changes, the update is saved to the in-app inbox for
-          you to review later.
+          If a payment fails, membership changes, credits run low, or account
+          activity shifts, the update is saved to the in-app inbox for you to
+          review later.
         </p>
       </div>
 

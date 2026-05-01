@@ -28,14 +28,14 @@ import toast from "react-hot-toast";
 import ReactMarkdown from "react-markdown";
 
 const QUICK_PROMPTS = [
-  "Plan my week in 5 steps",
-  "Write a friendly pitch intro",
-  "Turn notes into flashcards",
-  "Summarize a long article",
+  "Help me slow down after a stressful day",
+  "I feel overwhelmed and need perspective",
+  "Guide me through a grounding exercise",
+  "Help me reflect on a difficult conversation",
 ];
 
 const CREDIT_LIMIT_MESSAGE =
-  "You have reached your chat credit limit. Purchase a plan to continue with Amigo.";
+  "You have reached your chat credit limit. Purchase a plan to continue your support conversations with Amigo.";
 const PURCHASE_PLAN_PATH = "/plus-subscription";
 const DEFAULT_PLAN_LEVEL = "free";
 const RECENT_MESSAGE_LIMIT = 10;
@@ -43,7 +43,7 @@ const STARTER_MESSAGES = [
   {
     id: "starter-assistant",
     role: "assistant",
-    text: "Hi, I'm Amigo. I can help you brainstorm, organize, or explain something fast.",
+    text: "Hi, I'm Amigo. I'm here to support your emotional wellbeing with calm, text-based conversation.",
   },
 ];
 
@@ -481,7 +481,9 @@ export default function AmigoChatPage() {
     }
 
     if (!hasTodayMoodCheckIn) {
-      toast.error("Complete today's mood check-in before chatting with Amigo.");
+      toast.error(
+        "Complete today's mood check-in before starting a support chat with Amigo.",
+      );
       return;
     }
 
@@ -530,7 +532,7 @@ export default function AmigoChatPage() {
         }
 
         throw {
-          message: errorData?.message || "Failed to connect to Amigo",
+          message: errorData?.message || "Unable to reach Amigo right now",
           status: response.status,
           data: errorData,
         };
@@ -634,7 +636,9 @@ export default function AmigoChatPage() {
         return;
       }
 
-      toast.error(getClientErrorMessage(error, "Unable to connect to Amigo"));
+      toast.error(
+        getClientErrorMessage(error, "Unable to connect to Amigo right now"),
+      );
       setHasDraftMessages(true);
       setDraftMessages((currentMessages) => [
         ...(currentMessages.length > 0
@@ -643,7 +647,7 @@ export default function AmigoChatPage() {
         {
           id: buildTempMessageId("assistant-error"),
           role: "assistant",
-          text: "Sorry, I'm having trouble connecting to Amigo right now. Please check your connection and try again.",
+          text: "Sorry, I'm having trouble connecting to Amigo right now. Please check your connection and try again in a moment.",
         },
       ]);
     } finally {
@@ -658,9 +662,9 @@ export default function AmigoChatPage() {
       contentClassName="overflow-hidden pb-6"
     >
       <FeatureShowcaseCard
-        badge="Assistant Live"
-        title="A calmer chat space built around quick momentum"
-        description="Amigo is ready to help you brainstorm, organize, or explain something fast."
+        badge="Support Live"
+        title="A calmer chat space for emotional support"
+        description="Amigo is here to listen, reflect, and help you process what you're feeling."
         imageSrc="/icons/robot-slider-img3.png"
         imageAlt="Chat companion"
         className="mb-5"
@@ -686,7 +690,7 @@ export default function AmigoChatPage() {
           </div>
         </div>
         <p className="mt-3 font-satoshi text-[14px] leading-6 text-[#555]">
-          Amigo now reads this balance before each chat and stores each
+          Amigo checks this balance before each support chat and stores each
           finished reply back into your conversation history.
         </p>
       </div>
@@ -739,7 +743,7 @@ export default function AmigoChatPage() {
           entry={null}
           isSaving={isSavingMoodCheckIn}
           onSubmit={handleSaveMoodCheckIn}
-          description="Before we start, take 10 seconds to share how today feels so Amigo can respond with better tone and pacing."
+          description="Before we start, take 10 seconds to share how today feels so Amigo can respond with steadier tone and more relevant support."
           submitLabel="Save and unlock chat"
           showUpdateAction={false}
         />
@@ -837,7 +841,7 @@ export default function AmigoChatPage() {
                   ? "Complete today's mood check-in to unlock chat."
                   : isCreditDepleted
                     ? "Purchase a plan or refresh your balance to keep chatting."
-                    : "Ask Amigo anything..."
+                    : "Tell Amigo what's on your mind..."
             }
             className="theme-input-surface w-full resize-none rounded-[18px] px-4 py-4 font-satoshi text-[15px] leading-6 outline-none disabled:cursor-not-allowed disabled:bg-[#F1F5F2] disabled:text-[#7E8A83]"
           />
@@ -847,9 +851,9 @@ export default function AmigoChatPage() {
               {isMoodCheckInLoading
                 ? "Checking today's mood check-in before chat unlocks."
                 : !hasTodayMoodCheckIn
-                  ? "Share your mood first so Amigo can personalize the conversation."
+                  ? "Share your mood first so Amigo can respond with better context."
                   : isCreditDepleted
-                    ? "Purchase a plan to unlock more Amigo chats."
+                    ? "Purchase a plan to continue Amigo support chats."
                     : "Powered by Santum AI Counseling service."}
             </p>
             <button

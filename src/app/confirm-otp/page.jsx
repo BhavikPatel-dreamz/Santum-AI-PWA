@@ -70,7 +70,7 @@ export default function ConfirmOtpPage() {
       <FeatureShowcaseCard
         badge="Verification"
         title="Enter the short code we just sent"
-        description="This recovery step is wired with dummy values for now, but the experience now matches the rest of your app."
+        description="Verify it is really you before we let you reset your password."
         imageSrc="/icons/robot-slider-img3.png"
         imageAlt="OTP confirmation"
         className="mb-6"

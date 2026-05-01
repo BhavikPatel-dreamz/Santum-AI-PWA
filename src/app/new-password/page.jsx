@@ -56,7 +56,7 @@ export default function CreateNewPasswordPage() {
       <FeatureShowcaseCard
         badge="Security Reset"
         title="Set a fresh password that feels easy to remember"
-        description="The UI is now aligned with your main visual system while still using dummy completion logic for now."
+        description="Finish account recovery with a new password for your Amigo account."
         imageSrc="/icons/finger-print-img-green.png"
         imageAlt="Security reset"
         className="mb-6"
@@ -96,7 +96,7 @@ export default function CreateNewPasswordPage() {
             return;
           }
 
-          toast.success("Password updated in demo mode.");
+          toast.success("Password reset flow completed.");
           router.replace("/sign-in");
         }}
         disabled={!isComplete || !isMatch}

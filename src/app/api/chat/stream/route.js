@@ -22,7 +22,7 @@ import {
 
 const STREAM_METADATA_SEPARATOR = "\n\n{";
 const CREDIT_LIMIT_MESSAGE =
-  "You have reached your chat credit limit. Purchase a plan to continue with Amigo.";
+  "You have reached your chat credit limit. Purchase a plan to continue your support conversations with Amigo.";
 const RECENT_HISTORY_LIMIT = 10;
 const NEW_MESSAGES_PER_TURN = 2;
 const DEFAULT_AI_API_URL = "http://localhost:8000";
@@ -490,7 +490,7 @@ export async function POST(req) {
             category: "credits",
             title: "Your tokens are used up",
             description:
-              "You have used your remaining tokens. Renew or upgrade to keep chatting with Amigo.",
+              "You have used your remaining tokens. Renew or upgrade to continue support chats with Amigo.",
             actionHref: "/plus-subscription",
             actionLabel: "View plans",
             priority: "high",

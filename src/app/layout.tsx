@@ -18,7 +18,8 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: "Amigo App",
-  description: "A PWA with RTK Query",
+  description:
+    "A standalone AI counselling PWA for text-based emotional wellbeing support.",
 };
 
 export default function RootLayout({

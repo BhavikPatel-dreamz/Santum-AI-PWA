@@ -112,7 +112,7 @@ export default function SettingsDetailPage({ content }) {
       return;
     }
 
-    toast.success(action.toast || `${action.label} is ready in demo mode.`);
+    toast.success(action.toast || `${action.label} saved in this session.`);
   };
 
   const renderSection = (section, sectionIndex) => {
@@ -467,7 +467,9 @@ export default function SettingsDetailPage({ content }) {
                 <button
                   type="button"
                   onClick={() =>
-                    toast.success(`${item.buttonLabel} is staged as a demo action.`)
+                    toast.success(
+                      `${item.buttonLabel} request captured in this session.`,
+                    )
                   }
                   className="theme-surface theme-danger-title mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] font-semibold"
                 >

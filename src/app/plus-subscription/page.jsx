@@ -32,8 +32,12 @@ const PLANS = [
     name: "Free Membership",
     billing_amount: 0,
     description:
-      "A friendly everyday chat companion with the core Amigo experience.",
-    features: ["Basic chat", "Saved preferences", "Profile setup"],
+      "A supportive everyday chat space with the core Amigo wellbeing experience.",
+    features: [
+      "Text-based support chats",
+      "Daily mood check-ins",
+      "Saved conversation history",
+    ],
     highlighted: false,
     tokens: 200,
   },
@@ -41,11 +45,11 @@ const PLANS = [
     name: "Premium Membership",
     billing_amount: 100,
     description:
-      "The best fit for power users who want faster replies and more workspace control.",
+      "A stronger fit for members who want deeper support, more continuity, and faster replies.",
     features: [
-      "Priority responses",
-      "Longer chat memory",
-      "Premium prompt packs",
+      "Priority support responses",
+      "Longer conversation memory",
+      "Guided reflection tools",
     ],
     highlighted: true,
     tokens: 20000,
@@ -596,7 +600,7 @@ export default function PlusSubscriptionPage() {
       <FeatureShowcaseCard
         badge="Upgrade"
         title="Choose your plan here, then finish membership on Santum.net"
-        description="This PWA only shows live plans and redirects to the Santum checkout URL. When you come back, membership status and token limits refresh automatically."
+        description="This PWA shows live plans and redirects to the Santum checkout URL. When you come back, membership status and token limits refresh automatically."
         imageSrc="/icons/plus-robort.png"
         imageAlt="Subscription robot"
         className="mb-6"
@@ -615,8 +619,8 @@ export default function PlusSubscriptionPage() {
           Pick a plan in the app, pay on the web, then sync back here.
         </h2>
         <p className="mt-3 font-satoshi text-[15px] leading-6 text-white/75">
-          The active plan, token allowance, and chat balance are pulled from
-          Santum after checkout so the PWA always reflects the latest
+          The active plan, token allowance, and support-chat balance are pulled
+          from Santum after checkout so the PWA always reflects the latest
           membership state.
         </p>
       </div>

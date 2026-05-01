@@ -71,11 +71,11 @@ export default function CreditsSettingsPage() {
   return (
     <StepPageShell title="Credits" contentClassName="overflow-y-auto">
       <FeatureShowcaseCard
-        badge="Wallet"
-        title="Track your live Santum chat balance"
-        description="Credits are read from the authenticated WordPress API and used automatically by Amigo chat instead of being manually adjusted from this screen."
+        badge="Live Balance"
+        title="Track the balance behind your Amigo support chats"
+        description="Credits are read from the authenticated account API and used automatically whenever you chat with Amigo."
         imageSrc="/icons/plus-robort.png"
-        imageAlt="Credit wallet robot"
+        imageAlt="Credit balance illustration"
         className="mb-6"
         compact
       />
@@ -94,8 +94,8 @@ export default function CreditsSettingsPage() {
                   : formatCreditAmount(creditBalance)}
             </h2>
             <p className="mt-3 max-w-[320px] font-satoshi text-[14px] leading-6 text-white/75">
-              Live credit data is fetched through your signed-in session instead
-              of a mocked settings screen.
+              Live credit data is fetched through your signed-in session so the
+              balance shown here matches your real account state.
             </p>
           </div>
 
@@ -158,8 +158,8 @@ export default function CreditsSettingsPage() {
           </h3>
           <p className="mt-3 font-satoshi text-[15px] leading-6 text-[#555]">
             Before a reply starts, Amigo reads your current balance. After the
-            AI reply finishes, the app deducts usage from the token data the AI
-            service returns.
+            AI reply finishes, the app deducts usage from the token data
+            returned by the AI service.
           </p>
           <p className="mt-3 font-satoshi text-[15px] leading-6 text-[#555]">
             Membership checkout happens on Santum.net. When you return to the
@@ -175,13 +175,13 @@ export default function CreditsSettingsPage() {
           >
             Open Chat
           </button>
-        <button
-          type="button"
-          onClick={() => router.push("/plus-subscription")}
-          className="theme-secondary-button rounded-[14px] px-5 py-4 text-[16px] font-semibold"
-        >
-          View Plans
-        </button>
+          <button
+            type="button"
+            onClick={() => router.push("/plus-subscription")}
+            className="theme-secondary-button rounded-[14px] px-5 py-4 text-[16px] font-semibold"
+          >
+            View Plans
+          </button>
         </div>
       </div>
     </StepPageShell>

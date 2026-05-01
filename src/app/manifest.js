@@ -2,7 +2,7 @@ export default function manifest() {
   return {
     name: 'AmigoGPT',
     short_name: 'AmigoGPT',
-    description: 'Where Intelligence Meets Innovation',
+    description: 'A standalone AI counselling PWA for text-based emotional wellbeing support.',
     start_url: '/',
     display: 'standalone',
     background_color: '#ffffff',
