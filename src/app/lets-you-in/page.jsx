@@ -3,9 +3,58 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import GreenSection from "../../components/UI/GreenSection";
 import SocialButtons from "../../components/UI/SocialButtons";
+import { useEffect } from "react";
 
 export default function LetsYouInPage() {
   const router = useRouter();
+  const isFingerprintEnabled =
+    typeof window !== "undefined" &&
+    localStorage.getItem("fingerprintEnabled") === "true";
+  useEffect(() => {
+    const enabled = localStorage.getItem("fingerprintEnabled");
+
+    if (enabled === "true") {
+      setTimeout(() => {
+        handleFingerprintLogin();
+      }, 500);
+    }
+  }, []);
+  const handleFingerprintLogin = async () => {
+    try {
+      const stored = localStorage.getItem("passkeyId");
+
+      if (!stored) return;
+
+      const rawId = new Uint8Array(JSON.parse(stored));
+
+      const challenge = new Uint8Array(32);
+      window.crypto.getRandomValues(challenge);
+
+      const credential = await navigator.credentials.get({
+        publicKey: {
+          challenge,
+          allowCredentials: [
+            {
+              id: rawId,
+              type: "public-key",
+              transports: ["internal"],
+            },
+          ],
+          userVerification: "required",
+        },
+      });
+
+      console.log("Fingerprint login success:", credential);
+
+      // ✅ Redirect after success
+      router.push("/home");
+    } catch (err) {
+      if (err.name === "NotAllowedError") {
+        return;
+      }
+      console.error("Fingerprint login failed:", err);
+    }
+  };
 
   return (
     <div className="theme-auth-shell min-h-dvh flex flex-col items-center font-sans transition-colors duration-300">
@@ -37,6 +86,14 @@ export default function LetsYouInPage() {
           >
             Sign In With Password
           </button>
+          {isFingerprintEnabled && (
+            <button
+              onClick={handleFingerprintLogin}
+              className="w-full mt-3 py-4 rounded-[14px] border border-gray-300 text-[18px]"
+            >
+              Login with Fingerprint
+            </button>
+          )}
         </div>
 
         {/* ── Spacer ── */}

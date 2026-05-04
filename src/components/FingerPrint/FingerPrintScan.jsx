@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import HeaderSection from "../UI/HeaderSection";
 import { useTheme } from "../providers/ThemeProvider";
+import toast from "react-hot-toast";
 
 export default function FingerPrintScan() {
   const router = useRouter();
@@ -36,6 +37,8 @@ export default function FingerPrintScan() {
   };
 
   const handleScannerPress = async () => {
+    if (scanState === "scanning") return;
+    const storedPasskey = localStorage.getItem("passkeyId");
     try {
       if (!navigator.credentials || !navigator.credentials.get) {
         alert("Biometric not supported on this device");
@@ -44,7 +47,19 @@ export default function FingerPrintScan() {
 
       setScanState("scanning");
 
-      if (!window.passkeyCreated) {
+      if (storedPasskey) {
+        const confirmReset = confirm("Fingerprint already exists. Reset it?");
+
+        if (!confirmReset) {
+          setScanState("idle");
+          return;
+        }
+
+        // remove old
+        localStorage.removeItem("passkeyId");
+        localStorage.removeItem("fingerprintEnabled");
+      }
+      if (!storedPasskey) {
         const createdCredential = await navigator.credentials.create({
           publicKey: {
             challenge: generateRandomChallenge(),
@@ -62,37 +77,46 @@ export default function FingerPrintScan() {
             },
           },
         });
-        window.currentPasskey = createdCredential;
-        window.passkeyCreated = true;
-      }
+        const rawId = Array.from(new Uint8Array(createdCredential.rawId));
 
-      if (!window.currentPasskey) {
-        console.warn("No passkey found, creating one...");
+        // store in localStorage
+        localStorage.setItem("passkeyId", JSON.stringify(rawId));
+        localStorage.setItem("fingerprintEnabled", "true");
+
+        // if (!window.currentPasskey) {
+        //   console.warn("No passkey found, creating one...");
+        //   return;
+        // }
+
+        // const credential = await navigator.credentials.get({
+        //   publicKey: {
+        //     challenge: generateRandomChallenge(),
+        //     userVerification: "required",
+        //     allowCredentials: window.currentPasskey
+        //       ? [
+        //           {
+        //             id: window.currentPasskey.rawId,
+        //             type: "public-key",
+        //             transports: ["internal"],
+        //           },
+        //         ]
+        //       : [],
+        //   },
+        // });
+
+        // console.log(credential);
+
+        // SUCCESS
+        setScanProgress(100);
+        setScanState("success");
+      }
+    } catch (err) {
+      if (err.name === "NotAllowedError") {
+        // user cancelled
+        setScanState("idle");
         return;
       }
 
-      const credential = await navigator.credentials.get({
-        publicKey: {
-          challenge: generateRandomChallenge(),
-          userVerification: "required",
-          allowCredentials: window.currentPasskey
-            ? [
-                {
-                  id: window.currentPasskey.rawId,
-                  type: "public-key",
-                  transports: ["internal"],
-                },
-              ]
-            : [],
-        },
-      });
-
-      console.log(credential);
-
-      // SUCCESS
-      setScanProgress(100);
-      setScanState("success");
-    } catch (err) {
       console.error(err);
       setScanState("error");
     }
@@ -177,7 +201,8 @@ export default function FingerPrintScan() {
             {/* ── Subtitle ── */}
             <div className="px-6 pt-5 pb-2">
               <p className="theme-text-secondary text-center font-satoshi text-[18px] leading-6">
-                Add biometric unlock so returning to Amigo feels secure and effortless.
+                Add biometric unlock so returning to Amigo feels secure and
+                effortless.
               </p>
             </div>
 
