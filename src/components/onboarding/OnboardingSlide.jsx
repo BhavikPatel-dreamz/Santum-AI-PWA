@@ -13,17 +13,16 @@ export default function OnboardingSlide({
 }) {
   return (
     <div
-      className={`theme-surface flex h-screen max-w-[570px] mx-auto flex-col overflow-hidden transition-colors duration-300 ${animClass}`}
+      className={`theme-surface theme-border mx-auto flex min-h-dvh w-full max-w-[1200px] flex-col overflow-hidden transition-colors duration-300 lg:my-4 lg:min-h-[calc(100dvh-2rem)] lg:rounded-[36px] lg:border lg:shadow-[0_24px_64px_rgba(15,15,15,0.08)] ${animClass}`}
     >
-
       {/* Image area */}
-      <div className="h-[55vh] flex items-center justify-center px-8 pt-10">
-        <div className="relative w-[300px] h-[300px]">
+      <div className="flex min-h-[44vh] items-center justify-center px-6 pt-10 sm:min-h-[48vh] sm:px-10 lg:min-h-[52vh] lg:px-16 lg:pt-12">
+        <div className="relative h-[260px] w-[260px] sm:h-[340px] sm:w-[340px] lg:h-[420px] lg:w-[420px]">
           <Image
             src={image}
             alt={title}
             fill
-            sizes="300px"
+            sizes="(max-width: 640px) 260px, (max-width: 1024px) 340px, 420px"
             className="object-contain rounded-2xl"
             priority
           />
@@ -31,11 +30,11 @@ export default function OnboardingSlide({
       </div>
 
       {/* Title + description */}
-      <div className="text-center px-6">
-        <h2 className="theme-text-primary text-center text-[30px] font-poppins font-bold leading-[40px] pb-[15px]">
+      <div className="mx-auto w-full max-w-[780px] px-6 text-center sm:px-10 lg:px-16">
+        <h2 className="theme-text-primary pb-[15px] text-center text-[28px] font-poppins font-bold leading-[36px] sm:text-[36px] sm:leading-[46px] lg:text-[48px] lg:leading-[58px]">
           {title}
         </h2>
-        <p className="theme-text-secondary text-center text-[18px] font-satoshi font-medium leading-[24px]">
+        <p className="theme-text-secondary text-center text-[16px] font-satoshi font-medium leading-[24px] sm:text-[18px] lg:text-[22px] lg:leading-[32px]">
           {desc}
         </p>
       </div>
@@ -43,7 +42,7 @@ export default function OnboardingSlide({
       <div className="flex-1" />
 
       {/* Footer */}
-      <div className="flex flex-col items-center gap-5 px-7 pb-10">
+      <div className="flex flex-col items-center gap-5 px-6 pb-10 sm:px-10 sm:pb-12 lg:px-16 lg:pb-14">
         {/* Dots */}
         <div className="flex items-center gap-1.5">
           {Array.from({ length: totalDots }).map((_, i) => (
@@ -60,7 +59,7 @@ export default function OnboardingSlide({
 
         <button
           onClick={onNext}
-          className="w-full bg-[#00D061] text-white rounded-[14px] py-[18px] text-[17px] font-semibold active:opacity-90 transition-opacity"
+          className="w-full max-w-[420px] rounded-[14px] bg-[#00D061] py-[18px] text-[17px] font-semibold text-white transition-opacity active:opacity-90"
         >
           {btnLabel}
         </button>

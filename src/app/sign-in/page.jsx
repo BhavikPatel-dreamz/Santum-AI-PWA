@@ -1,8 +1,6 @@
 "use client";
-import Link from "next/link";
 import { useState } from "react";
 import GreenSection from "../../components/UI/GreenSection";
-import SocialButtons from "../../components/UI/SocialButtons";
 import { Eye, EyeOff, LockIcon, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -44,11 +42,11 @@ export default function SignInPage() {
 
   return (
     <div className="theme-auth-shell min-h-dvh flex flex-col items-center font-sans transition-colors duration-300">
-      <div className="theme-auth-frame relative flex min-h-dvh w-full max-w-[600px] flex-col transition-colors duration-300">
+      <div className="theme-auth-frame theme-border relative flex min-h-dvh w-full max-w-[1200px] flex-col transition-colors duration-300 lg:my-4 lg:min-h-[calc(100dvh-2rem)] lg:overflow-hidden lg:rounded-[36px] lg:border lg:shadow-[0_24px_64px_rgba(15,15,15,0.08)]">
         {/* ─ Top green section ── */}
         <GreenSection />
         {/* ── White card ── */}
-        <div className="theme-auth-card relative z-10 mx-3 -mt-20 w-[96%] rounded-[28px] px-7 pb-9 pt-8 transition-colors duration-300">
+        <div className="theme-auth-card relative z-10 mx-3 -mt-20 w-auto rounded-[28px] px-6 pb-9 pt-8 transition-colors duration-300 sm:mx-5 sm:px-7 md:mx-8 lg:mx-auto lg:-mt-24 lg:w-full lg:max-w-[760px] lg:px-10 lg:pb-10">
           <h2 className="theme-text-primary mb-6 text-center text-[24px] font-semibold leading-9">
             Sign In
           </h2>
@@ -59,7 +57,7 @@ export default function SignInPage() {
               type="email"
               inputMode="email"
               autoComplete="email"
-              placeholder="Enter Gmail Address"
+              placeholder="Your Email Address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="theme-input-field flex-1 text-[16px] outline-none"
@@ -87,12 +85,13 @@ export default function SignInPage() {
           </div>
 
           <div className="mb-5 flex justify-end">
-            <Link
-              href="/forgot-password"
+            <button
+              type="button"
+              onClick={() => router.push("/forgot-password")}
               className="theme-text-primary font-satoshi text-[14px] font-semibold hover:text-[#00A84D]"
             >
               Forgot password?
-            </Link>
+            </button>
           </div>
 
           {/* Sign In button */}
@@ -116,10 +115,10 @@ export default function SignInPage() {
 
           <button
             disabled={isLoading}
-            onClick={()=>router.push("/sign-up")}
-            className="w-full py-4 rounded-[14px] flex items-center justify-center bg-[#00D061] text-white text-[18px] font-semibold tracking-wide hover:bg-[#00b856] hover:shadow-[0_6px_20px_rgba(0,208,97,0.40)] hover:-translate-y-px active:translate-y-0 transition-all duration-200 mb-6"
+            onClick={() => router.push("/sign-up")}
+            className="w-full py-4 rounded-[14px] flex items-center justify-center bg-orange-400 text-white text-[18px] font-semibold tracking-wide hover:bg-orange-500 hover:shadow-[0_6px_20px_rgba(0,208,97,0.40)] hover:-translate-y-px active:translate-y-0 transition-all duration-200 mb-6"
           >
-              Sign up
+            Sign up
           </button>
 
           {/* OR divider */}

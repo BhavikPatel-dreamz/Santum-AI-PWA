@@ -45,11 +45,11 @@ const Page = () => {
   };
 
   return (
-    <div className="theme-shell min-h-dvh transition-colors duration-300">
-      <div className="theme-surface mx-auto flex min-h-dvh w-full max-w-[600px] flex-col transition-colors duration-300">
+    <div className="theme-shell min-h-dvh transition-colors duration-300 lg:px-4 lg:py-4">
+      <div className="theme-surface theme-border mx-auto flex min-h-dvh w-full max-w-[1200px] flex-col transition-colors duration-300 lg:min-h-[calc(100dvh-2rem)] lg:overflow-hidden lg:rounded-[36px] lg:border lg:shadow-[0_24px_64px_rgba(15,15,15,0.08)]">
         <HeaderSection title={"Select Language"} />
 
-        <section className="theme-surface relative -mt-10 flex flex-1 flex-col rounded-t-[32px] px-5 pb-10 pt-8 transition-colors duration-300">
+        <section className="theme-surface relative -mt-10 flex flex-1 flex-col rounded-t-[32px] px-5 pb-10 pt-8 transition-colors duration-300 sm:px-6 md:px-8 lg:px-10 lg:pb-12 lg:rounded-t-[40px]">
           <p className="theme-text-secondary mb-6 font-satoshi text-[18px] leading-6">
             Please select your preferred language to facilitate communication.
           </p>
@@ -74,11 +74,11 @@ const Page = () => {
 
           <div className="flex-1" />
 
-          <div className="flex justify-center gap-3 pt-6">
+          <div className="flex flex-col gap-3 pt-6 sm:flex-row sm:justify-center">
             <button
               type="button"
               onClick={() => router.push("/intrest")}
-              className="theme-secondary-button flex h-[48px] w-[163px] items-center justify-center rounded-[8px] text-[18px] font-medium font-poppins transition-all active:scale-[0.98]"
+              className="theme-secondary-button flex h-[48px] w-full items-center justify-center rounded-[8px] text-[18px] font-medium font-poppins transition-all active:scale-[0.98] sm:w-[180px]"
             >
               Skip
             </button>
@@ -86,7 +86,7 @@ const Page = () => {
             <button
               type="button"
               onClick={handleSubmit}
-              className="w-[163px] h-[48px] rounded-[8px] flex items-center justify-center text-white text-[18px] font-medium font-poppins transition-all active:scale-[0.98]"
+              className="flex h-[48px] w-full items-center justify-center rounded-[8px] text-[18px] font-medium font-poppins text-white transition-all active:scale-[0.98] sm:w-[180px]"
               style={{
                 background: "linear-gradient(135deg, #23cf67 0%, #1ab856 100%)",
                 boxShadow: "0 4px 20px #23cf6740",

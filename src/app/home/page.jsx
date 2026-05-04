@@ -823,10 +823,10 @@ export default function HomeScreen() {
   );
 
   return (
-    <div className="theme-shell min-h-dvh flex justify-center transition-colors duration-300">
-      <div className="theme-surface w-full max-w-[600px] min-h-dvh flex flex-col relative overflow-hidden transition-colors duration-300">
+    <div className="theme-shell min-h-dvh flex justify-center transition-colors duration-300 lg:px-4 lg:py-4">
+      <div className="theme-surface theme-border relative flex min-h-dvh w-full max-w-[1200px] flex-col overflow-hidden transition-colors duration-300 lg:min-h-[calc(100dvh-2rem)] lg:rounded-[36px] lg:border lg:shadow-[0_24px_64px_rgba(15,15,15,0.08)]">
         {/* ── Green header background ── */}
-        <div className="relative bg-[#00D061] px-4 pt-[30px] pb-4 overflow-hidden">
+        <div className="relative overflow-hidden bg-[#00D061] px-4 pb-4 pt-[30px] sm:px-6 sm:pt-9 lg:px-10 lg:pb-6 lg:pt-10">
           {/* Circuit background */}
           <Image
             src="/icons/let-you-screen-main-img.jpg"
@@ -880,8 +880,8 @@ export default function HomeScreen() {
           </div>
 
           {/* Hero text */}
-          <div className="relative z-10 mt-9 pb-2">
-            <h2 className="text-white text-[32px] font-bold leading-[40px]">
+          <div className="relative z-10 mt-9 max-w-[720px] pb-2">
+            <h2 className="text-[32px] font-bold leading-[40px] text-white sm:text-[38px] sm:leading-[46px] lg:text-[46px] lg:leading-[54px]">
               Hello, {firstName}{" "}
               <span
                 className="inline-block"
@@ -893,25 +893,25 @@ export default function HomeScreen() {
                 👋
               </span>
             </h2>
-            <h3 className="text-white text-[18px] font-semibold leading-6 mt-3">
+            <h3 className="mt-3 text-[18px] font-semibold leading-6 text-white sm:text-[20px] lg:text-[22px]">
               Let&apos;s check in with Amigo.
             </h3>
-            <p className="text-[16px] font-satoshi font-medium leading-[24px] pb-3 text-white mt-2 mb-3">
+            <p className="mb-3 mt-2 pb-3 font-satoshi text-[16px] font-medium leading-[24px] text-white sm:text-[17px] lg:max-w-[640px] lg:text-[18px] lg:leading-[28px]">
               Start a supportive conversation whenever you need space to reflect.
             </p>
           </div>
         </div>
 
         {/* ── White card ── */}
-        <section className="theme-surface relative -mt-5 flex-1 overflow-y-auto rounded-t-[32px] px-4 pb-28 pt-6 transition-colors duration-300">
+        <section className="theme-surface relative -mt-5 flex-1 overflow-y-auto rounded-t-[32px] px-4 pb-28 pt-6 transition-colors duration-300 sm:px-6 md:px-8 lg:px-10 lg:pb-32 lg:pt-8 lg:rounded-t-[40px]">
           {/* GPT Plus promo card */}
-          <div className="theme-card-soft mb-5 flex items-stretch justify-between overflow-hidden rounded-[12px] transition-colors duration-300">
-            <div className="p-3 flex flex-col justify-between">
+          <div className="theme-card-soft mb-5 flex flex-col overflow-hidden rounded-[20px] transition-colors duration-300 sm:flex-row sm:items-stretch sm:justify-between">
+            <div className="flex flex-col justify-between p-4 sm:p-5 lg:p-6">
               <div>
                 <h4 className="text-[#0F0F0F] text-[22px] font-semibold leading-[30px]">
                   Amigo GPT Plus
                 </h4>
-                <p className="text-[#555] text-[14px] font-medium leading-6 mt-1 max-w-[180px]">
+                <p className="mt-1 max-w-[320px] text-[14px] font-medium leading-6 text-[#555] lg:text-[15px]">
                   Unlock deeper support features, faster replies, and more conversation continuity.
                 </p>
               </div>
@@ -924,13 +924,13 @@ export default function HomeScreen() {
               </button>
             </div>
             {/* Robot placeholder */}
-            <div className="w-[110px] bg-[#00D061]/50 flex items-end justify-end rounded-r-[12px]">
+            <div className="flex h-[140px] w-full items-end justify-end bg-[#00D061]/50 px-4 pt-4 sm:h-auto sm:w-[160px] sm:rounded-r-[20px] sm:px-0 lg:w-[220px]">
               <Image
                 src="/icons/plus-robort.png"
                 alt=""
                 width={96}
                 height={96}
-                className="size-24 object-contain"
+                className="size-24 object-contain sm:size-28 lg:size-36"
               />
             </div>
           </div>
@@ -967,7 +967,7 @@ export default function HomeScreen() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
               {QUICK_ACCESS_ITEMS.map((item) => (
                 <button
                   key={item.label}
@@ -991,11 +991,11 @@ export default function HomeScreen() {
         </section>
 
         {/* ── Start Chat fixed button ── */}
-        <div className="fixed bottom-5 left-0 right-0 mx-auto max-w-[600px] px-4 z-10">
+        <div className="fixed bottom-5 left-0 right-0 z-10 mx-auto max-w-[1200px] px-4 sm:px-6 md:px-8 lg:px-10">
           <button
             type="button"
             onClick={handleOpenChat}
-            className="w-full max-w-[343px] mx-auto flex items-center justify-center h-[56px] rounded-[12px] bg-[#00D061] text-white text-[18px] font-medium shadow-[0_4px_20px_rgba(0,208,97,0.4)] transition-all active:scale-[0.98] hover:opacity-92"
+            className="mx-auto flex h-[56px] w-full max-w-[343px] items-center justify-center rounded-[12px] bg-[#00D061] text-[18px] font-medium text-white shadow-[0_4px_20px_rgba(0,208,97,0.4)] transition-all active:scale-[0.98] hover:opacity-92 sm:max-w-[420px]"
           >
             Start Support Chat
           </button>
@@ -1015,9 +1015,9 @@ export default function HomeScreen() {
 
         {/* Drawer panel */}
         <div
-          className={`fixed top-0 left-0 h-full w-[320px] max-w-[85vw] z-50 flex flex-col transition-transform duration-300 ease-in-out ${
+          className={`theme-surface-elevated fixed left-0 top-0 z-50 flex h-full w-[320px] max-w-[85vw] flex-col transition-transform duration-300 ease-in-out sm:w-[360px] ${
             drawerOpen ? "translate-x-0" : "-translate-x-full"
-          } theme-surface-elevated`}
+          }`}
         >
           {/* Drawer header */}
           <div className="theme-border-strong flex items-center justify-between border-b-2 px-4 py-4">
@@ -1179,7 +1179,7 @@ export default function HomeScreen() {
 
         {/* Bottom sheet */}
         <div
-          className={`theme-surface-elevated fixed left-0 right-0 mx-auto max-w-[600px] rounded-t-[24px] px-4 pb-8 pt-4 transition-all duration-300 ease-in-out z-50 ${
+          className={`theme-surface-elevated fixed left-0 right-0 z-50 mx-auto max-w-[1200px] rounded-t-[24px] px-4 pb-8 pt-4 transition-all duration-300 ease-in-out sm:px-6 md:px-8 lg:px-10 ${
             logoutOpen
               ? "translate-y-0 bottom-0"
               : "translate-y-full -bottom-full"
@@ -1197,7 +1197,7 @@ export default function HomeScreen() {
           <p className="theme-text-secondary mb-6 text-center text-[18px] font-medium leading-6">
             Are you sure you want to log out?
           </p>
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <button
               type="button"
               onClick={() => setLogoutOpen(false)}

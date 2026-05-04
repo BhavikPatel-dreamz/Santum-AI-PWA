@@ -6,7 +6,7 @@ import { apiFetch } from "../../lib/api/client";
 const SocialButtons = () => {
   const { isDark } = useTheme();
   const buttonClassName =
-    "theme-surface theme-border theme-text-primary flex h-[60px] w-[60px] items-center justify-center rounded-[14px] border transition-all duration-200 hover:border-[#2bb673] hover:shadow-[0_4px_12px_rgba(43,182,115,0.15)] hover:-translate-y-0.5";
+    "theme-surface theme-border theme-text-primary flex h-[56px] w-[56px] items-center justify-center rounded-[14px] border transition-all duration-200 hover:border-[#2bb673] hover:shadow-[0_4px_12px_rgba(43,182,115,0.15)] hover:-translate-y-0.5 sm:h-[60px] sm:w-[60px] lg:h-[64px] lg:w-[64px]";
 
   const handleGooleLogin = async()=>{
     try {
@@ -24,7 +24,7 @@ const SocialButtons = () => {
   }
   return (
     <div>
-      <div className="flex justify-center gap-4 mb-6">
+      <div className="mb-6 flex flex-wrap justify-center gap-3 sm:gap-4">
         {/* Facebook */}
         <button className={buttonClassName}>
           <svg width="26" height="26" viewBox="0 0 24 24" fill="#1877F2">

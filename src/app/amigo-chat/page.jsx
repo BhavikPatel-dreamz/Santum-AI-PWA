@@ -659,215 +659,219 @@ export default function AmigoChatPage() {
       title="Chat With Amigo"
       contentClassName="overflow-hidden pb-6"
     >
-      <FeatureShowcaseCard
-        badge="Support Live"
-        title="A calmer chat space for emotional support"
-        description="Amigo is here to listen, reflect, and help you process what you're feeling."
-        imageSrc="/icons/robot-slider-img3.png"
-        imageAlt="Chat companion"
-        className="mb-5"
-        compact
-      />
+      <div className="flex h-full min-h-0 flex-col gap-5 lg:grid lg:grid-cols-[360px_minmax(0,1fr)] lg:gap-6">
+        <div className="flex min-h-0 flex-col lg:overflow-y-auto lg:pr-1">
+          <FeatureShowcaseCard
+            badge="Support Live"
+            title="A calmer chat space for emotional support"
+            description="Amigo is here to listen, reflect, and help you process what you're feeling."
+            imageSrc="/icons/robot-slider-img3.png"
+            imageAlt="Chat companion"
+            className="mb-5"
+            compact
+          />
 
-      <div className="theme-card-muted mb-4 rounded-[22px] border px-4 py-4">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#7E8A83]">
-              Available Credits
+          <div className="theme-card-muted mb-4 rounded-[22px] border px-4 py-4">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#7E8A83]">
+                  Available Credits
+                </p>
+                <p className="mt-2 text-[24px] font-semibold leading-8 text-[#0F0F0F]">
+                  {isBalanceLoading
+                    ? "Loading..."
+                    : creditBalance === null
+                      ? "Unavailable"
+                      : formatCreditAmount(creditBalance)}
+                </p>
+              </div>
+              <div className="rounded-full bg-[#E8FFF1] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#00A84D]">
+                Live
+              </div>
+            </div>
+            <p className="mt-3 font-satoshi text-[14px] leading-6 text-[#555]">
+              Amigo checks this balance before each support chat and stores each
+              finished reply back into your conversation history.
             </p>
-            <p className="mt-2 text-[24px] font-semibold leading-8 text-[#0F0F0F]">
-              {isBalanceLoading
-                ? "Loading..."
-                : creditBalance === null
-                  ? "Unavailable"
-                  : formatCreditAmount(creditBalance)}
-            </p>
           </div>
-          <div className="rounded-full bg-[#E8FFF1] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#00A84D]">
-            Live
-          </div>
-        </div>
-        <p className="mt-3 font-satoshi text-[14px] leading-6 text-[#555]">
-          Amigo checks this balance before each support chat and stores each
-          finished reply back into your conversation history.
-        </p>
-      </div>
 
-      {purchasePromptMessage || isCreditDepleted ? (
-        <div className="mb-4 rounded-[24px] border border-[#FFD9B8] bg-[linear-gradient(135deg,#FFF5EA_0%,#FFFFFF_100%)] px-4 py-4 shadow-[0_12px_30px_rgba(15,15,15,0.04)]">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#C56B1F]">
-            Purchase Required
-          </p>
-          <h2 className="mt-2 text-[20px] font-semibold leading-7 text-[#0F0F0F]">
-            Your credits are used up
-          </h2>
-          <p className="mt-2 font-satoshi text-[14px] leading-6 text-[#5F4A33]">
-            {purchasePromptMessage || CREDIT_LIMIT_MESSAGE}
-          </p>
-          <div className="mt-4 flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={() => router.push(PURCHASE_PLAN_PATH)}
-              className="rounded-full bg-[#0F0F0F] px-4 py-2.5 text-[14px] font-semibold text-white"
-            >
-              View Plans
-            </button>
-            <button
-              type="button"
-              onClick={() => loadCreditBalance()}
-              className="theme-surface rounded-full px-4 py-2.5 text-[14px] font-semibold text-[#0F0F0F] shadow-[0_10px_24px_rgba(15,15,15,0.05)]"
-            >
-              Refresh Balance
-            </button>
-          </div>
-        </div>
-      ) : null}
+          {purchasePromptMessage || isCreditDepleted ? (
+            <div className="mb-4 rounded-[24px] border border-[#FFD9B8] bg-[linear-gradient(135deg,#FFF5EA_0%,#FFFFFF_100%)] px-4 py-4 shadow-[0_12px_30px_rgba(15,15,15,0.04)]">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#C56B1F]">
+                Purchase Required
+              </p>
+              <h2 className="mt-2 text-[20px] font-semibold leading-7 text-[#0F0F0F]">
+                Your credits are used up
+              </h2>
+              <p className="mt-2 font-satoshi text-[14px] leading-6 text-[#5F4A33]">
+                {purchasePromptMessage || CREDIT_LIMIT_MESSAGE}
+              </p>
+              <div className="mt-4 flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={() => router.push(PURCHASE_PLAN_PATH)}
+                  className="rounded-full bg-[#0F0F0F] px-4 py-2.5 text-[14px] font-semibold text-white"
+                >
+                  View Plans
+                </button>
+                <button
+                  type="button"
+                  onClick={() => loadCreditBalance()}
+                  className="theme-surface rounded-full px-4 py-2.5 text-[14px] font-semibold text-[#0F0F0F] shadow-[0_10px_24px_rgba(15,15,15,0.05)]"
+                >
+                  Refresh Balance
+                </button>
+              </div>
+            </div>
+          ) : null}
 
-      {isMoodCheckInLoading && !todayMoodCheckIn ? (
-        <div className="theme-card mb-4 rounded-[24px] border px-4 py-4 shadow-[0_12px_30px_rgba(15,15,15,0.04)]">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#00A84D]">
-            Mood Check-In
-          </p>
-          <p className="mt-3 text-[15px] font-medium text-[#0F0F0F]">
-            Checking today&apos;s mood check-in before chat starts...
-          </p>
-        </div>
-      ) : null}
+          {isMoodCheckInLoading && !todayMoodCheckIn ? (
+            <div className="theme-card mb-4 rounded-[24px] border px-4 py-4 shadow-[0_12px_30px_rgba(15,15,15,0.04)]">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#00A84D]">
+                Mood Check-In
+              </p>
+              <p className="mt-3 text-[15px] font-medium text-[#0F0F0F]">
+                Checking today&apos;s mood check-in before chat starts...
+              </p>
+            </div>
+          ) : null}
 
-      {!isMoodCheckInLoading && !hasTodayMoodCheckIn ? (
-        <MoodCheckInCard
-          key={`chat-mood-${todayMoodDateKey}`}
-          className="mb-4"
-          entry={null}
-          isSaving={isSavingMoodCheckIn}
-          onSubmit={handleSaveMoodCheckIn}
-          description="Before we start, take 10 seconds to share how today feels so Amigo can respond with steadier tone and more relevant support."
-          submitLabel="Save and unlock chat"
-          showUpdateAction={false}
-        />
-      ) : null}
-
-      {messages.length <= 1 && (
-        <div className="mb-4 flex flex-wrap gap-2">
-          {QUICK_PROMPTS.map((prompt) => (
-            <button
-              key={prompt}
-              type="button"
-              onClick={() => sendMessage(prompt)}
-              disabled={areChatActionsDisabled}
-              className={`rounded-full px-4 py-2 text-[13px] font-semibold transition-all ${
-                areChatActionsDisabled
-                  ? "bg-[#EDF2EE] text-[#93A099]"
-                  : "bg-[#F4F7F5] text-[#0F0F0F] hover:bg-[#E8FFF1]"
-              }`}
-            >
-              {prompt}
-            </button>
-          ))}
-        </div>
-      )}
-
-      <div className="flex flex-1 flex-col overflow-hidden rounded-[28px] bg-[#F8FFFB] p-4">
-        <div className="mb-3 flex items-center justify-between gap-3">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#7E8A83]">
-            {requestedChatId ? activeChatTitle : "Starting a new conversation"}
-          </p>
-          {isConversationLoading ? (
-            <span className="text-[12px] font-medium text-[#7E8A83]">
-              Loading history...
-            </span>
+          {!isMoodCheckInLoading && !hasTodayMoodCheckIn ? (
+            <MoodCheckInCard
+              key={`chat-mood-${todayMoodDateKey}`}
+              className="mb-4"
+              entry={null}
+              isSaving={isSavingMoodCheckIn}
+              onSubmit={handleSaveMoodCheckIn}
+              description="Before we start, take 10 seconds to share how today feels so Amigo can respond with steadier tone and more relevant support."
+              submitLabel="Save and unlock chat"
+              showUpdateAction={false}
+            />
           ) : null}
         </div>
 
-        <div className="flex-1 space-y-4 overflow-y-auto pr-1">
-          {isConversationLoading ? (
-            <div className="theme-surface rounded-[22px] px-4 py-4 shadow-[0_10px_24px_rgba(15,15,15,0.05)]">
-              <p className="font-satoshi text-[14px] leading-6 text-[#555]">
-                Loading your saved conversation...
-              </p>
-            </div>
-          ) : (
-            messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${
-                  message.role === "user" ? "justify-end" : "justify-start"
-                }`}
-              >
-                <div
-                  className={`max-w-[85%] rounded-[22px] px-4 py-3 ${
-                    message.role === "user"
-                      ? "rounded-br-[8px] bg-[#00D061] text-white"
-                      : "theme-surface rounded-bl-[8px] text-[#0F0F0F] shadow-[0_10px_24px_rgba(15,15,15,0.05)]"
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[28px] bg-[#F8FFFB] p-4">
+          {messages.length <= 1 && (
+            <div className="mb-4 flex flex-wrap gap-2">
+              {QUICK_PROMPTS.map((prompt) => (
+                <button
+                  key={prompt}
+                  type="button"
+                  onClick={() => sendMessage(prompt)}
+                  disabled={areChatActionsDisabled}
+                  className={`rounded-full px-4 py-2 text-[13px] font-semibold transition-all ${
+                    areChatActionsDisabled
+                      ? "bg-[#EDF2EE] text-[#93A099]"
+                      : "bg-[#F4F7F5] text-[#0F0F0F] hover:bg-[#E8FFF1]"
                   }`}
                 >
-                  <div className="font-satoshi text-[15px] leading-6 whitespace-pre-wrap">
-                    <ReactMarkdown>{message.text}</ReactMarkdown>
+                  {prompt}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#7E8A83]">
+              {requestedChatId ? activeChatTitle : "Starting a new conversation"}
+            </p>
+            {isConversationLoading ? (
+              <span className="text-[12px] font-medium text-[#7E8A83]">
+                Loading history...
+              </span>
+            ) : null}
+          </div>
+
+          <div className="flex-1 space-y-4 overflow-y-auto pr-1">
+            {isConversationLoading ? (
+              <div className="theme-surface rounded-[22px] px-4 py-4 shadow-[0_10px_24px_rgba(15,15,15,0.05)]">
+                <p className="font-satoshi text-[14px] leading-6 text-[#555]">
+                  Loading your saved conversation...
+                </p>
+              </div>
+            ) : (
+              messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex ${
+                    message.role === "user" ? "justify-end" : "justify-start"
+                  }`}
+                >
+                  <div
+                    className={`max-w-[92%] rounded-[22px] px-4 py-3 sm:max-w-[85%] ${
+                      message.role === "user"
+                        ? "rounded-br-[8px] bg-[#00D061] text-white"
+                        : "theme-surface rounded-bl-[8px] text-[#0F0F0F] shadow-[0_10px_24px_rgba(15,15,15,0.05)]"
+                    }`}
+                  >
+                    <div className="font-satoshi text-[15px] leading-6 whitespace-pre-wrap">
+                      <ReactMarkdown>{message.text}</ReactMarkdown>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+
+            {isReplying ? (
+              <div className="flex justify-start">
+                <div className="theme-surface rounded-[22px] rounded-bl-[8px] px-4 py-3 shadow-[0_10px_24px_rgba(15,15,15,0.05)]">
+                  <div className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-[#00D061] animate-bounce" />
+                    <span className="h-2 w-2 rounded-full bg-[#00D061] animate-bounce [animation-delay:120ms]" />
+                    <span className="h-2 w-2 rounded-full bg-[#00D061] animate-bounce [animation-delay:240ms]" />
                   </div>
                 </div>
               </div>
-            ))
-          )}
+            ) : null}
+          </div>
 
-          {isReplying ? (
-            <div className="flex justify-start">
-              <div className="theme-surface rounded-[22px] rounded-bl-[8px] px-4 py-3 shadow-[0_10px_24px_rgba(15,15,15,0.05)]">
-                <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-[#00D061] animate-bounce" />
-                  <span className="h-2 w-2 rounded-full bg-[#00D061] animate-bounce [animation-delay:120ms]" />
-                  <span className="h-2 w-2 rounded-full bg-[#00D061] animate-bounce [animation-delay:240ms]" />
-                </div>
-              </div>
-            </div>
-          ) : null}
-        </div>
-
-        <div className="theme-surface mt-4 rounded-[24px] p-3 shadow-[0_12px_30px_rgba(15,15,15,0.06)]">
-          <textarea
-            rows={3}
-            value={composer}
-            disabled={areChatActionsDisabled}
-            onChange={(event) => setComposer(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === "Enter" && !event.shiftKey) {
-                event.preventDefault();
-                sendMessage(composer);
+          <div className="theme-surface mt-4 rounded-[24px] p-3 shadow-[0_12px_30px_rgba(15,15,15,0.06)]">
+            <textarea
+              rows={3}
+              value={composer}
+              disabled={areChatActionsDisabled}
+              onChange={(event) => setComposer(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" && !event.shiftKey) {
+                  event.preventDefault();
+                  sendMessage(composer);
+                }
+              }}
+              placeholder={
+                isMoodCheckInLoading
+                  ? "Checking today's mood check-in..."
+                  : !hasTodayMoodCheckIn
+                    ? "Complete today's mood check-in to unlock chat."
+                    : isCreditDepleted
+                      ? "Purchase a plan or refresh your balance to keep chatting."
+                      : "Tell Amigo what's on your mind..."
               }
-            }}
-            placeholder={
-              isMoodCheckInLoading
-                ? "Checking today's mood check-in..."
-                : !hasTodayMoodCheckIn
-                  ? "Complete today's mood check-in to unlock chat."
-                  : isCreditDepleted
-                    ? "Purchase a plan or refresh your balance to keep chatting."
-                    : "Tell Amigo what's on your mind..."
-            }
-            className="theme-input-surface w-full resize-none rounded-[18px] px-4 py-4 font-satoshi text-[15px] leading-6 outline-none disabled:cursor-not-allowed disabled:bg-[#F1F5F2] disabled:text-[#7E8A83]"
-          />
+              className="theme-input-surface w-full resize-none rounded-[18px] px-4 py-4 font-satoshi text-[15px] leading-6 outline-none disabled:cursor-not-allowed disabled:bg-[#F1F5F2] disabled:text-[#7E8A83]"
+            />
 
-          <div className="mt-3 flex items-center justify-between gap-3">
-            <p className="font-satoshi text-[13px] leading-5 text-[#555]">
-              {isMoodCheckInLoading
-                ? "Checking today's mood check-in before chat unlocks."
-                : !hasTodayMoodCheckIn
-                  ? "Share your mood first so Amigo can respond with better context."
-                  : isCreditDepleted
-                    ? "Purchase a plan to continue Amigo support chats."
-                    : "Powered by Santum AI Counseling service."}
-            </p>
-            <button
-              type="button"
-              onClick={() => sendMessage(composer)}
-              disabled={!composer.trim() || areChatActionsDisabled}
-              className={`rounded-full px-5 py-3 text-[14px] font-semibold transition-all ${
-                !composer.trim() || areChatActionsDisabled
-                  ? "bg-[#CBEEDB] text-white"
-                  : "bg-[#00D061] text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)]"
-              }`}
-            >
-              Send
-            </button>
+            <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <p className="font-satoshi text-[13px] leading-5 text-[#555]">
+                {isMoodCheckInLoading
+                  ? "Checking today's mood check-in before chat unlocks."
+                  : !hasTodayMoodCheckIn
+                    ? "Share your mood first so Amigo can respond with better context."
+                    : isCreditDepleted
+                      ? "Purchase a plan to continue Amigo support chats."
+                      : "Powered by Santum AI Counseling service."}
+              </p>
+              <button
+                type="button"
+                onClick={() => sendMessage(composer)}
+                disabled={!composer.trim() || areChatActionsDisabled}
+                className={`rounded-full px-5 py-3 text-[14px] font-semibold transition-all ${
+                  !composer.trim() || areChatActionsDisabled
+                    ? "bg-[#CBEEDB] text-white"
+                    : "bg-[#00D061] text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)]"
+                }`}
+              >
+                Send
+              </button>
+            </div>
           </div>
         </div>
       </div>

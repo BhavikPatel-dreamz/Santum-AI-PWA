@@ -3,23 +3,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import GreenSection from "../../components/UI/GreenSection";
 import SocialButtons from "../../components/UI/SocialButtons";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 
 export default function LetsYouInPage() {
   const router = useRouter();
   const isFingerprintEnabled =
     typeof window !== "undefined" &&
     localStorage.getItem("fingerprintEnabled") === "true";
-  useEffect(() => {
-    const enabled = localStorage.getItem("fingerprintEnabled");
-
-    if (enabled === "true") {
-      setTimeout(() => {
-        handleFingerprintLogin();
-      }, 500);
-    }
-  }, []);
-  const handleFingerprintLogin = async () => {
+  const handleFingerprintLogin = useCallback(async () => {
     try {
       const stored = localStorage.getItem("passkeyId");
 
@@ -54,30 +45,30 @@ export default function LetsYouInPage() {
       }
       console.error("Fingerprint login failed:", err);
     }
-  };
+  }, [router]);
+
+  useEffect(() => {
+    const enabled = localStorage.getItem("fingerprintEnabled");
+
+    if (enabled === "true") {
+      const timeoutId = setTimeout(() => {
+        handleFingerprintLogin();
+      }, 500);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [handleFingerprintLogin]);
 
   return (
     <div className="theme-auth-shell min-h-dvh flex flex-col items-center font-sans transition-colors duration-300">
-      <div className="theme-auth-frame relative flex min-h-dvh w-full max-w-[600px] flex-col transition-colors duration-300">
+      <div className="theme-auth-frame theme-border relative flex min-h-dvh w-full max-w-[1200px] flex-col transition-colors duration-300 lg:my-4 lg:min-h-[calc(100dvh-2rem)] lg:overflow-hidden lg:rounded-[36px] lg:border lg:shadow-[0_24px_64px_rgba(15,15,15,0.08)]">
         {/* ── Top green section ── */}
         <GreenSection show={false} />
         {/* ── White card ── */}
-        <div className="theme-auth-card relative z-10 mx-3 -mt-20 w-[96%] rounded-[28px] px-7 pb-9 pt-8 transition-colors duration-300">
+        <div className="theme-auth-card relative z-10 mx-3 -mt-20 w-auto rounded-[28px] px-6 pb-9 pt-8 transition-colors duration-300 sm:mx-5 sm:px-7 md:mx-8 lg:mx-auto lg:-mt-24 lg:w-full lg:max-w-[760px] lg:px-10 lg:pb-10">
           <h2 className="theme-text-primary mb-7 text-center text-[24px] font-semibold leading-9">
             Let&apos;s You In
           </h2>
-
-          {/* Social buttons */}
-          <SocialButtons />
-
-          {/* OR divider */}
-          <div className="flex items-center gap-3 mb-6">
-            <span className="theme-auth-divider h-px flex-1" />
-            <span className="theme-text-secondary relative z-1 inline-block px-2 text-center font-satoshi text-[18px] leading-6">
-              or
-            </span>
-            <span className="theme-auth-divider h-px flex-1" />
-          </div>
 
           {/* Sign In With Password */}
           <button
@@ -95,22 +86,6 @@ export default function LetsYouInPage() {
             </button>
           )}
         </div>
-
-        {/* ── Spacer ── */}
-        <div className="flex-1" />
-
-        {/* ── Footer ── */}
-        <footer className="text-center py-6 pb-8 px-4 font-satoshi">
-          <p className="theme-text-secondary px-4 text-center text-[18px] leading-6">
-            Don&apos;t have an account?
-            <Link
-              href="/sign-up"
-              className="theme-text-primary px-1 font-semibold hover:underline"
-            >
-              Sign up
-            </Link>
-          </p>
-        </footer>
       </div>
     </div>
   );

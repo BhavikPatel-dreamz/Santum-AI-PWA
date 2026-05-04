@@ -7,7 +7,7 @@ const HeaderSection = ({ title }) => {
   const { isDark } = useTheme();
 
   return (
-    <header className="relative h-[120px] overflow-hidden bg-[#23cf67] px-5 pt-6">
+    <header className="relative h-[120px] overflow-hidden bg-[#23cf67] px-5 pt-6 sm:h-[136px] sm:px-6 sm:pt-7 lg:h-[156px] lg:px-10 lg:pt-8">
       <Image
         src={
           isDark
@@ -15,20 +15,20 @@ const HeaderSection = ({ title }) => {
             : "/icons/let-you-screen-main-img.jpg"
         }
         alt=""
-        width={480}
-        height={108}
+        width={960}
+        height={220}
         priority
         unoptimized
-        sizes="(max-width: 480px) 100vw, 480px"
-        className="absolute inset-0 top-0 w-[60%] mx-auto object-cover"
+        sizes="(max-width: 768px) 100vw, 960px"
+        className="absolute inset-0 mx-auto h-full w-full max-w-[960px] object-cover object-top"
       />
 
-      <div className="relative z-10 flex items-center gap-3 pt-1">
+      <div className="relative z-10 flex items-center gap-3 pt-1 sm:pt-2">
         <button
           type="button"
           onClick={() => router.back()}
           aria-label="Go back"
-          className="flex h-9 w-9 items-center justify-center rounded-[10px] border border-white/80 bg-white/10 text-white transition-colors hover:bg-white/15"
+          className="flex h-9 w-9 items-center justify-center rounded-[10px] border border-white/80 bg-white/10 text-white transition-colors hover:bg-white/15 sm:h-10 sm:w-10 lg:h-11 lg:w-11"
         >
           <svg
             width="18"
@@ -44,7 +44,7 @@ const HeaderSection = ({ title }) => {
             <line x1="9" y1="12" x2="20" y2="12" />
           </svg>
         </button>
-        <h1 className="text-[18px] font-medium leading-6 text-white">
+        <h1 className="text-[18px] font-medium leading-6 text-white sm:text-[20px] lg:text-[24px] lg:leading-8">
           {title}
         </h1>
       </div>

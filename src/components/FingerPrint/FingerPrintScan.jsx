@@ -1,10 +1,9 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import HeaderSection from "../UI/HeaderSection";
 import { useTheme } from "../providers/ThemeProvider";
-import toast from "react-hot-toast";
 
 export default function FingerPrintScan() {
   const router = useRouter();
@@ -193,13 +192,13 @@ export default function FingerPrintScan() {
         .fade-up { animation: fadeSlideUp 0.5s ease both; }
       `}</style>
 
-      <div className="theme-shell min-h-dvh transition-colors duration-300">
-        <div className="theme-surface mx-auto flex min-h-dvh w-full max-w-[600px] flex-col transition-colors duration-300">
+      <div className="theme-shell min-h-dvh transition-colors duration-300 lg:px-4 lg:py-4">
+        <div className="theme-surface theme-border mx-auto flex min-h-dvh w-full max-w-[1200px] flex-col transition-colors duration-300 lg:min-h-[calc(100dvh-2rem)] lg:overflow-hidden lg:rounded-[36px] lg:border lg:shadow-[0_24px_64px_rgba(15,15,15,0.08)]">
           <HeaderSection title={"Set Up Fingerprint"} />
 
-          <section className="theme-surface relative -mt-10 flex flex-1 flex-col rounded-t-[32px] pb-10 pt-3 transition-colors duration-300">
+          <section className="theme-surface relative -mt-10 flex flex-1 flex-col rounded-t-[32px] pb-10 pt-3 transition-colors duration-300 lg:rounded-t-[40px]">
             {/* ── Subtitle ── */}
-            <div className="px-6 pt-5 pb-2">
+            <div className="px-6 pb-2 pt-5 sm:px-8 lg:px-10">
               <p className="theme-text-secondary text-center font-satoshi text-[18px] leading-6">
                 Add biometric unlock so returning to Amigo feels secure and
                 effortless.
@@ -207,13 +206,13 @@ export default function FingerPrintScan() {
             </div>
 
             {/* ── Scanner area ── */}
-            <div className="flex-1 flex flex-col items-center justify-center px-6 gap-6">
+            <div className="flex flex-1 flex-col items-center justify-center gap-6 px-6 sm:px-8 lg:px-10">
               {/* Scanner box */}
               <button
                 type="button"
                 onClick={handleScannerPress}
                 aria-label="Tap to scan fingerprint"
-                className="relative outline-none focus:outline-none"
+                className="relative outline-none transition-transform focus:outline-none sm:scale-105 lg:scale-[1.12]"
                 style={{ WebkitTapHighlightColor: "transparent" }}
               >
                 {/* Outer glow when scanning/success */}
@@ -331,11 +330,11 @@ export default function FingerPrintScan() {
 
             {/* ── Bottom actions ── */}
 
-            <div className="px-6 pb-10 flex flex-col gap-4">
+            <div className="flex flex-col gap-4 px-6 pb-10 sm:px-8 lg:px-10 lg:pb-12">
               <button
                 type="button"
                 onClick={handleContinue}
-                className="mt-8 mx-auto w-full max-w-[343px] py-4 rounded-[14px] text-white text-[18px] font-semibold tracking-wide transition-all duration-200"
+                className="mt-8 mx-auto w-full max-w-[343px] rounded-[14px] py-4 text-[18px] font-semibold tracking-wide text-white transition-all duration-200 sm:max-w-[380px] lg:max-w-[420px]"
                 style={{
                   background:
                     scanState === "success"

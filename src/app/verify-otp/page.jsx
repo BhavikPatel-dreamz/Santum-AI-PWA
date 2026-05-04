@@ -124,13 +124,13 @@ export default function OtpPage() {
   const isComplete = otp.every((digit) => digit !== "");
 
   return (
-    <div className="theme-shell min-h-dvh transition-colors duration-300">
-      <div className="theme-surface mx-auto flex min-h-dvh w-full max-w-[600px] flex-col transition-colors duration-300">
+    <div className="theme-shell min-h-dvh transition-colors duration-300 lg:px-4 lg:py-4">
+      <div className="theme-surface theme-border mx-auto flex min-h-dvh w-full max-w-[1200px] flex-col transition-colors duration-300 lg:min-h-[calc(100dvh-2rem)] lg:overflow-hidden lg:rounded-[36px] lg:border lg:shadow-[0_24px_64px_rgba(15,15,15,0.08)]">
         <HeaderSection title={"Verify Phone Number"} />
 
-        <section className="theme-surface relative -mt-10 flex flex-1 flex-col rounded-t-[32px] pb-10 pt-3 transition-colors duration-300">
-          <div className="flex flex-col items-center text-center">
-            <div className="theme-static-panel mb-8 mt-2 flex aspect-square w-full max-w-[343px] items-center justify-center rounded-[24px] border">
+        <section className="theme-surface relative -mt-10 flex flex-1 flex-col rounded-t-[32px] px-4 pb-10 pt-3 transition-colors duration-300 sm:px-6 md:px-8 lg:px-10 lg:pb-12 lg:rounded-t-[40px]">
+          <div className="mx-auto flex w-full max-w-[560px] flex-col items-center text-center lg:max-w-[720px]">
+            <div className="theme-static-panel mb-8 mt-2 flex aspect-square w-full max-w-[343px] items-center justify-center rounded-[24px] border sm:max-w-[380px] lg:max-w-[460px]">
               <Image
                 src="/icons/artboard-2.jpg"
                 alt="Verification illustration"
@@ -146,7 +146,7 @@ export default function OtpPage() {
             </p>
 
             <div
-              className="mb-7 flex items-center justify-center gap-[10px]"
+              className="mb-7 flex flex-wrap items-center justify-center gap-[10px]"
               onPaste={handlePaste}
             >
               {otp.map((digit, index) => (
@@ -162,7 +162,7 @@ export default function OtpPage() {
                   onChange={(event) => handleChange(index, event.target.value)}
                   onKeyDown={(event) => handleKeyDown(index, event)}
                   aria-label={`OTP digit ${index + 1}`}
-                  className={`theme-otp-input h-[52px] w-[52px] rounded-full border text-center text-[22px] font-semibold outline-none transition-all duration-200 ${
+                  className={`theme-otp-input h-[48px] w-[48px] rounded-full border text-center text-[20px] font-semibold outline-none transition-all duration-200 sm:h-[52px] sm:w-[52px] sm:text-[22px] ${
                     digit ? "theme-otp-input-filled" : "theme-otp-input-empty"
                   }`}
                 />
@@ -193,7 +193,7 @@ export default function OtpPage() {
             type="button"
             onClick={handleVerify}
             disabled={!isComplete || isLoading}
-            className={`w-full max-w-[343px] flex items-center justify-center mx-auto py-4 rounded-[14px] text-white text-[18px] font-semibold tracking-wide transition-all duration-200
+            className={`mx-auto flex w-full max-w-[343px] items-center justify-center rounded-[14px] py-4 text-[18px] font-semibold tracking-wide text-white transition-all duration-200 sm:max-w-[380px] lg:max-w-[420px]
               ${
                 isComplete
                   ? "bg-[#00D061] hover:bg-[#00b856] hover:shadow-[0_6px_20px_rgba(0,208,97,0.40)] hover:-translate-y-px active:translate-y-0"

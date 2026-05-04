@@ -654,24 +654,10 @@ export default function PlusSubscriptionPage() {
                   <div className="flex items-center gap-2">
                     <h3 className="theme-text-primary text-[22px] font-semibold leading-8">
                       {plan.name}
-                    </h3>
-                    {plan.highlighted ? (
-                      <span className="rounded-full bg-[#00D061] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
-                        Best Value
-                      </span>
-                    ) : null}
+                    </h3>                
                     {isActivePlan ? (
                       <span className="rounded-full bg-[#0F0F0F] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
                         Active
-                      </span>
-                    ) : null}
-                    {isSelected ? (
-                      <span
-                        className={`rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] ${getSelectedBadgeClasses(
-                          isDark,
-                        )}`}
-                      >
-                        Selected
                       </span>
                     ) : null}
                   </div>
