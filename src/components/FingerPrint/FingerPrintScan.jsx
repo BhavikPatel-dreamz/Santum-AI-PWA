@@ -121,13 +121,13 @@ export default function FingerPrintScan() {
     }
   };
 
-  const handleContinue = async() => {
-    await handleScannerPress();
-    if (scanState === "success") {
-      router.push("/home");
-    } else {
-      setScanState("scanning");
+  const handleContinue = async () => {
+    if (scanState !== "success") {
+      await handleScannerPress();
+      return;
     }
+
+    router.push("/home");
   };
 
   const fingerSrc =
