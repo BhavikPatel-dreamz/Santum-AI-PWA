@@ -14,23 +14,23 @@ const ONBOARDING_SLIDES = [
   {
     darkImage: "/icons/artboard-3.png",
     lightImage: "/icons/artboard-2.jpg",
-    title: "Welcome to Amigo, your calm space to talk",
-    desc: "Text-based support for emotional wellbeing, reflection, and everyday moments that feel hard to carry alone.",
-    btnLabel: "Next",
+    title: "Welcome to Santum AI, your calm space to talk",
+    desc: "A private companion for self-reflection and psychological support, try it at your own pace",
+    btnLabel: "Try it for free",
   },
   {
     darkImage: "/icons/artboard-3.png",
     lightImage: "/icons/artboard-2.jpg",
-    title: "Support that adapts to how today feels",
-    desc: "Mood check-ins help Amigo respond with steadier tone, gentler pacing, and more relevant encouragement.",
-    btnLabel: "Next",
+    title: "Advanced assistance, when you need it",
+    desc: "Whether it's stress, anxiety, or just a heavy day... this is your space to talk",
+    btnLabel: "Try it for free",
   },
   {
     darkImage: "/icons/artboard-3.png",
     lightImage: "/icons/artboard-2.jpg",
-    title: "Build healthier reflection habits with Amigo",
-    desc: "Save conversations, return to past sessions, and create a private routine for emotional check-ins and support.",
-    btnLabel: "Get Started",
+    title: "Get started and meet Sai (Santum AI)",
+    desc: "Create your account to start structured, confidential conversations.",
+    btnLabel: "Try it for free",
   },
 ];
 

@@ -78,7 +78,7 @@ export async function GET(req) {
 
     const messages = await Message.find({ chatId })
       .lean()
-      .sort({ createdAt: 1 });
+      .sort({ createdAt: 1, _id: 1 });
 
     return NextResponse.json({
       success: true,

@@ -16,10 +16,7 @@ import {
   useGetSubscriptionStatusQuery,
   useUpsertMoodCheckInMutation,
 } from "@/lib/store";
-import {
-  extractCreditBalance,
-  formatCreditAmount,
-} from "@/lib/utills/credit";
+import { extractCreditBalance, formatCreditAmount } from "@/lib/utills/credit";
 import { getTodayMoodDateKey } from "@/lib/utills/mood";
 import { getProfilePhone } from "@/lib/utills/profile";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -378,7 +375,9 @@ export default function AmigoChatPage() {
     }
 
     if (chatError?.status === 404) {
-      toast.error("This conversation was not found or has already been deleted.");
+      toast.error(
+        "This conversation was not found or has already been deleted.",
+      );
       router.replace("/settings/history");
       return;
     }
@@ -498,7 +497,9 @@ export default function AmigoChatPage() {
 
     try {
       const chatId = await ensureChatId();
-      const baseMessages = hasDraftMessages ? draftMessages : persistedRawMessages;
+      const baseMessages = hasDraftMessages
+        ? draftMessages
+        : persistedRawMessages;
       const userMessage = {
         id: buildTempMessageId("user"),
         role: "user",
@@ -619,10 +620,7 @@ export default function AmigoChatPage() {
         setHasDraftMessages(false);
         setDraftMessages([]);
       } catch (refetchError) {
-        console.error(
-          "Unable to refresh stored chat messages:",
-          refetchError,
-        );
+        console.error("Unable to refresh stored chat messages:", refetchError);
       }
 
       await loadCreditBalance({ silent: true });
@@ -749,23 +747,25 @@ export default function AmigoChatPage() {
         />
       ) : null}
 
-      <div className="mb-4 flex flex-wrap gap-2">
-        {QUICK_PROMPTS.map((prompt) => (
-          <button
-            key={prompt}
-            type="button"
-            onClick={() => sendMessage(prompt)}
-            disabled={areChatActionsDisabled}
-            className={`rounded-full px-4 py-2 text-[13px] font-semibold transition-all ${
-              areChatActionsDisabled
-                ? "bg-[#EDF2EE] text-[#93A099]"
-                : "bg-[#F4F7F5] text-[#0F0F0F] hover:bg-[#E8FFF1]"
-            }`}
-          >
-            {prompt}
-          </button>
-        ))}
-      </div>
+      {messages.length <= 1 && (
+        <div className="mb-4 flex flex-wrap gap-2">
+          {QUICK_PROMPTS.map((prompt) => (
+            <button
+              key={prompt}
+              type="button"
+              onClick={() => sendMessage(prompt)}
+              disabled={areChatActionsDisabled}
+              className={`rounded-full px-4 py-2 text-[13px] font-semibold transition-all ${
+                areChatActionsDisabled
+                  ? "bg-[#EDF2EE] text-[#93A099]"
+                  : "bg-[#F4F7F5] text-[#0F0F0F] hover:bg-[#E8FFF1]"
+              }`}
+            >
+              {prompt}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="flex flex-1 flex-col overflow-hidden rounded-[28px] bg-[#F8FFFB] p-4">
         <div className="mb-3 flex items-center justify-between gap-3">
