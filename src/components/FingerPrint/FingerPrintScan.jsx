@@ -13,22 +13,22 @@ export default function FingerPrintScan() {
   const [scanProgress, setScanProgress] = useState(0);
 
   // Simulate scanning animation when in "scanning" state
-  useEffect(() => {
-    if (scanState !== "scanning") return;
+  // useEffect(() => {
+  //   if (scanState !== "scanning") return;
 
-    const interval = setInterval(() => {
-      setScanProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setScanState("success");
-          return 100;
-        }
-        return prev + 2;
-      });
-    }, 40);
+  //   const interval = setInterval(() => {
+  //     setScanProgress((prev) => {
+  //       if (prev >= 100) {
+  //         clearInterval(interval);
+  //         setScanState("success");
+  //         return 100;
+  //       }
+  //       return prev + 2;
+  //     });
+  //   }, 40);
 
-    return () => clearInterval(interval);
-  }, [scanState]);
+  //   return () => clearInterval(interval);
+  // }, [scanState]);
 
   const generateRandomChallenge = () => {
     const randomValues = new Uint8Array(32);
@@ -59,57 +59,56 @@ export default function FingerPrintScan() {
         localStorage.removeItem("passkeyId");
         localStorage.removeItem("fingerprintEnabled");
       }
-      if (!storedPasskey) {
-        const createdCredential = await navigator.credentials.create({
-          publicKey: {
-            challenge: generateRandomChallenge(),
-            rp: { name: "Amigo App", id: window.location.hostname },
-            user: {
-              id: crypto.getRandomValues(new Uint8Array(16)),
-              name: "member@amigo.local",
-              displayName: "Amigo Member",
-            },
-            pubKeyCredParams: [{ type: "public-key", alg: -7 }],
-            timeout: 60000,
-            authenticatorSelection: {
-              authenticatorAttachment: "platform",
-              userVerification: "required",
-            },
+
+      const createdCredential = await navigator.credentials.create({
+        publicKey: {
+          challenge: generateRandomChallenge(),
+          rp: { name: "Amigo App", id: window.location.hostname },
+          user: {
+            id: crypto.getRandomValues(new Uint8Array(16)),
+            name: "member@amigo.local",
+            displayName: "Amigo Member",
           },
-        });
-        const rawId = Array.from(new Uint8Array(createdCredential.rawId));
+          pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+          timeout: 60000,
+          authenticatorSelection: {
+            authenticatorAttachment: "platform",
+            userVerification: "required",
+          },
+        },
+      });
+      const rawId = Array.from(new Uint8Array(createdCredential.rawId));
 
-        // store in localStorage
-        localStorage.setItem("passkeyId", JSON.stringify(rawId));
-        localStorage.setItem("fingerprintEnabled", "true");
+      // store in localStorage
+      localStorage.setItem("passkeyId", JSON.stringify(rawId));
+      localStorage.setItem("fingerprintEnabled", "true");
 
-        // if (!window.currentPasskey) {
-        //   console.warn("No passkey found, creating one...");
-        //   return;
-        // }
+      // if (!window.currentPasskey) {
+      //   console.warn("No passkey found, creating one...");
+      //   return;
+      // }
 
-        // const credential = await navigator.credentials.get({
-        //   publicKey: {
-        //     challenge: generateRandomChallenge(),
-        //     userVerification: "required",
-        //     allowCredentials: window.currentPasskey
-        //       ? [
-        //           {
-        //             id: window.currentPasskey.rawId,
-        //             type: "public-key",
-        //             transports: ["internal"],
-        //           },
-        //         ]
-        //       : [],
-        //   },
-        // });
+      // const credential = await navigator.credentials.get({
+      //   publicKey: {
+      //     challenge: generateRandomChallenge(),
+      //     userVerification: "required",
+      //     allowCredentials: window.currentPasskey
+      //       ? [
+      //           {
+      //             id: window.currentPasskey.rawId,
+      //             type: "public-key",
+      //             transports: ["internal"],
+      //           },
+      //         ]
+      //       : [],
+      //   },
+      // });
 
-        // console.log(credential);
+      // console.log(credential);
 
-        // SUCCESS
-        setScanProgress(100);
-        setScanState("success");
-      }
+      // SUCCESS
+      setScanProgress(100);
+      setScanState("success");
     } catch (err) {
       if (err.name === "NotAllowedError") {
         // user cancelled
@@ -122,7 +121,8 @@ export default function FingerPrintScan() {
     }
   };
 
-  const handleContinue = () => {
+  const handleContinue = async() => {
+    await handleScannerPress();
     if (scanState === "success") {
       router.push("/home");
     } else {
