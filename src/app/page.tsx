@@ -14,7 +14,7 @@ const ONBOARDING_SLIDES = [
   {
     darkImage: "/icons/artboard-3.png",
     lightImage: "/icons/artboard-2.jpg",
-    title: "Welcome to Santum AI, your calm space to talk",
+    title: "Welcome to SantumAI, your calm space to talk",
     desc: "A private companion for self-reflection and psychological support, try it at your own pace",
     btnLabel: "Try it for free",
   },
@@ -28,7 +28,7 @@ const ONBOARDING_SLIDES = [
   {
     darkImage: "/icons/artboard-3.png",
     lightImage: "/icons/artboard-2.jpg",
-    title: "Get started and meet Sai (Santum AI)",
+    title: "Get started and meet Sai (SantumAI)",
     desc: "Create your account to start structured, confidential conversations.",
     btnLabel: "Try it for free",
   },

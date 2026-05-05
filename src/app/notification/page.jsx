@@ -9,14 +9,14 @@ export default function NotificationSetupPage() {
 
   return (
     <StepPageShell title="Notifications" contentClassName="overflow-y-auto">
-      <FeatureShowcaseCard
+      {/* <FeatureShowcaseCard
         badge="In-App Inbox"
-        title="Important updates appear automatically inside your Amigo inbox"
+        title="Important updates appear automatically inside your SantumAI inbox"
         description="Membership, credit, mood check-in, and account updates are shown in the in-app notifications feed when they matter most."
         imageSrc="/icons/robot-slider-img3.png"
         imageAlt="Notification inbox"
         className="mb-6"
-      />
+      /> */}
 
       <div className="theme-card rounded-[24px] border px-5 py-5">
         <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#00A84D]">

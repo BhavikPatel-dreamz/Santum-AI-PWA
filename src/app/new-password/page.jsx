@@ -53,14 +53,14 @@ export default function CreateNewPasswordPage() {
 
   return (
     <StepPageShell title="Create New Password" contentClassName="overflow-y-auto">
-      <FeatureShowcaseCard
+      {/* <FeatureShowcaseCard
         badge="Security Reset"
         title="Set a fresh password that feels easy to remember"
-        description="Finish account recovery with a new password for your Amigo account."
+        description="Finish account recovery with a new password for your SantumAI account."
         imageSrc="/icons/finger-print-img-green.png"
         imageAlt="Security reset"
         className="mb-6"
-      />
+      /> */}
 
       <div className="space-y-4">
         <PasswordField

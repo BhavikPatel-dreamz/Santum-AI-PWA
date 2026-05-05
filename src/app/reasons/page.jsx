@@ -27,22 +27,22 @@ export default function ReasonScreen() {
   const anyChecked = Object.values(checked).some(Boolean);
 
   return (
-    <StepPageShell title="Why Amigo?" contentClassName="overflow-y-auto">
-      <FeatureShowcaseCard
+    <StepPageShell title="Why SantumAI?" contentClassName="overflow-y-auto">
+      {/* <FeatureShowcaseCard
         badge="Personalization"
         title="Tell us what brought you here so support can feel more personal"
         description="Your choices help shape tone, starter prompts, and the kinds of emotional support we highlight first."
         imageSrc="/icons/robot-slider-img2.png"
         imageAlt="Onboarding personalization"
         className="mb-6"
-      />
+      /> */}
 
       <div className="mb-4">
         <h2 className="theme-text-primary text-[20px] font-semibold leading-7">
           Pick what matters most
         </h2>
         <p className="theme-text-secondary mt-1 font-satoshi text-[15px] leading-6">
-          This helps Amigo adapt your first conversations and suggested check-ins.
+          This helps SantumAI adapt your first conversations and suggested check-ins.
         </p>
       </div>
 

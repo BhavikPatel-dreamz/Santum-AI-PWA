@@ -67,14 +67,14 @@ export default function ConfirmOtpPage() {
 
   return (
     <StepPageShell title="Confirm OTP" contentClassName="overflow-y-auto">
-      <FeatureShowcaseCard
+      {/* <FeatureShowcaseCard
         badge="Verification"
         title="Enter the short code we just sent"
         description="Verify it is really you before we let you reset your password."
         imageSrc="/icons/robot-slider-img3.png"
         imageAlt="OTP confirmation"
         className="mb-6"
-      />
+      /> */}
 
       <p className="theme-text-secondary mb-6 text-center font-satoshi text-[16px] leading-6">
         The code was sent to{" "}

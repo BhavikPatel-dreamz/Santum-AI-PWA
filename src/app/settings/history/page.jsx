@@ -125,14 +125,14 @@ export default function ChatHistoryPage() {
 
   return (
     <StepPageShell title="History" contentClassName="overflow-y-auto">
-      <FeatureShowcaseCard
+      {/* <FeatureShowcaseCard
         badge="Conversation Memory"
         title="Return to any real conversation in seconds"
-        description="Your finished Amigo support conversations are saved automatically and can be reopened from this history screen."
+        description="Your finished SantumAI support conversations are saved automatically and can be reopened from this history screen."
         imageSrc="/icons/robot-slider-img2.png"
         imageAlt="Chat history preview"
         className="mb-6"
-      />
+      /> */}
 
       <div className="mb-6 grid grid-cols-3 gap-3">
         <div className="theme-card-muted rounded-[22px] border px-3 py-4 text-center">
@@ -197,7 +197,7 @@ export default function ChatHistoryPage() {
             No saved chats yet
           </h3>
           <p className="mt-2 font-satoshi text-[14px] leading-6 text-[#555]">
-            Start a support conversation with Amigo and it will appear here
+            Start a support conversation with SantumAI and it will appear here
             once the reply is finished and stored.
           </p>
         </div>
@@ -211,7 +211,7 @@ export default function ChatHistoryPage() {
               <div className="flex items-start justify-between gap-3">
                 <button
                   type="button"
-                  onClick={() => router.push(`/amigo-chat?chat=${chat._id}`)}
+                  onClick={() => router.push(`/santumai-chat?chat=${chat._id}`)}
                   className="min-w-0 flex-1 text-left"
                 >
                   <div className="flex flex-wrap items-center gap-2">
@@ -246,7 +246,7 @@ export default function ChatHistoryPage() {
       <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
         <button
           type="button"
-          onClick={() => router.push("/amigo-chat")}
+          onClick={() => router.push("/santumai-chat")}
           className="rounded-[14px] bg-[#00D061] px-5 py-4 text-[16px] font-semibold text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)]"
         >
           Start New Chat

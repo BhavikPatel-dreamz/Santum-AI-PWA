@@ -1,6 +1,6 @@
-# Amigo GPT PWA
+# SantumAI PWA
 
-Amigo GPT is a standalone Progressive Web App for text-based emotional wellbeing support. The app combines mood check-ins, saved conversations, account security, memberships, notifications, and a streaming AI chat experience.
+SantumAI is a standalone Progressive Web App for text-based emotional wellbeing support. The app combines mood check-ins, saved conversations, account security, memberships, notifications, and a streaming AI chat experience.
 
 ## Product Shape
 
@@ -29,6 +29,6 @@ Then open `http://localhost:3000`.
 
 ## Notes
 
-- The PWA keeps the current app name and route structure, including `/amigo-chat`
+- The primary chat route is `/santumai-chat`, and the legacy `/amigo-chat` path still works
 - Chat streaming is forwarded to the external AI service configured by `NEXT_PUBLIC_AI_API_URL`
 - Membership checkout completes on Santum.net and syncs back into the PWA

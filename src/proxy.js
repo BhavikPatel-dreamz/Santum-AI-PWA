@@ -13,6 +13,7 @@ const PROTECTED_PREFIXES = [
   "/finger-scan",
   "/notifications",
   "/amigo-chat",
+  "/santumai-chat",
   "/plus-subscription",
   "/settings",
 ];
@@ -51,6 +52,7 @@ export const config = {
     "/finger-scan",
     "/notifications",
     "/amigo-chat",
+    "/santumai-chat",
     "/plus-subscription",
     "/settings/:path*",
     "/sign-in",

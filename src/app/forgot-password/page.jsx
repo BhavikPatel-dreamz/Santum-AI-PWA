@@ -30,14 +30,14 @@ export default function ForgetPasswordPage() {
 
   return (
     <StepPageShell title="Reset Password" contentClassName="overflow-y-auto">
-      <FeatureShowcaseCard
+      {/* <FeatureShowcaseCard
         badge="Recovery"
         title="Choose the quickest way to recover your account"
         description="Masked recovery options help protect your account details while you reset access."
         imageSrc="/icons/robot-slider-img2.png"
         imageAlt="Recovery assistant"
         className="mb-6"
-      />
+      /> */}
 
       <div className="mb-4">
         <h2 className="theme-text-primary text-[20px] font-semibold leading-7">

@@ -62,11 +62,11 @@ export default function FingerPrintScan() {
       const createdCredential = await navigator.credentials.create({
         publicKey: {
           challenge: generateRandomChallenge(),
-          rp: { name: "Amigo App", id: window.location.hostname },
+          rp: { name: "SantumAI", id: window.location.hostname },
           user: {
             id: crypto.getRandomValues(new Uint8Array(16)),
-            name: "member@amigo.local",
-            displayName: "Amigo Member",
+            name: "member@santumai.local",
+            displayName: "SantumAI Member",
           },
           pubKeyCredParams: [{ type: "public-key", alg: -7 }],
           timeout: 60000,
@@ -200,7 +200,7 @@ export default function FingerPrintScan() {
             {/* ── Subtitle ── */}
             <div className="px-6 pb-2 pt-5 sm:px-8 lg:px-10">
               <p className="theme-text-secondary text-center font-satoshi text-[18px] leading-6">
-                Add biometric unlock so returning to Amigo feels secure and
+                Add biometric unlock so returning to SantumAI feels secure and
                 effortless.
               </p>
             </div>

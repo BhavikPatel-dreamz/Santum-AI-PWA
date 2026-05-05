@@ -17,7 +17,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Amigo App",
+  title: "SantumAI",
   description:
     "A standalone AI counselling PWA for text-based emotional wellbeing support.",
 };

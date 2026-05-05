@@ -4,7 +4,7 @@ export const SETTINGS_PAGE_CONTENT = {
     badge: "Membership Billing",
     heroTitle: "Keep your renewal methods organized and easy to review",
     description:
-      "Use this space to review the cards or accounts linked to Amigo memberships and chat-credit top-ups.",
+      "Use this space to review the cards or accounts linked to SantumAI memberships and chat-credit top-ups.",
     imageSrc: "/icons/plus-robort.png",
     imageAlt: "Billing methods",
     sections: [
@@ -56,7 +56,7 @@ export const SETTINGS_PAGE_CONTENT = {
   "payment-methods": {
     title: "Payment Preferences",
     badge: "Checkout Ready",
-    heroTitle: "Choose how Amigo should handle renewals and receipts",
+    heroTitle: "Choose how SantumAI should handle renewals and receipts",
     description:
       "These settings shape recurring membership charges, low-balance reminders, and receipt delivery.",
     imageSrc: "/icons/robot-slider-img3.png",
@@ -238,7 +238,7 @@ export const SETTINGS_PAGE_CONTENT = {
     badge: "Message Control",
     heroTitle: "Choose the updates that actually feel useful",
     description:
-      "Control which product, wellbeing, and membership messages you want to receive from Amigo.",
+      "Control which product, wellbeing, and membership messages you want to receive from SantumAI.",
     imageSrc: "/icons/robot-slider-img2.png",
     imageAlt: "Message preferences",
     sections: [
@@ -342,14 +342,14 @@ export const SETTINGS_PAGE_CONTENT = {
         type: "faq",
         items: [
           {
-            question: "Can I chat with Amigo without buying a plan?",
+            question: "Can I chat with SantumAI without buying a plan?",
             answer:
               "Yes. Access depends on your active plan and available chat credits, and the core experience can still work on the free tier when credits are available.",
           },
           {
-            question: "Is Amigo a replacement for therapy or emergency care?",
+            question: "Is SantumAI a replacement for therapy or emergency care?",
             answer:
-              "No. Amigo is designed for everyday emotional support and reflection, not emergency or crisis response. If you are in immediate danger or need urgent help, contact local emergency services or a licensed crisis resource right away.",
+              "No. SantumAI is designed for everyday emotional support and reflection, not emergency or crisis response. If you are in immediate danger or need urgent help, contact local emergency services or a licensed crisis resource right away.",
           },
           {
             question: "Will my chat history stay synced across devices?",
@@ -359,7 +359,7 @@ export const SETTINGS_PAGE_CONTENT = {
           {
             question: "How do mood check-ins affect replies?",
             answer:
-              "Mood check-ins help Amigo adapt tone, pacing, and encouragement so the conversation feels more appropriate for your day.",
+              "Mood check-ins help SantumAI adapt tone, pacing, and encouragement so the conversation feels more appropriate for your day.",
           },
         ],
       },
@@ -388,7 +388,7 @@ export const SETTINGS_PAGE_CONTENT = {
     sections: [
       {
         type: "text",
-        title: "How Amigo Handles Data",
+        title: "How SantumAI Handles Data",
         items: [
           {
             heading: "Profile basics",
@@ -400,7 +400,7 @@ export const SETTINGS_PAGE_CONTENT = {
           },
           {
             heading: "Mood check-ins",
-            body: "Daily mood scores help Amigo adjust tone, pacing, and support style before a conversation starts.",
+            body: "Daily mood scores help SantumAI adjust tone, pacing, and support style before a conversation starts.",
           },
         ],
       },
@@ -432,14 +432,14 @@ export const SETTINGS_PAGE_CONTENT = {
       { label: "Back To Settings", href: "/home", variant: "secondary" },
     ],
   },
-  "about-amigo": {
-    title: "About Amigo GPT",
+  "about-santumai": {
+    title: "About SantumAI",
     badge: "Product Story",
     heroTitle: "A calmer AI companion for text-based emotional wellbeing support",
     description:
-      "Amigo is designed to offer supportive conversation, gentle reflection, and a more human-feeling daily check-in flow.",
+      "SantumAI is designed to offer supportive conversation, gentle reflection, and a more human-feeling daily check-in flow.",
     imageSrc: "/icons/logo.png",
-    imageAlt: "Amigo logo",
+    imageAlt: "SantumAI logo",
     sections: [
       {
         type: "stats",
@@ -452,7 +452,7 @@ export const SETTINGS_PAGE_CONTENT = {
       },
       {
         type: "steps",
-        title: "What Amigo Is Designed To Do",
+        title: "What SantumAI Is Designed To Do",
         items: [
           "Offer gentle text-based support for everyday emotional wellbeing.",
           "Use mood check-ins to adapt tone before a conversation begins.",
@@ -579,7 +579,7 @@ export const SETTINGS_PAGE_CONTENT = {
       {
         type: "referral",
         title: "Your Invite Code",
-        code: "AMIGO-2026",
+        code: "SANTUMAI-2026",
         reward:
           "Give friends 14 days of guided support features and unlock bonus reflections for yourself.",
       },
@@ -596,7 +596,7 @@ export const SETTINGS_PAGE_CONTENT = {
     footerActions: [
       {
         label: "Copy Invite Code",
-        copyText: "AMIGO-2026",
+        copyText: "SANTUMAI-2026",
         toast: "Invite code copied.",
         variant: "primary",
       },

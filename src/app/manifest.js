@@ -1,7 +1,7 @@
 export default function manifest() {
   return {
-    name: "AmigoGPT",
-    short_name: "AmigoGPT",
+    name: "SantumAI",
+    short_name: "SantumAI",
     description:
       "A standalone AI counselling PWA for text-based emotional wellbeing support.",
     start_url: "/",

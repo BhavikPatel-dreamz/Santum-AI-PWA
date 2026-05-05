@@ -325,7 +325,7 @@ export default function PersonalInformationPage() {
       title={isOnboarding ? "Complete Profile" : "My Profile"}
       contentClassName="overflow-y-auto pb-24"
     >
-      <FeatureShowcaseCard
+      {/* <FeatureShowcaseCard
         badge={isOnboarding ? "Welcome" : "Account"}
         title={
           isOnboarding
@@ -341,7 +341,7 @@ export default function PersonalInformationPage() {
         imageAlt="Profile overview"
         className="mb-6"
         compact
-      />
+      /> */}
 
       <div className="theme-card mb-6 rounded-[26px] border px-5 py-5">
         <div className="flex items-center gap-4">

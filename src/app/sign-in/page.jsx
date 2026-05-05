@@ -60,7 +60,7 @@ export default function SignInPage() {
               placeholder="Your Email Address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="theme-input-field flex-1 text-[16px] outline-none"
+              className="theme-input-field min-w-0 flex-1 text-[16px] outline-none"
             />
           </div>
 
@@ -72,13 +72,14 @@ export default function SignInPage() {
               placeholder="Your Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="theme-input-field flex-1 text-[16px] outline-none"
+              className="theme-input-field min-w-0 flex-1 text-[16px] outline-none"
             />
 
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="theme-text-secondary"
+              className="theme-text-secondary shrink-0 p-1"
+              aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>

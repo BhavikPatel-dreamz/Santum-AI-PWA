@@ -107,7 +107,7 @@ export default function SignUpPage() {
               placeholder="Your Email Address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="theme-input-field flex-1 text-[16px] outline-none"
+              className="theme-input-field min-w-0 flex-1 text-[16px] outline-none"
             />
           </div>
 
@@ -119,13 +119,14 @@ export default function SignUpPage() {
               placeholder="Your Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="theme-input-field flex-1 text-[16px] outline-none"
+              className="theme-input-field min-w-0 flex-1 text-[16px] outline-none"
             />
 
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="theme-text-secondary"
+              className="theme-text-secondary shrink-0 p-1"
+              aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
@@ -140,13 +141,16 @@ export default function SignUpPage() {
               placeholder="Confirm Password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="theme-input-field flex-1 text-[16px] outline-none"
+              className="theme-input-field min-w-0 flex-1 text-[16px] outline-none"
             />
 
             <button
               type="button"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="theme-text-secondary"
+              className="theme-text-secondary shrink-0 p-1"
+              aria-label={
+                showConfirmPassword ? "Hide confirm password" : "Show confirm password"
+              }
             >
               {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>

@@ -39,7 +39,7 @@ export default function LoadingScreen({ onDone }) {
         >
           <Image
             src="/icons/logo.png"
-            alt="Amigo GPT"
+            alt="SantumAI"
             fill
             sizes="112px"
             className="object-contain"
@@ -49,7 +49,7 @@ export default function LoadingScreen({ onDone }) {
         </div>
 
         <h1 className="theme-text-primary text-5xl font-bold leading-[60px] pt-4 pb-2 font-[Poppins]">
-          Amigo GPT
+          SantumAI
         </h1>
         <p className="theme-text-secondary text-lg font-medium leading-6 font-[Poppins]">
           Calm support for everyday emotional wellbeing

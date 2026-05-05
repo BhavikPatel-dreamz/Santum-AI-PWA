@@ -44,7 +44,7 @@ const GreenSection = ({ show = true }) => {
           <div className="flex items-center justify-center">
             <Image
               src="/icons/logo.png"
-              alt="Amigo logo"
+              alt="SantumAI logo"
               width={120}
               height={120}
               priority

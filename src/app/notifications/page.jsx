@@ -172,14 +172,14 @@ export default function NotificationsPage() {
 
   return (
     <StepPageShell title="Notifications" contentClassName="overflow-y-auto">
-      <FeatureShowcaseCard
+      {/* <FeatureShowcaseCard
         badge="Inbox"
         title="Every important update, all in one calm feed"
         description="Your inbox now stores real in-app events from memberships, tokens, mood check-ins, and profile activity."
         imageSrc="/icons/robot-slider-img2.png"
         imageAlt="Notification inbox"
         className="mb-6"
-      />
+      /> */}
 
       <div className="mb-6 grid grid-cols-3 gap-3">
         <div className="theme-card-muted rounded-[22px] border px-3 py-4 text-center">

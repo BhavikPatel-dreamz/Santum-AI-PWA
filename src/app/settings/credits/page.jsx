@@ -70,15 +70,15 @@ export default function CreditsSettingsPage() {
 
   return (
     <StepPageShell title="Credits" contentClassName="overflow-y-auto">
-      <FeatureShowcaseCard
+      {/* <FeatureShowcaseCard
         badge="Live Balance"
-        title="Track the balance behind your Amigo support chats"
-        description="Credits are read from the authenticated account API and used automatically whenever you chat with Amigo."
+        title="Track the balance behind your SantumAI support chats"
+        description="Credits are read from the authenticated account API and used automatically whenever you chat with SantumAI."
         imageSrc="/icons/plus-robort.png"
         imageAlt="Credit balance illustration"
         className="mb-6"
         compact
-      />
+      /> */}
 
       <div className="rounded-[28px] bg-[#0F0F0F] px-5 py-5 text-white">
         <div className="flex items-start justify-between gap-4">
@@ -157,7 +157,7 @@ export default function CreditsSettingsPage() {
             Chat spends credits automatically
           </h3>
           <p className="mt-3 font-satoshi text-[15px] leading-6 text-[#555]">
-            Before a reply starts, Amigo reads your current balance. After the
+            Before a reply starts, SantumAI reads your current balance. After the
             AI reply finishes, the app deducts usage from the token data
             returned by the AI service.
           </p>
@@ -170,7 +170,7 @@ export default function CreditsSettingsPage() {
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <button
             type="button"
-            onClick={() => router.push("/amigo-chat")}
+            onClick={() => router.push("/santumai-chat")}
             className="rounded-[14px] bg-[#00D061] px-5 py-4 text-[16px] font-semibold text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)]"
           >
             Open Chat

@@ -488,14 +488,14 @@ export default function SettingsDetailPage({ content }) {
 
   return (
     <StepPageShell title={content.title} contentClassName="overflow-y-auto">
-      <FeatureShowcaseCard
+      {/* <FeatureShowcaseCard
         badge={content.badge}
         title={content.heroTitle}
         description={content.description}
         imageSrc={content.imageSrc}
         imageAlt={content.imageAlt}
         className="mb-6"
-      />
+      /> */}
 
       {content.sections.map((section, sectionIndex) =>
         renderSection(section, sectionIndex),

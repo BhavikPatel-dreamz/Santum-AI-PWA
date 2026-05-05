@@ -9,6 +9,10 @@ export default async function SettingsSlugPage({ params }) {
     redirect("/notifications");
   }
 
+  if (slug === "about-amigo") {
+    redirect("/settings/about-santumai");
+  }
+
   const content = SETTINGS_PAGE_CONTENT[slug];
 
   if (!content) {

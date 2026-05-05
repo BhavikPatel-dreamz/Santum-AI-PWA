@@ -32,7 +32,7 @@ const PLANS = [
     name: "Free Membership",
     billing_amount: 0,
     description:
-      "A supportive everyday chat space with the core Amigo wellbeing experience.",
+      "A supportive everyday chat space with the core SantumAI wellbeing experience.",
     features: [
       "Text-based support chats",
       "Daily mood check-ins",
@@ -532,7 +532,7 @@ export default function PlusSubscriptionPage() {
 
   async function handlePrimaryAction() {
     if (purchaseSummary || isSelectedPlanActive) {
-      router.push("/amigo-chat");
+      router.push("/santumai-chat");
       return;
     }
 
@@ -596,8 +596,8 @@ export default function PlusSubscriptionPage() {
       isPlansLoading);
 
   return (
-    <StepPageShell title="Amigo GPT Plus" contentClassName="overflow-y-auto">
-      <FeatureShowcaseCard
+    <StepPageShell title="SantumAI Plus" contentClassName="overflow-y-auto">
+      {/* <FeatureShowcaseCard
         badge="Upgrade"
         title="Choose your plan here, then finish membership on Santum.net"
         description="This PWA shows live plans and redirects to the Santum checkout URL. When you come back, membership status and token limits refresh automatically."
@@ -605,7 +605,7 @@ export default function PlusSubscriptionPage() {
         imageAlt="Subscription robot"
         className="mb-6"
         compact
-      />
+      /> */}
 
       <div
         className={`mb-6 rounded-[24px] px-5 py-5 ${getBenefitsPanelClasses(

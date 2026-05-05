@@ -450,7 +450,7 @@ const MENU_ITEMS = [
   //   ),
   // },
   {
-    label: "About Amigo GPT",
+    label: "About SantumAI",
     hint: "v2.0.2",
     danger: false,
     icon: (
@@ -598,7 +598,7 @@ const MENU_ITEMS = [
 ];
 
 const MENU_ROUTES = {
-  // "New Chat": "/amigo-chat",
+  // "New Chat": "/santumai-chat",
   History: "/settings/history",
   // "Banks & Cards": "/settings/banks-cards",
   // "Payment Methods": "/settings/payment-methods",
@@ -611,7 +611,7 @@ const MENU_ROUTES = {
   // Currency: "/settings/currency",
   FAQs: "/settings/faqs",
   // "Data & Privacy Policy": "/settings/privacy-policy",
-  "About Amigo GPT": "/settings/about-amigo",
+  "About SantumAI": "/settings/about-santumai",
   // "Send Feedback": "/settings/send-feedback",
   "Contact Us": "/settings/contact-us",
   // "Invite Friends": "/settings/invite-friends",
@@ -877,14 +877,14 @@ export default function HomeScreen() {
       return;
     }
 
-    router.push("/amigo-chat");
+    router.push("/santumai-chat");
   };
 
   const navigateTo = (href) => {
     setDrawerOpen(false);
     setLogoutOpen(false);
 
-    if (href === "/amigo-chat") {
+    if (href === "/santumai-chat") {
       handleOpenChat();
       return;
     }
@@ -902,7 +902,7 @@ export default function HomeScreen() {
     ? "hover:bg-[#35191d] active:bg-[#431f24]"
     : "hover:bg-red-50 active:bg-red-100";
 
-  const displayName = getProfileFullName(profile) || "Amigo member";
+  const displayName = getProfileFullName(profile) || "SantumAI member";
   const firstName = getProfileFirstName(profile) || "Friend";
   const emailAddress = getProfileEmail(profile);
   const contactLine =
@@ -939,7 +939,7 @@ export default function HomeScreen() {
                 unoptimized
               />
               <h1 className="text-white text-[18px] font-medium leading-[24px]">
-                Amigo GPT
+                SantumAI
               </h1>
             </div>
             <div className="flex items-center gap-3">
@@ -984,7 +984,7 @@ export default function HomeScreen() {
               </span>
             </h2>
             <h3 className="mt-3 text-[18px] font-semibold leading-6 text-white sm:text-[20px] lg:text-[22px]">
-              Let&apos;s check in with Amigo.
+              Let&apos;s check in with SantumAI.
             </h3>
             <p className="mb-3 mt-2 pb-3 font-satoshi text-[16px] font-medium leading-[24px] text-white sm:text-[17px] lg:max-w-[640px] lg:text-[18px] lg:leading-[28px]">
               Start a supportive conversation whenever you need space to
@@ -1000,7 +1000,7 @@ export default function HomeScreen() {
             <div className="flex flex-col justify-between p-4 sm:p-5 lg:p-6">
               <div>
                 <h4 className="text-[#0F0F0F] text-[22px] font-semibold leading-[30px]">
-                  Amigo GPT Plus
+                  SantumAI Plus
                 </h4>
                 <p className="mt-1 max-w-[320px] text-[14px] font-medium leading-6 text-[#555] lg:text-[15px]">
                   Unlock deeper support features, faster replies, and more
@@ -1016,7 +1016,7 @@ export default function HomeScreen() {
               </button>
             </div>
             {/* Robot placeholder */}
-            <div className="flex h-[140px] w-full items-end justify-end bg-[#00D061]/50 px-4 pt-4 sm:h-auto sm:w-[160px] sm:rounded-r-[20px] sm:px-0 lg:w-[220px]">
+            {/* <div className="flex h-[140px] w-full items-end justify-end bg-[#00D061]/50 px-4 pt-4 sm:h-auto sm:w-[160px] sm:rounded-r-[20px] sm:px-0 lg:w-[220px]">
               <Image
                 src="/icons/plus-robort.png"
                 alt=""
@@ -1024,7 +1024,7 @@ export default function HomeScreen() {
                 height={96}
                 className="size-24 object-contain sm:size-28 lg:size-36"
               />
-            </div>
+            </div> */}
           </div>
 
           <div ref={moodCheckInRef} className="mb-5">

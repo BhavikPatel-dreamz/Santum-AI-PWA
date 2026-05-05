@@ -32,7 +32,7 @@ const QUICK_PROMPTS = [
 ];
 
 const CREDIT_LIMIT_MESSAGE =
-  "You have reached your chat credit limit. Purchase a plan to continue your support conversations with Amigo.";
+  "You have reached your chat credit limit. Purchase a plan to continue your support conversations with SantumAI.";
 const PURCHASE_PLAN_PATH = "/plus-subscription";
 const DEFAULT_PLAN_LEVEL = "free";
 const RECENT_MESSAGE_LIMIT = 10;
@@ -40,7 +40,7 @@ const STARTER_MESSAGES = [
   {
     id: "starter-assistant",
     role: "assistant",
-    text: "Hi, I'm Amigo. I'm here to support your emotional wellbeing with calm, text-based conversation.",
+    text: "Hi, I'm SantumAI. I'm here to support your emotional wellbeing with calm, text-based conversation.",
   },
 ];
 
@@ -118,7 +118,7 @@ function buildTempMessageId(prefix) {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-export default function AmigoChatPage() {
+export default function SantumAIChatPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
@@ -284,7 +284,7 @@ export default function AmigoChatPage() {
           throw { message: "Unable to initialize a new conversation" };
         }
 
-        router.replace(`/amigo-chat?chat=${nextChatId}`);
+        router.replace(`/santumai-chat?chat=${nextChatId}`);
         return nextChatId;
       })
       .finally(() => {
@@ -481,7 +481,7 @@ export default function AmigoChatPage() {
 
     if (!hasTodayMoodCheckIn) {
       toast.error(
-        "Complete today's mood check-in before starting a support chat with Amigo.",
+        "Complete today's mood check-in before starting a support chat with SantumAI.",
       );
       return;
     }
@@ -533,7 +533,7 @@ export default function AmigoChatPage() {
         }
 
         throw {
-          message: errorData?.message || "Unable to reach Amigo right now",
+          message: errorData?.message || "Unable to reach SantumAI right now",
           status: response.status,
           data: errorData,
         };
@@ -635,7 +635,7 @@ export default function AmigoChatPage() {
       }
 
       toast.error(
-        getClientErrorMessage(error, "Unable to connect to Amigo right now"),
+        getClientErrorMessage(error, "Unable to connect to SantumAI right now"),
       );
       setHasDraftMessages(true);
       setDraftMessages((currentMessages) => [
@@ -645,7 +645,7 @@ export default function AmigoChatPage() {
         {
           id: buildTempMessageId("assistant-error"),
           role: "assistant",
-          text: "Sorry, I'm having trouble connecting to Amigo right now. Please check your connection and try again in a moment.",
+          text: "Sorry, I'm having trouble connecting to SantumAI right now. Please check your connection and try again in a moment.",
         },
       ]);
     } finally {
@@ -656,20 +656,20 @@ export default function AmigoChatPage() {
 
   return (
     <StepPageShell
-      title="Chat With Amigo"
+      title="Chat With SantumAI"
       contentClassName="overflow-hidden pb-6"
     >
       <div className="flex h-full min-h-0 flex-col gap-5 lg:grid lg:grid-cols-[360px_minmax(0,1fr)] lg:gap-6">
         <div className="flex min-h-0 flex-col lg:overflow-y-auto lg:pr-1">
-          <FeatureShowcaseCard
+          {/* <FeatureShowcaseCard
             badge="Support Live"
             title="A calmer chat space for emotional support"
-            description="Amigo is here to listen, reflect, and help you process what you're feeling."
+            description="SantumAI is here to listen, reflect, and help you process what you're feeling."
             imageSrc="/icons/robot-slider-img3.png"
             imageAlt="Chat companion"
             className="mb-5"
             compact
-          />
+          /> */}
 
           <div className="theme-card-muted mb-4 rounded-[22px] border px-4 py-4">
             <div className="flex items-center justify-between gap-3">
@@ -690,7 +690,7 @@ export default function AmigoChatPage() {
               </div>
             </div>
             <p className="mt-3 font-satoshi text-[14px] leading-6 text-[#555]">
-              Amigo checks this balance before each support chat and stores each
+              SantumAI checks this balance before each support chat and stores each
               finished reply back into your conversation history.
             </p>
           </div>
@@ -743,7 +743,7 @@ export default function AmigoChatPage() {
               entry={null}
               isSaving={isSavingMoodCheckIn}
               onSubmit={handleSaveMoodCheckIn}
-              description="Before we start, take 10 seconds to share how today feels so Amigo can respond with steadier tone and more relevant support."
+              description="Before we start, take 10 seconds to share how today feels so SantumAI can respond with steadier tone and more relevant support."
               submitLabel="Save and unlock chat"
               showUpdateAction={false}
             />
@@ -844,7 +844,7 @@ export default function AmigoChatPage() {
                     ? "Complete today's mood check-in to unlock chat."
                     : isCreditDepleted
                       ? "Purchase a plan or refresh your balance to keep chatting."
-                      : "Tell Amigo what's on your mind..."
+                      : "Tell SantumAI what's on your mind..."
               }
               className="theme-input-surface w-full resize-none rounded-[18px] px-4 py-4 font-satoshi text-[15px] leading-6 outline-none disabled:cursor-not-allowed disabled:bg-[#F1F5F2] disabled:text-[#7E8A83]"
             />
@@ -854,10 +854,10 @@ export default function AmigoChatPage() {
                 {isMoodCheckInLoading
                   ? "Checking today's mood check-in before chat unlocks."
                   : !hasTodayMoodCheckIn
-                    ? "Share your mood first so Amigo can respond with better context."
+                    ? "Share your mood first so SantumAI can respond with better context."
                     : isCreditDepleted
-                      ? "Purchase a plan to continue Amigo support chats."
-                      : "Powered by Santum AI Counseling service."}
+                      ? "Purchase a plan to continue SantumAI support chats."
+                      : "Powered by SantumAI counseling service."}
               </p>
               <button
                 type="button"
