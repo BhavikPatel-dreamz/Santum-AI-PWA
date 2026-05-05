@@ -673,6 +673,92 @@ const DarkModeToggle = ({ dark, onToggle }) => (
   </button>
 );
 
+let hasTriggeredPushDemo = false;
+export async function subscribeUser() {
+  if (hasTriggeredPushDemo) return;
+  hasTriggeredPushDemo = true;
+
+  if (
+    typeof window === "undefined" ||
+    !("serviceWorker" in navigator) ||
+    !("PushManager" in window)
+  ) {
+    return;
+  }
+
+  const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+  if (!vapidPublicKey) {
+    console.error("Missing NEXT_PUBLIC_VAPID_PUBLIC_KEY");
+    return;
+  }
+
+  const permission =
+    Notification.permission === "granted"
+      ? "granted"
+      : await Notification.requestPermission();
+  if (permission !== "granted") return;
+
+  try {
+    const registration = await navigator.serviceWorker.ready;
+
+    const existingSubscription =
+      await registration.pushManager.getSubscription();
+
+    const subscription =
+      existingSubscription ??
+      (await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
+      }));
+    const subscriptionPayload = subscription.toJSON();
+
+    const subscribeResponse = await fetch("/api/subscribe", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(subscriptionPayload),
+    });
+    const subscribeResult = await subscribeResponse.json();
+
+    if (!subscribeResponse.ok) {
+      throw new Error(
+        subscribeResult?.error ?? "Failed to process push subscription",
+      );
+    }
+    // const notifyResponse = await fetch("/api/notify", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({
+    //     subscription: subscriptionPayload,
+    //     title: "Hello",
+    //     body: "Minimal web push working!",
+    //   }),
+    // });
+    // const notifyResult = await notifyResponse.json();
+
+    // if (!notifyResponse.ok) {
+    //   throw new Error(
+    //     notifyResult?.error ?? "Failed to send push notification",
+    //   );
+    // }
+  } catch (error) {
+    hasTriggeredPushDemo = false;
+    console.error("Push notification setup failed:", error);
+  }
+}
+
+// helper
+function urlBase64ToUint8Array(base64String) {
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+
+  const raw = atob(base64);
+  return Uint8Array.from([...raw].map((char) => char.charCodeAt(0)));
+}
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function HomeScreen() {
@@ -706,6 +792,10 @@ export default function HomeScreen() {
       : 0;
   const hasTodayMoodCheckIn =
     Boolean(todayMoodCheckIn) && todayMoodCheckIn?.dateKey === todayMoodDateKey;
+
+  useEffect(() => {
+    subscribeUser();
+  }, []);
 
   useEffect(() => {
     if (!profileError) {
@@ -897,7 +987,8 @@ export default function HomeScreen() {
               Let&apos;s check in with Amigo.
             </h3>
             <p className="mb-3 mt-2 pb-3 font-satoshi text-[16px] font-medium leading-[24px] text-white sm:text-[17px] lg:max-w-[640px] lg:text-[18px] lg:leading-[28px]">
-              Start a supportive conversation whenever you need space to reflect.
+              Start a supportive conversation whenever you need space to
+              reflect.
             </p>
           </div>
         </div>
@@ -912,7 +1003,8 @@ export default function HomeScreen() {
                   Amigo GPT Plus
                 </h4>
                 <p className="mt-1 max-w-[320px] text-[14px] font-medium leading-6 text-[#555] lg:text-[15px]">
-                  Unlock deeper support features, faster replies, and more conversation continuity.
+                  Unlock deeper support features, faster replies, and more
+                  conversation continuity.
                 </p>
               </div>
               <button
