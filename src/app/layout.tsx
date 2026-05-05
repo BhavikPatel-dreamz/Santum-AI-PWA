@@ -4,16 +4,78 @@ import { PageTransitionProvider } from "@/components/providers/PageTransitionPro
 import { ReduxProvider } from "@/components/providers/ReduxProvider";
 import { getThemeInitScript } from "@/lib/theme";
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import localFont from "next/font/local";
 import Script from "next/script";
 import { Suspense } from "react";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
 
-const poppins = Poppins({
-  variable: "--font-poppins-ui",
-  weight: ["400", "500", "600", "700"],
-  subsets: ["latin"],
+const segoeUi = localFont({
+  src: [
+    {
+      path: "../../public/Logo Source files 21-4/Font/segoeuil.ttf",
+      weight: "300",
+      style: "normal",
+    },
+    {
+      path: "../../public/Logo Source files 21-4/Font/seguili.ttf",
+      weight: "300",
+      style: "italic",
+    },
+    {
+      path: "../../public/Logo Source files 21-4/Font/segoeuisl.ttf",
+      weight: "350",
+      style: "normal",
+    },
+    {
+      path: "../../public/Logo Source files 21-4/Font/seguisli.ttf",
+      weight: "350",
+      style: "italic",
+    },
+    {
+      path: "../../public/Logo Source files 21-4/Font/segoeui.ttf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../../public/Logo Source files 21-4/Font/segoeuii.ttf",
+      weight: "400",
+      style: "italic",
+    },
+    {
+      path: "../../public/Logo Source files 21-4/Font/seguisb.ttf",
+      weight: "600",
+      style: "normal",
+    },
+    {
+      path: "../../public/Logo Source files 21-4/Font/seguisbi.ttf",
+      weight: "600",
+      style: "italic",
+    },
+    {
+      path: "../../public/Logo Source files 21-4/Font/segoeuib.ttf",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "../../public/Logo Source files 21-4/Font/segoeuiz.ttf",
+      weight: "700",
+      style: "italic",
+    },
+    {
+      path: "../../public/Logo Source files 21-4/Font/seguibl.ttf",
+      weight: "900",
+      style: "normal",
+    },
+    {
+      path: "../../public/Logo Source files 21-4/Font/seguibli.ttf",
+      weight: "900",
+      style: "italic",
+    },
+  ],
+  variable: "--font-segoe-ui",
+  display: "swap",
+  fallback: ["Segoe UI", "Arial", "sans-serif"],
 });
 
 export const metadata: Metadata = {
@@ -32,9 +94,9 @@ export default function RootLayout({
       lang="en"
       data-theme="light"
       suppressHydrationWarning
-      className={`${poppins.variable} h-full antialiased`}
+      className={`${segoeUi.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col font-poppins">
+      <body className="min-h-full flex flex-col font-sans">
         <Script id="theme-init" strategy="beforeInteractive">
           {getThemeInitScript()}
         </Script>

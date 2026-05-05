@@ -5,8 +5,8 @@ self.addEventListener("push", (event) => {
 
   const options = {
     body: data.body || "New notification",
-    icon: data.icon || "/icons/logo.png",
-    badge: data.badge || "/icons/logo.png",
+    icon: data.icon || "/Logo Source files 21-4/Icon/SVG/Artboard1.svg",
+    badge: data.badge || "/Logo Source files 21-4/Icon/SVG/Artboard1.svg",
     data: {
       url: data.url || "/",
     },

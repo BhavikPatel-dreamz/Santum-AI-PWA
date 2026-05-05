@@ -1,0 +1,275 @@
+%!Adobe-FontList 1.22
+%Locale:0x409
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:SegoeUI
+FamilyName:Segoe UI
+StyleName:Regular
+FullName:Segoe UI
+MenuName:Segoe UI
+StyleBits:0
+WritingScript:Roman
+OutlineFileName:D:\Works\Santum AI\Source files\Font\segoeui.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:955804
+FileModTime:1575709707
+WeightClass:400
+WidthClass:5
+AngleClass:0
+NameArray:0,Win,1,Segoe UI
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:SegoeUI-Bold
+FamilyName:Segoe UI
+StyleName:Bold
+FullName:Segoe UI Bold
+MenuName:Segoe UI
+StyleBits:2
+WritingScript:Roman
+OutlineFileName:D:\Works\Santum AI\Source files\Font\segoeuib.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:951724
+FileModTime:1575709707
+WeightClass:700
+WidthClass:5
+AngleClass:0
+NameArray:0,Win,1,Segoe UI
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:SegoeUI-Italic
+FamilyName:Segoe UI
+StyleName:Italic
+FullName:Segoe UI Italic
+MenuName:Segoe UI
+StyleBits:1
+WritingScript:Roman
+OutlineFileName:D:\Works\Santum AI\Source files\Font\segoeuii.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:529712
+FileModTime:1575709707
+WeightClass:400
+WidthClass:5
+AngleClass:1
+NameArray:0,Win,1,Segoe UI
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:SegoeUI-Light
+FamilyName:Segoe UI
+StyleName:Light
+FullName:Segoe UI Light
+MenuName:Segoe UI Light
+StyleBits:0
+WritingScript:Roman
+OutlineFileName:D:\Works\Santum AI\Source files\Font\segoeuil.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:913712
+FileModTime:1575709707
+WeightClass:300
+WidthClass:5
+AngleClass:0
+NameArray:0,Win,1,Segoe UI Light
+NameArray:0,Win,16,Segoe UI
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:SegoeUI-Semilight
+FamilyName:Segoe UI
+StyleName:Semilight
+FullName:Segoe UI Semilight
+MenuName:Segoe UI Semilight
+StyleBits:0
+WritingScript:Roman
+OutlineFileName:D:\Works\Santum AI\Source files\Font\segoeuisl.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:854140
+FileModTime:1575709707
+WeightClass:350
+WidthClass:5
+AngleClass:0
+NameArray:0,Win,1,Segoe UI Semilight
+NameArray:0,Win,16,Segoe UI
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:SegoeUI-BoldItalic
+FamilyName:Segoe UI
+StyleName:Bold Italic
+FullName:Segoe UI Bold Italic
+MenuName:Segoe UI
+StyleBits:3
+WritingScript:Roman
+OutlineFileName:D:\Works\Santum AI\Source files\Font\segoeuiz.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:541468
+FileModTime:1575709707
+WeightClass:700
+WidthClass:5
+AngleClass:1
+NameArray:0,Win,1,Segoe UI
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:SegoeUIBlack
+FamilyName:Segoe UI
+StyleName:Black
+FullName:Segoe UI Black
+MenuName:Segoe UI Black
+StyleBits:0
+WritingScript:Roman
+OutlineFileName:D:\Works\Santum AI\Source files\Font\seguibl.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:324260
+FileModTime:1575709707
+WeightClass:900
+WidthClass:5
+AngleClass:0
+NameArray:0,Win,1,Segoe UI Black
+NameArray:0,Win,16,Segoe UI
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:SegoeUIBlack-Italic
+FamilyName:Segoe UI
+StyleName:Black Italic
+FullName:Segoe UI Black Italic
+MenuName:Segoe UI Black
+StyleBits:1
+WritingScript:Roman
+OutlineFileName:D:\Works\Santum AI\Source files\Font\seguibli.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:356008
+FileModTime:1575709717
+WeightClass:900
+WidthClass:5
+AngleClass:1
+NameArray:0,Win,1,Segoe UI Black
+NameArray:0,Win,16,Segoe UI
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:SegoeUI-LightItalic
+FamilyName:Segoe UI
+StyleName:Light Italic
+FullName:Segoe UI Light Italic
+MenuName:Segoe UI Light
+StyleBits:1
+WritingScript:Roman
+OutlineFileName:D:\Works\Santum AI\Source files\Font\seguili.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:459940
+FileModTime:1575709717
+WeightClass:300
+WidthClass:5
+AngleClass:1
+NameArray:0,Win,1,Segoe UI Light
+NameArray:0,Win,16,Segoe UI
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:SegoeUI-Semibold
+FamilyName:Segoe UI
+StyleName:Semibold
+FullName:Segoe UI Semibold
+MenuName:Segoe UI Semibold
+StyleBits:0
+WritingScript:Roman
+OutlineFileName:D:\Works\Santum AI\Source files\Font\seguisb.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:971080
+FileModTime:1575709707
+WeightClass:600
+WidthClass:5
+AngleClass:0
+NameArray:0,Win,1,Segoe UI Semibold
+NameArray:0,Win,16,Segoe UI
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:SegoeUI-SemiboldItalic
+FamilyName:Segoe UI
+StyleName:Semibold Italic
+FullName:Segoe UI Semibold Italic
+MenuName:Segoe UI Semibold
+StyleBits:1
+WritingScript:Roman
+OutlineFileName:D:\Works\Santum AI\Source files\Font\seguisbi.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:457892
+FileModTime:1575709717
+WeightClass:600
+WidthClass:5
+AngleClass:1
+NameArray:0,Win,1,Segoe UI Semibold
+NameArray:0,Win,16,Segoe UI
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:SegoeUI-SemilightItalic
+FamilyName:Segoe UI
+StyleName:Semilight Italic
+FullName:Segoe UI Semilight Italic
+MenuName:Segoe UI Semilight
+StyleBits:1
+WritingScript:Roman
+OutlineFileName:D:\Works\Santum AI\Source files\Font\seguisli.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:467180
+FileModTime:1575709717
+WeightClass:350
+WidthClass:5
+AngleClass:1
+NameArray:0,Win,1,Segoe UI Semilight
+NameArray:0,Win,16,Segoe UI
+%EndFont
+

@@ -337,7 +337,7 @@ export default function PersonalInformationPage() {
             ? "Basic details, language, and interests now live in one place instead of three separate steps."
             : "This profile module loads your saved data first, then lets you update the fields the current API supports."
         }
-        imageSrc="/icons/logo.png"
+        imageSrc="/Logo Source files 21-4/Icon/SVG/Artboard1.svg"
         imageAlt="Profile overview"
         className="mb-6"
         compact

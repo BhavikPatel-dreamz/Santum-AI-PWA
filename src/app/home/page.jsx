@@ -931,7 +931,7 @@ export default function HomeScreen() {
             <div className="flex items-center gap-3">
               {/* Logo placeholder */}
               <Image
-                src="/icons/logo.png"
+                src="/Logo Source files 21-4/Icon/SVG/Artboard1.svg"
                 alt=""
                 width={36}
                 height={36}

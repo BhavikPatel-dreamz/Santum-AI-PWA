@@ -12,22 +12,22 @@ const AUTO_SLIDE_INTERVAL = 4000;
 const ANIM_DURATION = 320;
 const ONBOARDING_SLIDES = [
   {
-    darkImage: "/icons/artboard-3.png",
-    lightImage: "/icons/artboard-2.jpg",
+    darkImage: "/Logo Source files 21-4/Logo/SVG/Artboard3.svg",
+    lightImage: "/Logo Source files 21-4/Logo/SVG/Artboard2.svg",
     title: "Welcome to SantumAI, your calm space to talk",
     desc: "A private companion for self-reflection and psychological support, try it at your own pace",
     btnLabel: "Try it for free",
   },
   {
-    darkImage: "/icons/artboard-3.png",
-    lightImage: "/icons/artboard-2.jpg",
+    darkImage: "/Logo Source files 21-4/Logo/SVG/Artboard3.svg",
+    lightImage: "/Logo Source files 21-4/Logo/SVG/Artboard2.svg",
     title: "Advanced assistance, when you need it",
     desc: "Whether it's stress, anxiety, or just a heavy day... this is your space to talk",
     btnLabel: "Try it for free",
   },
   {
-    darkImage: "/icons/artboard-3.png",
-    lightImage: "/icons/artboard-2.jpg",
+    darkImage: "/Logo Source files 21-4/Logo/SVG/Artboard3.svg",
+    lightImage: "/Logo Source files 21-4/Logo/SVG/Artboard2.svg",
     title: "Get started and meet Sai (SantumAI)",
     desc: "Create your account to start structured, confidential conversations.",
     btnLabel: "Try it for free",

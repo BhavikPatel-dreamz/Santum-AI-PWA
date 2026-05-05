@@ -438,7 +438,7 @@ export const SETTINGS_PAGE_CONTENT = {
     heroTitle: "A calmer AI companion for text-based emotional wellbeing support",
     description:
       "SantumAI is designed to offer supportive conversation, gentle reflection, and a more human-feeling daily check-in flow.",
-    imageSrc: "/icons/logo.png",
+    imageSrc: "/Logo Source files 21-4/Icon/SVG/Artboard1.svg",
     imageAlt: "SantumAI logo",
     sections: [
       {

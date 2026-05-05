@@ -19,8 +19,8 @@ const config: Config = {
         "logo-pulse": "pulse 2s ease-in-out infinite",
       },
       fontFamily: {
-        poppins: ["Poppins", "sans-serif"],
-        satoshi: ["Satoshi", "sans-serif"],
+        poppins: ["var(--font-segoe-ui)", "Segoe UI", "Arial", "sans-serif"],
+        satoshi: ["var(--font-segoe-ui)", "Segoe UI", "Arial", "sans-serif"],
       },
     },
   },

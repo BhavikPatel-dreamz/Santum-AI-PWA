@@ -43,7 +43,7 @@ const GreenSection = ({ show = true }) => {
         <div className="theme-surface absolute top-20 z-10 flex h-[120px] w-[120px] items-center justify-center rounded-[24px] border border-white/15 shadow-[0_18px_42px_rgba(0,0,0,0.14)] transition-colors duration-300 sm:top-24 sm:h-[136px] sm:w-[136px] lg:top-28 lg:h-[152px] lg:w-[152px]">
           <div className="flex items-center justify-center">
             <Image
-              src="/icons/logo.png"
+              src="/Logo Source files 21-4/Icon/SVG/Artboard1.svg"
               alt="SantumAI logo"
               width={120}
               height={120}

@@ -38,7 +38,7 @@ export default function LoadingScreen({ onDone }) {
           style={{ animation: "logoPulse 2s ease-in-out infinite" }}
         >
           <Image
-            src="/icons/logo.png"
+            src="/Logo Source files 21-4/Icon/SVG/Artboard1.svg"
             alt="SantumAI"
             fill
             sizes="112px"
@@ -48,10 +48,10 @@ export default function LoadingScreen({ onDone }) {
           />
         </div>
 
-        <h1 className="theme-text-primary text-5xl font-bold leading-[60px] pt-4 pb-2 font-[Poppins]">
+        <h1 className="theme-text-primary text-5xl font-bold leading-[60px] pt-4 pb-2 font-poppins">
           SantumAI
         </h1>
-        <p className="theme-text-secondary text-lg font-medium leading-6 font-[Poppins]">
+        <p className="theme-text-secondary text-lg font-medium leading-6 font-poppins">
           Calm support for everyday emotional wellbeing
         </p>
       </div>

@@ -45,7 +45,7 @@ export async function POST(req) {
       JSON.stringify({
         title: body?.title ?? "Hello",
         body: body?.body ?? "Minimal web push working!",
-        icon: "/icons/logo.png",
+        icon: "/Logo Source files 21-4/Icon/SVG/Artboard1.svg",
       }),
       {
         TTL: 60,

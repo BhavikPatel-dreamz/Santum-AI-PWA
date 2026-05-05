@@ -1,15 +1,5 @@
 @import "tailwindcss";
 
-@font-face {
-  font-family: "Satoshi";
-  src:
-    url("/font/Satoshi-Medium.woff2") format("woff2"),
-    url("/font/Satoshi-Medium.woff") format("woff");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -37,9 +27,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-poppins-ui);
-  --font-poppins: var(--font-poppins-ui);
-  --font-satoshi: "Satoshi", sans-serif;
+  --font-sans: var(--font-segoe-ui), "Segoe UI", Arial, sans-serif;
+  --font-poppins: var(--font-segoe-ui), "Segoe UI", Arial, sans-serif;
+  --font-satoshi: var(--font-segoe-ui), "Segoe UI", Arial, sans-serif;
 }
 
 html[data-theme="dark"] {
