@@ -82,6 +82,9 @@ export const metadata: Metadata = {
   title: "SantumAI",
   description:
     "A standalone AI counselling PWA for text-based emotional wellbeing support.",
+  icons: {
+    icon: "/Logo Source files 21-4/Icon/SVG/Artboard1.svg",
+  },
 };
 
 export default function RootLayout({

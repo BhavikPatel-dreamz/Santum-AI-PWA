@@ -315,7 +315,7 @@ export async function createNotificationForUser({
         },
       },
       {
-        new: true,
+        returnDocument: 'after',
         upsert: true,
         setDefaultsOnInsert: true,
       },
@@ -389,7 +389,7 @@ export async function markNotificationAsRead({ notificationId, user }) {
       },
     },
     {
-      new: true,
+      returnDocument: 'after',
     },
   ).lean();
 
@@ -423,7 +423,7 @@ export async function syncBillingNotifications({ snapshot, user }) {
       },
     },
     {
-      new: true,
+      returnDocument: 'after',
       upsert: true,
       setDefaultsOnInsert: true,
     },
