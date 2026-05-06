@@ -43,7 +43,7 @@ export async function PATCH(req, { params }) {
 
     const body = await req.json();
 
-    const chat = await Chat.findByIdAndUpdate(id, body, { new: true }).lean();
+    const chat = await Chat.findByIdAndUpdate(id, body, { returnDocument: 'after' }).lean();
 
     if (!chat) return createErrorResponse({ status: 404 }, "Chat not found");
 

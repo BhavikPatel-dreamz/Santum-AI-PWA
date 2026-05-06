@@ -95,7 +95,7 @@ export async function POST(request) {
         },
       },
       {
-        new: true,
+        returnDocument: 'after',
         upsert: true,
         setDefaultsOnInsert: true,
       },
