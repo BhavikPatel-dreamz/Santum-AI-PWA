@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
+import { registerPushServiceWorker } from "@/lib/push/client";
 
 const OnboardingSlide = dynamic(
   () => import("../components/onboarding/OnboardingSlide"),
@@ -54,12 +55,9 @@ export default function RootPage() {
   const autoSlideStopped = useRef(false);
 
   useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker
-        .register("/sw.js")
-        .then(() => console.log("SW registered"))
-        .catch((err) => console.log("SW error", err));
-    }
+    registerPushServiceWorker().catch((error) => {
+      console.log("SW error", error);
+    });
   }, []);
 
   useEffect(() => {

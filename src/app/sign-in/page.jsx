@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import { getClientErrorMessage } from "@/lib/api/error";
 import { useLoginMutation } from "@/lib/store";
 
-export const validateEmailAddress = (value) =>
+const validateEmailAddress = (value) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 
 export default function SignInPage() {

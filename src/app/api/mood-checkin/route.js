@@ -1,8 +1,7 @@
-import { after, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import { createErrorResponse } from "@/lib/api/server";
 import { resolveMoodUserKey } from "@/lib/mood/server";
-import { createNotificationForCurrentUser } from "@/lib/notifications/server";
 import { clearAuthCookie, getAuthToken } from "@/lib/auth/session";
 import { MoodCheckIn } from "@/models/mood-checkin.model";
 import {
@@ -100,29 +99,7 @@ export async function POST(request) {
         setDefaultsOnInsert: true,
       },
     ).lean();
-
-    after(async () => {
-      try {
-        await createNotificationForCurrentUser({
-          type: "mood_check_in_saved",
-          category: "wellness",
-          title: "Today's mood check-in is saved",
-          description:
-            "SantumAI can use your latest mood context to support future chats with better tone and pacing.",
-          actionHref: "/home",
-          actionLabel: "Open home",
-          priority: "low",
-          dedupeKey: `mood-check-in:${normalizedEntry.data.dateKey}`,
-          metadata: {
-            dateKey: normalizedEntry.data.dateKey,
-          },
-          subscription:body.subscription
-        });
-      } catch (notificationError) {
-        console.error("Unable to create mood notification:", notificationError);
-      }
-    });
-
+    
     return NextResponse.json({
       success: true,
       message: "Mood check-in saved successfully",

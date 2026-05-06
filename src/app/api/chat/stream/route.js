@@ -9,7 +9,6 @@ import {
   createErrorResponse,
 } from "../../../../lib/api/server";
 import { clearAuthCookie, getAuthToken } from "../../../../lib/auth/session";
-import { createNotificationForCurrentUser } from "../../../../lib/notifications/server";
 import {
   buildChatCreditReference,
   extractChatCreditDebit,
@@ -476,63 +475,8 @@ export async function POST(req) {
     let didPersistConversation = false;
     let assistantReply = "";
     let availableTokens = 0;
-    let remainingCreditBalance = null;
 
     after(async () => {
-      if (
-        Number.isFinite(remainingCreditBalance) &&
-        remainingCreditBalance <= 0 &&
-        availableTokens > 0
-      ) {
-        try {
-          await createNotificationForCurrentUser({
-            type: "credit_depleted",
-            category: "credits",
-            title: "Your tokens are used up",
-            description:
-              "You have used your remaining tokens. Renew or upgrade to continue support chats with SantumAI.",
-            actionHref: "/plus-subscription",
-            actionLabel: "View plans",
-            priority: "high",
-            metadata: {
-              remaining_balance: remainingCreditBalance,
-            },
-          });
-        } catch (notificationError) {
-          console.error(
-            "Unable to create depleted credit notification:",
-            notificationError,
-          );
-        }
-      } else if (
-        Number.isFinite(remainingCreditBalance) &&
-        remainingCreditBalance <= 25 &&
-        availableTokens > 25
-      ) {
-        try {
-          await createNotificationForCurrentUser({
-            type: "credit_low",
-            category: "credits",
-            title: "Token balance is getting low",
-            description: `You have about ${Math.max(
-              Math.floor(remainingCreditBalance),
-              0,
-            )} tokens left for chat replies.`,
-            actionHref: "/settings/credits",
-            actionLabel: "View credits",
-            priority: "normal",
-            metadata: {
-              remaining_balance: remainingCreditBalance,
-            },
-          });
-        } catch (notificationError) {
-          console.error(
-            "Unable to create low credit notification:",
-            notificationError,
-          );
-        }
-      }
-
       if (!didPersistConversation) {
         return;
       }
@@ -683,10 +627,6 @@ export async function POST(req) {
 
           const metadata = parseChatMetadata(metadataBuffer);
           const debitAmount = extractChatCreditDebit(metadata, availableTokens);
-          remainingCreditBalance = Number.isFinite(debitAmount)
-            ? Math.max(availableTokens - debitAmount, 0)
-            : null;
-
           try {
             await reduceCreditsAfterChat({
               amount: debitAmount,

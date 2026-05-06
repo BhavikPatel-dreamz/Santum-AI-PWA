@@ -6,11 +6,8 @@ import {
 } from "../../../../../lib/api/server";
 import { clearAuthCookie } from "../../../../../lib/auth/session";
 import { extractCreditBalance } from "../../../../../lib/utills/credit";
-import {
-  buildBillingSnapshot,
-  syncBillingNotifications,
-} from "../../../../../lib/notifications/server";
-import { normalizeProfilePayload, resolveUserKeyFromProfile } from "../../../../../lib/user/server";
+import { buildBillingSnapshot } from "../../../../../lib/notifications/server";
+import { normalizeProfilePayload } from "../../../../../lib/user/server";
 
 function extractPlans(payload) {
   if (Array.isArray(payload)) {
@@ -95,19 +92,6 @@ export async function GET() {
       plans,
       profile,
     });
-
-    try {
-      const userKey = resolveUserKeyFromProfile(profile);
-      await syncBillingNotifications({
-        user: userKey,
-        snapshot: billingSnapshot,
-      });
-    } catch (notificationError) {
-      console.error(
-        "Unable to sync billing notifications from subscription status:",
-        notificationError,
-      );
-    }
 
     return NextResponse.json({
       success: true,

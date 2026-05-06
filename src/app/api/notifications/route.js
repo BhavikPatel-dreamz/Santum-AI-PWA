@@ -3,9 +3,7 @@ import { createErrorResponse } from "@/lib/api/server";
 import { clearAuthCookie, getAuthToken } from "@/lib/auth/session";
 import {
   getNotificationFeedForUser,
-  loadCurrentBillingSnapshot,
   markAllNotificationsAsRead,
-  syncBillingNotifications,
 } from "@/lib/notifications/server";
 import {
   loadCurrentUserProfile,
@@ -41,22 +39,6 @@ export async function GET(request) {
 
     const profile = await loadCurrentUserProfile();
     const userKey = resolveUserKeyFromProfile(profile);
-
-    try {
-      const billingSnapshot = await loadCurrentBillingSnapshot({
-        profile,
-      });
-
-      await syncBillingNotifications({
-        user: userKey,
-        snapshot: billingSnapshot,
-      });
-    } catch (notificationError) {
-      console.error(
-        "Unable to refresh billing notifications while loading the inbox:",
-        notificationError,
-      );
-    }
 
     const { searchParams } = new URL(request.url);
     const feed = await getNotificationFeedForUser(userKey, {

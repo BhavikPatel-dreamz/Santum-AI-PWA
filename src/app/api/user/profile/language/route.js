@@ -1,11 +1,10 @@
-import { after, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import {
   apiFetchWithAuth,
   assertApiSuccess,
   createErrorResponse,
 } from "../../../../../lib/api/server";
 import { clearAuthCookie } from "../../../../../lib/auth/session";
-import { createNotificationForCurrentUser } from "../../../../../lib/notifications/server";
 
 export async function POST(req) {
   try {

@@ -32,7 +32,6 @@ type UpsertMoodCheckInPayload = {
   happiness: number;
   stress: number;
   energy: number;
-  subscription: any;
 };
 
 type CreateChatPayload = {
@@ -314,7 +313,7 @@ export const appApi = createApi({
       providesTags: (result, error, dateKey) => [{ type: "Mood", id: dateKey }],
     }),
     upsertMoodCheckIn: builder.mutation<ApiRecord, UpsertMoodCheckInPayload>({
-      query: ({ dateKey, happiness, stress, energy, subscription }) => ({
+      query: ({ dateKey, happiness, stress, energy }) => ({
         url: "/mood-checkin",
         method: "POST",
         body: {
@@ -322,7 +321,6 @@ export const appApi = createApi({
           happiness,
           stress,
           energy,
-          subscription,
         },
       }),
       transformResponse: (response: unknown) =>

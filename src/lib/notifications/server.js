@@ -8,7 +8,6 @@ import {
   loadCurrentUserProfile,
   resolveCurrentUserKey,
 } from "@/lib/user/server";
-import { useSelector } from "react-redux";
 
 const BILLING_NOTIFICATION_SCOPE = "billing";
 const DEFAULT_NOTIFICATION_LIMIT = 50;
@@ -288,7 +287,6 @@ export async function createNotificationForUser({
   title,
   type,
   user,
-  subscription = "",
 }) {
   if (!user || !type || !title || !description) {
     return null;
@@ -323,33 +321,10 @@ export async function createNotificationForUser({
         setDefaultsOnInsert: true,
       },
     ).lean();
-
-    await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/notify`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        subscription,
-        title: notification.title,
-        body: notification.description,
-      }),
-    });
     return serializeNotification(notification);
   }
 
   const notification = await Notification.create(payload);
-  await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/notify`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      subscription,
-      title: notification.title,
-      body: notification.description,
-    }),
-  });
   return serializeNotification(notification.toObject());
 }
 

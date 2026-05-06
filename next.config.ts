@@ -3,9 +3,10 @@ import withPWAInit from 'next-pwa';
 
 const withPWA = withPWAInit({
   dest: 'public',
-  register: true,
+  register: false,
   skipWaiting: true,
-  disable: process.env.NODE_ENV === 'development',
+  disable: false,
+  customWorkerDir: 'worker',
   runtimeCaching: [
     {
       urlPattern: /^https?.*/,
@@ -54,7 +55,6 @@ const withPWA = withPWAInit({
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  turbopack: {},
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

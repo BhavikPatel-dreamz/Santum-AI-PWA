@@ -23,8 +23,10 @@ import {
   getProfilePhone,
 } from "@/lib/utills/profile";
 import { useTheme } from "@/components/providers/ThemeProvider";
-import { useDispatch, useSelector } from "react-redux";
-import { setSubscription } from "../../lib/store/pushSlice";
+import {
+  registerPushServiceWorker,
+  subscribeCurrentBrowserToPush,
+} from "@/lib/push/client";
 
 const CollapseIcon = () => (
   <svg
@@ -675,83 +677,6 @@ const DarkModeToggle = ({ dark, onToggle }) => (
   </button>
 );
 
-let hasTriggeredPushDemo = false;
-export async function subscribeUser(dispatch) {
-  if (hasTriggeredPushDemo) return;
-  hasTriggeredPushDemo = true;
-
-  if (
-    typeof window === "undefined" ||
-    !("serviceWorker" in navigator) ||
-    !("PushManager" in window)
-  ) {
-    return;
-  }
-
-  const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-  if (!vapidPublicKey) {
-    console.error("Missing NEXT_PUBLIC_VAPID_PUBLIC_KEY");
-    return;
-  }
-
-  const permission =
-    Notification.permission === "granted"
-      ? "granted"
-      : await Notification.requestPermission();
-  if (permission !== "granted") return;
-
-  try {
-    const registration = await navigator.serviceWorker.ready;
-
-    let subscription = await registration.pushManager.getSubscription();
-
-    if (!subscription) {
-      subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
-      });
-      const subscribeResponse = await fetch("/api/subscribe", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(subscription),
-      });
-      const subscribeResult = await subscribeResponse.json();
-
-      if (!subscribeResponse.ok) {
-        throw new Error(
-          subscribeResult?.error ?? "Failed to process push subscription",
-        );
-      }
-      dispatch(setSubscription(subscription.toJSON()));
-      await fetch("/api/notify", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          subscription,
-          title: "Hello",
-          body: "Minimal web push working!",
-        }),
-      });
-    }
-  } catch (error) {
-    hasTriggeredPushDemo = false;
-    console.error("Push notification setup failed:", error);
-  }
-}
-
-// helper
-function urlBase64ToUint8Array(base64String) {
-  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
-
-  const raw = atob(base64);
-  return Uint8Array.from([...raw].map((char) => char.charCodeAt(0)));
-}
-
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function HomeScreen() {
@@ -786,12 +711,11 @@ export default function HomeScreen() {
   const hasTodayMoodCheckIn =
     Boolean(todayMoodCheckIn) && todayMoodCheckIn?.dateKey === todayMoodDateKey;
 
-  const dispatch = useDispatch();
   useEffect(() => {
-    subscribeUser(dispatch);
+    registerPushServiceWorker().catch((error) => {
+      console.error("Unable to register push service worker:", error);
+    });
   }, []);
-
-  const subscription = useSelector((state) => state.push.subscription);
   useEffect(() => {
     if (!profileError) {
       return;
@@ -848,7 +772,6 @@ export default function HomeScreen() {
         happiness: values.happiness,
         stress: values.stress,
         energy: values.energy,
-        subscription,
       }).unwrap();
       toast.success("Mood check-in saved for today");
     } catch (error) {
@@ -874,6 +797,16 @@ export default function HomeScreen() {
     }
 
     router.push("/santumai-chat");
+  };
+
+  const handleOpenNotifications = async () => {
+    try {
+      await subscribeCurrentBrowserToPush();
+    } catch (error) {
+      console.error("Unable to subscribe current browser for push:", error);
+    }
+
+    router.push("/notifications");
   };
 
   const navigateTo = (href) => {
@@ -943,7 +876,7 @@ export default function HomeScreen() {
               <button
                 type="button"
                 className="relative text-white"
-                onClick={() => router.push("/notifications")}
+                onClick={handleOpenNotifications}
               >
                 <Bell />
                 {unreadNotificationCount > 0 ? (

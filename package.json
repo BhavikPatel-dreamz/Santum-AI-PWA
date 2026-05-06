@@ -3,15 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "next dev --webpack",
+    "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "push:worker": "node scripts/push-worker.cjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@reduxjs/toolkit": "^2.11.2",
     "axios": "^1.14.0",
+    "bullmq": "^5.76.5",
+    "ioredis": "^5.10.1",
     "lucide-react": "^1.7.0",
     "mongoose": "^9.6.0",
     "next": "16.2.2",
