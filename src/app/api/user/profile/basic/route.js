@@ -31,30 +31,6 @@ export async function POST(req) {
       "Unable to save profile",
     );
 
-    after(async () => {
-      try {
-        await createNotificationForCurrentUser({
-          type: "profile_updated",
-          category: "account",
-          title: "Profile details updated",
-          description:
-            "Your basic profile details were saved successfully in the app.",
-          actionHref: "/personal-information",
-          actionLabel: "Open profile",
-          priority: "low",
-          metadata: {
-            first_name: body.firstName,
-            last_name: body.lastName,
-          },
-        });
-      } catch (notificationError) {
-        console.error(
-          "Unable to create profile update notification:",
-          notificationError,
-        );
-      }
-    });
-
     return NextResponse.json({
       success: true,
       message: data?.data?.message || data?.message || "Profile saved",

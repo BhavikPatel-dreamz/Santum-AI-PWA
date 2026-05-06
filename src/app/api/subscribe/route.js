@@ -20,7 +20,8 @@ export async function POST(req) {
       );
     }
 
-    // console.log("Received subscription:", subscription.endpoint);
+  //store it into db 
+  // console.log("Received subscription:", subscription.endpoint);
 
     return Response.json({ success: true, subscription });
   } catch (error) {

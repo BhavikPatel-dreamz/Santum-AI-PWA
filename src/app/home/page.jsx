@@ -23,6 +23,8 @@ import {
   getProfilePhone,
 } from "@/lib/utills/profile";
 import { useTheme } from "@/components/providers/ThemeProvider";
+import { useDispatch, useSelector } from "react-redux";
+import { setSubscription } from "../../lib/store/pushSlice";
 
 const CollapseIcon = () => (
   <svg
@@ -674,7 +676,7 @@ const DarkModeToggle = ({ dark, onToggle }) => (
 );
 
 let hasTriggeredPushDemo = false;
-export async function subscribeUser() {
+export async function subscribeUser(dispatch) {
   if (hasTriggeredPushDemo) return;
   hasTriggeredPushDemo = true;
 
@@ -701,49 +703,41 @@ export async function subscribeUser() {
   try {
     const registration = await navigator.serviceWorker.ready;
 
-    const existingSubscription =
-      await registration.pushManager.getSubscription();
+    let subscription = await registration.pushManager.getSubscription();
 
-    const subscription =
-      existingSubscription ??
-      (await registration.pushManager.subscribe({
+    if (!localStorage.getItem("push_subscribed")) {
+      subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
-      }));
-    const subscriptionPayload = subscription.toJSON();
+      });
+      const subscribeResponse = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(subscription),
+      });
+      const subscribeResult = await subscribeResponse.json();
 
-    const subscribeResponse = await fetch("/api/subscribe", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(subscriptionPayload),
-    });
-    const subscribeResult = await subscribeResponse.json();
-
-    if (!subscribeResponse.ok) {
-      throw new Error(
-        subscribeResult?.error ?? "Failed to process push subscription",
-      );
+      if (!subscribeResponse.ok) {
+        throw new Error(
+          subscribeResult?.error ?? "Failed to process push subscription",
+        );
+      }
+      localStorage.setItem("push_subscribed", true);
+      await fetch("/api/notify", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          subscription,
+          title: "Hello",
+          body: "Minimal web push working!",
+        }),
+      });
+      dispatch(setSubscription(subscription.toJSON()));
     }
-    // const notifyResponse = await fetch("/api/notify", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     subscription: subscriptionPayload,
-    //     title: "Hello",
-    //     body: "Minimal web push working!",
-    //   }),
-    // });
-    // const notifyResult = await notifyResponse.json();
-
-    // if (!notifyResponse.ok) {
-    //   throw new Error(
-    //     notifyResult?.error ?? "Failed to send push notification",
-    //   );
-    // }
   } catch (error) {
     hasTriggeredPushDemo = false;
     console.error("Push notification setup failed:", error);
@@ -793,10 +787,12 @@ export default function HomeScreen() {
   const hasTodayMoodCheckIn =
     Boolean(todayMoodCheckIn) && todayMoodCheckIn?.dateKey === todayMoodDateKey;
 
+  const dispatch = useDispatch();
   useEffect(() => {
-    subscribeUser();
+    subscribeUser(dispatch);
   }, []);
 
+  const subscription =  ((state) => state.push.subscription);
   useEffect(() => {
     if (!profileError) {
       return;

@@ -31,28 +31,6 @@ export async function POST(req) {
       "Unable to save interests",
     );
 
-    after(async () => {
-      try {
-        await createNotificationForCurrentUser({
-          type: "interests_updated",
-          category: "account",
-          title: "Interests updated",
-          description: `Your app interests were refreshed with ${body.interests.length} saved selections.`,
-          actionHref: "/personal-information",
-          actionLabel: "Review profile",
-          priority: "low",
-          metadata: {
-            interests: body.interests,
-          },
-        });
-      } catch (notificationError) {
-        console.error(
-          "Unable to create interests update notification:",
-          notificationError,
-        );
-      }
-    });
-
     return NextResponse.json({
       success: true,
       message: data?.data?.message || data?.message || "Interests saved",

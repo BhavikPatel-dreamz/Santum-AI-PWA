@@ -1,19 +1,14 @@
 import { connectDB } from "@/lib/db";
 import { Notification } from "@/models/notification.model";
 import { NotificationState } from "@/models/notification-state.model";
-import {
-  apiFetchWithAuth,
-  assertApiSuccess,
-} from "@/lib/api/server";
-import {
-  extractCreditBalance,
-  formatCreditAmount,
-} from "@/lib/utills/credit";
+import { apiFetchWithAuth, assertApiSuccess } from "@/lib/api/server";
+import { extractCreditBalance, formatCreditAmount } from "@/lib/utills/credit";
 import { buildSubscriptionSnapshot } from "@/lib/utills/subscription";
 import {
   loadCurrentUserProfile,
   resolveCurrentUserKey,
 } from "@/lib/user/server";
+import { useSelector } from "react-redux";
 
 const BILLING_NOTIFICATION_SCOPE = "billing";
 const DEFAULT_NOTIFICATION_LIMIT = 50;
@@ -73,7 +68,9 @@ function serializeNotification(notification) {
 function calculateNotificationStats(notifications) {
   const total = notifications.length;
   const unread = notifications.filter((item) => item.unread).length;
-  const priority = notifications.filter((item) => item.priority === "high").length;
+  const priority = notifications.filter(
+    (item) => item.priority === "high",
+  ).length;
 
   return {
     total,
@@ -165,7 +162,10 @@ function shouldCreateTokenReset(previousState, nextState) {
     ? Math.max(10, Math.floor(expectedPlanTokens * 0.25))
     : 20;
 
-  if (nextState.credit_balance - previousState.credit_balance < minimumIncrease) {
+  if (
+    nextState.credit_balance - previousState.credit_balance <
+    minimumIncrease
+  ) {
     return false;
   }
 
@@ -218,12 +218,14 @@ function buildBillingStateSnapshot(snapshot) {
   return {
     active_plan_id: normalizeTextValue(snapshot?.active_plan_id) || null,
     active_plan_name: normalizeTextValue(snapshot?.active_plan_name) || null,
-    active_plan_level: normalizeTextValue(snapshot?.active_plan_level) || "free",
+    active_plan_level:
+      normalizeTextValue(snapshot?.active_plan_level) || "free",
     active_plan_tokens: Number.isFinite(snapshot?.active_plan_tokens)
       ? snapshot.active_plan_tokens
       : null,
     is_paid_active: snapshot?.is_paid_active === true,
-    subscription_status: normalizeStatusToken(snapshot?.subscription_status) || null,
+    subscription_status:
+      normalizeStatusToken(snapshot?.subscription_status) || null,
     payment_status: normalizeStatusToken(snapshot?.payment_status) || null,
     renewal_date: normalizeTextValue(snapshot?.renewal_date) || null,
     expiry_date: normalizeTextValue(snapshot?.expiry_date) || null,
@@ -286,6 +288,7 @@ export async function createNotificationForUser({
   title,
   type,
   user,
+  subscription
 }) {
   if (!user || !type || !title || !description) {
     return null;
@@ -325,6 +328,17 @@ export async function createNotificationForUser({
   }
 
   const notification = await Notification.create(payload);
+  await fetch("/api/notify", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      subscription,
+      title: notification.title,
+      body: notification.description,
+    }),
+  });
   return serializeNotification(notification.toObject());
 }
 
@@ -456,7 +470,10 @@ export async function syncBillingNotifications({ snapshot, user }) {
   const pausedNow = isPausedState(nextState);
   const pausedBefore = isPausedState(previousState);
   const currentPlanLabel = getPlanReferenceLabel(nextState);
-  const previousPlanLabel = getPlanReferenceLabel(previousState, currentPlanLabel);
+  const previousPlanLabel = getPlanReferenceLabel(
+    previousState,
+    currentPlanLabel,
+  );
 
   if (didActivatePaidPlan) {
     createdNotifications.push(
@@ -523,7 +540,8 @@ export async function syncBillingNotifications({ snapshot, user }) {
         actionLabel: "Open membership",
         priority: "high",
         metadata: {
-          active_plan_id: nextState.active_plan_id || previousState.active_plan_id,
+          active_plan_id:
+            nextState.active_plan_id || previousState.active_plan_id,
           subscription_status: nextState.subscription_status,
         },
       }),
