@@ -32,6 +32,7 @@ type UpsertMoodCheckInPayload = {
   happiness: number;
   stress: number;
   energy: number;
+  subscription: any;
 };
 
 type CreateChatPayload = {
@@ -66,11 +67,19 @@ function extractProfile(payload: unknown): ApiRecord | null {
 
   const record = payload as ApiRecord;
 
-  if (record.user && typeof record.user === "object" && !Array.isArray(record.user)) {
+  if (
+    record.user &&
+    typeof record.user === "object" &&
+    !Array.isArray(record.user)
+  ) {
     return record.user as ApiRecord;
   }
 
-  if (record.data && typeof record.data === "object" && !Array.isArray(record.data)) {
+  if (
+    record.data &&
+    typeof record.data === "object" &&
+    !Array.isArray(record.data)
+  ) {
     return record.data as ApiRecord;
   }
 
@@ -104,7 +113,11 @@ function extractRecord(payload: unknown): ApiRecord | null {
 
   const record = payload as ApiRecord;
 
-  if (record.data && typeof record.data === "object" && !Array.isArray(record.data)) {
+  if (
+    record.data &&
+    typeof record.data === "object" &&
+    !Array.isArray(record.data)
+  ) {
     return record.data as ApiRecord;
   }
 
@@ -189,7 +202,9 @@ function extractNotificationFeed(payload: unknown): ApiRecord {
     ? (record.notifications as ApiList)
     : [];
   const stats =
-    record.stats && typeof record.stats === "object" && !Array.isArray(record.stats)
+    record.stats &&
+    typeof record.stats === "object" &&
+    !Array.isArray(record.stats)
       ? (record.stats as ApiRecord)
       : {};
 
@@ -255,7 +270,9 @@ export const appApi = createApi({
       query: () => noStoreGet("/user/profile"),
       transformResponse: (response: unknown) => {
         const payload =
-          response && typeof response === "object" && "data" in (response as ApiRecord)
+          response &&
+          typeof response === "object" &&
+          "data" in (response as ApiRecord)
             ? (response as ApiRecord).data
             : response;
 
@@ -297,7 +314,7 @@ export const appApi = createApi({
       providesTags: (result, error, dateKey) => [{ type: "Mood", id: dateKey }],
     }),
     upsertMoodCheckIn: builder.mutation<ApiRecord, UpsertMoodCheckInPayload>({
-      query: ({ dateKey, happiness, stress, energy }) => ({
+      query: ({ dateKey, happiness, stress, energy, subscription }) => ({
         url: "/mood-checkin",
         method: "POST",
         body: {
@@ -305,16 +322,19 @@ export const appApi = createApi({
           happiness,
           stress,
           energy,
+          subscription,
         },
       }),
-      transformResponse: (response: unknown) => extractMoodCheckIn(response) ?? {},
+      transformResponse: (response: unknown) =>
+        extractMoodCheckIn(response) ?? {},
       invalidatesTags: (result, error, { dateKey }) => [
         { type: "Mood", id: dateKey },
       ],
     }),
     getNotifications: builder.query<ApiRecord, void>({
       query: () => noStoreGet("/notifications"),
-      transformResponse: (response: unknown) => extractNotificationFeed(response),
+      transformResponse: (response: unknown) =>
+        extractNotificationFeed(response),
       providesTags: ["Notifications"],
     }),
     markAllNotificationsRead: builder.mutation<ApiRecord, void>({
@@ -325,7 +345,8 @@ export const appApi = createApi({
           action: "mark-all-read",
         },
       }),
-      transformResponse: (response: unknown) => extractNotificationFeed(response),
+      transformResponse: (response: unknown) =>
+        extractNotificationFeed(response),
       invalidatesTags: ["Notifications"],
     }),
     markNotificationRead: builder.mutation<ApiRecord, string>({
@@ -333,7 +354,8 @@ export const appApi = createApi({
         url: `/notifications/${notificationId}`,
         method: "PATCH",
       }),
-      transformResponse: (response: unknown) => extractNotificationFeed(response),
+      transformResponse: (response: unknown) =>
+        extractNotificationFeed(response),
       invalidatesTags: ["Notifications"],
     }),
     getCreditBalance: builder.query<ApiRecord, void>({

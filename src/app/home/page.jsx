@@ -705,7 +705,7 @@ export async function subscribeUser(dispatch) {
 
     let subscription = await registration.pushManager.getSubscription();
 
-    if (!localStorage.getItem("push_subscribed")) {
+    if (!subscription) {
       subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
@@ -724,7 +724,7 @@ export async function subscribeUser(dispatch) {
           subscribeResult?.error ?? "Failed to process push subscription",
         );
       }
-      localStorage.setItem("push_subscribed", true);
+      dispatch(setSubscription(subscription.toJSON()));
       await fetch("/api/notify", {
         method: "POST",
         headers: {
@@ -736,7 +736,6 @@ export async function subscribeUser(dispatch) {
           body: "Minimal web push working!",
         }),
       });
-      dispatch(setSubscription(subscription.toJSON()));
     }
   } catch (error) {
     hasTriggeredPushDemo = false;
@@ -792,7 +791,7 @@ export default function HomeScreen() {
     subscribeUser(dispatch);
   }, []);
 
-  const subscription =  ((state) => state.push.subscription);
+  const subscription = useSelector((state) => state.push.subscription);
   useEffect(() => {
     if (!profileError) {
       return;
@@ -849,6 +848,7 @@ export default function HomeScreen() {
         happiness: values.happiness,
         stress: values.stress,
         energy: values.energy,
+        subscription,
       }).unwrap();
       toast.success("Mood check-in saved for today");
     } catch (error) {

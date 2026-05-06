@@ -116,7 +116,7 @@ export async function POST(request) {
           metadata: {
             dateKey: normalizedEntry.data.dateKey,
           },
-          subscription:normalizedEntry.subscription
+          subscription:body.subscription
         });
       } catch (notificationError) {
         console.error("Unable to create mood notification:", notificationError);
