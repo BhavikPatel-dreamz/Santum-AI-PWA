@@ -14,8 +14,8 @@ self.addEventListener("push", (event) => {
   event.waitUntil(
     self.registration.showNotification(data.title || "SantumAI", {
       body: data.body || "You have a new notification.",
-      icon: data.icon || "/Logo Source files 21-4/Icon/0.5x/Artboard1.png",
-      badge: data.badge || "/Logo Source files 21-4/Icon/0.5x/Artboard1.png",
+      icon: data.icon || "/Logo Source files 21-4/SVG/Artboard1.svg",
+      badge: data.badge || "/Logo Source files 21-4/SVG/Artboard1.svg",
       tag: data.tag || undefined,
       data: {
         ...((data.data && typeof data.data === "object") ? data.data : {}),

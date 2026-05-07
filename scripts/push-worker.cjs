@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 const { loadEnvConfig } = require("@next/env");
-const IORedis = require("ioredis");
 const mongoose = require("mongoose");
 const webpush = require("web-push");
 const { Worker } = require("bullmq");
+const createRedisConnection = require("../src/lib/push/queue.js");
 
 loadEnvConfig(process.cwd());
 
@@ -19,38 +19,6 @@ function parseNumber(value, fallbackValue) {
   return Number.isFinite(parsedValue) ? parsedValue : fallbackValue;
 }
 
-function getRedisConnectionConfig() {
-  const redisUrl =
-    normalizeText(process.env.PUSH_QUEUE_REDIS_URL) ||
-    normalizeText(process.env.REDIS_URL);
-
-  if (redisUrl) {
-    return redisUrl;
-  }
-
-  return {
-    host: normalizeText(process.env.REDIS_HOST) || "127.0.0.1",
-    port: parseNumber(process.env.REDIS_PORT, 6379),
-    password: normalizeText(process.env.REDIS_PASSWORD) || undefined,
-    db: parseNumber(process.env.REDIS_DB, 0),
-  };
-}
-
-function createRedisConnection() {
-  const config = getRedisConnectionConfig();
-
-  if (typeof config === "string") {
-    return new IORedis(config, {
-      maxRetriesPerRequest: null,
-    });
-  }
-
-  return new IORedis({
-    ...config,
-    maxRetriesPerRequest: null,
-  });
-}
-
 async function connectMongo() {
   if (mongoose.connection.readyState === 1) {
     return;
@@ -63,12 +31,14 @@ async function connectMongo() {
   }
 
   await mongoose.connect(mongoUri, {
-    dbName: "AmigoChat",
+    dbName: "SantumAI",
   });
 }
 
 function configureWebPush() {
-  const vapidPublicKey = normalizeText(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY);
+  const vapidPublicKey = normalizeText(
+    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+  );
   const vapidPrivateKey = normalizeText(process.env.VAPID_PRIVATE_KEY);
 
   if (!vapidPublicKey || !vapidPrivateKey) {
@@ -100,7 +70,8 @@ function normalizeUsers(value) {
 
 function buildPushPayload(notification) {
   const title = normalizeText(notification?.title) || "SantumAI";
-  const body = normalizeText(notification?.body) || "You have a new notification.";
+  const body =
+    normalizeText(notification?.body) || "You have a new notification.";
   const url = normalizeText(notification?.url) || "/notifications";
   const icon =
     normalizeText(notification?.icon) ||
@@ -172,7 +143,9 @@ async function sendSubscriptionBatch(collection, records, notification) {
       const subscription = {
         endpoint: record.endpoint,
         expirationTime:
-          typeof record.expirationTime === "number" ? record.expirationTime : null,
+          typeof record.expirationTime === "number"
+            ? record.expirationTime
+            : null,
         keys: {
           p256dh: record.keys?.p256dh,
           auth: record.keys?.auth,
@@ -242,7 +215,9 @@ async function processPushJob(job) {
   }
 
   await connectMongo();
-  const collection = mongoose.connection.collection(PUSH_SUBSCRIPTIONS_COLLECTION);
+  const collection = mongoose.connection.collection(
+    PUSH_SUBSCRIPTIONS_COLLECTION,
+  );
   const subscriptions = await collection
     .find({
       user: { $in: users },

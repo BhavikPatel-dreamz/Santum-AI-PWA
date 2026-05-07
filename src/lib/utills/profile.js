@@ -150,7 +150,7 @@ export function getProfileId(profile) {
     getFirstValue(profile, [
       "id",
       "_id",
-      "ID",
+      "user",
       "user_id",
       "userId",
       "wp_user_id",

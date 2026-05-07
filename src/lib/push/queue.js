@@ -25,7 +25,7 @@ function getRedisConnectionConfig() {
   };
 }
 
-function createRedisConnection() {
+export function createRedisConnection() {
   const config = getRedisConnectionConfig();
 
   if (typeof config === "string") {

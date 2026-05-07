@@ -18,6 +18,12 @@ import {
   buildMoodAssistantContext,
   sanitizeMoodCheckInEntry,
 } from "../../../../lib/utills/mood";
+import {
+  notifyCreditUsed,
+  notifyLowCredits,
+  notifyOutOfCredits,
+} from "../../../../lib/push/triggers";
+import { resolveCurrentUserKey } from "../../../../lib/user/server";
 
 const STREAM_METADATA_SEPARATOR = "\n\n{";
 const CREDIT_LIMIT_MESSAGE =
@@ -248,13 +254,45 @@ async function reduceCreditsAfterChat({ amount, message }) {
   payload.append("note", createCreditNote(message));
   payload.append("source", "chat");
 
-  await assertApiSuccess(
+  const response = await assertApiSuccess(
     await apiFetchWithAuth("/v1/credit/reduce", {
       method: "POST",
       body: payload,
     }),
     "Unable to reduce credit",
   );
+
+  // Extract remaining balance from response and send notifications if needed
+  try {
+    const remainingBalance = extractCreditBalance(response?.data ?? response);
+
+    if (Number.isFinite(remainingBalance)) {
+      const userId = await resolveCurrentUserKey();
+
+      // Notify about credit usage (only for significant amounts)
+      if (amount >= 5) {
+        notifyCreditUsed(userId, amount, remainingBalance).catch((error) =>
+          console.error("[chat] failed to notify credit used:", error)
+        );
+      }
+
+      // Warn if credits are running low (< 10 remaining)
+      if (remainingBalance < 10 && remainingBalance > 0) {
+        notifyLowCredits(userId, remainingBalance).catch((error) =>
+          console.error("[chat] failed to notify low credits:", error)
+        );
+      }
+
+      // Alert if out of credits
+      if (remainingBalance <= 0) {
+        notifyOutOfCredits(userId).catch((error) =>
+          console.error("[chat] failed to notify out of credits:", error)
+        );
+      }
+    }
+  } catch (notificationError) {
+    console.error("[chat] error sending credit notifications:", notificationError);
+  }
 }
 
 async function persistChatConversation({
