@@ -1068,12 +1068,6 @@ export default function HomeScreen() {
                 <p className="text-[14px] text-[#555]">{contactLine}</p>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={() => navigateTo("/personal-information")}
-            >
-              <Edit2Icon className="text-[#00D061]" />
-            </button>
           </div>
 
           {/* Scrollable menu */}
