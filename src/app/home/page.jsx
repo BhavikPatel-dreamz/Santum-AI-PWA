@@ -860,11 +860,11 @@ export default function HomeScreen() {
             <div className="flex items-center gap-3">
               {/* Logo placeholder */}
               <Image
-                src="/Logo Source files 21-4/Icon/SVG/Artboard1.svg"
+                src="/Logo Source files 21-4/Icon/0.5x/Artboard-1.jpg"
                 alt=""
                 width={36}
                 height={36}
-                className="object-contain logo-home"
+                className="object-contain"
                 unoptimized
               />
               <h1 className="text-white text-[18px] font-medium leading-[24px]">
@@ -901,7 +901,7 @@ export default function HomeScreen() {
           {/* Hero text */}
           <div className="relative z-10 mt-9 max-w-[720px] pb-2">
             <h2 className="text-[32px] font-bold leading-[40px] text-white sm:text-[38px] sm:leading-[46px] lg:text-[46px] lg:leading-[54px]">
-              Hello, {firstName}{" "}
+              Hello!{" "}
               <span
                 className="inline-block"
                 style={{
@@ -913,11 +913,10 @@ export default function HomeScreen() {
               </span>
             </h2>
             <h3 className="mt-3 text-[18px] font-semibold leading-6 text-white sm:text-[20px] lg:text-[22px]">
-              Let&apos;s check in with SantumAI.
+              I'm Sai, short for Santum AI
             </h3>
             <p className="mb-3 mt-2 pb-3 font-satoshi text-[16px] font-medium leading-[24px] text-white sm:text-[17px] lg:max-w-[640px] lg:text-[18px] lg:leading-[28px]">
-              Start a supportive conversation whenever you need space to
-              reflect.
+              I'm here to listen and help you make sense of what you're experiencing
             </p>
           </div>
         </div>
@@ -929,11 +928,10 @@ export default function HomeScreen() {
             <div className="flex flex-col justify-between p-4 sm:p-5 lg:p-6">
               <div>
                 <h4 className="text-[#0F0F0F] text-[22px] font-semibold leading-[30px]">
-                  SantumAI Plus
+                  SantumAI Plans
                 </h4>
                 <p className="mt-1 max-w-[320px] text-[14px] font-medium leading-6 text-[#555] lg:text-[15px]">
-                  Unlock deeper support features, faster replies, and more
-                  conversation continuity.
+                  Unlock advanced features for deeper support and faster replies
                 </p>
               </div>
               <button
@@ -1018,7 +1016,7 @@ export default function HomeScreen() {
             onClick={handleOpenChat}
             className="mx-auto flex h-[56px] w-full max-w-[343px] items-center justify-center rounded-[12px] bg-[#00D061] text-[18px] font-medium text-white shadow-[0_4px_20px_rgba(0,208,97,0.4)] transition-all active:scale-[0.98] hover:opacity-92 sm:max-w-[420px]"
           >
-            Start Support Chat
+            Start Chatting
           </button>
         </div>
 

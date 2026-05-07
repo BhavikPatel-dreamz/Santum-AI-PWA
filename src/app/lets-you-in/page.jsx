@@ -67,7 +67,8 @@ export default function LetsYouInPage() {
         {/* ── White card ── */}
         <div className="theme-auth-card relative z-10 mx-3 -mt-20 w-auto rounded-[28px] px-6 pb-9 pt-8 transition-colors duration-300 sm:mx-5 sm:px-7 md:mx-8 lg:mx-auto lg:-mt-24 lg:w-full lg:max-w-[760px] lg:px-10 lg:pb-10">
           <h2 className="theme-text-primary mb-7 text-center text-[24px] font-semibold leading-9">
-            Let&apos;s You In
+            WELCOME<br/>
+            Nice To See You
           </h2>
 
           {/* Sign In With Password */}
@@ -75,7 +76,7 @@ export default function LetsYouInPage() {
             onClick={() => router.push("/sign-in")}
             className="w-full py-4 rounded-[14px] bg-[#00D061] text-white text-[18px] font-semibold tracking-wide hover:bg-[#24a063] hover:shadow-[0_6px_20px_rgba(43,182,115,0.45)] hover:-translate-y-px active:translate-y-0 transition-all duration-200 cursor-pointer"
           >
-            Sign In With Password
+            Sign In / Sign up
           </button>
           {isFingerprintEnabled && (
             <button

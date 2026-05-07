@@ -1,9 +1,11 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 
 export default function LoadingScreen({ onDone }) {
+  const [theme, setTheme] = useState(null);
   useEffect(() => {
+    setTheme(localStorage.getItem("theme"));
     const t = setTimeout(() => {
       if (typeof onDone === "function") {
         onDone();
@@ -18,7 +20,7 @@ export default function LoadingScreen({ onDone }) {
       style={{ zIndex: 99999 }}
     >
       {/* Top-left dot pattern */}
-      <div className="absolute top-0 left-0 w-full h-1/2 opacity-30">
+      {/* <div className="absolute top-0 left-0 w-full h-1/2 opacity-30">
         <Image
           src="/icons/dots_pattern.png"
           alt=""
@@ -26,7 +28,7 @@ export default function LoadingScreen({ onDone }) {
           className="object-cover"
           loading="eager"
         />
-      </div>
+      </div> */}
 
       {/* Center content */}
       <div
@@ -34,37 +36,38 @@ export default function LoadingScreen({ onDone }) {
         style={{ animation: "fadeInUp 0.8s ease-out both" }}
       >
         <div
-          className="relative w-28 h-28"
+          className="relative h-[260px] w-[260px] sm:h-[340px] sm:w-[340px] lg:h-[420px] lg:w-[420px]"
           style={{ animation: "logoPulse 2s ease-in-out infinite" }}
         >
           <Image
-            src="/Logo Source files 21-4/Icon/SVG/Artboard1.svg"
+            src={
+              theme === "dark"
+                ? "/Logo Source files 21-4/Logo/SVG/Artboard3.svg"
+                : "/Logo Source files 21-4/Logo/SVG/Artboard2.svg"
+            }
             alt="SantumAI"
             fill
-            sizes="112px"
-            className="object-contain"
+            sizes="(max-width: 640px) 260px, (max-width: 1024px) 340px, 420px"
+            className="object-contain size-10"
             priority
             loading="eager"
           />
         </div>
 
-        <h1 className="theme-text-primary text-5xl font-bold leading-[60px] pt-4 pb-2 font-poppins">
-          SantumAI
-        </h1>
         <p className="theme-text-secondary text-lg font-medium leading-6 font-poppins">
-          Calm support for everyday emotional wellbeing
+          Best Viewed on Mobile Phone
         </p>
       </div>
 
       {/* Bottom-right dot pattern */}
-      <div className="absolute bottom-0 right-0 w-full h-1/2 opacity-30">
+      {/* <div className="absolute bottom-0 right-0 w-full h-1/2 opacity-30">
         <Image
           src="/icons/dots_pattern_bottom.png"
           alt=""
           fill
           className="object-cover"
         />
-      </div>
+      </div> */}
 
       <style>{`
         @keyframes fadeInUp {

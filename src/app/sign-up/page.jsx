@@ -162,7 +162,7 @@ export default function SignUpPage() {
               id="ageCheck"
               checked={isAdult}
               onChange={(e) => setIsAdult(e.target.checked)}
-              className="w-4 h-4 cursor-pointer"
+              className="w-5 h-5 cursor-pointer"
             />
             <label htmlFor="ageCheck" className="text-sm cursor-pointer">
               I am over 18 years old
@@ -173,7 +173,7 @@ export default function SignUpPage() {
           <button
             disabled={isLoading || !isAdult}
             onClick={() => handleSubmit()}
-            className={`w-full py-4 rounded-[14px] flex items-center justify-center text-[18px] font-semibold tracking-wide transition-all duration-200 mb-6
+            className={`w-full py-4 rounded-[14px] flex items-center justify-center text-[18px] font-semibold tracking-wide transition-all duration-200
               ${
                 isAdult
                   ? "bg-[#00D061] text-white hover:bg-[#00b856] hover:shadow-[0_6px_20px_rgba(0,208,97,0.40)] hover:-translate-y-px"

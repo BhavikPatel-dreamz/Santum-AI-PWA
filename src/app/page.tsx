@@ -30,7 +30,7 @@ const ONBOARDING_SLIDES = [
     darkImage: "/Logo Source files 21-4/Logo/SVG/Artboard3.svg",
     lightImage: "/Logo Source files 21-4/Logo/SVG/Artboard2.svg",
     title: "Get started and meet Sai (SantumAI)",
-    desc: "Create your account to start structured, confidential conversations.",
+    desc: "Create an account to start structured, confidential conversations.",
     btnLabel: "Try it for free",
   },
 ];
@@ -39,7 +39,7 @@ type Direction = "left" | "right";
 
 export default function RootPage() {
   const [theme] = useState<string | null>(() =>
-    typeof window === "undefined" ? null : localStorage.getItem("amigo-theme"),
+    typeof window === "undefined" ? null : localStorage.getItem("theme"),
   );
   const slides = ONBOARDING_SLIDES.map(
     ({ darkImage, lightImage, ...slideContent }) => ({
@@ -51,8 +51,9 @@ export default function RootPage() {
   const [animClass, setAnimClass] = useState("");
   const isAnimating = useRef(false);
   const router = useRouter();
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const autoSlideStopped = useRef(false);
+  const firstLoadRef = useRef(true);
 
   useEffect(() => {
     registerPushServiceWorker().catch((error) => {
@@ -68,7 +69,7 @@ export default function RootPage() {
   const stopAutoSlide = useCallback(() => {
     autoSlideStopped.current = true;
     if (timerRef.current) {
-      clearInterval(timerRef.current);
+      clearTimeout(timerRef.current);
       timerRef.current = null;
     }
   }, []);
@@ -98,30 +99,34 @@ export default function RootPage() {
   );
 
   const goNext = useCallback(() => {
-    setCurrentSlide((prev: number) => {
-      const next = prev < ONBOARDING_SLIDES.length - 1 ? prev + 1 : prev;
-      if (next === ONBOARDING_SLIDES.length - 1 && timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-      setAnimClass("slide-enter-left");
-      setTimeout(() => setAnimClass(""), ANIM_DURATION);
-      return next;
-    });
-  }, []);
-
-  const resetTimer = useCallback(() => {
-    if (autoSlideStopped.current) return;
-    if (timerRef.current) clearInterval(timerRef.current);
-    timerRef.current = setInterval(goNext, AUTO_SLIDE_INTERVAL);
-  }, [goNext]);
+    if (currentSlide < ONBOARDING_SLIDES.length - 1) {
+      goToSlide(currentSlide + 1, "left");
+    }
+  }, [currentSlide, goToSlide]);
 
   useEffect(() => {
-    resetTimer();
+    if (autoSlideStopped.current) return;
+
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+
+    const delay = firstLoadRef.current
+      ? AUTO_SLIDE_INTERVAL + 2000
+      : AUTO_SLIDE_INTERVAL;
+
+    firstLoadRef.current = false;
+
+    timerRef.current = setTimeout(() => {
+      goNext();
+    }, delay);
+
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
     };
-  }, [resetTimer]);
+  }, [currentSlide, goNext]);
 
   const handleDotClick = useCallback(
     (index: number) => {

@@ -2,7 +2,6 @@ import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import LoadingScreenWrapper from "@/components/onboarding/LoadingScreenWrapper";
 import { PageTransitionProvider } from "@/components/providers/PageTransitionProvider";
 import { ReduxProvider } from "@/components/providers/ReduxProvider";
-import { getThemeInitScript } from "@/lib/theme";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import Script from "next/script";
@@ -100,9 +99,6 @@ export default function RootLayout({
       className={`${segoeUi.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">
-        <Script id="theme-init" strategy="beforeInteractive">
-          {getThemeInitScript()}
-        </Script>
         <ReduxProvider>
           <ThemeProvider>
             <LoadingScreenWrapper />
