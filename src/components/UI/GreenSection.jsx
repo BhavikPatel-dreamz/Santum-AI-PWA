@@ -10,7 +10,7 @@ const GreenSection = ({ show = true }) => {
 
   return (
     <div>
-      <div className="relative flex h-[360px] flex-shrink-0 items-end justify-center overflow-hidden bg-[#00D061] pb-12 sm:h-[420px] sm:pb-14 lg:h-[460px] lg:pb-16">
+      <div className="relative flex min-h-[240px] h-[32vh] max-h-[360px] flex-shrink-0 items-end justify-center overflow-hidden bg-[#00D061] pb-6 sm:min-h-[300px] sm:h-[38vh] sm:pb-10 lg:min-h-[420px] lg:max-h-[460px] lg:pb-16">
         {/* Circuit SVG background */}
         <Image
           src={
@@ -40,7 +40,7 @@ const GreenSection = ({ show = true }) => {
         )}
 
         {/* Logo */}
-        <div className="theme-surface absolute top-20 z-10 flex h-[120px] w-[120px] items-center justify-center rounded-[24px] border border-white/15 shadow-[0_18px_42px_rgba(0,0,0,0.14)] transition-colors duration-300 sm:top-24 sm:h-[136px] sm:w-[136px] lg:top-28 lg:h-[152px] lg:w-[152px]">
+        <div className="theme-surface absolute top-14 z-10 flex h-[88px] w-[88px] items-center justify-center rounded-[20px] border border-white/15 shadow-[0_18px_42px_rgba(0,0,0,0.14)] transition-colors duration-300 sm:top-20 sm:h-[120px] sm:w-[120px] lg:top-28 lg:h-[152px] lg:w-[152px]">
           <div className="flex items-center justify-center">
             <Image
               src="/Logo Source files 21-4/Icon/SVG/Artboard1.svg"
@@ -48,7 +48,7 @@ const GreenSection = ({ show = true }) => {
               width={120}
               height={120}
               priority
-              className="h-[88px] w-[88px] object-contain sm:h-[98px] sm:w-[98px] lg:h-[112px] lg:w-[112px]"
+              className="h-[64px] w-[64px] object-contain sm:h-[88px] sm:w-[88px] lg:h-[112px] lg:w-[112px]"
             />
           </div>
         </div>
