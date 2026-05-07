@@ -916,7 +916,8 @@ export default function HomeScreen() {
               I'm Sai, short for Santum AI
             </h3>
             <p className="mb-3 mt-2 pb-3 font-satoshi text-[16px] font-medium leading-[24px] text-white sm:text-[17px] lg:max-w-[640px] lg:text-[18px] lg:leading-[28px]">
-              I'm here to listen and help you make sense of what you're experiencing
+              I'm here to listen and help you make sense of what you're
+              experiencing
             </p>
           </div>
         </div>
