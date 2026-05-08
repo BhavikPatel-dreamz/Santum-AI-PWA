@@ -29,6 +29,7 @@ const SYNC_POLLING_INTERVAL = 10000;
 
 const PLANS = [
   {
+    key: 1,
     name: "Free Membership",
     billing_amount: 0,
     description:
@@ -41,9 +42,26 @@ const PLANS = [
     highlighted: false,
     tokens: 200,
   },
+
   {
+    key: 2,
+    name: "Standard Membership",
+    billing_amount: 49,
+    description:
+      "Perfect for regular users who want more access, smoother conversations, and better continuity.",
+    features: [
+      "Extended daily usage",
+      "Faster response times",
+      "Improved conversation memory",
+    ],
+    highlighted: false,
+    tokens: 5000,
+  },
+
+  {
+    key: 3,
     name: "Premium Membership",
-    billing_amount: 100,
+    billing_amount: 99,
     description:
       "A stronger fit for members who want deeper support, more continuity, and faster replies.",
     features: [
@@ -122,10 +140,7 @@ function persistCheckoutSyncState(value) {
     return;
   }
 
-  window.localStorage.setItem(
-    CHECKOUT_SYNC_STORAGE_KEY,
-    JSON.stringify(value),
-  );
+  window.localStorage.setItem(CHECKOUT_SYNC_STORAGE_KEY, JSON.stringify(value));
 }
 
 function clearCheckoutSyncState() {
@@ -290,6 +305,7 @@ function didActivateExpectedPlan(checkoutState, subscriptionStatus) {
 
 export default function PlusSubscriptionPage() {
   const [selectedPlanKey, setSelectedPlanKey] = useState(null);
+  const [pressed, setPressed] = useState(null)
   const [pendingCheckout, setPendingCheckout] = useState(null);
   const [purchaseSummary, setPurchaseSummary] = useState(null);
   const [isManualSyncing, setIsManualSyncing] = useState(false);
@@ -446,7 +462,9 @@ export default function PlusSubscriptionPage() {
 
       if (!didActivateExpectedPlan(checkoutState, nextStatus)) {
         if (!silent) {
-          toast("Membership status refreshed. Complete checkout on Santum.net, then return here.");
+          toast(
+            "Membership status refreshed. Complete checkout on Santum.net, then return here.",
+          );
         }
 
         return false;
@@ -559,7 +577,7 @@ export default function PlusSubscriptionPage() {
     }
 
     if (purchaseSummary || isSelectedPlanActive) {
-      router.push("/settings/credits");
+      router.push("/settings/subscriptions");
       return;
     }
 
@@ -585,7 +603,7 @@ export default function PlusSubscriptionPage() {
   const secondaryButtonLabel = pendingCheckout
     ? "Open Santum.net Again"
     : purchaseSummary || isSelectedPlanActive
-      ? "View Updated Credits"
+      ? "View My Subscription"
       : "Maybe Later";
 
   const isPrimaryButtonDisabled =
@@ -626,9 +644,11 @@ export default function PlusSubscriptionPage() {
       </div>
 
       <div className="space-y-4">
-        {plans.map((plan, index) => {
+        {PLANS.map((plan, index) => {
           const planKey = getPlanKey(plan, index);
-          const isSelected = planKey === resolvedSelectedPlanKey;
+          const isSelected = plan.key === pressed
+
+          // planKey === resolvedSelectedPlanKey;
           const isActivePlan = isSamePlan(plan, activePlanReference);
           const planTokenLimit = getPlanTokenLimit(plan);
 
@@ -638,6 +658,7 @@ export default function PlusSubscriptionPage() {
               type="button"
               aria-pressed={isSelected}
               onClick={() => {
+                setPressed(plan.key)
                 setSelectedPlanKey(planKey);
                 setPurchaseSummary(null);
               }}
@@ -654,7 +675,7 @@ export default function PlusSubscriptionPage() {
                   <div className="flex items-center gap-2">
                     <h3 className="theme-text-primary text-[22px] font-semibold leading-8">
                       {plan.name}
-                    </h3>                
+                    </h3>
                     {/* {isActivePlan ? (
                       <span className="rounded-full bg-[#0F0F0F] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
                         Active
@@ -751,7 +772,7 @@ export default function PlusSubscriptionPage() {
         </div>
       ) : null}
 
-      {!pendingCheckout && !purchaseSummary && isSelectedPlanActive ? (
+      {/* {!pendingCheckout && !purchaseSummary && isSelectedPlanActive ? (
         <div
           className={`mt-6 rounded-3xl border px-5 py-5 ${getPurchaseSummaryClasses(
             isDark,
@@ -769,7 +790,7 @@ export default function PlusSubscriptionPage() {
               : "Your current plan details are already synced in the PWA."}
           </p>
         </div>
-      ) : null}
+      ) : null} */}
 
       <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
         <button

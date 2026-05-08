@@ -36,6 +36,7 @@ const CREDIT_LIMIT_MESSAGE =
 const PURCHASE_PLAN_PATH = "/plus-subscription";
 const DEFAULT_PLAN_LEVEL = "free";
 const RECENT_MESSAGE_LIMIT = 10;
+const MAX_CREDITS = 20000;
 const STARTER_MESSAGES = [
   {
     id: "starter-assistant",
@@ -185,6 +186,9 @@ export default function SantumAIChatPage() {
       ? subscriptionStatus.active_plan_level
       : DEFAULT_PLAN_LEVEL;
   const creditBalance = extractCreditBalance(balanceResponse);
+  const usedBalance = MAX_CREDITS - creditBalance;
+  const creditPercentage =
+    usedBalance !== null ? Math.min((usedBalance / MAX_CREDITS) * 100, 100) : 0;
   const isCreditDepleted = creditBalance !== null && creditBalance <= 0;
   const hasTodayMoodCheckIn =
     Boolean(todayMoodCheckIn) && todayMoodCheckIn?.dateKey === todayMoodDateKey;
@@ -203,6 +207,9 @@ export default function SantumAIChatPage() {
     typeof activeChat?.summerized === "string"
       ? activeChat.summerized.trim()
       : "";
+
+  const isWarn =
+    !hasTodayMoodCheckIn || isCreditDepleted;
 
   const persistedRawMessages = useMemo(() => {
     if (!requestedChatId) {
@@ -657,11 +664,11 @@ export default function SantumAIChatPage() {
   return (
     <StepPageShell
       title="Chat With SantumAI"
-      contentClassName="overflow-hidden pb-6"
+      contentClassName="h-[100dvh] overflow-hidden pb-4"
     >
-      <div className="flex h-full min-h-0 flex-col gap-5 lg:grid lg:grid-cols-[360px_minmax(0,1fr)] lg:gap-6">
-        <div className="flex min-h-0 flex-col lg:overflow-y-auto lg:pr-1">
-          {/* <FeatureShowcaseCard
+      <div className="flex h-full min-h-0 flex-col">
+        {/* <div className="flex min-h-0 flex-col lg:overflow-y-auto lg:pr-1">
+          <FeatureShowcaseCard
             badge="Support Live"
             title="A calmer chat space for emotional support"
             description="SantumAI is here to listen, reflect, and help you process what you're feeling."
@@ -669,7 +676,7 @@ export default function SantumAIChatPage() {
             imageAlt="Chat companion"
             className="mb-5"
             compact
-          /> */}
+          />
 
           <div className="theme-card-muted mb-4 rounded-[22px] border px-4 py-4">
             <div className="flex items-center justify-between gap-3">
@@ -690,8 +697,8 @@ export default function SantumAIChatPage() {
               </div>
             </div>
             <p className="mt-3 font-satoshi text-[14px] leading-6 text-[#555]">
-              SantumAI checks this balance before each support chat and stores each
-              finished reply back into your conversation history.
+              SantumAI checks this balance before each support chat and stores
+              each finished reply back into your conversation history.
             </p>
           </div>
 
@@ -748,9 +755,9 @@ export default function SantumAIChatPage() {
               showUpdateAction={false}
             />
           ) : null}
-        </div>
+        </div> */}
 
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[28px] bg-[#F8FFFB] p-4">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[24px] bg-[#F8FFFB] p-3 sm:p-4 md:p-5">
           {messages.length <= 1 && (
             <div className="mb-4 flex flex-wrap gap-2">
               {QUICK_PROMPTS.map((prompt) => (
@@ -773,7 +780,9 @@ export default function SantumAIChatPage() {
 
           <div className="mb-3 flex items-center justify-between gap-3">
             <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#7E8A83]">
-              {requestedChatId ? activeChatTitle : "Starting a new conversation"}
+              {requestedChatId
+                ? activeChatTitle
+                : "Starting a new conversation"}
             </p>
             {isConversationLoading ? (
               <span className="text-[12px] font-medium text-[#7E8A83]">
@@ -782,7 +791,7 @@ export default function SantumAIChatPage() {
             ) : null}
           </div>
 
-          <div className="flex-1 space-y-4 overflow-y-auto pr-1">
+          <div className="flex-1 space-y-4 pr-1 pb-2">
             {isConversationLoading ? (
               <div className="theme-surface rounded-[22px] px-4 py-4 shadow-[0_10px_24px_rgba(15,15,15,0.05)]">
                 <p className="font-satoshi text-[14px] leading-6 text-[#555]">
@@ -798,7 +807,7 @@ export default function SantumAIChatPage() {
                   }`}
                 >
                   <div
-                    className={`max-w-[92%] rounded-[22px] px-4 py-3 sm:max-w-[85%] ${
+                    className={`max-w-[94%] rounded-[22px] px-3 py-3 sm:max-w-[88%] sm:px-4 ${
                       message.role === "user"
                         ? "rounded-br-[8px] bg-[#00D061] text-white"
                         : "theme-surface rounded-bl-[8px] text-[#0F0F0F] shadow-[0_10px_24px_rgba(15,15,15,0.05)]"
@@ -827,7 +836,7 @@ export default function SantumAIChatPage() {
 
           <div className="theme-surface mt-4 rounded-[24px] p-3 shadow-[0_12px_30px_rgba(15,15,15,0.06)]">
             <textarea
-              rows={3}
+              rows={2}
               value={composer}
               disabled={areChatActionsDisabled}
               onChange={(event) => setComposer(event.target.value)}
@@ -846,11 +855,13 @@ export default function SantumAIChatPage() {
                       ? "Purchase a plan or refresh your balance to keep chatting."
                       : "Tell SantumAI what's on your mind..."
               }
-              className="theme-input-surface w-full resize-none rounded-[18px] px-4 py-4 font-satoshi text-[15px] leading-6 outline-none disabled:cursor-not-allowed disabled:bg-[#F1F5F2] disabled:text-[#7E8A83]"
+              className="theme-input-surface w-full resize-none rounded-[18px] px-3 py-3 sm:px-4 sm:py-4 font-satoshi text-[15px] leading-6 outline-none disabled:cursor-not-allowed disabled:bg-[#F1F5F2] disabled:text-[#7E8A83]"
             />
 
-            <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <p className="font-satoshi text-[13px] leading-5 text-[#555]">
+            <div className="mt-3 flex items-center justify-between gap-3">
+              <p
+                className={`font-satoshi text-[13px] leading-5 ${isWarn ? "text-red-500" : "text-[#555]"}`}
+              >
                 {isMoodCheckInLoading
                   ? "Checking today's mood check-in before chat unlocks."
                   : !hasTodayMoodCheckIn
@@ -859,18 +870,57 @@ export default function SantumAIChatPage() {
                       ? "Purchase a plan to continue SantumAI support chats."
                       : "Powered by SantumAI counseling service."}
               </p>
-              <button
-                type="button"
-                onClick={() => sendMessage(composer)}
-                disabled={!composer.trim() || areChatActionsDisabled}
-                className={`rounded-full px-5 py-3 text-[14px] font-semibold transition-all ${
-                  !composer.trim() || areChatActionsDisabled
-                    ? "bg-[#CBEEDB] text-white"
-                    : "bg-[#00D061] text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)]"
-                }`}
-              >
-                Send
-              </button>
+              <div className="flex items-center justify-end gap-3">
+                {/* Circular Progress */}
+                <div className="relative flex h-11 w-11 items-center justify-center sm:h-12 sm:w-12">
+                  <svg
+                    className="h-full w-full -rotate-90"
+                    viewBox="0 0 100 100"
+                  >
+                    {/* Background Circle */}
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="42"
+                      strokeWidth="8"
+                      className="stroke-[#E6F4EC]"
+                      fill="transparent"
+                    />
+
+                    {/* Progress Circle */}
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="42"
+                      strokeWidth="8"
+                      fill="transparent"
+                      strokeLinecap="round"
+                      className="stroke-[#00D061] transition-all duration-500"
+                      strokeDasharray={264}
+                      strokeDashoffset={264 - (264 * creditPercentage) / 100}
+                    />
+                  </svg>
+
+                  {/* Percentage Text */}
+                  <span className="absolute text-[10px] font-semibold text-[#0F0F0F] sm:text-[11px]">
+                    {Math.round(creditPercentage)}%
+                  </span>
+                </div>
+
+                {/* Send Button */}
+                <button
+                  type="button"
+                  onClick={() => sendMessage(composer)}
+                  disabled={!composer.trim() || areChatActionsDisabled}
+                  className={`rounded-full px-5 py-3 text-[14px] font-semibold transition-all ${
+                    !composer.trim() || areChatActionsDisabled
+                      ? "bg-[#CBEEDB] text-white"
+                      : "bg-[#00D061] text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)]"
+                  }`}
+                >
+                  Send
+                </button>
+              </div>
             </div>
           </div>
         </div>
