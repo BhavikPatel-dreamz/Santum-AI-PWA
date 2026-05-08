@@ -363,7 +363,7 @@ export default function PersonalInformationPage() {
           </div>
         </div>
 
-        <div className="mt-5 grid grid-cols-3 gap-3">
+        {/* <div className="mt-5 grid grid-cols-3 gap-3">
           <div className="theme-static-panel rounded-[20px] border px-3 py-4 text-center">
             <p className="theme-text-primary text-[20px] font-semibold leading-7">
               {completionScore}/4
@@ -388,7 +388,7 @@ export default function PersonalInformationPage() {
               Interests
             </p>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {isProfileLoading && !didInitialize ? (
@@ -479,7 +479,7 @@ export default function PersonalInformationPage() {
             </div>
           </div>
 
-          <div className="theme-card mb-5 rounded-[26px] border px-5 py-5">
+          {/* <div className="theme-card mb-5 rounded-[26px] border px-5 py-5">
             <div className="mb-4">
               <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#00A84D]">
                 Preferred Language
@@ -499,9 +499,9 @@ export default function PersonalInformationPage() {
                 />
               ))}
             </div>
-          </div>
+          </div> */}
 
-          <div className="theme-card rounded-[26px] border px-5 py-5">
+          {/* <div className="theme-card rounded-[26px] border px-5 py-5">
             <div className="mb-4 flex items-start justify-between gap-3">
               <div>
                 <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#00A84D]">
@@ -534,7 +534,7 @@ export default function PersonalInformationPage() {
                 the old separate language and interest steps.
               </p>
             </div>
-          </div>
+          </div> */}
         </>
       )}
 

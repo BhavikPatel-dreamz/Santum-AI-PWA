@@ -36,6 +36,7 @@ const pushSubscriptionSchema = new Schema(
       type: String,
       default: "",
       trim: true,
+      index: true,
     },
     platform: {
       type: String,

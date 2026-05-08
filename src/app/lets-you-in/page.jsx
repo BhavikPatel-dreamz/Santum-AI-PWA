@@ -66,10 +66,15 @@ export default function LetsYouInPage() {
         <GreenSection show={false} />
         {/* ── White card ── */}
         <div className="theme-auth-card relative z-10 mx-3 -mt-20 w-auto rounded-[28px] px-6 pb-9 pt-8 transition-colors duration-300 sm:mx-5 sm:px-7 md:mx-8 lg:mx-auto lg:-mt-24 lg:w-full lg:max-w-[760px] lg:px-10 lg:pb-10">
-          <h2 className="theme-text-primary mb-7 text-center text-[24px] font-semibold leading-9">
-            WELCOME<br/>
-            Nice To See You
-          </h2>
+          <div className="text-center mb-6">
+            <p className="mb-3 text-[13px] font-semibold tracking-[5px] text-white/55">
+              WELCOME
+            </p>
+
+            <h2 className="theme-text-primary text-[38px] font-bold leading-[1.1] tracking-[-0.02em]">
+              Nice to see you
+            </h2>
+          </div>
 
           {/* Sign In With Password */}
           <button

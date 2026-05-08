@@ -23,10 +23,7 @@ import {
   getProfilePhone,
 } from "@/lib/utills/profile";
 import { useTheme } from "@/components/providers/ThemeProvider";
-import {
-  registerPushServiceWorker,
-  subscribeCurrentBrowserToPush,
-} from "@/lib/push/client";
+import { registerPushServiceWorker } from "@/lib/push/client";
 
 const CollapseIcon = () => (
   <svg
@@ -799,13 +796,7 @@ export default function HomeScreen() {
     router.push("/santumai-chat");
   };
 
-  const handleOpenNotifications = async () => {
-    try {
-      await subscribeCurrentBrowserToPush();
-    } catch (error) {
-      console.error("Unable to subscribe current browser for push:", error);
-    }
-
+  const handleOpenNotifications = () => {
     router.push("/notifications");
   };
 

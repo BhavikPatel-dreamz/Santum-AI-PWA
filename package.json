@@ -7,7 +7,7 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
-    "push:worker": "node scripts/push-worker.cjs"
+    "worker": "node scripts/push-worker.cjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

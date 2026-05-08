@@ -1,8 +1,12 @@
 "use client";
 
-import FeatureShowcaseCard from "@/components/app/FeatureShowcaseCard";
 import StepPageShell from "@/components/app/StepPageShell";
 import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
+import {
+  registerPushServiceWorker,
+  subscribeCurrentBrowserToPush,
+  unsubscribeCurrentBrowserFromPush,
+} from "@/lib/push/client";
 import {
   useGetNotificationsQuery,
   useMarkAllNotificationsReadMutation,
@@ -17,7 +21,7 @@ import {
   RefreshCcw,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 function formatNotificationTime(value) {
@@ -110,8 +114,78 @@ function getNotificationIcon(notification) {
   }
 }
 
+function getPushPermissionDetails({
+  isPushEnabled,
+  isPushSupported,
+  pushPermission,
+}) {
+  if (!isPushSupported) {
+    return {
+      badge: "Unsupported",
+      description: "This browser does not support push notifications.",
+    };
+  }
+
+  if (isPushEnabled) {
+    return {
+      badge: "On",
+      description: "Push notifications are enabled for this browser.",
+    };
+  }
+
+  if (pushPermission === "denied") {
+    return {
+      badge: "Blocked",
+      description:
+        "Browser permission is blocked. Enable notifications in your browser site settings.",
+    };
+  }
+
+  if (pushPermission === "granted") {
+    return {
+      badge: "Off",
+      description: "Push notifications are off for this browser right now.",
+    };
+  }
+
+  return {
+    badge: "Off",
+    description: "Turn this on to allow push notifications on this browser.",
+  };
+}
+
+async function getPushPermissionState() {
+  if (
+    typeof window === "undefined" ||
+    !("serviceWorker" in navigator) ||
+    !("PushManager" in window) ||
+    typeof Notification === "undefined"
+  ) {
+    return {
+      isPushSupported: false,
+      isPushEnabled: false,
+      pushPermission: "unsupported",
+    };
+  }
+
+  await registerPushServiceWorker();
+  const registration = await navigator.serviceWorker.ready;
+  const subscription = await registration.pushManager.getSubscription();
+
+  return {
+    isPushSupported: true,
+    isPushEnabled:
+      Notification.permission === "granted" && Boolean(subscription),
+    pushPermission: Notification.permission,
+  };
+}
+
 export default function NotificationsPage() {
   const router = useRouter();
+  const [isPushSupported, setIsPushSupported] = useState(true);
+  const [pushPermission, setPushPermission] = useState("default");
+  const [isPushEnabled, setIsPushEnabled] = useState(false);
+  const [isUpdatingPush, setIsUpdatingPush] = useState(false);
   const {
     data: notificationsFeed,
     error,
@@ -129,6 +203,19 @@ export default function NotificationsPage() {
     useMarkNotificationReadMutation();
   const notifications = getNotifications(notificationsFeed);
   const stats = getNotificationStats(notificationsFeed);
+  const pushPermissionDetails = getPushPermissionDetails({
+    isPushEnabled,
+    isPushSupported,
+    pushPermission,
+  });
+
+  const syncPushPermissionState = async () => {
+    const nextState = await getPushPermissionState();
+
+    setIsPushSupported(nextState.isPushSupported);
+    setPushPermission(nextState.pushPermission);
+    setIsPushEnabled(nextState.isPushEnabled);
+  };
 
   useEffect(() => {
     if (!error) {
@@ -142,6 +229,40 @@ export default function NotificationsPage() {
 
     toast.error(getClientErrorMessage(error, "Unable to load notifications"));
   }, [error, router]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadPushPermissionState = async () => {
+      try {
+        const nextState = await getPushPermissionState();
+
+        if (!isMounted) {
+          return;
+        }
+
+        setIsPushSupported(nextState.isPushSupported);
+        setPushPermission(nextState.pushPermission);
+        setIsPushEnabled(nextState.isPushEnabled);
+      } catch (pushError) {
+        console.error("Unable to load push notification state:", pushError);
+
+        if (!isMounted) {
+          return;
+        }
+
+        setIsPushSupported(false);
+        setPushPermission("unsupported");
+        setIsPushEnabled(false);
+      }
+    };
+
+    loadPushPermissionState();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleMarkAllAsRead = async () => {
     try {
@@ -167,6 +288,56 @@ export default function NotificationsPage() {
       toast.error(
         getClientErrorMessage(markError, "Unable to update notification"),
       );
+    }
+  };
+
+  const handleTogglePushNotifications = async () => {
+    if (isUpdatingPush) {
+      return;
+    }
+
+    setIsUpdatingPush(true);
+
+    try {
+      if (isPushEnabled) {
+        await unsubscribeCurrentBrowserFromPush();
+        toast.success("Push notifications turned off for this browser.");
+      } else {
+        const result = await subscribeCurrentBrowserToPush();
+
+        if (result.status === "unsupported") {
+          toast.error("Push notifications are not supported on this browser.");
+          return;
+        }
+
+        if (result.status === "denied") {
+          toast.error(
+            "Notifications are blocked. Enable them from your browser site settings.",
+          );
+          return;
+        }
+
+        if (result.status !== "granted") {
+          toast.error("Push notifications were not enabled.");
+          return;
+        }
+
+        toast.success("Push notifications turned on for this browser.");
+      }
+    } catch (pushError) {
+      if (isUnauthorizedError(pushError)) {
+        router.replace("/sign-in");
+        return;
+      }
+
+      toast.error(
+        getClientErrorMessage(pushError, "Unable to update push notifications"),
+      );
+    } finally {
+      setIsUpdatingPush(false);
+      syncPushPermissionState().catch((pushError) => {
+        console.error("Unable to refresh push notification state:", pushError);
+      });
     }
   };
 
@@ -205,6 +376,50 @@ export default function NotificationsPage() {
           <p className="mt-1 font-satoshi text-[13px] leading-5 text-[#555]">
             Priority
           </p>
+        </div>
+      </div>
+
+      <div className="theme-card mb-6 rounded-[24px] border px-4 py-4">
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-[18px] font-semibold leading-7 text-[#0F0F0F]">
+                Push notifications
+              </h2>
+              <span
+                className={`rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] ${
+                  isPushEnabled
+                    ? "bg-[#E8FFF1] text-[#00A84D]"
+                    : pushPermission === "denied"
+                      ? "bg-[#FFF3E9] text-[#D46B08]"
+                      : "bg-[#F4F7F5] text-[#7E8A83]"
+                }`}
+              >
+                {pushPermissionDetails.badge}
+              </span>
+            </div>
+            <p className="mt-1 font-satoshi text-[14px] leading-6 text-[#555]">
+              {pushPermissionDetails.description}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            role="switch"
+            aria-checked={isPushEnabled}
+            aria-label="Toggle push notifications"
+            onClick={handleTogglePushNotifications}
+            disabled={!isPushSupported || isUpdatingPush}
+            className={`relative h-[30px] w-[54px] shrink-0 rounded-full transition-all duration-300 ${
+              isPushEnabled ? "bg-[#00D061]" : "theme-surface-secondary"
+            } ${!isPushSupported || isUpdatingPush ? "opacity-60" : ""}`}
+          >
+            <span
+              className={`theme-surface absolute top-[3px] h-6 w-6 rounded-full shadow-sm transition-all duration-300 ${
+                isPushEnabled ? "left-[26px]" : "left-[3px]"
+              }`}
+            />
+          </button>
         </div>
       </div>
 

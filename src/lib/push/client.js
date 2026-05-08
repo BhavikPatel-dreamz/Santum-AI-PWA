@@ -47,6 +47,17 @@ function getDeviceInfo() {
   };
 }
 
+function createRequestError(response, payload, fallbackMessage) {
+  const error = new Error(
+    normalizeText(payload?.message) ||
+      normalizeText(payload?.error) ||
+      fallbackMessage,
+  );
+
+  error.status = response.status;
+  return error;
+}
+
 export async function registerPushServiceWorker() {
   if (typeof window === "undefined" || !("serviceWorker" in navigator)) {
     return null;
@@ -108,16 +119,65 @@ export async function subscribeCurrentBrowserToPush() {
   const payload = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    throw new Error(
-      normalizeText(payload?.message) ||
-        normalizeText(payload?.error) ||
-        "Failed to save push subscription",
+    throw createRequestError(
+      response,
+      payload,
+      "Failed to save push subscription",
     );
   }
 
   return {
     status: "granted",
     subscription: subscription.toJSON(),
+    result: payload,
+  };
+}
+
+export async function unsubscribeCurrentBrowserFromPush() {
+  if (
+    typeof window === "undefined" ||
+    !("serviceWorker" in navigator) ||
+    !("PushManager" in window) ||
+    typeof Notification === "undefined"
+  ) {
+    return { status: "unsupported" };
+  }
+
+  await registerPushServiceWorker();
+  const registration = await navigator.serviceWorker.ready;
+  const subscription = await registration.pushManager.getSubscription();
+  const endpoint = normalizeText(subscription?.endpoint);
+
+  if (subscription) {
+    const unsubscribed = await subscription.unsubscribe();
+
+    if (!unsubscribed) {
+      throw new Error("Failed to unsubscribe this browser from push");
+    }
+  }
+
+  const response = await fetch("/api/subscribe", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      deviceInfo: getDeviceInfo(),
+    }),
+  });
+  const payload = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw createRequestError(
+      response,
+      payload,
+      "Failed to disable push notifications",
+    );
+  }
+
+  return {
+    status: Notification.permission,
+    endpoint,
     result: payload,
   };
 }

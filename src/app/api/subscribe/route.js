@@ -84,7 +84,8 @@ export async function POST(req) {
 
     const record = await PushSubscriptionRecord.findOneAndUpdate(
       {
-        endpoint: subscription.endpoint,
+        user,
+        deviceId: deviceInfo.deviceId,
       },
       {
         $set: {
@@ -124,5 +125,54 @@ export async function POST(req) {
     }
 
     return createErrorResponse(error, "Failed to process subscription");
+  }
+}
+
+export async function DELETE(req) {
+  try {
+    const token = await getAuthToken();
+
+    if (!token) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await req.json().catch(() => ({}));
+    const deviceInfo = normalizeDeviceInfo(body?.deviceInfo, req);
+
+    if (!deviceInfo.deviceId) {
+      return NextResponse.json(
+        { message: "Subscription device ID is required" },
+        { status: 400 },
+      );
+    }
+    const user = await resolveCurrentUserKey();
+
+    await connectDB();
+
+    const query = { user };
+
+    if (deviceInfo.deviceId) {
+      query.deviceId = deviceInfo.deviceId;
+    }
+
+    const updateResult = await PushSubscriptionRecord.updateMany(query, {
+      $set: {
+        isActive: false,
+        deactivatedAt: new Date(),
+      },
+    });
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        deactivatedCount: updateResult.modifiedCount ?? 0,
+      },
+    });
+  } catch (error) {
+    if (error?.status === 401) {
+      return createUnauthorizedResponse();
+    }
+
+    return createErrorResponse(error, "Failed to remove subscription");
   }
 }

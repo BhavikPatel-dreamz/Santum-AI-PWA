@@ -3,7 +3,7 @@ const { loadEnvConfig } = require("@next/env");
 const mongoose = require("mongoose");
 const webpush = require("web-push");
 const { Worker } = require("bullmq");
-const createRedisConnection = require("../src/lib/push/queue.js");
+const { createRedisConnection } = require("../src/lib/push/queue");
 
 loadEnvConfig(process.cwd());
 
