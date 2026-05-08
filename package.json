@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev --webpack",
     "build": "next build --webpack",
-    "start": "next start",
+    "start": "node scripts/push-worker.cjs & next start",
     "lint": "eslint",
     "worker": "node scripts/push-worker.cjs"
   },
