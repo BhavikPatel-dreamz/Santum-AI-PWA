@@ -35,15 +35,13 @@ export default function LetsYouInPage() {
         },
       });
 
-      console.log("Fingerprint login success:", credential);
-
-      // ✅ Redirect after success
+      //Redirect after success
       router.push("/home");
     } catch (err) {
       if (err.name === "NotAllowedError") {
         return;
       }
-      console.error("Fingerprint login failed:", err);
+      console.error("Fingerprint Sigh In failed:", err);
     }
   }, [router]);
 
@@ -88,7 +86,7 @@ export default function LetsYouInPage() {
               onClick={handleFingerprintLogin}
               className="w-full mt-3 py-4 rounded-[14px] border border-gray-300 text-[18px]"
             >
-              Login with Fingerprint
+              Sign In with Fingerprint
             </button>
           )}
         </div>
