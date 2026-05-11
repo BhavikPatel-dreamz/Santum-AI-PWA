@@ -127,10 +127,10 @@ export default function SettingsDetailPage({ content }) {
                 key={item.label}
                 className="theme-card-muted rounded-[20px] border px-3 py-4 text-center"
               >
-                <p className="theme-text-primary text-[20px] font-semibold leading-7">
+                <p className="theme-text-primary text-[16px] font-semibold leading-7">
                   {item.value}
                 </p>
-                <p className="theme-text-secondary mt-1 font-satoshi text-[13px] leading-5">
+                <p className="theme-text-secondary mt-1 font-satoshi text-[12px] leading-5">
                   {item.label}
                 </p>
               </div>

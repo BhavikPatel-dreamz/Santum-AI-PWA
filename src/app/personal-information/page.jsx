@@ -126,8 +126,8 @@ function validateBasicProfile(form) {
   const ageDate = new Date(ageDifference);
   const age = Math.abs(ageDate.getUTCFullYear() - 1970);
 
-  if (age < 13) {
-    return "You must be at least 13 years old";
+  if (age < 18) {
+    return "You must be at least 18 years old";
   }
 
   return null;
@@ -247,7 +247,7 @@ export default function PersonalInformationPage() {
 
   const finishProfileFlow = () => {
     if (isOnboarding) {
-      router.replace("/reasons");
+      router.replace("/finger-scan");
     }
   };
 
@@ -343,7 +343,7 @@ export default function PersonalInformationPage() {
         compact
       /> */}
 
-      <div className="theme-card mb-6 rounded-[26px] border px-5 py-5">
+      {!isOnboarding && <div className="theme-card mb-6 rounded-[26px] border px-5 py-5">
         <div className="flex items-center gap-4">
           <div className="theme-pill flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-full text-[24px] font-semibold">
             {profileInitials}
@@ -389,7 +389,7 @@ export default function PersonalInformationPage() {
             </p>
           </div>
         </div> */}
-      </div>
+      </div>}
 
       {isProfileLoading && !didInitialize ? (
         <div className="theme-card rounded-[26px] border px-5 py-8 text-center">
@@ -438,7 +438,7 @@ export default function PersonalInformationPage() {
             </div>
           </div>
 
-          <div className="theme-card mb-5 rounded-[26px] border px-5 py-5">
+          {/* <div className="theme-card mb-5 rounded-[26px] border px-5 py-5">
             <div className="mb-4">
               <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#00A84D]">
                 Contact Details
@@ -477,7 +477,7 @@ export default function PersonalInformationPage() {
                 </p>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* <div className="theme-card mb-5 rounded-[26px] border px-5 py-5">
             <div className="mb-4">

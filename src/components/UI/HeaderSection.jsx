@@ -7,23 +7,8 @@ const HeaderSection = ({ title }) => {
   const { isDark } = useTheme();
 
   return (
-    <header className="relative h-[120px] overflow-hidden bg-[#23cf67] px-5 pt-6 sm:h-[136px] sm:px-6 sm:pt-7 lg:h-[156px] lg:px-10 lg:pt-8">
-      <Image
-        src={
-          isDark
-            ? "/icons/let-you-screen-main-img-dark.jpg"
-            : "/icons/let-you-screen-main-img.jpg"
-        }
-        alt=""
-        width={960}
-        height={220}
-        priority
-        unoptimized
-        sizes="(max-width: 768px) 100vw, 960px"
-        className="absolute inset-0 mx-auto h-full w-full max-w-[960px] object-cover object-top"
-      />
-
-      <div className="relative z-10 flex items-center gap-3 pt-1 sm:pt-2">
+    <header className=" h-[120px] overflow-hidden bg-[#323d51] px-5 pt-6 sm:h-[136px] sm:px-6 sm:pt-7 lg:h-[156px] lg:px-10 lg:pt-8">
+      <div className="flex items-center gap-3">
         <button
           type="button"
           onClick={() => router.back()}
@@ -44,9 +29,18 @@ const HeaderSection = ({ title }) => {
             <line x1="9" y1="12" x2="20" y2="12" />
           </svg>
         </button>
-        <h1 className="text-[18px] font-medium leading-6 text-white sm:text-[20px] lg:text-[24px] lg:leading-8">
-          {title}
-        </h1>
+        <div className=" w-full flex items-center justify-between">
+          <h1 className="text-[18px] font-medium leading-6 text-white sm:text-[20px] lg:text-[24px] lg:leading-8">
+            {title}
+          </h1>
+          <Image
+            src="/Logo Source files 21-4/Icon/SVG/Artboard1.svg"
+            alt=""
+            width={70}
+            height={70}
+            className=""
+          />
+        </div>
       </div>
     </header>
   );

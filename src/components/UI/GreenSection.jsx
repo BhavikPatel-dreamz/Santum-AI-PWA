@@ -10,9 +10,9 @@ const GreenSection = ({ show = true }) => {
 
   return (
     <div>
-      <div className="relative flex min-h-[240px] h-[32vh] max-h-[360px] flex-shrink-0 items-end justify-center overflow-hidden bg-[#00D061] pb-6 sm:min-h-[300px] sm:h-[38vh] sm:pb-10 lg:min-h-[420px] lg:max-h-[460px] lg:pb-16">
+      <div className="flex min-h-[240px] h-[32vh] max-h-[360px] flex-shrink-0 items-center justify-center overflow-hidden bg-[#323d51] pb-6 sm:min-h-[300px] sm:h-[38vh] sm:pb-10 lg:min-h-[420px] lg:max-h-[460px] lg:pb-16">
         {/* Circuit SVG background */}
-        <Image
+        {/* <Image
           src={
             isDark
               ? "/icons/let-you-screen-main-img-dark.jpg"
@@ -25,7 +25,7 @@ const GreenSection = ({ show = true }) => {
           unoptimized
           sizes="(max-width: 768px) 100vw, (max-width: 1280px) 85vw, 1120px"
           className="absolute left-1/2 top-0 h-full w-full max-w-[1120px] -translate-x-1/2 object-cover object-top"
-        />
+        /> */}
 
         {/* Back button */}
         {show && (
@@ -38,20 +38,20 @@ const GreenSection = ({ show = true }) => {
             <ArrowLeft size={18} />
           </button>
         )}
+        <div className="flex items-center justify-center">
+          <Image
+            src="/Logo Source files 21-4/Icon/SVG/Artboard1.svg"
+            alt="SantumAI logo"
+            width={180}
+            height={180}
+            priority
+            className="h-[96px] w-[96px] object-contain sm:h-[132px] sm:w-[132px] lg:h-[168px] lg:w-[168px]"
+          />
+        </div>
 
         {/* Logo */}
-        <div className="theme-surface absolute top-14 z-10 flex h-[88px] w-[88px] items-center justify-center rounded-[20px] border border-white/15 shadow-[0_18px_42px_rgba(0,0,0,0.14)] transition-colors duration-300 sm:top-20 sm:h-[120px] sm:w-[120px] lg:top-28 lg:h-[152px] lg:w-[152px]">
-          <div className="flex items-center justify-center">
-            <Image
-              src="/Logo Source files 21-4/Icon/SVG/Artboard1.svg"
-              alt="SantumAI logo"
-              width={120}
-              height={120}
-              priority
-              className="h-[64px] w-[64px] object-contain sm:h-[88px] sm:w-[88px] lg:h-[112px] lg:w-[112px]"
-            />
-          </div>
-        </div>
+        {/* <div className=" absolute top-20 z-10 flex h-[132px] w-[132px] items-center justify-center sm:top-32 sm:h-[180px] sm:w-[180px] lg:top-44 lg:h-[228px] lg:w-[228px]">
+        </div> */}
       </div>
     </div>
   );

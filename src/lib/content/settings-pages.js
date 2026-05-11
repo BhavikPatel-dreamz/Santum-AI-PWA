@@ -123,7 +123,7 @@ export const SETTINGS_PAGE_CONTENT = {
     ],
   },
   subscriptions: {
-    title: "Subscriptions",
+    title: "Current Plan",
     badge: "Plan Control",
     heroTitle: "Track your membership, renewal cycle, and support access",
     description:
@@ -133,7 +133,7 @@ export const SETTINGS_PAGE_CONTENT = {
     sections: [
       {
         type: "stats",
-        title: "Current Snapshot",
+        title: "Plan Snapshot",
         items: [
           { label: "Plan", value: "Free" },
           { label: "Renewal", value: "Monthly" },
@@ -142,7 +142,7 @@ export const SETTINGS_PAGE_CONTENT = {
       },
       {
         type: "list",
-        title: "What Premium Adds",
+        title: "Plan Upgrade Gets You:",
         items: [
           {
             title: "Longer conversations",
@@ -161,7 +161,7 @@ export const SETTINGS_PAGE_CONTENT = {
     ],
     footerActions: [
       {
-        label: "Upgrade To Plus",
+        label: "Upgrade to Standard",
         href: "/plus-subscription",
         variant: "primary",
       },

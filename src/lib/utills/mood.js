@@ -18,7 +18,7 @@ export const MOOD_METRICS = [
     key: "stress",
     label: "Stress",
     accentColor: "#FF8A3D",
-    helperText: "How pressured or overwhelmed does today feel?",
+    helperText: "How pressured or overwhelmed do you feel today?",
   },
   {
     key: "energy",

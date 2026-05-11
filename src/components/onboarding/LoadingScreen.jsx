@@ -16,7 +16,7 @@ export default function LoadingScreen({ onDone }) {
 
   return (
     <div
-      className="theme-surface fixed inset-0 flex items-center justify-center overflow-hidden transition-colors duration-300"
+      className="theme-shell fixed inset-0 flex items-center justify-center overflow-hidden transition-colors duration-300"
       style={{ zIndex: 99999 }}
     >
       {/* Top-left dot pattern */}
@@ -55,7 +55,7 @@ export default function LoadingScreen({ onDone }) {
         </div>
 
         <p className="theme-text-secondary text-lg font-medium leading-6 font-poppins">
-          Best Viewed on Mobile Phone
+          Best Viewed on Mobile
         </p>
       </div>
 

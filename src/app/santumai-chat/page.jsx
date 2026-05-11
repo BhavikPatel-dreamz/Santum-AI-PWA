@@ -28,20 +28,19 @@ const QUICK_PROMPTS = [
   "Help me slow down after a stressful day",
   "I feel overwhelmed and need perspective",
   "Guide me through a grounding exercise",
-  "Help me reflect on a difficult conversation",
 ];
 
 const CREDIT_LIMIT_MESSAGE =
   "You have reached your chat credit limit. Purchase a plan to continue your support conversations with SantumAI.";
 const PURCHASE_PLAN_PATH = "/plus-subscription";
 const DEFAULT_PLAN_LEVEL = "free";
-const RECENT_MESSAGE_LIMIT = 10;
-const MAX_CREDITS = 20000;
+const RECENT_MESSAGE_LIMIT = 6;
+const MAX_CREDITS = 20000; // change this to dynamic
 const STARTER_MESSAGES = [
   {
     id: "starter-assistant",
     role: "assistant",
-    text: "Hi, I'm SantumAI. I'm here to support your emotional wellbeing with calm, text-based conversation.",
+    text: "Hi, I'm Sai. You are not alone in this, i'm here to support you at your own pace",
   },
 ];
 
@@ -208,8 +207,7 @@ export default function SantumAIChatPage() {
       ? activeChat.summerized.trim()
       : "";
 
-  const isWarn =
-    !hasTodayMoodCheckIn || isCreditDepleted;
+  const isWarn = !hasTodayMoodCheckIn || isCreditDepleted;
 
   const persistedRawMessages = useMemo(() => {
     if (!requestedChatId) {
@@ -663,7 +661,7 @@ export default function SantumAIChatPage() {
 
   return (
     <StepPageShell
-      title="Chat With SantumAI"
+      title="Chat with Sai..."
       contentClassName="h-[100dvh] overflow-hidden pb-4"
     >
       <div className="flex h-full min-h-0 flex-col">
@@ -853,14 +851,14 @@ export default function SantumAIChatPage() {
                     ? "Complete today's mood check-in to unlock chat."
                     : isCreditDepleted
                       ? "Purchase a plan or refresh your balance to keep chatting."
-                      : "Tell SantumAI what's on your mind..."
+                      : "Where would you like to begin..."
               }
               className="theme-input-surface w-full resize-none rounded-[18px] px-3 py-3 sm:px-4 sm:py-4 font-satoshi text-[15px] leading-6 outline-none disabled:cursor-not-allowed disabled:bg-[#F1F5F2] disabled:text-[#7E8A83]"
             />
 
-            <div className="mt-3 flex items-center justify-between gap-3">
+            <div className="mt-2 flex items-center justify-between">
               <p
-                className={`font-satoshi text-[13px] leading-5 ${isWarn ? "text-red-500" : "text-[#555]"}`}
+                className={`font-satoshi text-[10px] ${isWarn ? "text-red-500" : "text-[#555]"}`}
               >
                 {isMoodCheckInLoading
                   ? "Checking today's mood check-in before chat unlocks."
@@ -868,7 +866,7 @@ export default function SantumAIChatPage() {
                     ? "Share your mood first so SantumAI can respond with better context."
                     : isCreditDepleted
                       ? "Purchase a plan to continue SantumAI support chats."
-                      : "Powered by SantumAI counseling service."}
+                      : "Powered by advanced artificial intelligence counseling system."}
               </p>
               <div className="flex items-center justify-end gap-3">
                 {/* Circular Progress */}
@@ -900,7 +898,7 @@ export default function SantumAIChatPage() {
                       strokeDashoffset={264 - (264 * creditPercentage) / 100}
                     />
                   </svg>
-
+                  {/* this svg only show for free & standard */}
                   {/* Percentage Text */}
                   <span className="absolute text-[10px] font-semibold text-[#0F0F0F] sm:text-[11px]">
                     {Math.round(creditPercentage)}%

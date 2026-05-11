@@ -30,47 +30,61 @@ const SYNC_POLLING_INTERVAL = 10000;
 const PLANS = [
   {
     key: 1,
-    name: "Free Membership",
+    name: "Free",
     billing_amount: 0,
     description:
-      "A supportive everyday chat space with the core SantumAI wellbeing experience.",
+      "Learn how Sai responds with basic space and core wellbeing experience",
     features: [
-      "Text-based support chats",
+      "Caring conversations",
+      "Empathetic advice",
+      "Coping tips",
+      "Immediate support",
       "Daily mood check-ins",
-      "Saved conversation history",
+      "Privacy and anonymity",
+      "24/7 access",
+      "30-35 minutes talk time",
+      "Cancel any time",
     ],
     highlighted: false,
-    tokens: 200,
+    tokens: "In FREE TRAIL You Get:",
+    tip: null,
   },
 
   {
     key: 2,
-    name: "Standard Membership",
-    billing_amount: 49,
+    name: "Standard",
+    billing_amount: 90,
     description:
-      "Perfect for regular users who want more access, smoother conversations, and better continuity.",
+      "Prioritize understanding of emotional context and guidance to help  you develop healthier ways of awareness and thinking",
     features: [
-      "Extended daily usage",
-      "Faster response times",
-      "Improved conversation memory",
+      "Sensitive dialogue",
+      "Emotional context",
+      "Relief tactics",
+      "Complex reasoning",
+      "Advanced chat memory",
     ],
     highlighted: false,
-    tokens: 5000,
+    tokens: "You Get Everything in FREE Plus:",
+    tip: "Total talk time depends on multiple factors and is approximate 10hrs monthly talk time",
   },
 
   {
     key: 3,
-    name: "Premium Membership",
-    billing_amount: 99,
+    name: "Premium",
+    billing_amount: 150,
     description:
-      "A stronger fit for members who want deeper support, more continuity, and faster replies.",
+      "Get stronger support with structured strategies, adcanced behavioral tools, reasoning and training for more complex challenges.",
     features: [
-      "Priority support responses",
-      "Longer conversation memory",
-      "Guided reflection tools",
+      "Advanced techniques",
+      "Cognitive training",
+      "Behavioral management",
+      "Practical strategies",
+      "Faster response times",
+      "Approx 20hrs talk time",
     ],
     highlighted: true,
-    tokens: 20000,
+    tokens: "You Get Everything in STANDARD Plus:",
+    tip: "Total talk time depends on multiple factors and is approximate 20hrs monthly talk time",
   },
 ];
 
@@ -305,7 +319,7 @@ function didActivateExpectedPlan(checkoutState, subscriptionStatus) {
 
 export default function PlusSubscriptionPage() {
   const [selectedPlanKey, setSelectedPlanKey] = useState(null);
-  const [pressed, setPressed] = useState(null)
+  const [pressed, setPressed] = useState(null);
   const [pendingCheckout, setPendingCheckout] = useState(null);
   const [purchaseSummary, setPurchaseSummary] = useState(null);
   const [isManualSyncing, setIsManualSyncing] = useState(false);
@@ -603,7 +617,7 @@ export default function PlusSubscriptionPage() {
   const secondaryButtonLabel = pendingCheckout
     ? "Open Santum.net Again"
     : purchaseSummary || isSelectedPlanActive
-      ? "View My Subscription"
+      ? "My Current Plan"
       : "Maybe Later";
 
   const isPrimaryButtonDisabled =
@@ -614,7 +628,7 @@ export default function PlusSubscriptionPage() {
       isPlansLoading);
 
   return (
-    <StepPageShell title="SantumAI Plus" contentClassName="overflow-y-auto">
+    <StepPageShell title="Santum AI Plans" contentClassName="overflow-y-auto">
       {/* <FeatureShowcaseCard
         badge="Upgrade"
         title="Choose your plan here, then finish membership on Santum.net"
@@ -625,7 +639,7 @@ export default function PlusSubscriptionPage() {
         compact
       /> */}
 
-      <div
+      {/* <div
         className={`mb-6 rounded-[24px] px-5 py-5 ${getBenefitsPanelClasses(
           isDark,
         )}`}
@@ -641,12 +655,12 @@ export default function PlusSubscriptionPage() {
           from Santum after checkout so the PWA always reflects the latest
           membership state.
         </p>
-      </div>
+      </div> */}
 
       <div className="space-y-4">
         {PLANS.map((plan, index) => {
           const planKey = getPlanKey(plan, index);
-          const isSelected = plan.key === pressed
+          const isSelected = plan.key === pressed;
 
           // planKey === resolvedSelectedPlanKey;
           const isActivePlan = isSamePlan(plan, activePlanReference);
@@ -658,7 +672,7 @@ export default function PlusSubscriptionPage() {
               type="button"
               aria-pressed={isSelected}
               onClick={() => {
-                setPressed(plan.key)
+                setPressed(plan.key);
                 setSelectedPlanKey(planKey);
                 setPurchaseSummary(null);
               }}
@@ -671,11 +685,25 @@ export default function PlusSubscriptionPage() {
               )}`}
             >
               <div className="flex items-start justify-between gap-4">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="theme-text-primary text-[22px] font-semibold leading-8">
+                <div className="w-full">
+                  <div className="flex items-center justify-between">
+                    <h3 className="theme-text-primary text-[24px] font-semibold">
                       {plan.name}
                     </h3>
+                    <div
+                      className={`rounded-[18px] bg-orange-400 px-7 pt-3 pb-4 text-center ${getPricePillClasses(
+                        isDark,
+                      )}`}
+                    >
+                      <p className="text-[20px] font-semibold">
+                        {getPlanPrice(plan) === 0
+                          ? "Free Trial"
+                          : `R${getPlanPrice(plan)}pm`}
+                      </p>
+                      <p className="text-[12px] font-semibold -m-1">
+                        {getPlanPrice(plan) != 0 && `(R3 per day)`}
+                      </p>
+                    </div>
                     {/* {isActivePlan ? (
                       <span className="rounded-full bg-[#0F0F0F] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
                         Active
@@ -685,21 +713,8 @@ export default function PlusSubscriptionPage() {
                   <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6">
                     {plan.description}
                   </p>
-                  <p className="theme-text-primary mt-3 text-[12px] font-semibold uppercase tracking-[0.16em]">
-                    {planTokenLimit === null
-                      ? "Token allowance syncs after checkout"
-                      : `${formatCreditAmount(planTokenLimit)} tokens included`}
-                  </p>
-                </div>
-                <div
-                  className={`rounded-[18px] px-4 py-3 text-center ${getPricePillClasses(
-                    isDark,
-                  )}`}
-                >
-                  <p className="text-[20px] font-semibold leading-7">
-                    {getPlanPrice(plan) === 0
-                      ? "Free"
-                      : `$${getPlanPrice(plan)}/mo`}
+                  <p className="theme-text-primary mt-3 text-[12px] font-semibold tracking-[0.16em]">
+                    {plan.tokens}
                   </p>
                 </div>
               </div>
@@ -718,6 +733,9 @@ export default function PlusSubscriptionPage() {
                   ))}
                 </div>
               ) : null}
+              <p className="theme-text-secondary mt-3 font-satoshi text-[14px] leading-6">
+                {plan.tip}
+              </p>
             </button>
           );
         })}

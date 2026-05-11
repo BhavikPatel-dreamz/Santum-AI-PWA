@@ -8,6 +8,7 @@ import Script from "next/script";
 import { Suspense } from "react";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
+import LayoutContent from "@/components/app/LayoutConetent";
 
 const segoeUi = localFont({
   src: [
@@ -82,7 +83,7 @@ export const metadata: Metadata = {
   description:
     "A standalone AI counselling PWA for text-based emotional wellbeing support.",
   icons: {
-    icon: "/Logo Source files 21-4/Icon/SVG/Artboard1.svg",
+    icon: "/Logo Source files 21-4/Icon/SAI116.jpg",
   },
 };
 
@@ -104,7 +105,9 @@ export default function RootLayout({
             <LoadingScreenWrapper />
             <PageTransitionProvider>
               <Suspense>
-                <main className="flex-1">{children}</main>
+                <LayoutContent>
+                  <main className="flex-1">{children}</main>
+                </LayoutContent>
                 <Toaster
                   position="top-center"
                   toastOptions={{
