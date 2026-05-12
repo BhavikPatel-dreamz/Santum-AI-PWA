@@ -110,8 +110,8 @@ export default function SignInPage() {
               "Sign in"
             )}
           </button>
-          <p className="theme-text-secondary px-4 text-center text-[17px] leading-6">
-            Don&apos;t have an account?
+          <p className="theme-text-primary font-semibold font-satoshi px-4 text-center text-[17px] leading-6">
+            Don't have an account?
           </p>
 
           <button

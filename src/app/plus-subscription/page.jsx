@@ -33,7 +33,7 @@ const PLANS = [
     name: "Free",
     billing_amount: 0,
     description:
-      "Learn how Sai responds with basic space and core wellbeing experience",
+      "Learn how Sai responds with basic chat space and core wellbeing advice",
     features: [
       "Caring conversations",
       "Empathetic advice",
@@ -42,7 +42,7 @@ const PLANS = [
       "Daily mood check-ins",
       "Privacy and anonymity",
       "24/7 access",
-      "30-35 minutes talk time",
+      "20-25 minutes talk time",
       "Cancel any time",
     ],
     highlighted: false,
@@ -629,7 +629,7 @@ export default function PlusSubscriptionPage() {
       isPlansLoading);
 
   return (
-    <StepPageShell title="Santum AI Plans" contentClassName="overflow-y-auto">
+    <StepPageShell title="Santum AI Plans" contentClassName="overflow-y-auto bg-[#f2f2f2]">
       {/* <FeatureShowcaseCard
         badge="Upgrade"
         title="Choose your plan here, then finish membership on Santum.net"
