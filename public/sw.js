@@ -1,1 +1,100 @@
-if(!self.define){let e,i={};const s=(s,o)=>(s=new URL(s+".js",o).href,i[s]||new Promise(i=>{if("document"in self){const e=document.createElement("script");e.src=s,e.onload=i,document.head.appendChild(e)}else e=s,importScripts(s),i()}).then(()=>{let e=i[s];if(!e)throw new Error(`Module ${s} didn’t register its module`);return e}));self.define=(o,a)=>{const c=e||("document"in self?document.currentScript.src:"")||location.href;if(i[c])return;let r={};const t=e=>s(e,c),n={module:{uri:c},exports:r,require:t};i[c]=Promise.all(o.map(e=>n[e]||t(e))).then(e=>(a(...e),r))}}define(["./workbox-0710f85d"],function(e){"use strict";importScripts("worker-3gJId6gh70ZHvZ39PqFjq.js"),self.skipWaiting(),e.clientsClaim(),e.precacheAndRoute([{url:"/Logo Source files 21-4/Font/AdobeFnt22.lst",revision:"f0a9a0a2ea14876da89ce930f561c557"},{url:"/Logo Source files 21-4/Font/segoeui.ttf",revision:"d9076ed73f2501090da92fe3c72d3ce6"},{url:"/Logo Source files 21-4/Font/segoeuib.ttf",revision:"299556cecd6b730bce8230f529e837a1"},{url:"/Logo Source files 21-4/Font/segoeuii.ttf",revision:"ac2711bc5bf8d5883fc4091ac738a19a"},{url:"/Logo Source files 21-4/Font/segoeuil.ttf",revision:"d44929d62a49114d494d1768893fcdf7"},{url:"/Logo Source files 21-4/Font/segoeuisl.ttf",revision:"426088e434f43481b24859270171b906"},{url:"/Logo Source files 21-4/Font/segoeuiz.ttf",revision:"cb53f8068af6572a9ad4cc3c9a226704"},{url:"/Logo Source files 21-4/Font/seguibl.ttf",revision:"868d9468768f1660600f840e3b864815"},{url:"/Logo Source files 21-4/Font/seguibli.ttf",revision:"38b35433147fc7e2b286919b5cb8854e"},{url:"/Logo Source files 21-4/Font/seguili.ttf",revision:"5989bb884027d397cf27a15c18c26b95"},{url:"/Logo Source files 21-4/Font/seguisb.ttf",revision:"bc74928e0b7d13379ccf0b39354e87ad"},{url:"/Logo Source files 21-4/Font/seguisbi.ttf",revision:"3f0b609427347ed7f9d60c8c2f0b2e14"},{url:"/Logo Source files 21-4/Font/seguisli.ttf",revision:"3b10d164be87745d556fddfb792096cd"},{url:"/Logo Source files 21-4/Icon/0.25x/Artboard-1.jpg",revision:"acd2f9a4e590029bcc2b14525d190b1b"},{url:"/Logo Source files 21-4/Icon/0.25x/Artboard-1.png",revision:"125c571dca6747228a110a28f7a92eb7"},{url:"/Logo Source files 21-4/Icon/0.5x/Artboard-1.jpg",revision:"906a511ccec3d4e40ec1843180a19cf8"},{url:"/Logo Source files 21-4/Icon/0.5x/Artboard1.png",revision:"cd5b1b362d56faa2e765ba724dbf250d"},{url:"/Logo Source files 21-4/Icon/1x/Artboard 1-100.jpg",revision:"078a97d5152b5fd19f94fe49468ccedb"},{url:"/Logo Source files 21-4/Icon/1x/Artboard 1.png",revision:"ae27d35c9a984d4b47920e9b98237489"},{url:"/Logo Source files 21-4/Icon/2x/Artboard 1@2x-100.jpg",revision:"2b4030aefeceab4f7a455d5b19f5aca2"},{url:"/Logo Source files 21-4/Icon/2x/Artboard 1@2x.png",revision:"29391640c67640cfaa227e386fce8da7"},{url:"/Logo Source files 21-4/Icon/4x/Artboard 1@4x-100.jpg",revision:"ccd36be4868c17f5991342d52f6b5a20"},{url:"/Logo Source files 21-4/Icon/4x/Artboard 1@4x.png",revision:"1a12ea754f22bd2ec5b96027a0d856e8"},{url:"/Logo Source files 21-4/Icon/PDF/Artboard 1.pdf",revision:"4c3bdfdae489c1ae967c696d6878318a"},{url:"/Logo Source files 21-4/Icon/SAI116.jpg",revision:"71c82c9d0eea1b27597a5bd08ae265b2"},{url:"/Logo Source files 21-4/Icon/SVG/Artboard1.svg",revision:"47bd213baccc6bbe7e6c641a06f987fb"},{url:"/Logo Source files 21-4/Logo.ai",revision:"b8c7a00791806ed5c2c210ac9b9c14d4"},{url:"/Logo Source files 21-4/Logo.psd",revision:"00c651961e1d476e7493416e9ef0e04b"},{url:"/Logo Source files 21-4/Logo/0.25x/Artboard-1.png",revision:"125c571dca6747228a110a28f7a92eb7"},{url:"/Logo Source files 21-4/Logo/0.25x/Artboard-2-100.jpg",revision:"33d9a1a340bfd3565c01b0071068e9ae"},{url:"/Logo Source files 21-4/Logo/0.25x/Artboard-2.png",revision:"fcfa8528f6153c1ed359f8a6479f1b18"},{url:"/Logo Source files 21-4/Logo/0.25x/Artboard-3.png",revision:"596fdf218f5adbf59bbb1c39f790b847"},{url:"/Logo Source files 21-4/Logo/0.25x/Artboard-3_transparent.png",revision:"e5313c700c4301763bd1a1a325256db7"},{url:"/Logo Source files 21-4/Logo/0.5x/Artboard 1.png",revision:"cd5b1b362d56faa2e765ba724dbf250d"},{url:"/Logo Source files 21-4/Logo/0.5x/Artboard 2.png",revision:"8137db56de12104fce8472c0f1d17d53"},{url:"/Logo Source files 21-4/Logo/0.5x/Artboard 3.png",revision:"893b96de5654ae2f93f84f0bd558180c"},{url:"/Logo Source files 21-4/Logo/0.5x/Artboard 3_transparent.png",revision:"a73f7572fcdc3bb5809184ecb3c421b1"},{url:"/Logo Source files 21-4/Logo/0.5x/Artboard-2.jpg",revision:"782787e9772260446304de6700b0fd21"},{url:"/Logo Source files 21-4/Logo/1x/Artboard 2-100.jpg",revision:"1f3b209a683d49d21a6b8bce70d85c9a"},{url:"/Logo Source files 21-4/Logo/1x/Artboard 2.png",revision:"81a8fdde8d97a3c7bace399899764847"},{url:"/Logo Source files 21-4/Logo/1x/Artboard 3-100.jpg",revision:"22f33d573edc6d69af72c0dd8f4d4a87"},{url:"/Logo Source files 21-4/Logo/1x/Artboard 3.png",revision:"d50ca918ab6faf2cb7f67e3c98de81dd"},{url:"/Logo Source files 21-4/Logo/2x/Artboard 2@2x-100.jpg",revision:"b01a63f840d89d1c614772510dc74acd"},{url:"/Logo Source files 21-4/Logo/2x/Artboard 2@2x.png",revision:"1e66c1449244f4e9e347255ba1c3694d"},{url:"/Logo Source files 21-4/Logo/2x/Artboard 3@2x-100.jpg",revision:"7548c7d035706b0b35caa3a5ea49675b"},{url:"/Logo Source files 21-4/Logo/2x/Artboard 3@2x.png",revision:"1237edaa02c95ee10801d1f1f16c3e16"},{url:"/Logo Source files 21-4/Logo/4x/Artboard 2@4x-100.jpg",revision:"e363320e0fa08241264ea67a29627eff"},{url:"/Logo Source files 21-4/Logo/4x/Artboard 2@4x.png",revision:"7db6db61d658efe790ba2c11ef21487d"},{url:"/Logo Source files 21-4/Logo/4x/Artboard 3@4x-100.jpg",revision:"873475ec82f27c4b926aa9a8473ea2db"},{url:"/Logo Source files 21-4/Logo/4x/Artboard 3@4x.png",revision:"aa5d2f894cf0e5f95ca7767435190a95"},{url:"/Logo Source files 21-4/Logo/PDF/Artboard 2.pdf",revision:"c0996dc216fa441f0e6896d3881dea50"},{url:"/Logo Source files 21-4/Logo/PDF/Artboard 3.pdf",revision:"6e165163dfc564526f84b426f2205bb5"},{url:"/Logo Source files 21-4/Logo/SVG/Artboard2.svg",revision:"7d742378e0be3f9e8389f319b66976d6"},{url:"/Logo Source files 21-4/Logo/SVG/Artboard3.svg",revision:"a686296e9131efa666cd7d9b277aca95"},{url:"/_next/static/3gJId6gh70ZHvZ39PqFjq/_buildManifest.js",revision:"cd7f6540302ccc6c244a46739b0b2932"},{url:"/_next/static/3gJId6gh70ZHvZ39PqFjq/_ssgManifest.js",revision:"b6652df95db52feb4daf4eca35380933"},{url:"/_next/static/chunks/1764.315049f9c08c29f7.js",revision:"315049f9c08c29f7"},{url:"/_next/static/chunks/3794-0147154ca0a4b9c9.js",revision:"0147154ca0a4b9c9"},{url:"/_next/static/chunks/4615-3c0f6ec214d0cb1e.js",revision:"3c0f6ec214d0cb1e"},{url:"/_next/static/chunks/4bd1b696-c2f6e0877b6c10aa.js",revision:"c2f6e0877b6c10aa"},{url:"/_next/static/chunks/5772-0dd4c8dceaee4227.js",revision:"0dd4c8dceaee4227"},{url:"/_next/static/chunks/6444-163c2862d7038b3f.js",revision:"163c2862d7038b3f"},{url:"/_next/static/chunks/7543-36110470be9354ce.js",revision:"36110470be9354ce"},{url:"/_next/static/chunks/7764-2be0a6e1f2b87435.js",revision:"2be0a6e1f2b87435"},{url:"/_next/static/chunks/9195-239168fc57edbd50.js",revision:"239168fc57edbd50"},{url:"/_next/static/chunks/app/_global-error/page-f648d42e526fe40d.js",revision:"f648d42e526fe40d"},{url:"/_next/static/chunks/app/_not-found/page-596f49dcadd707aa.js",revision:"596f49dcadd707aa"},{url:"/_next/static/chunks/app/api/auth/login/route-f648d42e526fe40d.js",revision:"f648d42e526fe40d"},{url:"/_next/static/chunks/app/api/auth/logout/route-f648d42e526fe40d.js",revision:"f648d42e526fe40d"},{url:"/_next/static/chunks/app/api/auth/me/route-f648d42e526fe40d.js",revision:"f648d42e526fe40d"},{url:"/_next/static/chunks/app/api/auth/register/route-f648d42e526fe40d.js",revision:"f648d42e526fe40d"},{url:"/_next/static/chunks/app/api/auth/verify-mobile/route-f648d42e526fe40d.js",revision:"f648d42e526fe40d"},{url:"/_next/static/chunks/app/api/chat/%5Bid%5D/route-f648d42e526fe40d.js",revision:"f648d42e526fe40d"},{url:"/_next/static/chunks/app/api/chat/route-f648d42e526fe40d.js",revision:"f648d42e526fe40d"},{url:"/_next/static/chunks/app/api/chat/stream/route-f648d42e526fe40d.js",revision:"f648d42e526fe40d"},{url:"/_next/static/chunks/app/api/credit/balance/route-f648d42e526fe40d.js",revision:"f648d42e526fe40d"},{url:"/_next/static/chunks/app/api/message/route-f648d42e526fe40d.js",revision:"f648d42e526fe40d"},{url:"/_next/static/chunks/app/api/mood-checkin/reminder/route-f648d42e526fe40d.js",revision:"f648d42e526fe40d"},{url:"/_next/static/chunks/app/api/mood-checkin/route-f648d42e526fe40d.js",revision:"f648d42e526fe40d"},{url:"/_next/static/chunks/app/api/notifications/%5Bid%5D/route-f648d42e526fe40d.js",revision:"f648d42e526fe40d"},{url:"/_next/static/chunks/app/api/notifications/route-f648d42e526fe40d.js",revision:"f648d42e526fe40d"},{url:"/_next/static/chunks/app/api/notify/route-f648d42e526fe40d.js",revision:"f648d42e526fe40d"},{url:"/_next/static/chunks/app/api/settings/subscription/route-f648d42e526fe40d.js",revision:"f648d42e526fe40d"},{url:"/_next/static/chunks/app/api/settings/subscription/status/route-f648d42e526fe40d.js",revision:"f648d42e526fe40d"},{url:"/_next/static/chunks/app/api/subscribe/route-f648d42e526fe40d.js",revision:"f648d42e526fe40d"},{url:"/_next/static/chunks/app/api/subscribe/webhook/route-f648d42e526fe40d.js",revision:"f648d42e526fe40d"},{url:"/_next/static/chunks/app/api/user/profile/basic/route-f648d42e526fe40d.js",revision:"f648d42e526fe40d"},{url:"/_next/static/chunks/app/api/user/profile/interests/route-f648d42e526fe40d.js",revision:"f648d42e526fe40d"},{url:"/_next/static/chunks/app/api/user/profile/language/route-f648d42e526fe40d.js",revision:"f648d42e526fe40d"},{url:"/_next/static/chunks/app/api/user/profile/route-f648d42e526fe40d.js",revision:"f648d42e526fe40d"},{url:"/_next/static/chunks/app/confirm-otp/page-b46ec66a6bed1088.js",revision:"b46ec66a6bed1088"},{url:"/_next/static/chunks/app/create-pin/page-f992d6903913ecdf.js",revision:"f992d6903913ecdf"},{url:"/_next/static/chunks/app/finger-scan/page-9d5b602f7374ca19.js",revision:"9d5b602f7374ca19"},{url:"/_next/static/chunks/app/forgot-password/page-3ad02a72ae498ff5.js",revision:"3ad02a72ae498ff5"},{url:"/_next/static/chunks/app/home/page-18eeef9fa7ae02a0.js",revision:"18eeef9fa7ae02a0"},{url:"/_next/static/chunks/app/intrest/page-b4259da1aac479bb.js",revision:"b4259da1aac479bb"},{url:"/_next/static/chunks/app/language/page-ffb478c2e0003882.js",revision:"ffb478c2e0003882"},{url:"/_next/static/chunks/app/layout-0cd25e849c3ea310.js",revision:"0cd25e849c3ea310"},{url:"/_next/static/chunks/app/lets-you-in/page-0154f971de59f28b.js",revision:"0154f971de59f28b"},{url:"/_next/static/chunks/app/manifest.webmanifest/route-f648d42e526fe40d.js",revision:"f648d42e526fe40d"},{url:"/_next/static/chunks/app/new-password/page-9b54d5f5dc767dce.js",revision:"9b54d5f5dc767dce"},{url:"/_next/static/chunks/app/notification/page-606068e4fc2afc07.js",revision:"606068e4fc2afc07"},{url:"/_next/static/chunks/app/notifications/page-dab5c3bcf7880c28.js",revision:"dab5c3bcf7880c28"},{url:"/_next/static/chunks/app/page-164f5b9e9e2baf45.js",revision:"164f5b9e9e2baf45"},{url:"/_next/static/chunks/app/personal-information/page-c5a64cb32f0f9d71.js",revision:"c5a64cb32f0f9d71"},{url:"/_next/static/chunks/app/plus-subscription/page-f0a9af5ce1d51fae.js",revision:"f0a9af5ce1d51fae"},{url:"/_next/static/chunks/app/reasons/page-552ec5e19ca4ddc4.js",revision:"552ec5e19ca4ddc4"},{url:"/_next/static/chunks/app/santumai-chat/page-c828bd4386761bf0.js",revision:"c828bd4386761bf0"},{url:"/_next/static/chunks/app/settings/%5Bslug%5D/page-a40f7c3e43245173.js",revision:"a40f7c3e43245173"},{url:"/_next/static/chunks/app/settings/credits/page-e7159ec9dc5be5d6.js",revision:"e7159ec9dc5be5d6"},{url:"/_next/static/chunks/app/settings/history/page-2ae5e78512bd8a2a.js",revision:"2ae5e78512bd8a2a"},{url:"/_next/static/chunks/app/sign-in/page-8eed000aca54fd0c.js",revision:"8eed000aca54fd0c"},{url:"/_next/static/chunks/app/sign-up/page-041ef7d1978eb871.js",revision:"041ef7d1978eb871"},{url:"/_next/static/chunks/app/verify-otp/page-e7c6b887164a7faf.js",revision:"e7c6b887164a7faf"},{url:"/_next/static/chunks/framework-d1de002210ddaaef.js",revision:"d1de002210ddaaef"},{url:"/_next/static/chunks/main-app-d98563762ed1a6c5.js",revision:"d98563762ed1a6c5"},{url:"/_next/static/chunks/main-d4e634dac96b1891.js",revision:"d4e634dac96b1891"},{url:"/_next/static/chunks/next/dist/client/components/builtin/app-error-f648d42e526fe40d.js",revision:"f648d42e526fe40d"},{url:"/_next/static/chunks/next/dist/client/components/builtin/forbidden-f648d42e526fe40d.js",revision:"f648d42e526fe40d"},{url:"/_next/static/chunks/next/dist/client/components/builtin/global-error-71378fd1cf2df829.js",revision:"71378fd1cf2df829"},{url:"/_next/static/chunks/next/dist/client/components/builtin/not-found-f648d42e526fe40d.js",revision:"f648d42e526fe40d"},{url:"/_next/static/chunks/next/dist/client/components/builtin/unauthorized-f648d42e526fe40d.js",revision:"f648d42e526fe40d"},{url:"/_next/static/chunks/polyfills-42372ed130431b0a.js",revision:"846118c33b2c0e922d7b3a7676f81f6f"},{url:"/_next/static/chunks/webpack-a43744c8dcf3230e.js",revision:"a43744c8dcf3230e"},{url:"/_next/static/css/19129f157ca7a7a5.css",revision:"19129f157ca7a7a5"},{url:"/_next/static/media/0a99c8ce3c679917-s.p.ttf",revision:"868d9468768f1660600f840e3b864815"},{url:"/_next/static/media/10e8e240eba8429b-s.p.ttf",revision:"d44929d62a49114d494d1768893fcdf7"},{url:"/_next/static/media/4fc1183f8285b006-s.p.ttf",revision:"ac2711bc5bf8d5883fc4091ac738a19a"},{url:"/_next/static/media/549872d193c16296-s.p.ttf",revision:"3f0b609427347ed7f9d60c8c2f0b2e14"},{url:"/_next/static/media/5f2e5813932f35b1-s.p.ttf",revision:"299556cecd6b730bce8230f529e837a1"},{url:"/_next/static/media/5f793b7ed9f6f352-s.p.ttf",revision:"d9076ed73f2501090da92fe3c72d3ce6"},{url:"/_next/static/media/64f45df8a5585abb-s.p.ttf",revision:"38b35433147fc7e2b286919b5cb8854e"},{url:"/_next/static/media/b2ecff75c1c4f851-s.p.ttf",revision:"426088e434f43481b24859270171b906"},{url:"/_next/static/media/b8729516ec45e577-s.p.ttf",revision:"3b10d164be87745d556fddfb792096cd"},{url:"/_next/static/media/c70a4807eaf8d60d-s.p.ttf",revision:"5989bb884027d397cf27a15c18c26b95"},{url:"/_next/static/media/d5994bfc292094e7-s.p.ttf",revision:"bc74928e0b7d13379ccf0b39354e87ad"},{url:"/_next/static/media/ed138dce082b5898-s.p.ttf",revision:"cb53f8068af6572a9ad4cc3c9a226704"},{url:"/file.svg",revision:"d09f95206c3fa0bb9bd9fefabfd0ea71"},{url:"/globe.svg",revision:"2aaafa6a49b6563925fe440891e32717"},{url:"/icons/Artboard 1@2x-100.jpg",revision:"2b4030aefeceab4f7a455d5b19f5aca2"},{url:"/icons/Artboard 2@2x.png",revision:"1e66c1449244f4e9e347255ba1c3694d"},{url:"/icons/Artboard 3@2x-100.jpg",revision:"7548c7d035706b0b35caa3a5ea49675b"},{url:"/icons/Image.png",revision:"ae2b0bd1b40ab163deedeba9de27e545"},{url:"/icons/artboard-2.jpg",revision:"b01a63f840d89d1c614772510dc74acd"},{url:"/icons/artboard-3.png",revision:"1237edaa02c95ee10801d1f1f16c3e16"},{url:"/icons/dots_pattern.png",revision:"718c8ea380b204a9a5c427e0d80dce03"},{url:"/icons/dots_pattern_bottom.png",revision:"6b00da0bcfb046423036abeac785d8a9"},{url:"/icons/favicon.png",revision:"787e62d1f74fb301968e1ed4e4b9cbf4"},{url:"/icons/finger-print-img-black.png",revision:"ebe60351e4e502417cf1e64d04ca8c83"},{url:"/icons/finger-print-img-green.png",revision:"9f9cf168aa3e289c28c8e4c28212d91b"},{url:"/icons/finger-print-img-white.png",revision:"79663949bc04a789b1a15c268ac1d807"},{url:"/icons/friend10.jpg",revision:"98dbd2a4518fd52480998d0132f30854"},{url:"/icons/let-you-screen-main-img-dark.jpg",revision:"c5aa694e691139e76203f00add725201"},{url:"/icons/let-you-screen-main-img.jpg",revision:"b45899b1be7fd671db77f441d14569a1"},{url:"/icons/logo.png",revision:"0923652e9bc66d3fdc715ce23c4fc015"},{url:"/icons/plus-robort.png",revision:"a1e8ecc542e528e3d8f22d67bbf8aa7a"},{url:"/icons/robot-slider-img2.png",revision:"ae2b0bd1b40ab163deedeba9de27e545"},{url:"/icons/robot-slider-img3.png",revision:"ae2b0bd1b40ab163deedeba9de27e545"},{url:"/next.svg",revision:"8e061864f388b47f33a1c3780831193e"},{url:"/vercel.svg",revision:"c0af2f507b369b085b35ef4bbe3bcf1e"},{url:"/window.svg",revision:"a2760511c65806022ad20adf74370ff3"}],{ignoreURLParametersMatching:[]}),e.cleanupOutdatedCaches(),e.registerRoute("/",new e.NetworkFirst({cacheName:"start-url",plugins:[{cacheWillUpdate:async({request:e,response:i,event:s,state:o})=>i&&"opaqueredirect"===i.type?new Response(i.body,{status:200,statusText:"OK",headers:i.headers}):i}]}),"GET"),e.registerRoute(/^https?.*/,new e.NetworkFirst({cacheName:"offlineCache",plugins:[new e.ExpirationPlugin({maxEntries:200,maxAgeSeconds:86400}),new e.CacheableResponsePlugin({statuses:[0,200]})]}),"GET"),e.registerRoute(/\.(?:js|css|woff2?|ico|png|jpg|jpeg|svg|webp)$/,new e.StaleWhileRevalidate({cacheName:"staticAssetsCache",plugins:[new e.ExpirationPlugin({maxEntries:100,maxAgeSeconds:2592e3}),new e.CacheableResponsePlugin({statuses:[0,200]})]}),"GET"),e.registerRoute(/^https:\/\/jsonplaceholder\.typicode\.com/,new e.NetworkFirst({cacheName:"apiCache",plugins:[new e.ExpirationPlugin({maxEntries:100,maxAgeSeconds:3600}),new e.CacheableResponsePlugin({statuses:[0,200]})]}),"GET")});
+/**
+ * Copyright 2018 Google Inc. All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// If the loader is already loaded, just stop.
+if (!self.define) {
+  let registry = {};
+
+  // Used for `eval` and `importScripts` where we can't get script URL by other means.
+  // In both cases, it's safe to use a global var because those functions are synchronous.
+  let nextDefineUri;
+
+  const singleRequire = (uri, parentUri) => {
+    uri = new URL(uri + ".js", parentUri).href;
+    return registry[uri] || (
+      
+        new Promise(resolve => {
+          if ("document" in self) {
+            const script = document.createElement("script");
+            script.src = uri;
+            script.onload = resolve;
+            document.head.appendChild(script);
+          } else {
+            nextDefineUri = uri;
+            importScripts(uri);
+            resolve();
+          }
+        })
+      
+      .then(() => {
+        let promise = registry[uri];
+        if (!promise) {
+          throw new Error(`Module ${uri} didn’t register its module`);
+        }
+        return promise;
+      })
+    );
+  };
+
+  self.define = (depsNames, factory) => {
+    const uri = nextDefineUri || ("document" in self ? document.currentScript.src : "") || location.href;
+    if (registry[uri]) {
+      // Module is already loading or loaded.
+      return;
+    }
+    let exports = {};
+    const require = depUri => singleRequire(depUri, uri);
+    const specialDeps = {
+      module: { uri },
+      exports,
+      require
+    };
+    registry[uri] = Promise.all(depsNames.map(
+      depName => specialDeps[depName] || require(depName)
+    )).then(deps => {
+      factory(...deps);
+      return exports;
+    });
+  };
+}
+define(['./workbox-e43f5367'], (function (workbox) { 'use strict';
+
+  importScripts("worker-development.js");
+  self.skipWaiting();
+  workbox.clientsClaim();
+  workbox.registerRoute("/", new workbox.NetworkFirst({
+    "cacheName": "start-url",
+    plugins: [{
+      cacheWillUpdate: async ({
+        request,
+        response,
+        event,
+        state
+      }) => {
+        if (response && response.type === 'opaqueredirect') {
+          return new Response(response.body, {
+            status: 200,
+            statusText: 'OK',
+            headers: response.headers
+          });
+        }
+        return response;
+      }
+    }]
+  }), 'GET');
+  workbox.registerRoute(/.*/i, new workbox.NetworkOnly({
+    "cacheName": "dev",
+    plugins: []
+  }), 'GET');
+
+}));

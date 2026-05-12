@@ -40,7 +40,7 @@ const STARTER_MESSAGES = [
   {
     id: "starter-assistant",
     role: "assistant",
-    text: "Hi, I'm Sai. You are not alone in this, i'm here to support you at your own pace",
+    text: "Hi, I'm Sai. You are not alone in this, where would you like to begin?",
   },
 ];
 
@@ -201,7 +201,7 @@ export default function SantumAIChatPage() {
   const activeChatTitle =
     typeof activeChat?.title === "string" && activeChat.title.trim()
       ? activeChat.title.trim()
-      : "Stored conversation";
+      : null;
   const activeChatSummary =
     typeof activeChat?.summerized === "string"
       ? activeChat.summerized.trim()
@@ -812,7 +812,20 @@ export default function SantumAIChatPage() {
                     }`}
                   >
                     <div className="font-satoshi text-[15px] leading-6 whitespace-pre-wrap">
-                      <ReactMarkdown>{message.text}</ReactMarkdown>
+                      <ReactMarkdown
+                        components={{
+                          a: ({ node, ...props }) => (
+                            <a
+                              {...props}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[#4ade80] underline break-words hover:text-[#22c55e] transition-colors"
+                            />
+                          ),
+                        }}
+                      >
+                        {message.text}
+                      </ReactMarkdown>
                     </div>
                   </div>
                 </div>
@@ -851,7 +864,7 @@ export default function SantumAIChatPage() {
                     ? "Complete today's mood check-in to unlock chat."
                     : isCreditDepleted
                       ? "Purchase a plan or refresh your balance to keep chatting."
-                      : "Where would you like to begin..."
+                      : "Type your thoughts here..."
               }
               className="theme-input-surface w-full resize-none rounded-[18px] px-3 py-3 sm:px-4 sm:py-4 font-satoshi text-[15px] leading-6 outline-none disabled:cursor-not-allowed disabled:bg-[#F1F5F2] disabled:text-[#7E8A83]"
             />

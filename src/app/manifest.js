@@ -10,15 +10,15 @@ export default function manifest() {
     background_color: "#ffffff",
     theme_color: "#000000",
     icons: [
+      // {
+      //   src: "/Logo Source files 21-4/Icon/0.25x/Artboard-1.png",
+      //   sizes: "192x192",
+      //   type: "image/png",
+      // },
       {
-        src: "/Logo Source files 21-4/Icon/SVG/Artboard1.svg",
-        sizes: "192x192",
-        type: "image/png",
-      },
-      {
-        src: "/Logo Source files 21-4/Icon/0.5x/Artboard1.png",
+        src: "/Logo Source files 21-4/Icon/1x/1234567.jpg",
         sizes: "512x512",
-        type: "image/png",
+        type: "image/jpeg",
       },
     ],
   };

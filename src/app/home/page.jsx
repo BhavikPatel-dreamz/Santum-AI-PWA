@@ -683,6 +683,7 @@ export default function HomeScreen() {
   const { isDark, isUsingSystemTheme, toggleTheme } = useTheme();
   const router = useRouter();
   const moodCheckInRef = useRef(null);
+  const floatingButtonRef = useRef(null);
   const { data: profileData, error: profileError } = useGetProfileQuery();
   const { data: notificationsFeed } = useGetNotificationsQuery(undefined, {
     refetchOnFocus: true,
@@ -743,6 +744,46 @@ export default function HomeScreen() {
       ),
     );
   }, [moodCheckInError, router]);
+
+  useEffect(() => {
+    let ticking = false;
+
+    const updateButtonPosition = () => {
+      const footer = document.getElementById("global-footer");
+      const button = floatingButtonRef.current;
+
+      if (!footer || !button) {
+        ticking = false;
+        return;
+      }
+
+      const footerRect = footer.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+
+      const visibleFooterHeight = Math.max(0, windowHeight - footerRect.top);
+
+      button.style.transform = `translateY(-${visibleFooterHeight}px)`;
+
+      ticking = false;
+    };
+
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(updateButtonPosition);
+        ticking = true;
+      }
+    };
+
+    handleScroll();
+
+    window.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -848,15 +889,15 @@ export default function HomeScreen() {
 
           {/* Nav row */}
           <div className="relative z-10 flex items-center justify-between">
-              {/* Logo placeholder */}
-              <Image
-                src="/Logo Source files 21-4/Icon/SVG/Artboard1.svg"
-                alt=""
-                width={70}
-                height={70}
-                className="object-contain"
-                unoptimized
-              />
+            {/* Logo placeholder */}
+            <Image
+              src="/Logo Source files 21-4/Icon/SVG/Artboard1.svg"
+              alt=""
+              width={70}
+              height={70}
+              className="object-contain"
+              unoptimized
+            />
             <div className="flex items-center gap-3">
               {/* Bell */}
               <button
@@ -997,7 +1038,10 @@ export default function HomeScreen() {
         </section>
 
         {/* ── Start Chat fixed button ── */}
-        <div className="fixed bottom-5 left-0 right-0 z-10 mx-auto max-w-[1200px] px-4 sm:px-6 md:px-8 lg:px-10">
+        <div
+          ref={floatingButtonRef}
+          className="fixed bottom-5 left-0 right-0 z-10 mx-auto max-w-[1200px] px-4 sm:px-6 md:px-8 lg:px-10 will-change-transform"
+        >
           <button
             type="button"
             onClick={handleOpenChat}

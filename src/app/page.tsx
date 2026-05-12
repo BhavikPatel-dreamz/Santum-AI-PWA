@@ -15,7 +15,7 @@ const ONBOARDING_SLIDES = [
   {
     darkImage: "/Logo Source files 21-4/Logo/SVG/Artboard3.svg",
     lightImage: "/Logo Source files 21-4/Logo/SVG/Artboard2.svg",
-    title: "Welcome to SantumAI, your calm space to talk",
+    title: "Find your calm, your quite space to talk",
     desc: "A private companion for self-reflection and psychological support, try it at your own pace",
     btnLabel: "Try it for free",
   },

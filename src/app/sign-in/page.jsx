@@ -48,7 +48,7 @@ export default function SignInPage() {
         {/* ── White card ── */}
         <div className="theme-auth-card relative z-10 mx-3 -mt-20 w-auto rounded-[28px] px-6 pb-9 pt-8 transition-colors duration-300 sm:mx-5 sm:px-7 md:mx-8 lg:mx-auto lg:-mt-24 lg:w-full lg:max-w-[760px] lg:px-10 lg:pb-10">
           <h2 className="theme-text-primary mb-6 text-center text-[24px] font-semibold leading-9">
-            Sign In
+            Sign in
           </h2>
 
           <div className="theme-input-group mb-4 flex items-center gap-3 rounded-[14px] px-4 py-3.5">

@@ -83,7 +83,7 @@ export const metadata: Metadata = {
   description:
     "A standalone AI counselling PWA for text-based emotional wellbeing support.",
   icons: {
-    icon: "/Logo Source files 21-4/Icon/SAI116.jpg",
+    icon: "/Logo Source files 21-4/Icon/SVG/Artboard1.svg",
   },
 };
 

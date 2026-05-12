@@ -45,7 +45,7 @@ const GreenSection = ({ show = true }) => {
             width={180}
             height={180}
             priority
-            className="h-[96px] w-[96px] object-contain sm:h-[132px] sm:w-[132px] lg:h-[168px] lg:w-[168px]"
+            className="h-[144px] w-[144px] object-contain sm:h-[198px] sm:w-[198px] lg:h-[252px] lg:w-[252px]"
           />
         </div>
 
