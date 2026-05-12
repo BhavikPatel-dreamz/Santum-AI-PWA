@@ -702,7 +702,7 @@ export default function PlusSubscriptionPage() {
                           : `R${getPlanPrice(plan)}pm`}
                       </p>
                       <p className="text-[12px] font-semibold -m-1">
-                        {getPlanPrice(plan) != 0 && `(R3 per day)`}
+                        {getPlanPrice(plan) != 0 && `(R${plan.billing_amount/30} per day)`}
                       </p>
                     </div>
                     {/* {isActivePlan ? (

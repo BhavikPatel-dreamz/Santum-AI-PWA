@@ -33,7 +33,7 @@ function Toggle({ enabled, onToggle }) {
     <button
       type="button"
       onClick={onToggle}
-      className={`relative h-[30px] w-[54px] rounded-full transition-all duration-300 ${
+      className={`relative h-[30px] w-[54px] shrink-0 rounded-full transition-all duration-300 ${
         enabled ? "bg-[#00D061]" : "theme-surface-secondary"
       }`}
     >
