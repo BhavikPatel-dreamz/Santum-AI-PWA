@@ -136,7 +136,7 @@ export const SETTINGS_PAGE_CONTENT = {
         title: "Plan Snapshot",
         items: [
           { label: "Plan", value: "Free" },
-          { label: "Renewal", value: "Monthly" },
+          { label: "Auto-renew", value: "Monthly" },
           { label: "Check-ins", value: "Daily" },
         ],
       },
@@ -443,16 +443,16 @@ export const SETTINGS_PAGE_CONTENT = {
     sections: [
       {
         type: "stats",
-        title: "Current Snapshot",
+        title: "Technical Snapshot",
         items: [
+          { label: "Model", value: "GPT-4.1" },
           { label: "Version", value: "v2.0.2" },
-          { label: "Theme", value: "Mint Core" },
-          { label: "Mode", value: "PWA" },
+          { label: "Theme", value: "JSON" },
         ],
       },
       {
         type: "steps",
-        title: "What SantumAI Is Designed To Do",
+        title: "What Santum AI Does",
         items: [
           "Offer gentle text-based support for everyday emotional wellbeing.",
           "Use mood check-ins to adapt tone before a conversation begins.",
@@ -483,15 +483,16 @@ export const SETTINGS_PAGE_CONTENT = {
         key: "feedback",
         title: "What should we improve?",
         placeholder:
-          "Tell us what felt helpful, what felt confusing, or what would make support feel safer and more human...",
+          "Tell us what felt helpful, what felt confusing, or what would make Sai feel safer and more human...",
         submitLabel: "Submit Feedback",
         submitToast: "Feedback captured in this session.",
         categories: [
-          "Support Quality",
+          "Talk Time",
           "Design",
           "Speed",
           "Billing",
           "Trust & Safety",
+          "Chat Quality"
         ],
       },
       {

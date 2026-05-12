@@ -4,14 +4,14 @@ export default function Footer() {
       
       {/* Professional Care Section */}
       <div className="flex flex-col gap-4">
-        <h2 className="text-[#00A84D] text-sm font-semibold uppercase tracking-wide">
+        <h2 className="text-[#86bd65] text-sm font-semibold uppercase tracking-wide">
           For Professional Care
         </h2>
         <a
           href="https://santum.net"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center justify-center w-max bg-[#00d061] text-white px-8 py-3 rounded-2xl font-medium hover:opacity-90 transition-opacity duration-200"
+          className="inline-flex items-center justify-center w-max bg-orange-400 text-white px-8 py-3 rounded-2xl font-medium hover:opacity-90 transition-opacity duration-200"
         >
           Visit Santum.net
         </a>
@@ -19,7 +19,7 @@ export default function Footer() {
 
       {/* Emergency Lines Section */}
       <div className="flex flex-col gap-3">
-        <h2 className="text-[#00A84D] text-sm font-semibold uppercase tracking-wide text-center">
+        <h2 className="text-[#86bd65] text-sm font-semibold uppercase tracking-wide text-center">
           Emergency Lines
         </h2>
         {/* Using your global muted text color #93A099 for the dark background */}

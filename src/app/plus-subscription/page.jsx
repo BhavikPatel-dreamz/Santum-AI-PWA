@@ -62,10 +62,11 @@ const PLANS = [
       "Relief tactics",
       "Complex reasoning",
       "Advanced chat memory",
+      "Approx 10hrs talk time*"
     ],
     highlighted: false,
     tokens: "You Get Everything in FREE Plus:",
-    tip: "Total talk time depends on multiple factors and is approximate 10hrs monthly talk time",
+    tip: "*Monthly talk time depends on multiple factors and is approximate",
   },
 
   {
@@ -73,18 +74,18 @@ const PLANS = [
     name: "Premium",
     billing_amount: 150,
     description:
-      "Get stronger support with structured strategies, adcanced behavioral tools, reasoning and training for more complex challenges.",
+      "Get stronger support with structured strategies, advanced behavioral tools, reasoning and training for more complex challenges.",
     features: [
       "Advanced techniques",
       "Cognitive training",
       "Behavioral management",
       "Practical strategies",
       "Faster response times",
-      "Approx 20hrs talk time",
+      "Approx 20hrs talk time*",
     ],
     highlighted: true,
     tokens: "You Get Everything in STANDARD Plus:",
-    tip: "Total talk time depends on multiple factors and is approximate 20hrs monthly talk time",
+    tip: "*Monthly talk time depends on multiple factors and is approximate",
   },
 ];
 

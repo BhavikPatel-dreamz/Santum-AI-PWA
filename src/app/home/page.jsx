@@ -452,7 +452,7 @@ const MENU_ITEMS = [
   // },
   {
     label: "About SantumAI",
-    hint: "v2.0.2",
+    hint: null,
     danger: false,
     icon: (
       <svg
