@@ -31,7 +31,7 @@ export default function OnboardingSlide({
 
       {/* Title + description */}
       <div className="mx-auto w-full max-w-[780px] px-6 text-center sm:px-10 lg:px-16">
-        <h2 className="theme-text-primary pb-[15px] text-center text-[28px] font-poppins font-bold leading-[36px] sm:text-[36px] sm:leading-[46px] lg:text-[48px] lg:leading-[58px]">
+        <h2 className="text-[#323d51] pb-[15px] text-center text-[28px] font-poppins font-bold leading-[36px] sm:text-[36px] sm:leading-[46px] lg:text-[48px] lg:leading-[58px]">
           {title}
         </h2>
         <p className="theme-text-secondary text-center text-[16px] font-satoshi font-medium leading-[24px] sm:text-[18px] lg:text-[22px] lg:leading-[32px]">

@@ -7,7 +7,7 @@ const HeaderSection = ({ title }) => {
   const { isDark } = useTheme();
 
   return (
-    <header className=" h-[120px] overflow-hidden bg-[#323d51] px-5 pt-6 sm:h-[136px] sm:px-6 sm:pt-7 lg:h-[156px] lg:px-10 lg:pt-8">
+    <header className=" h-[120px] overflow-hidden bg-[#323d51] px-5 pt-3 sm:h-[136px] sm:px-6 sm:pt-7 lg:h-[156px] lg:px-10 lg:pt-8">
       <div className="flex items-center gap-3">
         <button
           type="button"
@@ -36,8 +36,8 @@ const HeaderSection = ({ title }) => {
           <Image
             src="/Logo Source files 21-4/Icon/SVG/Artboard1.svg"
             alt=""
-            width={70}
-            height={70}
+            width={95}
+            height={95}
             className=""
           />
         </div>

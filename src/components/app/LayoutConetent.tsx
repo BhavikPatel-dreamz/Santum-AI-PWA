@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { usePathname } from "next/navigation";
 import Footer from "@/components/app/Footer";
 
@@ -14,13 +14,18 @@ export default function LayoutContent({
     "/verify-otp",
     "/finger-scan",
     "/lets-you-in",
+    "/",
   ];
   const shouldHideFooter: boolean = hideFooterRoutes.includes(pathname ?? "");
   return (
-    <>
+    <div className="relative">
       {children}
 
-      {!shouldHideFooter && <Footer />}
-    </>
+      {!shouldHideFooter && (
+        <div id="global-footer">
+          <Footer />
+        </div>
+      )}
+    </div>
   );
 }

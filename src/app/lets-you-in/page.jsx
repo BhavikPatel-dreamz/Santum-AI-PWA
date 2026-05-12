@@ -68,7 +68,7 @@ export default function LetsYouInPage() {
             <h2 className="text-gray-600 text-[38px] font-bold leading-[1.1] tracking-[5px] mb-3">
               WELCOME
             </h2>
-            <p className="theme-text-primary text-[13px] font-semibold ">
+            <p className="theme-text-primary text-[15px] font-semibold ">
               Nice to see you here
             </p>
           </div>
