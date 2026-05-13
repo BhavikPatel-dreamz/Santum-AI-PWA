@@ -1,6 +1,5 @@
 "use client";
 
-import FeatureShowcaseCard from "@/components/app/FeatureShowcaseCard";
 import StepPageShell from "@/components/app/StepPageShell";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -28,15 +27,6 @@ export default function ReasonScreen() {
 
   return (
     <StepPageShell title="Why SantumAI?" contentClassName="overflow-y-auto">
-      {/* <FeatureShowcaseCard
-        badge="Personalization"
-        title="Tell us what brought you here so support can feel more personal"
-        description="Your choices help shape tone, starter prompts, and the kinds of emotional support we highlight first."
-        imageSrc="/icons/robot-slider-img2.png"
-        imageAlt="Onboarding personalization"
-        className="mb-6"
-      /> */}
-
       <div className="mb-4">
         <h2 className="theme-text-primary text-[20px] font-semibold leading-7">
           Pick what matters most

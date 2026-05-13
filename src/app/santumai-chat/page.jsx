@@ -1,7 +1,5 @@
 "use client";
 
-import FeatureShowcaseCard from "@/components/app/FeatureShowcaseCard";
-import MoodCheckInCard from "@/components/app/MoodCheckInCard";
 import StepPageShell from "@/components/app/StepPageShell";
 import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
 import {
@@ -666,15 +664,6 @@ export default function SantumAIChatPage() {
     >
       <div className="flex h-full min-h-0 flex-col">
         {/* <div className="flex min-h-0 flex-col lg:overflow-y-auto lg:pr-1">
-          <FeatureShowcaseCard
-            badge="Support Live"
-            title="A calmer chat space for emotional support"
-            description="SantumAI is here to listen, reflect, and help you process what you're feeling."
-            imageSrc="/icons/robot-slider-img3.png"
-            imageAlt="Chat companion"
-            className="mb-5"
-            compact
-          />
 
           <div className="theme-card-muted mb-4 rounded-[22px] border px-4 py-4">
             <div className="flex items-center justify-between gap-3">

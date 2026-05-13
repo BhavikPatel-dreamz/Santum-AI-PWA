@@ -1,6 +1,5 @@
 "use client";
 
-import FeatureShowcaseCard from "@/components/app/FeatureShowcaseCard";
 import StepPageShell from "@/components/app/StepPageShell";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -67,15 +66,6 @@ export default function ConfirmOtpPage() {
 
   return (
     <StepPageShell title="Confirm OTP" contentClassName="overflow-y-auto">
-      {/* <FeatureShowcaseCard
-        badge="Verification"
-        title="Enter the short code we just sent"
-        description="Verify it is really you before we let you reset your password."
-        imageSrc="/icons/robot-slider-img3.png"
-        imageAlt="OTP confirmation"
-        className="mb-6"
-      /> */}
-
       <p className="theme-text-secondary mb-6 text-center font-satoshi text-[16px] leading-6">
         The code was sent to{" "}
         <span className="theme-text-primary font-semibold">+91 ****** 65</span>

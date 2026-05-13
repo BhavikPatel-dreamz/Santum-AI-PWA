@@ -1,6 +1,5 @@
 "use client";
 
-import FeatureShowcaseCard from "@/components/app/FeatureShowcaseCard";
 import StepPageShell from "@/components/app/StepPageShell";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
@@ -630,34 +629,6 @@ export default function PlusSubscriptionPage() {
 
   return (
     <StepPageShell title="Santum AI Plans" contentClassName="overflow-y-auto bg-[#f2f2f2]">
-      {/* <FeatureShowcaseCard
-        badge="Upgrade"
-        title="Choose your plan here, then finish membership on Santum.net"
-        description="This PWA shows live plans and redirects to the Santum checkout URL. When you come back, membership status and token limits refresh automatically."
-        imageSrc="/icons/plus-robort.png"
-        imageAlt="Subscription robot"
-        className="mb-6"
-        compact
-      /> */}
-
-      {/* <div
-        className={`mb-6 rounded-[24px] px-5 py-5 ${getBenefitsPanelClasses(
-          isDark,
-        )}`}
-      >
-        <p className="text-[12px] font-semibold uppercase tracking-[0.2em] text-white/70">
-          How membership works
-        </p>
-        <h2 className="mt-3 text-[24px] font-semibold leading-8">
-          Pick a plan in the app, pay on the web, then sync back here.
-        </h2>
-        <p className="mt-3 font-satoshi text-[15px] leading-6 text-white/75">
-          The active plan, token allowance, and support-chat balance are pulled
-          from Santum after checkout so the PWA always reflects the latest
-          membership state.
-        </p>
-      </div> */}
-
       <div className="space-y-4">
         {PLANS.map((plan, index) => {
           const planKey = getPlanKey(plan, index);

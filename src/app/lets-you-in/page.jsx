@@ -1,8 +1,5 @@
 "use client";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import GreenSection from "../../components/UI/GreenSection";
-import SocialButtons from "../../components/UI/SocialButtons";
 import { useCallback, useEffect } from "react";
 import Image from "next/image";
 

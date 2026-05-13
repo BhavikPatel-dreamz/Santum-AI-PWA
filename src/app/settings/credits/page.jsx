@@ -1,6 +1,5 @@
 "use client";
 
-import FeatureShowcaseCard from "@/components/app/FeatureShowcaseCard";
 import StepPageShell from "@/components/app/StepPageShell";
 import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
 import { useGetCreditBalanceQuery } from "@/lib/store";
@@ -70,16 +69,6 @@ export default function CreditsSettingsPage() {
 
   return (
     <StepPageShell title="Credits" contentClassName="overflow-y-auto">
-      {/* <FeatureShowcaseCard
-        badge="Live Balance"
-        title="Track the balance behind your SantumAI support chats"
-        description="Credits are read from the authenticated account API and used automatically whenever you chat with SantumAI."
-        imageSrc="/icons/plus-robort.png"
-        imageAlt="Credit balance illustration"
-        className="mb-6"
-        compact
-      /> */}
-
       <div className="rounded-[28px] bg-[#0F0F0F] px-5 py-5 text-white">
         <div className="flex items-start justify-between gap-4">
           <div>

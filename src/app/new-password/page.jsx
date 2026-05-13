@@ -1,6 +1,5 @@
 "use client";
 
-import FeatureShowcaseCard from "@/components/app/FeatureShowcaseCard";
 import StepPageShell from "@/components/app/StepPageShell";
 import { Eye, EyeOff, Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -53,15 +52,6 @@ export default function CreateNewPasswordPage() {
 
   return (
     <StepPageShell title="Create New Password" contentClassName="overflow-y-auto">
-      {/* <FeatureShowcaseCard
-        badge="Security Reset"
-        title="Set a fresh password that feels easy to remember"
-        description="Finish account recovery with a new password for your SantumAI account."
-        imageSrc="/icons/finger-print-img-green.png"
-        imageAlt="Security reset"
-        className="mb-6"
-      /> */}
-
       <div className="space-y-4">
         <PasswordField
           id="new-password"

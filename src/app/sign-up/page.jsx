@@ -190,27 +190,7 @@ export default function SignUpPage() {
               "Sign up"
             )}
           </button>
-
-          {/* OR divider */}
-
-          {/* Social buttons */}
-          {/* <SocialButtons /> */}
         </div>
-
-        {/* ── Spacer ── */}
-
-        {/* ── Footer ── */}
-        {/* <footer className="text-center py-6 pb-8 px-4 font-satoshi">
-          <p className="theme-text-secondary px-4 text-center text-[17px] leading-6">
-            Already have an account?{" "}
-            <Link
-              href="/sign-in"
-              className="theme-text-primary font-bold hover:underline"
-            >
-              Sign in
-            </Link>
-          </p>
-        </footer> */}
       </div>
     </div>
   );

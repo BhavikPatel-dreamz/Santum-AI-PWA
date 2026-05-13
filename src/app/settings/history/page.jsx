@@ -1,6 +1,5 @@
 "use client";
 
-import FeatureShowcaseCard from "@/components/app/FeatureShowcaseCard";
 import StepPageShell from "@/components/app/StepPageShell";
 import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
 import {
@@ -125,15 +124,6 @@ export default function ChatHistoryPage() {
 
   return (
     <StepPageShell title="History" contentClassName="overflow-y-auto">
-      {/* <FeatureShowcaseCard
-        badge="Conversation Memory"
-        title="Return to any real conversation in seconds"
-        description="Your finished SantumAI support conversations are saved automatically and can be reopened from this history screen."
-        imageSrc="/icons/robot-slider-img2.png"
-        imageAlt="Chat history preview"
-        className="mb-6"
-      /> */}
-
       <div className="mb-6 grid grid-cols-3 gap-3">
         <div className="theme-card-muted rounded-[22px] border px-3 py-4 text-center">
           <p className="text-[20px] font-semibold leading-7 text-[#0F0F0F]">

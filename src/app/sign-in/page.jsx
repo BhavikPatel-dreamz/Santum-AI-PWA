@@ -121,18 +121,6 @@ export default function SignInPage() {
           >
             Sign up
           </button>
-
-          {/* OR divider */}
-          {/* <div className="flex items-center gap-3 mb-6">
-            <span className="theme-auth-divider h-px flex-1" />
-            <span className="theme-text-secondary relative z-1 inline-block px-2 text-center font-satoshi text-[18px] leading-6">
-              or continue with
-            </span>
-            <span className="theme-auth-divider h-px flex-1" />
-          </div> */}
-
-          {/* Social buttons */}
-          {/* <SocialButtons /> */}
         </div>
       </div>
     </div>

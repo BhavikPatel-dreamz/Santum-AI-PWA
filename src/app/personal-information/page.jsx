@@ -1,6 +1,5 @@
 "use client";
 
-import FeatureShowcaseCard from "@/components/app/FeatureShowcaseCard";
 import StepPageShell from "@/components/app/StepPageShell";
 import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
 import {
@@ -325,24 +324,6 @@ export default function PersonalInformationPage() {
       title={isOnboarding ? "Complete Profile" : "My Profile"}
       contentClassName="overflow-y-auto pb-24"
     >
-      {/* <FeatureShowcaseCard
-        badge={isOnboarding ? "Welcome" : "Account"}
-        title={
-          isOnboarding
-            ? "Finish one clean profile setup before your first full session"
-            : "Keep your Santum profile complete, readable, and ready"
-        }
-        description={
-          isOnboarding
-            ? "Basic details, language, and interests now live in one place instead of three separate steps."
-            : "This profile module loads your saved data first, then lets you update the fields the current API supports."
-        }
-        imageSrc="/Logo Source files 21-4/Icon/SVG/Artboard1.svg"
-        imageAlt="Profile overview"
-        className="mb-6"
-        compact
-      /> */}
-
       {!isOnboarding && <div className="theme-card mb-6 rounded-[26px] border px-5 py-5">
         <div className="flex items-center gap-4">
           <div className="theme-pill flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-full text-[24px] font-semibold">

@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Check, ChevronDown, ChevronRight, Copy } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import FeatureShowcaseCard from "./FeatureShowcaseCard";
 import StepPageShell from "./StepPageShell";
 
 function SectionHeading({ title, description }) {
@@ -74,9 +73,10 @@ export default function SettingsDetailPage({ content }) {
       if (section.type === "toggles") {
         section.items.forEach((item) => {
           if (item.key === "biometricPrompt")
-            initialState[item.key] = localStorage.getItem("fingerprintEnabled")
-              ? localStorage.getItem("fingerprintEnabled")
-              : false;
+            initialState[item.key] =
+              localStorage.getItem("fingerprintEnabled") === "true"
+                ? true
+                : false;
           else initialState[item.key] = item.enabled;
         });
       }
@@ -217,20 +217,29 @@ export default function SettingsDetailPage({ content }) {
                   enabled={!!toggles[item.key]}
                   onToggle={() => {
                     let togglevalue;
-                    if (item.key == "biometricPrompt") {
+
+                    if (item.key === "biometricPrompt") {
                       const finger = localStorage.getItem("passkeyId");
                       const isEnabled =
-                        localStorage.getItem("fingerprintEnabled");
-                      if (isEnabled && finger) {
-                        localStorage.setItem("fingerprintEnabled", false);
-                        togglevalue = false
-                      } else if (!isEnabled && finger) {
-                        localStorage.setItem("fingerprintEnabled", true);
-                        togglevalue = true
+                        localStorage.getItem("fingerprintEnabled") === "true";
+
+                      if (finger) {
+                        togglevalue = !isEnabled;
+
+                        localStorage.setItem(
+                          "fingerprintEnabled",
+                          String(togglevalue),
+                        );
+                      } else {
+                        toast.error(
+                          "Scan your finger to enable Fingerprint lock",
+                        );
+                        return;
                       }
-                      else toast.error("Scan your finger to enable Fingerprint lock")
+                    } else {
+                      togglevalue = !toggles[item.key];
                     }
-                    else togglevalue = !toggles[item.key]
+
                     setToggles((currentToggles) => ({
                       ...currentToggles,
                       [item.key]: togglevalue,
@@ -536,15 +545,6 @@ export default function SettingsDetailPage({ content }) {
 
   return (
     <StepPageShell title={content.title} contentClassName="overflow-y-auto">
-      {/* <FeatureShowcaseCard
-        badge={content.badge}
-        title={content.heroTitle}
-        description={content.description}
-        imageSrc={content.imageSrc}
-        imageAlt={content.imageAlt}
-        className="mb-6"
-      /> */}
-
       {content.sections.map((section, sectionIndex) =>
         renderSection(section, sectionIndex),
       )}

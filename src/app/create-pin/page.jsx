@@ -1,6 +1,5 @@
 "use client";
 
-import FeatureShowcaseCard from "@/components/app/FeatureShowcaseCard";
 import StepPageShell from "@/components/app/StepPageShell";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -54,14 +53,6 @@ export default function CreatePinPage() {
 
   return (
     <StepPageShell title="Create Security PIN" contentClassName="overflow-y-auto">
-      {/* <FeatureShowcaseCard
-        badge="Secure Access"
-        title="Add a quick PIN for sensitive parts of the app"
-        description="A short PIN adds another layer of privacy before reopening sensitive conversations."
-        imageSrc="/icons/finger-print-img-green.png"
-        imageAlt="PIN setup"
-        className="mb-6"
-      /> */}
 
       <p className="theme-text-secondary mb-6 text-center font-satoshi text-[16px] leading-6">
         Use a simple 4-digit PIN to protect your account when you reopen the app.
