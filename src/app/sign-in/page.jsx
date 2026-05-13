@@ -46,7 +46,7 @@ export default function SignInPage() {
         {/* ─ Top green section ── */}
         <GreenSection />
         {/* ── White card ── */}
-        <div className="theme-auth-card relative z-10 mx-3 -mt-26 w-auto rounded-[28px] px-6 pb-9 pt-8 transition-colors duration-300 sm:mx-5 sm:px-7 md:mx-8 lg:mx-auto lg:-mt-24 lg:w-full lg:max-w-[760px] lg:px-10 lg:pb-10">
+        <div className="theme-auth-card relative z-10 mx-3 -mt-26 w-auto rounded-[28px] px-6 pb-9 pt-8 transition-colors duration-300 sm:mx-5 sm:px-7 md:mx-8 lg:mx-auto lg:-mt-36 lg:w-full lg:max-w-[760px] lg:px-10 lg:pb-10">
           <h2 className="theme-text-primary mb-6 text-center text-[24px] font-semibold leading-9">
             Sign in
           </h2>
@@ -89,7 +89,7 @@ export default function SignInPage() {
             <button
               type="button"
               onClick={() => router.push("/forgot-password")}
-              className="theme-text-primary font-satoshi text-[14px] font-semibold hover:text-[#00A84D]"
+              className="theme-text-primary font-satoshi text-[14px] font-semibold"
             >
               Forgot password?
             </button>
@@ -110,7 +110,7 @@ export default function SignInPage() {
               "Sign in"
             )}
           </button>
-          <p className="theme-text-primary font-semibold font-satoshi px-4 text-center text-[17px] leading-6">
+          <p className="theme-text-primary font-semibold font-satoshi px-4 text-center text-[14px]">
             Don't have an account?
           </p>
 
