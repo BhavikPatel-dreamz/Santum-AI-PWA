@@ -55,7 +55,7 @@ export default function MoodCheckInCard({
   submitLabel = "Save today's check-in",
   successTitle = "You've checked in today ✅",
   successDescription =
-    "Thanks for sharing how you feel. SantumAI can use this to support you more thoughtfully today.",
+    "Thank you for sharing.",
   showUpdateAction = true,
 }) {
   const [isEditing, setIsEditing] = useState(!entry);

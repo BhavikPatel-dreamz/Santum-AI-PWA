@@ -898,11 +898,11 @@ export default function HomeScreen() {
               className="object-contain"
               unoptimized
             />
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 text-[#dedede]">
               {/* Bell */}
               <button
                 type="button"
-                className="relative text-white"
+                className="relative"
                 onClick={handleOpenNotifications}
               >
                 <Bell />
@@ -917,7 +917,6 @@ export default function HomeScreen() {
               {/* Hex / settings */}
               <button
                 type="button"
-                className="text-white"
                 onClick={() => setDrawerOpen(true)}
               >
                 <Settings />
@@ -927,7 +926,7 @@ export default function HomeScreen() {
 
           {/* Hero text */}
           <div className="relative z-10 mt-5 max-w-[720px] pb-2">
-            <h2 className="text-[32px] font-bold leading-[40px] text-white sm:text-[38px] sm:leading-[46px] lg:text-[46px] lg:leading-[54px]">
+            <h2 className="text-[32px] font-bold leading-[40px] text-[#dedede] sm:text-[38px] sm:leading-[46px] lg:text-[46px] lg:leading-[54px]">
               Hello!{" "}
               <span
                 className="inline-block"
@@ -939,7 +938,7 @@ export default function HomeScreen() {
                 👋
               </span>
             </h2>
-            <h3 className="mt-3 text-[18px] font-semibold leading-6 text-white sm:text-[20px] lg:text-[22px]">
+            <h3 className="mt-3 text-[18px] font-semibold leading-6 text-[#dedede] sm:text-[20px] lg:text-[22px]">
               I'm Sai, short for Santum AI
             </h3>
             <p className="mb-3 mt-2 pb-3 font-satoshi text-[16px] font-medium leading-[24px] text-white sm:text-[17px] lg:max-w-[640px] lg:text-[18px] lg:leading-[28px]">

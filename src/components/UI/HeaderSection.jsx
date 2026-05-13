@@ -30,7 +30,7 @@ const HeaderSection = ({ title }) => {
           </svg>
         </button>
         <div className=" w-full flex items-center justify-between">
-          <h1 className="text-[18px] font-medium leading-6 text-white sm:text-[20px] lg:text-[24px] lg:leading-8">
+          <h1 className="text-[18px] font-medium leading-6 text-[#dedede] sm:text-[20px] lg:text-[24px] lg:leading-8">
             {title}
           </h1>
           <Image

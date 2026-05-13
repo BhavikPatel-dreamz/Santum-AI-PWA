@@ -73,7 +73,11 @@ export default function SettingsDetailPage({ content }) {
     content.sections.forEach((section) => {
       if (section.type === "toggles") {
         section.items.forEach((item) => {
-          initialState[item.key] = item.enabled;
+          if (item.key === "biometricPrompt")
+            initialState[item.key] = localStorage.getItem("fingerprintEnabled")
+              ? localStorage.getItem("fingerprintEnabled")
+              : false;
+          else initialState[item.key] = item.enabled;
         });
       }
     });
@@ -119,7 +123,10 @@ export default function SettingsDetailPage({ content }) {
     if (section.type === "stats") {
       return (
         <div key={`${section.type}-${sectionIndex}`} className="mb-6">
-          <SectionHeading title={section.title} description={section.description} />
+          <SectionHeading
+            title={section.title}
+            description={section.description}
+          />
 
           <div className="grid grid-cols-3 gap-3">
             {section.items.map((item) => (
@@ -143,7 +150,10 @@ export default function SettingsDetailPage({ content }) {
     if (section.type === "list") {
       return (
         <div key={`${section.type}-${sectionIndex}`} className="mb-6">
-          <SectionHeading title={section.title} description={section.description} />
+          <SectionHeading
+            title={section.title}
+            description={section.description}
+          />
 
           <div className="space-y-3">
             {section.items.map((item) => (
@@ -184,7 +194,10 @@ export default function SettingsDetailPage({ content }) {
     if (section.type === "toggles") {
       return (
         <div key={`${section.type}-${sectionIndex}`} className="mb-6">
-          <SectionHeading title={section.title} description={section.description} />
+          <SectionHeading
+            title={section.title}
+            description={section.description}
+          />
 
           <div className="space-y-3">
             {section.items.map((item) => (
@@ -202,12 +215,27 @@ export default function SettingsDetailPage({ content }) {
                 </div>
                 <Toggle
                   enabled={!!toggles[item.key]}
-                  onToggle={() =>
+                  onToggle={() => {
+                    let togglevalue;
+                    if (item.key == "biometricPrompt") {
+                      const finger = localStorage.getItem("passkeyId");
+                      const isEnabled =
+                        localStorage.getItem("fingerprintEnabled");
+                      if (isEnabled && finger) {
+                        localStorage.setItem("fingerprintEnabled", false);
+                        togglevalue = false
+                      } else if (!isEnabled && finger) {
+                        localStorage.setItem("fingerprintEnabled", true);
+                        togglevalue = true
+                      }
+                      else toast.error("Scan your finger to enable Fingerprint lock")
+                    }
+                    else togglevalue = !toggles[item.key]
                     setToggles((currentToggles) => ({
                       ...currentToggles,
-                      [item.key]: !currentToggles[item.key],
-                    }))
-                  }
+                      [item.key]: togglevalue,
+                    }));
+                  }}
                 />
               </div>
             ))}
@@ -219,7 +247,10 @@ export default function SettingsDetailPage({ content }) {
     if (section.type === "choices") {
       return (
         <div key={`${section.type}-${sectionIndex}`} className="mb-6">
-          <SectionHeading title={section.title} description={section.description} />
+          <SectionHeading
+            title={section.title}
+            description={section.description}
+          />
 
           <div className="space-y-3">
             {section.items.map((item) => {
@@ -311,7 +342,10 @@ export default function SettingsDetailPage({ content }) {
     if (section.type === "steps") {
       return (
         <div key={`${section.type}-${sectionIndex}`} className="mb-6">
-          <SectionHeading title={section.title} description={section.description} />
+          <SectionHeading
+            title={section.title}
+            description={section.description}
+          />
 
           <div className="space-y-3">
             {section.items.map((item, itemIndex) => (
@@ -335,7 +369,10 @@ export default function SettingsDetailPage({ content }) {
     if (section.type === "text") {
       return (
         <div key={`${section.type}-${sectionIndex}`} className="mb-6">
-          <SectionHeading title={section.title} description={section.description} />
+          <SectionHeading
+            title={section.title}
+            description={section.description}
+          />
 
           <div className="space-y-3">
             {section.items.map((item) => (
@@ -359,7 +396,10 @@ export default function SettingsDetailPage({ content }) {
     if (section.type === "form") {
       return (
         <div key={`${section.type}-${sectionIndex}`} className="mb-6">
-          <SectionHeading title={section.title} description={section.description} />
+          <SectionHeading
+            title={section.title}
+            description={section.description}
+          />
 
           {section.categories?.length ? (
             <div className="mb-3 flex flex-wrap gap-2">
@@ -416,7 +456,10 @@ export default function SettingsDetailPage({ content }) {
     if (section.type === "referral") {
       return (
         <div key={`${section.type}-${sectionIndex}`} className="mb-6">
-          <SectionHeading title={section.title} description={section.description} />
+          <SectionHeading
+            title={section.title}
+            description={section.description}
+          />
 
           <div className="rounded-[26px] bg-[linear-gradient(135deg,#E9FFF3_0%,#FFFFFF_100%)] p-5 shadow-[0_12px_30px_rgba(15,15,15,0.04)]">
             <p className="text-[12px] font-semibold uppercase tracking-[0.2em] text-[#00A84D]">
@@ -424,7 +467,9 @@ export default function SettingsDetailPage({ content }) {
             </p>
             <div className="mt-3 flex items-center justify-between gap-3 rounded-[20px] bg-[#0F0F0F] px-4 py-4 text-white">
               <div>
-                <p className="text-[22px] font-semibold leading-7">{section.code}</p>
+                <p className="text-[22px] font-semibold leading-7">
+                  {section.code}
+                </p>
                 <p className="mt-1 font-satoshi text-[13px] leading-5 text-white/70">
                   {section.reward}
                 </p>
@@ -450,7 +495,10 @@ export default function SettingsDetailPage({ content }) {
     if (section.type === "destructive") {
       return (
         <div key={`${section.type}-${sectionIndex}`} className="mb-6">
-          <SectionHeading title={section.title} description={section.description} />
+          <SectionHeading
+            title={section.title}
+            description={section.description}
+          />
 
           <div className="space-y-3">
             {section.items.map((item) => (

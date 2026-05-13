@@ -14,13 +14,15 @@ export const SETTINGS_PAGE_CONTENT = {
         items: [
           {
             title: "Primary debit card",
-            description: "Used for membership renewals and one-tap credit top-ups.",
+            description:
+              "Used for membership renewals and one-tap credit top-ups.",
             meta: "Ending in 4821",
             badge: "Default",
           },
           {
             title: "UPI AutoPay",
-            description: "Available for recurring membership charges when enabled.",
+            description:
+              "Available for recurring membership charges when enabled.",
             meta: "Ready",
           },
         ],
@@ -31,11 +33,13 @@ export const SETTINGS_PAGE_CONTENT = {
         items: [
           {
             title: "Secure checkout",
-            description: "Payments are completed on Santum.net before the PWA syncs the latest membership state.",
+            description:
+              "Payments are completed on Santum.net before the PWA syncs the latest membership state.",
           },
           {
             title: "Receipts and renewals",
-            description: "Membership renewals and balance changes are reflected in your notification inbox.",
+            description:
+              "Membership renewals and balance changes are reflected in your notification inbox.",
           },
         ],
       },
@@ -74,7 +78,8 @@ export const SETTINGS_PAGE_CONTENT = {
           },
           {
             title: "Debit or credit card",
-            description: "Reliable fallback for memberships and chat-credit purchases.",
+            description:
+              "Reliable fallback for memberships and chat-credit purchases.",
             meta: "Saved",
           },
           {
@@ -91,19 +96,22 @@ export const SETTINGS_PAGE_CONTENT = {
           {
             key: "autopay",
             label: "Auto-renew active membership",
-            description: "Let your current plan renew without interrupting support access.",
+            description:
+              "Let your current plan renew without interrupting support access.",
             enabled: true,
           },
           {
             key: "lowBalance",
             label: "Warn when balance runs low",
-            description: "Get notified before credits are too low for another chat.",
+            description:
+              "Get notified before credits are too low for another chat.",
             enabled: true,
           },
           {
             key: "receipts",
             label: "Send detailed receipts",
-            description: "Share billing summaries and plan updates to your chosen inbox.",
+            description:
+              "Share billing summaries and plan updates to your chosen inbox.",
             enabled: false,
           },
         ],
@@ -136,7 +144,7 @@ export const SETTINGS_PAGE_CONTENT = {
         title: "Plan Snapshot",
         items: [
           { label: "Plan", value: "Free" },
-          { label: "Auto-renew", value: "Monthly" },
+          { label: "Renewal", value: "Monthly" },
           { label: "Check-ins", value: "Daily" },
         ],
       },
@@ -146,7 +154,8 @@ export const SETTINGS_PAGE_CONTENT = {
         items: [
           {
             title: "Longer conversations",
-            description: "Keep more context available while you unpack harder moments.",
+            description:
+              "Keep more context available while you unpack harder moments.",
           },
           {
             title: "Priority responses",
@@ -183,17 +192,20 @@ export const SETTINGS_PAGE_CONTENT = {
         items: [
           {
             title: "4-digit security PIN",
-            description: "Adds a quick privacy check before returning to sensitive screens.",
+            description:
+              "Adds a quick privacy check before returning to sensitive screens.",
             meta: "Suggested next step",
           },
           {
             title: "Fingerprint unlock",
-            description: "Use local biometrics on supported devices for faster re-entry.",
+            description:
+              "Use local biometrics on supported devices for faster re-entry.",
             meta: "Device ready",
           },
           {
             title: "New device alerts",
-            description: "Get notified when your account is opened somewhere new.",
+            description:
+              "Get notified when your account is opened somewhere new.",
             meta: "Enabled",
             badge: "Live",
           },
@@ -217,8 +229,9 @@ export const SETTINGS_PAGE_CONTENT = {
           },
           {
             key: "biometricPrompt",
-            label: "Prompt for biometrics on app open",
-            description: "Add another layer before private conversations appear.",
+            label: "Fingerprint lock",
+            description:
+              "Sign in with fingerprint.",
             enabled: true,
           },
         ],
@@ -249,25 +262,29 @@ export const SETTINGS_PAGE_CONTENT = {
           {
             key: "featureDrops",
             label: "Feature announcements",
-            description: "Hear about important product changes and major releases.",
+            description:
+              "Hear about important product changes and major releases.",
             enabled: true,
           },
           {
             key: "promos",
             label: "Membership offers",
-            description: "Receive pricing updates or limited membership campaigns.",
+            description:
+              "Receive pricing updates or limited membership campaigns.",
             enabled: true,
           },
           {
             key: "tips",
             label: "Weekly reflection tips",
-            description: "Get small ideas for journaling, emotional check-ins, and calmer routines.",
+            description:
+              "Get small ideas for journaling, emotional check-ins, and calmer routines.",
             enabled: false,
           },
           {
             key: "partnerNews",
             label: "Community updates",
-            description: "Optional news about guided programs, resources, or partner initiatives.",
+            description:
+              "Optional news about guided programs, resources, or partner initiatives.",
             enabled: false,
           },
         ],
@@ -347,7 +364,8 @@ export const SETTINGS_PAGE_CONTENT = {
               "Yes. Access depends on your active plan and available chat credits, and the core experience can still work on the free tier when credits are available.",
           },
           {
-            question: "Is SantumAI a replacement for therapy or emergency care?",
+            question:
+              "Is SantumAI a replacement for therapy or emergency care?",
             answer:
               "No. SantumAI is designed for everyday emotional support and reflection, not emergency or crisis response. If you are in immediate danger or need urgent help, contact local emergency services or a licensed crisis resource right away.",
           },
@@ -380,7 +398,8 @@ export const SETTINGS_PAGE_CONTENT = {
   "privacy-policy": {
     title: "Data & Privacy Policy",
     badge: "Trust Layer",
-    heroTitle: "Explain how support data is handled without hiding it in legal language",
+    heroTitle:
+      "Explain how support data is handled without hiding it in legal language",
     description:
       "A readable privacy summary for profile data, mood check-ins, conversation history, and account controls.",
     imageSrc: "/icons/finger-print-img-white.png",
@@ -410,15 +429,18 @@ export const SETTINGS_PAGE_CONTENT = {
         items: [
           {
             title: "Clarity first",
-            description: "Tell people what is stored, why it matters, and where they can change it.",
+            description:
+              "Tell people what is stored, why it matters, and where they can change it.",
           },
           {
             title: "Control by default",
-            description: "Make key account, security, and messaging choices easy to review and update.",
+            description:
+              "Make key account, security, and messaging choices easy to review and update.",
           },
           {
             title: "Respect sensitive moments",
-            description: "Private conversation features should never feel surprising or careless.",
+            description:
+              "Private conversation features should never feel surprising or careless.",
           },
         ],
       },
@@ -435,7 +457,8 @@ export const SETTINGS_PAGE_CONTENT = {
   "about-santumai": {
     title: "About SantumAI",
     badge: "Product Story",
-    heroTitle: "A calmer AI companion for text-based emotional wellbeing support",
+    heroTitle:
+      "A calmer AI companion for text-based emotional wellbeing support",
     description:
       "SantumAI is designed to offer supportive conversation, gentle reflection, and a more human-feeling daily check-in flow.",
     imageSrc: "/Logo Source files 21-4/Icon/SVG/Artboard1.svg",
@@ -492,7 +515,7 @@ export const SETTINGS_PAGE_CONTENT = {
           "Speed",
           "Billing",
           "Trust & Safety",
-          "Chat Quality"
+          "Chat Quality",
         ],
       },
       {
@@ -501,21 +524,28 @@ export const SETTINGS_PAGE_CONTENT = {
         items: [
           {
             title: "Reply quality",
-            description: "Share when a response felt especially helpful, flat, or off-target.",
+            description:
+              "Share when a response felt especially helpful, flat, or off-target.",
           },
           {
             title: "Feature ideas",
-            description: "Suggest new tools for reflection, mood tracking, or support routines.",
+            description:
+              "Suggest new tools for reflection, mood tracking, or support routines.",
           },
           {
             title: "Trust and safety",
-            description: "Flag moments where wording, pacing, or product behavior should feel more careful.",
+            description:
+              "Flag moments where wording, pacing, or product behavior should feel more careful.",
           },
         ],
       },
     ],
     footerActions: [
-      { label: "Contact Team", href: "/settings/contact-us", variant: "secondary" },
+      {
+        label: "Contact Team",
+        href: "/settings/contact-us",
+        variant: "secondary",
+      },
     ],
   },
   "contact-us": {
@@ -533,18 +563,21 @@ export const SETTINGS_PAGE_CONTENT = {
         items: [
           {
             title: "In-app support",
-            description: "The fastest path for account access, billing, and app-navigation issues.",
+            description:
+              "The fastest path for account access, billing, and app-navigation issues.",
             meta: "Fastest",
             badge: "Recommended",
           },
           {
             title: "Care experience review",
-            description: "Use this for feedback on tone, reply quality, or how emotionally safe the app feels.",
+            description:
+              "Use this for feedback on tone, reply quality, or how emotionally safe the app feels.",
             meta: "Thoughtful follow-up",
           },
           {
             title: "Membership and billing help",
-            description: "Best for plan questions, credit issues, or checkout follow-up.",
+            description:
+              "Best for plan questions, credit issues, or checkout follow-up.",
             meta: "Business hours",
           },
         ],
@@ -619,17 +652,20 @@ export const SETTINGS_PAGE_CONTENT = {
         items: [
           {
             title: "Deactivate account for 30 days",
-            description: "Hide your account temporarily while keeping the option to return.",
+            description:
+              "Hide your account temporarily while keeping the option to return.",
             buttonLabel: "Deactivate",
           },
           {
             title: "Export my chat archive",
-            description: "Prepare a downloadable copy of saved conversations and account preferences.",
+            description:
+              "Prepare a downloadable copy of saved conversations and account preferences.",
             buttonLabel: "Request Export",
           },
           {
             title: "Delete account permanently",
-            description: "Remove access and begin a permanent account-removal workflow.",
+            description:
+              "Remove access and begin a permanent account-removal workflow.",
             buttonLabel: "Delete Forever",
           },
         ],
@@ -655,7 +691,11 @@ export const SETTINGS_PAGE_CONTENT = {
         href: "/settings/contact-us",
         variant: "primary",
       },
-      { label: "Back To Security", href: "/settings/security", variant: "secondary" },
+      {
+        label: "Back To Security",
+        href: "/settings/security",
+        variant: "secondary",
+      },
     ],
   },
 };

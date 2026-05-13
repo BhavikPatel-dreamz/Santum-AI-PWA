@@ -808,7 +808,7 @@ export default function SantumAIChatPage() {
                     className={`max-w-[94%] rounded-[22px] px-3 py-3 sm:max-w-[88%] sm:px-4 ${
                       message.role === "user"
                         ? "rounded-br-[8px] bg-[#00D061] text-white"
-                        : "theme-surface rounded-bl-[8px] text-[#0F0F0F] shadow-[0_10px_24px_rgba(15,15,15,0.05)]"
+                        : "bg-[#e4ffee] rounded-bl-[8px] text-[#0F0F0F] shadow-[0_10px_24px_rgba(15,15,15,0.05)]"
                     }`}
                   >
                     <div className="font-satoshi text-[15px] leading-6 whitespace-pre-wrap">
