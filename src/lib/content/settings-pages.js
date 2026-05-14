@@ -190,43 +190,43 @@ export const SETTINGS_PAGE_CONTENT = {
         type: "list",
         title: "Protection Stack",
         items: [
-          {
-            title: "4-digit security PIN",
-            description:
-              "Adds a quick privacy check before returning to sensitive screens.",
-            meta: "Suggested next step",
-          },
+          // {
+          //   title: "4-digit security PIN",
+          //   description:
+          //     "Adds a quick privacy check before returning to sensitive screens.",
+          //   meta: "Suggested next step",
+          // },
           {
             title: "Fingerprint unlock",
             description:
               "Use local biometrics on supported devices for faster re-entry.",
             meta: "Device ready",
           },
-          {
-            title: "New device alerts",
-            description:
-              "Get notified when your account is opened somewhere new.",
-            meta: "Enabled",
-            badge: "Live",
-          },
+          // {
+          //   title: "New device alerts",
+          //   description:
+          //     "Get notified when your account is opened somewhere new.",
+          //   meta: "Enabled",
+          //   badge: "Live",
+          // },
         ],
       },
       {
         type: "toggles",
         title: "Security Controls",
         items: [
-          {
-            key: "loginAlerts",
-            label: "Instant sign-in alerts",
-            description: "Know right away when a new session is created.",
-            enabled: true,
-          },
-          {
-            key: "weeklyDigest",
-            label: "Weekly account summary",
-            description: "Receive a simple recap of recent account activity.",
-            enabled: false,
-          },
+          // {
+          //   key: "loginAlerts",
+          //   label: "Instant sign-in alerts",
+          //   description: "Know right away when a new session is created.",
+          //   enabled: true,
+          // },
+          // {
+          //   key: "weeklyDigest",
+          //   label: "Weekly account summary",
+          //   description: "Receive a simple recap of recent account activity.",
+          //   enabled: false,
+          // },
           {
             key: "biometricPrompt",
             label: "Fingerprint lock",
@@ -238,11 +238,11 @@ export const SETTINGS_PAGE_CONTENT = {
       },
     ],
     footerActions: [
-      { label: "Create PIN", href: "/create-pin", variant: "primary" },
+      // { label: "Create PIN", href: "/create-pin", variant: "secondary" },
       {
         label: "Scan Fingerprint",
         href: "/finger-scan",
-        variant: "secondary",
+        variant: "primary",
       },
     ],
   },

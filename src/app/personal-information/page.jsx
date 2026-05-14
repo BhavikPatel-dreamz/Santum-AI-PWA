@@ -547,20 +547,6 @@ export default function PersonalInformationPage() {
           )}
         </button>
       </div>
-
-      {!isOnboarding ? (
-        <div className="theme-card-soft theme-border mt-4 rounded-[22px] border px-4 py-4">
-          <div className="flex items-start gap-3">
-            <CheckCircle2 className="mt-0.5 text-[#00A84D]" size={18} />
-            <p className="theme-text-secondary font-satoshi text-[14px] leading-6">
-              This page now acts as the main profile module for the PWA. Basic
-              details, language, and interests are editable here, while email
-              and phone stay visible until the backend exposes dedicated update
-              endpoints for them.
-            </p>
-          </div>
-        </div>
-      ) : null}
     </StepPageShell>
   );
 }
