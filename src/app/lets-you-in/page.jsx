@@ -75,12 +75,12 @@ export default function LetsYouInPage() {
           </div>
         </div>
         {/* ── White card ── */}
-        <div className="theme-auth-card relative z-10 mx-3 -mt-13 w-auto rounded-[28px] px-6 pb-9 pt-8 transition-colors duration-300 sm:mx-5 sm:px-7 md:mx-8 lg:mx-auto lg:-mt-24 lg:w-full lg:max-w-[760px] lg:px-10 lg:pb-10">
+        <div className="theme-auth-card-bg relative z-10 mx-3 -mt-13 w-auto rounded-[28px] px-6 pb-9 pt-8 transition-colors duration-300 sm:mx-5 sm:px-7 md:mx-8 lg:mx-auto lg:-mt-24 lg:w-full lg:max-w-[760px] lg:px-10 lg:pb-10">
           <div className="text-center mb-6">
             <h2 className="text-gray-600 text-[38px] font-bold leading-[1.1] tracking-[5px] mb-3">
               WELCOME
             </h2>
-            <p className="theme-text-primary text-[17px] font-semibold ">
+            <p className="theme-text-primary text-[20px] font-semibold ">
               Nice to see you here
             </p>
           </div>
@@ -101,7 +101,9 @@ export default function LetsYouInPage() {
             </button>
           )}
         </div>
-      <p className="text-center text-[#dedede] pt-12 p-5">Powered By <br /> Advanced AI Councelling System</p>
+        <p className="text-center text-[10px] text-[#dedede] pt-12 p-5">
+          Powered By <br /> Advanced AI Counselling System
+        </p>
       </div>
     </div>
   );

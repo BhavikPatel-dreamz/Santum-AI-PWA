@@ -38,7 +38,7 @@ const STARTER_MESSAGES = [
   {
     id: "starter-assistant",
     role: "assistant",
-    text: "Hi, I'm Sai. You are not alone in this, where would you like to begin?",
+    text: "Hi, I'm Sai. I am here to listen, where would you like to begin?",
   },
 ];
 

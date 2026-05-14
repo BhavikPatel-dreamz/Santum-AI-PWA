@@ -239,7 +239,7 @@ const MENU_ITEMS = [
   //   ),
   // },
   {
-    label: "Subscriptions",
+    label: "Current Plan",
     hint: null,
     danger: false,
     icon: (
@@ -276,7 +276,7 @@ const MENU_ITEMS = [
     ),
   },
   {
-    label: "Personal Info",
+    label: "Profile Info",
     hint: null,
     danger: false,
     icon: (
@@ -543,7 +543,7 @@ const MENU_ITEMS = [
   //   ),
   // },
   {
-    label: "Delete or Deactivate Account",
+    label: "Pause or Delete",
     hint: null,
     danger: true,
     icon: (
@@ -604,8 +604,8 @@ const MENU_ROUTES = {
   // "Banks & Cards": "/settings/banks-cards",
   // "Payment Methods": "/settings/payment-methods",
   // Credits: "/settings/credits",
-  Subscriptions: "/settings/subscriptions",
-  "Personal Info": "/personal-information",
+  "Current Plan": "/settings/subscriptions",
+  "Profile Info": "/personal-information",
   Security: "/settings/security",
   // "Marketing Preferences": "/settings/marketing-preferences",
   // Language: "/language",
@@ -616,7 +616,7 @@ const MENU_ROUTES = {
   // "Send Feedback": "/settings/send-feedback",
   "Contact Us": "/settings/contact-us",
   // "Invite Friends": "/settings/invite-friends",
-  "Delete or Deactivate Account": "/settings/account-management",
+  "Pause or Delete": "/settings/account-management",
 };
 
 const QUICK_ACCESS_ITEMS = [
@@ -915,10 +915,7 @@ export default function HomeScreen() {
                 ) : null}
               </button>
               {/* Hex / settings */}
-              <button
-                type="button"
-                onClick={() => setDrawerOpen(true)}
-              >
+              <button type="button" onClick={() => setDrawerOpen(true)}>
                 <Settings />
               </button>
             </div>
@@ -1092,7 +1089,7 @@ export default function HomeScreen() {
               </div>
               <div>
                 <p className="theme-text-primary text-[16px] font-medium">
-                  {displayName}
+                  {firstName}
                 </p>
                 <p className="text-[14px] text-[#555]">{contactLine}</p>
               </div>
@@ -1244,7 +1241,7 @@ export default function HomeScreen() {
             <button
               type="button"
               onClick={() => setLogoutOpen(false)}
-              className="theme-card-soft rounded-[12px] px-8 py-[18px] text-[18px] font-medium text-[#00D061] transition-all duration-300 active:scale-[0.97]"
+              className="theme-card-soft rounded-[12px] px-12 py-[18px] text-[18px] font-medium text-[#00D061] transition-all duration-300 active:scale-[0.97]"
             >
               Cancel
             </button>

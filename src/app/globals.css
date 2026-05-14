@@ -217,6 +217,12 @@ input[type="file"]:not(:disabled) {
   box-shadow: var(--app-card-shadow);
 }
 
+.theme-auth-card-bg {
+  background-color: #e4ffee;
+  border: 1px solid var(--app-border);
+  box-shadow: var(--app-card-shadow);
+}
+
 .theme-auth-dropdown {
   background-color: var(--app-surface-elevated);
   border: 1px solid var(--app-border);
