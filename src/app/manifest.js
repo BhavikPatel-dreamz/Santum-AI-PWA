@@ -7,18 +7,20 @@ export default function manifest() {
     start_url: "/",
     scope: "/",
     display: "standalone",
-    background_color: "#ffffff",
-    theme_color: "#000000",
+    background_color: "#323d51",
+    theme_color: "#323d51",
     icons: [
-      // {
-      //   src: "/Logo Source files 21-4/Icon/0.25x/Artboard-1.png",
-      //   sizes: "192x192",
-      //   type: "image/png",
-      // },
       {
-        src: "/Logo Source files 21-4/Icon/1x/1234567.jpg",
+        src: "/favicon/web-app-manifest-192x192.png",
+        sizes: "192x192",
+        type: "image/png",
+        purpose: "maskable"
+      },
+      {
+        src: "/favicon/web-app-manifest-512x512.png",
         sizes: "512x512",
-        type: "image/jpeg",
+        type: "image/png",
+        purpose: "any"
       },
     ],
   };

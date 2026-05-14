@@ -4,7 +4,6 @@ import { PageTransitionProvider } from "@/components/providers/PageTransitionPro
 import { ReduxProvider } from "@/components/providers/ReduxProvider";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import Script from "next/script";
 import { Suspense } from "react";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
@@ -83,7 +82,8 @@ export const metadata: Metadata = {
   description:
     "A standalone AI counselling PWA for text-based emotional wellbeing support.",
   icons: {
-    icon: "/Logo Source files 21-4/Icon/SVG/Artboard1.svg",
+    icon: "/favicon/favicon.ico", // Main favicon
+    apple: "/favicon/apple-touch-icon.png", // Specifically for iPhone
   },
 };
 

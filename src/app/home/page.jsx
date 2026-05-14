@@ -877,7 +877,7 @@ export default function HomeScreen() {
     <div className="theme-shell min-h-dvh flex justify-center lg:px-4 lg:py-4">
       <div className="theme-surface theme-border relative flex min-h-dvh w-full max-w-[1200px] flex-col overflow-hidden lg:min-h-[calc(100dvh-2rem)] lg:rounded-[36px] lg:border lg:shadow-[0_24px_64px_rgba(15,15,15,0.08)]">
         {/* ── Green header background ── */}
-        <div className="relative overflow-hidden bg-[#323d51] px-4 pb-4 pt-[30px] sm:px-6 sm:pt-9 lg:px-10 lg:pb-6 lg:pt-10">
+        <div className="relative overflow-hidden bg-[#323d51] px-4 pb-4 pt-3 sm:px-6 sm:pt-9 lg:px-10 lg:pb-6 lg:pt-10">
           {/* Circuit background */}
           {/* <Image
             src="/icons/let-you-screen-main-img.jpg"
@@ -893,8 +893,8 @@ export default function HomeScreen() {
             <Image
               src="/Logo Source files 21-4/Icon/SVG/Artboard1.svg"
               alt=""
-              width={70}
-              height={70}
+              width={95}
+              height={95}
               className="object-contain"
               unoptimized
             />
@@ -922,7 +922,7 @@ export default function HomeScreen() {
           </div>
 
           {/* Hero text */}
-          <div className="relative z-10 mt-5 max-w-[720px] pb-2">
+          <div className="relative z-10 mt-2 max-w-[720px] pb-2">
             <h2 className="text-[32px] font-bold leading-[40px] text-[#dedede] sm:text-[38px] sm:leading-[46px] lg:text-[46px] lg:leading-[54px]">
               Hello!{" "}
               <span
@@ -1241,7 +1241,7 @@ export default function HomeScreen() {
             <button
               type="button"
               onClick={() => setLogoutOpen(false)}
-              className="theme-card-soft rounded-[12px] px-12 py-[18px] text-[18px] font-medium text-[#00D061] transition-all duration-300 active:scale-[0.97]"
+              className="theme-card-soft rounded-[12px] px-13 py-[18px] text-[18px] font-medium text-[#00D061] transition-all duration-300 active:scale-[0.97]"
             >
               Cancel
             </button>
