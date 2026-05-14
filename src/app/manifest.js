@@ -11,14 +11,16 @@ export default function manifest() {
     theme_color: "#323d51",
     icons: [
       {
-        src: "/favicon/web-app-manifest-192x192.png",
+        src: "/fav/web-app-manifest-192x192.png",
         sizes: "192x192",
         type: "image/png",
+        purpose: "maskable",
       },
       {
-        src: "/favicon/web-app-manifest-512x512.png",
+        src: "/fav/web-app-manifest-512x512.png",
         sizes: "512x512",
         type: "image/png",
+        purpose: "maskable",
       },
     ],
   };

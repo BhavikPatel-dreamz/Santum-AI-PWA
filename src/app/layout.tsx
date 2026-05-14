@@ -82,8 +82,8 @@ export const metadata: Metadata = {
   description:
     "A standalone AI counselling PWA for text-based emotional wellbeing support.",
   icons: {
-    icon: "/favicon/favicon.ico", // Main favicon
-    apple: "/favicon/apple-touch-icon.png", // Specifically for iPhone
+    icon: "/fav/favicon.ico", // Main favicon
+    apple: "/fav/apple-touch-icon.png", // Specifically for iPhone
   },
 };
 
