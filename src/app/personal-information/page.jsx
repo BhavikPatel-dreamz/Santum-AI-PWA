@@ -29,11 +29,9 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const EMPTY_PROFILE_FORM = {
-  firstName: "",
-  lastName: "",
-  dob: "",
-  preferredLanguage: PROFILE_LANGUAGES[0],
-  interests: [],
+  firstName: "Anonymous",
+  lastName: "Anonymous",
+  email: ""
 };
 
 function FloatingInput({
@@ -71,7 +69,7 @@ function buildProfileForm(profile) {
   return {
     firstName: getProfileFirstName(profile),
     lastName: getProfileLastName(profile),
-    dob: getProfileDob(profile),
+    email: getProfileEmail(profile),
     preferredLanguage:
       getProfilePreferredLanguage(profile) || PROFILE_LANGUAGES[0],
     interests: getProfileInterests(profile),
@@ -86,7 +84,7 @@ function normalizeFormState(form) {
   return {
     firstName: form.firstName.trim(),
     lastName: form.lastName.trim(),
-    dob: form.dob,
+    email: form.email,
     preferredLanguage: form.preferredLanguage.trim(),
     interests: normalizeInterests(form.interests).sort((left, right) =>
       left.localeCompare(right),
@@ -194,7 +192,8 @@ export default function PersonalInformationPage() {
     normalizedCurrent.lastName !== normalizedBaseline.lastName ||
     normalizedCurrent.dob !== normalizedBaseline.dob;
   const isLanguageChanged =
-    normalizedCurrent.preferredLanguage !== normalizedBaseline.preferredLanguage;
+    normalizedCurrent.preferredLanguage !==
+    normalizedBaseline.preferredLanguage;
   const isInterestsChanged = !hasMatchingInterests(
     normalizedCurrent.interests,
     normalizedBaseline.interests,
@@ -321,30 +320,31 @@ export default function PersonalInformationPage() {
 
   return (
     <StepPageShell
-      title={isOnboarding ? "Complete Profile" : "My Profile"}
+      title={isOnboarding ? "Complete Profile" : "Profile Info"}
       contentClassName="overflow-y-auto pb-24"
     >
-      {!isOnboarding && <div className="theme-card mb-6 rounded-[26px] border px-5 py-5">
-        <div className="flex items-center gap-4">
-          <div className="theme-pill flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-full text-[24px] font-semibold">
-            {profileInitials}
+      {!isOnboarding && (
+        <div className="theme-card mb-6 rounded-[26px] border px-5 py-5">
+          <div className="flex items-center gap-4">
+            <div className="theme-pill flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-full text-[24px] font-semibold">
+              {profileInitials}
+            </div>
+            <div className="min-w-0">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#00A84D]">
+                Overview
+              </p>
+              <h2 className="theme-text-primary mt-2 truncate text-[24px] font-semibold leading-8">
+                {form.firstName ?? "Anonymous"}
+              </h2>
+              <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6">
+                {emailAddress ||
+                  phoneNumber ||
+                  "Contact details are managed from your Santum account"}
+              </p>
+            </div>
           </div>
-          <div className="min-w-0">
-            <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#00A84D]">
-              Profile Overview
-            </p>
-            <h2 className="theme-text-primary mt-2 truncate text-[24px] font-semibold leading-8">
-              {profileName}
-            </h2>
-            <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6">
-              {emailAddress ||
-                phoneNumber ||
-                "Contact details are managed from your Santum account"}
-            </p>
-          </div>
-        </div>
 
-        {/* <div className="mt-5 grid grid-cols-3 gap-3">
+          {/* <div className="mt-5 grid grid-cols-3 gap-3">
           <div className="theme-static-panel rounded-[20px] border px-3 py-4 text-center">
             <p className="theme-text-primary text-[20px] font-semibold leading-7">
               {completionScore}/4
@@ -370,7 +370,8 @@ export default function PersonalInformationPage() {
             </p>
           </div>
         </div> */}
-      </div>}
+        </div>
+      )}
 
       {isProfileLoading && !didInitialize ? (
         <div className="theme-card rounded-[26px] border px-5 py-8 text-center">
@@ -383,14 +384,7 @@ export default function PersonalInformationPage() {
           <div className="theme-card mb-5 rounded-[26px] border px-5 py-5">
             <div className="mb-4">
               <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#00A84D]">
-                Basic Details
-              </p>
-              <h3 className="theme-text-primary mt-2 text-[22px] font-semibold leading-8">
-                Name and date of birth
-              </h3>
-              <p className="theme-text-secondary mt-2 font-satoshi text-[14px] leading-6">
-                These fields are fully editable with the current Santum profile
-                API.
+                Logged Details
               </p>
             </div>
 
@@ -407,14 +401,15 @@ export default function PersonalInformationPage() {
                 id="last-name"
                 label="Last Name"
                 value={form.lastName}
-                onChange={(event) => updateField("lastName", event.target.value)}
+                onChange={(event) =>
+                  updateField("lastName", event.target.value)
+                }
               />
               <FloatingInput
-                id="dob"
-                label="Date of Birth"
-                type="date"
-                value={form.dob}
-                onChange={(event) => updateField("dob", event.target.value)}
+                id="email"
+                label="Email"
+                value={form.email}
+                onChange={(event) => updateField("email", event.target.value)}
               />
             </div>
           </div>
@@ -535,9 +530,7 @@ export default function PersonalInformationPage() {
           onClick={handleSaveProfile}
           disabled={!didInitialize || isSavingProfile}
           className={`rounded-[14px] px-5 py-4 text-[16px] font-semibold text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)] ${
-            isSavingProfile || !didInitialize
-              ? "bg-[#A8F0CB]"
-              : "bg-[#00D061]"
+            isSavingProfile || !didInitialize ? "bg-[#A8F0CB]" : "bg-[#00D061]"
           } ${isOnboarding ? "sm:col-span-2" : ""}`}
         >
           {isSavingProfile ? (

@@ -638,7 +638,7 @@ export const SETTINGS_PAGE_CONTENT = {
     ],
   },
   "account-management": {
-    title: "Delete or Deactivate Account",
+    title: "Pause or Delete",
     badge: "Sensitive Action",
     heroTitle: "Make hard account decisions feel clear and carefully explained",
     description:
@@ -651,10 +651,10 @@ export const SETTINGS_PAGE_CONTENT = {
         title: "Account Actions",
         items: [
           {
-            title: "Deactivate account for 30 days",
+            title: "Pause account for 30 days",
             description:
               "Hide your account temporarily while keeping the option to return.",
-            buttonLabel: "Deactivate",
+            buttonLabel: "Pause",
           },
           {
             title: "Export my chat archive",
