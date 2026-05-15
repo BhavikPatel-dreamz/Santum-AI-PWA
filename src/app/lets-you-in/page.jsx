@@ -102,7 +102,7 @@ export default function LetsYouInPage() {
           )}
         </div>
         <p className="text-center text-[10px] text-[#dedede] pt-12 p-5">
-          Powered By <br /> Advanced AI Counselling System
+          Powered by: <br /> Advanced AI Counselling System
         </p>
       </div>
     </div>

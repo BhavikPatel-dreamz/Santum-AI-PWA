@@ -1,11 +1,12 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Image from "next/image";
+import { useTheme } from "@/components/providers/ThemeProvider";
 
 export default function LoadingScreen({ onDone }) {
-  const [theme, setTheme] = useState(null);
+  const { theme } = useTheme();
+
   useEffect(() => {
-    setTheme(localStorage.getItem("theme"));
     const t = setTimeout(() => {
       if (typeof onDone === "function") {
         onDone();

@@ -178,7 +178,7 @@ export const SETTINGS_PAGE_CONTENT = {
     ],
   },
   security: {
-    title: "Security",
+    title: "Protection",
     badge: "Account Shield",
     heroTitle: "Protect private conversations without making access feel heavy",
     description:
@@ -188,7 +188,7 @@ export const SETTINGS_PAGE_CONTENT = {
     sections: [
       {
         type: "list",
-        title: "Protection Stack",
+        title: "Additional Security",
         items: [
           // {
           //   title: "4-digit security PIN",
@@ -230,8 +230,7 @@ export const SETTINGS_PAGE_CONTENT = {
           {
             key: "biometricPrompt",
             label: "Fingerprint lock",
-            description:
-              "Sign in with fingerprint.",
+            description: "Sign in with fingerprint.",
             enabled: true,
           },
         ],
@@ -667,20 +666,6 @@ export const SETTINGS_PAGE_CONTENT = {
             description:
               "Remove access and begin a permanent account-removal workflow.",
             buttonLabel: "Delete Forever",
-          },
-        ],
-      },
-      {
-        type: "text",
-        title: "Before You Continue",
-        items: [
-          {
-            heading: "Use clear language",
-            body: "Deactivation should feel reversible. Deletion should feel permanent and carefully explained.",
-          },
-          {
-            heading: "Offer exports first",
-            body: "Give users a chance to take their information before leaving.",
           },
         ],
       },

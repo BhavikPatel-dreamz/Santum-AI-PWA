@@ -306,7 +306,7 @@ const MENU_ITEMS = [
     ),
   },
   {
-    label: "Security",
+    label: "Protection",
     hint: null,
     danger: false,
     icon: (
@@ -606,7 +606,7 @@ const MENU_ROUTES = {
   // Credits: "/settings/credits",
   "Current Plan": "/settings/subscriptions",
   "Profile Info": "/personal-information",
-  Security: "/settings/security",
+  Protection: "/settings/security",
   // "Marketing Preferences": "/settings/marketing-preferences",
   // Language: "/language",
   // Currency: "/settings/currency",
@@ -627,9 +627,9 @@ const QUICK_ACCESS_ITEMS = [
   //   href: "/notifications",
   // },
   {
-    label: "Security",
+    label: "Protection",
     caption: "Protect access",
-    value: "PIN",
+    value: "bio",
     href: "/settings/security",
   },
   {
@@ -680,7 +680,7 @@ export default function HomeScreen() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
   const [todayMoodDateKey] = useState(() => getTodayMoodDateKey());
-  const { isDark, isUsingSystemTheme, toggleTheme } = useTheme();
+  const { isDark, toggleTheme } = useTheme();
   const router = useRouter();
   const moodCheckInRef = useRef(null);
   const floatingButtonRef = useRef(null);
@@ -853,9 +853,7 @@ export default function HomeScreen() {
     router.push(href);
   };
   const themeLabel = isDark ? "Dark mode" : "Light mode";
-  const themeStatus = isUsingSystemTheme
-    ? "Using your device preference"
-    : "Saved for this browser";
+  const themeStatus = "Saved for this browser";
   const drawerHoverClass = isDark
     ? "hover:bg-white/5 active:bg-white/10"
     : "hover:bg-[#f9fffe] active:bg-[#E4FFEE]";
@@ -936,11 +934,11 @@ export default function HomeScreen() {
               </span>
             </h2>
             <h3 className="mt-3 text-[18px] font-semibold leading-6 text-[#dedede] sm:text-[20px] lg:text-[22px]">
-              I'm Sai, short for Santum AI
+              I&apos;m Sai, short for Santum AI
             </h3>
             <p className="mb-3 mt-2 pb-3 font-satoshi text-[16px] font-medium leading-[24px] text-white sm:text-[17px] lg:max-w-[640px] lg:text-[18px] lg:leading-[28px]">
-              I'm here to listen and help you make sense of what you're
-              experiencing
+              I&apos;m here to listen and help you make sense of what
+              you&apos;re experiencing
             </p>
           </div>
         </div>

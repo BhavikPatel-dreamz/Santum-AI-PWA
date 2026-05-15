@@ -16,12 +16,10 @@ import {
 
 type ThemeContextValue = {
   isDark: boolean;
-  isUsingSystemTheme: boolean;
   setTheme: (theme: ThemeName) => void;
   theme: ThemeName;
   themePreference: ThemePreference;
   toggleTheme: () => void;
-  useSystemTheme: () => void;
 };
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
@@ -39,25 +37,6 @@ function readStoredTheme(): ThemePreference {
   }
 }
 
-function readDocumentTheme(): ThemeName | null {
-  if (typeof document === "undefined") {
-    return null;
-  }
-
-  const currentTheme = document.documentElement.dataset.theme;
-  return isThemeName(currentTheme) ? currentTheme : null;
-}
-
-function readSystemTheme(): ThemeName {
-  if (typeof window === "undefined") {
-    return "light";
-  }
-
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
-}
-
 function applyTheme(theme: ThemeName) {
   if (typeof document === "undefined") {
     return;
@@ -68,20 +47,15 @@ function applyTheme(theme: ThemeName) {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [themePreference, setThemePreference] = useState<ThemePreference>(null);
-  const [systemTheme, setSystemTheme] = useState<ThemeName>("light");
+  const [themePreference, setThemePreference] =
+    useState<ThemePreference>("light");
 
-  const theme = themePreference ?? systemTheme;
-  const syncSystemTheme = useEffectEvent((matches: boolean) => {
-    setSystemTheme(matches ? "dark" : "light");
-  });
+  const theme = themePreference ?? "light";
   const syncThemeFromBrowser = useEffectEvent(() => {
-    const storedTheme = readStoredTheme();
-    const resolvedSystemTheme = readDocumentTheme() ?? readSystemTheme();
+    const storedTheme = readStoredTheme() ?? "light";
 
     setThemePreference(storedTheme);
-    setSystemTheme(resolvedSystemTheme);
-    applyTheme(storedTheme ?? resolvedSystemTheme);
+    applyTheme(storedTheme);
   });
 
   useLayoutEffect(() => {
@@ -94,18 +68,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
 
     syncThemeFromBrowser();
-
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-
-    const handleChange = (event: MediaQueryListEvent) => {
-      syncSystemTheme(event.matches);
-    };
-
-    mediaQuery.addEventListener("change", handleChange);
-
-    return () => {
-      mediaQuery.removeEventListener("change", handleChange);
-    };
   }, []);
 
   const setTheme = (nextTheme: ThemeName) => {
@@ -116,26 +78,16 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     } catch {}
   };
 
-  const useSystemTheme = () => {
-    setThemePreference(null);
-
-    try {
-      window.localStorage.removeItem(THEME_STORAGE_KEY);
-    } catch {}
-  };
-
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
   };
 
   const value = {
     isDark: theme === "dark",
-    isUsingSystemTheme: themePreference === null,
     setTheme,
     theme,
     themePreference,
     toggleTheme,
-    useSystemTheme,
   };
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

@@ -4,7 +4,7 @@ export default function Footer() {
       
       {/* Professional Care Section */}
       <div className="flex flex-col gap-4">
-        <h2 className="text-[#86bd65] text-sm font-semibold uppercase tracking-wide">
+        <h2 className="text-[#dedede] text-sm font-semibold uppercase tracking-wide">
           For Professional Care
         </h2>
         <a
@@ -19,7 +19,7 @@ export default function Footer() {
 
       {/* Emergency Lines Section */}
       <div className="flex flex-col gap-3">
-        <h2 className="text-[#86bd65] text-sm font-semibold uppercase tracking-wide text-center">
+        <h2 className="text-[#dedede] text-sm font-semibold uppercase tracking-wide text-center">
           Emergency Lines
         </h2>
         {/* Using your global muted text color #93A099 for the dark background */}

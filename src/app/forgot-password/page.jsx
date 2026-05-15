@@ -4,24 +4,19 @@ import StepPageShell from "@/components/app/StepPageShell";
 import { Mail, MessageSquare } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { OTP_PHONE_STORAGE_KEY } from "../../lib/utills/phone";
+
+const storedEmail = sessionStorage.getItem(OTP_PHONE_STORAGE_KEY);
 
 const RECOVERY_OPTIONS = [
   {
-    id: "sms",
-    title: "Recover with SMS",
-    description: "Send a short code to your verified mobile number.",
-    value: "+91 ****** 65",
-    icon: MessageSquare,
-  },
-  {
     id: "email",
     title: "Recover with Email",
-    description: "Use your email inbox when you cannot access your phone.",
-    value: "je*****@mail.com",
+    description: "Receive a verification code in your email inbox.",
+    value: storedEmail,
     icon: Mail,
   },
 ];
-
 
 export default function ForgetPasswordPage() {
   const router = useRouter();
@@ -29,19 +24,19 @@ export default function ForgetPasswordPage() {
 
   return (
     <StepPageShell title="Reset Password" contentClassName="overflow-y-auto">
-      <div className="mb-4">
+      {/* <div className="mb-4">
         <h2 className="theme-text-primary text-[20px] font-semibold leading-7">
           Pick a recovery path
         </h2>
         <p className="theme-text-secondary mt-1 font-satoshi text-[15px] leading-6">
           We&apos;ll use this to send your verification code.
         </p>
-      </div>
+      </div> */}
 
       <div className="space-y-3">
         {RECOVERY_OPTIONS.map((option) => {
           const Icon = option.icon;
-          const isSelected = selectedOption === option.id;
+          const isSelected = true;
 
           return (
             <button
@@ -78,7 +73,7 @@ export default function ForgetPasswordPage() {
                   <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6">
                     {option.description}
                   </p>
-                  <p className="mt-3 text-[13px] font-semibold uppercase tracking-[0.16em] text-[#00A84D]">
+                  <p className="mt-3 text-[13px] font-semibold text-[#00A84D]">
                     {option.value}
                   </p>
                 </div>
@@ -90,7 +85,9 @@ export default function ForgetPasswordPage() {
 
       <button
         type="button"
-        onClick={() => router.push("/confirm-otp")}
+        onClick={() => {
+          router.replace("/confirm-otp");
+        }}
         className="mt-auto rounded-[14px] bg-[#00D061] px-5 py-4 text-[18px] font-semibold text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)]"
       >
         Continue

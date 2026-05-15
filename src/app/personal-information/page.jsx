@@ -27,11 +27,12 @@ import { CheckCircle2, Mail, Phone } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { OTP_PHONE_STORAGE_KEY } from "../../lib/utills/phone";
 
 const EMPTY_PROFILE_FORM = {
   firstName: "Anonymous",
   lastName: "Anonymous",
-  email: ""
+  email: "",
 };
 
 function FloatingInput({
@@ -249,6 +250,11 @@ export default function PersonalInformationPage() {
     }
   };
 
+  const handleChangePassword = () => {
+    sessionStorage.setItem(OTP_PHONE_STORAGE_KEY, form.email.trim());
+    router.push("/forgot-password");
+  };
+
   const handleSaveProfile = async () => {
     const basicValidationMessage = validateBasicProfile(normalizedCurrent);
 
@@ -390,6 +396,7 @@ export default function PersonalInformationPage() {
 
             <div className="space-y-4">
               <FloatingInput
+                disabled={true}
                 id="first-name"
                 label="First Name"
                 value={form.firstName}
@@ -398,6 +405,7 @@ export default function PersonalInformationPage() {
                 }
               />
               <FloatingInput
+                disabled={true}
                 id="last-name"
                 label="Last Name"
                 value={form.lastName}
@@ -518,10 +526,10 @@ export default function PersonalInformationPage() {
         {!isOnboarding ? (
           <button
             type="button"
-            onClick={() => router.push("/home")}
+            onClick={handleChangePassword}
             className="theme-secondary-button rounded-[14px] px-5 py-4 text-[16px] font-semibold"
           >
-            Back To Home
+            Change Password
           </button>
         ) : null}
 

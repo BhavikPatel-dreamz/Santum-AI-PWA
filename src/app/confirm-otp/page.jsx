@@ -3,8 +3,10 @@
 import StepPageShell from "@/components/app/StepPageShell";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { OTP_PHONE_STORAGE_KEY } from "../../lib/utills/phone";
 
 export default function ConfirmOtpPage() {
+  const storedEmail = sessionStorage.getItem(OTP_PHONE_STORAGE_KEY);
   const router = useRouter();
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [resendTimer, setResendTimer] = useState(30);
@@ -68,7 +70,7 @@ export default function ConfirmOtpPage() {
     <StepPageShell title="Confirm OTP" contentClassName="overflow-y-auto">
       <p className="theme-text-secondary mb-6 text-center font-satoshi text-[16px] leading-6">
         The code was sent to{" "}
-        <span className="theme-text-primary font-semibold">+91 ****** 65</span>
+        <span className="theme-text-primary font-semibold">{storedEmail}</span>
       </p>
 
       <div
@@ -99,7 +101,9 @@ export default function ConfirmOtpPage() {
         {resendTimer > 0 ? (
           <>
             Code expires in{" "}
-            <span className="theme-text-primary font-semibold">{resendTimer}s</span>
+            <span className="theme-text-primary font-semibold">
+              {resendTimer}s
+            </span>
           </>
         ) : (
           <button
@@ -115,7 +119,10 @@ export default function ConfirmOtpPage() {
       <button
         type="button"
         disabled={!isComplete}
-        onClick={() => router.push("/new-password")}
+        onClick={() => {
+          router.replace("/new-password");
+          sessionStorage.removeItem(OTP_PHONE_STORAGE_KEY);
+        }}
         className={`mt-auto rounded-[14px] px-5 py-4 text-[18px] font-semibold text-white transition-all duration-200 ${
           isComplete
             ? "bg-[#00D061] shadow-[0_10px_24px_rgba(0,208,97,0.22)]"

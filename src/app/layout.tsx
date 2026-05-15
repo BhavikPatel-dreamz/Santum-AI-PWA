@@ -4,6 +4,7 @@ import { PageTransitionProvider } from "@/components/providers/PageTransitionPro
 import { ReduxProvider } from "@/components/providers/ReduxProvider";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import Script from "next/script";
 import { Suspense } from "react";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
@@ -82,10 +83,27 @@ export const metadata: Metadata = {
   description:
     "A standalone AI counselling PWA for text-based emotional wellbeing support.",
   icons: {
-    icon: "/fav/favicon.ico", // Main favicon
-    apple: "/fav/apple-touch-icon.png", // Specifically for iPhone
+    icon: "/favicon/favicon.ico", // Main favicon
+    apple: "/favicon/apple-touch-icon.png", // Specifically for iPhone
   },
 };
+
+const themeInitScript = `
+(() => {
+  try {
+    const storedTheme = window.localStorage.getItem("theme");
+    const theme = storedTheme === "light" || storedTheme === "dark"
+      ? storedTheme
+      : "light";
+
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
+  } catch {
+    document.documentElement.dataset.theme = "light";
+    document.documentElement.style.colorScheme = "light";
+  }
+})();
+`;
 
 export default function RootLayout({
   children,
@@ -100,6 +118,11 @@ export default function RootLayout({
       className={`${segoeUi.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">
+        <Script
+          id="theme-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: themeInitScript }}
+        />
         <ReduxProvider>
           <ThemeProvider>
             <LoadingScreenWrapper />
