@@ -6,11 +6,15 @@ import { useRouter } from "next/navigation";
 import { OTP_PHONE_STORAGE_KEY } from "../../lib/utills/phone";
 
 export default function ConfirmOtpPage() {
-  const storedEmail = sessionStorage.getItem(OTP_PHONE_STORAGE_KEY);
   const router = useRouter();
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [resendTimer, setResendTimer] = useState(30);
   const inputRefs = useRef([]);
+  let storedEmail;
+
+  useEffect(() => {
+    storedEmail = sessionStorage.getItem(OTP_PHONE_STORAGE_KEY);
+  }, []);
 
   useEffect(() => {
     if (resendTimer === 0) {

@@ -3,24 +3,27 @@
 import StepPageShell from "@/components/app/StepPageShell";
 import { Mail, MessageSquare } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { OTP_PHONE_STORAGE_KEY } from "../../lib/utills/phone";
 
-const storedEmail = sessionStorage.getItem(OTP_PHONE_STORAGE_KEY);
-
-const RECOVERY_OPTIONS = [
-  {
-    id: "email",
-    title: "Recover with Email",
-    description: "Receive a verification code in your email inbox.",
-    value: storedEmail,
-    icon: Mail,
-  },
-];
-
 export default function ForgetPasswordPage() {
+  let storedEmail;
+
+  const RECOVERY_OPTIONS = [
+    {
+      id: "email",
+      title: "Recover with Email",
+      description: "Receive a verification code in your email inbox.",
+      value: storedEmail,
+      icon: Mail,
+    },
+  ];
   const router = useRouter();
   const [selectedOption, setSelectedOption] = useState("sms");
+
+  useEffect(() => {
+    storedEmail = sessionStorage.getItem(OTP_PHONE_STORAGE_KEY);
+  });
 
   return (
     <StepPageShell title="Reset Password" contentClassName="overflow-y-auto">
