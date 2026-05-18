@@ -664,7 +664,7 @@ const QUICK_ACCESS_ITEMS = [
     href: "/settings/security",
   },
   {
-    label: "History",
+    label: "Chat History",
     caption: "View Chat History",
     value: "Saved",
     href: "/settings/history",

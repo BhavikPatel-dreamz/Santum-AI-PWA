@@ -363,15 +363,15 @@ export const SETTINGS_PAGE_CONTENT = {
               "Sai is short for Santum AI. it is an AI-powered mental wellness and psychotherapy support chatbot which provides private conversations to help you manage emotional challenges, and everyday mental wellbeing.",
           },
           {
-            question: "Can I chat with SantumAI without buying a plan?",
+            question: "Can I chat with Sai without buying a plan?",
             answer:
               "Yes. Access depends on your active plan and available chat credits, and the core experience can still work on the free tier when credits are available.",
           },
           {
             question:
-              "Is SantumAI a replacement for therapy or emergency care?",
+              "Is Sai a replacement for therapy or emergency care?",
             answer:
-              "No. SantumAI is designed for everyday emotional support and reflection, not emergency or crisis response. If you are in immediate danger or need urgent help, contact local emergency services or a licensed crisis resource right away.",
+              "No. Sai is designed for everyday emotional support and reflection, not emergency or crisis response. If you are in immediate danger or need urgent help, contact local emergency services or a licensed crisis resource right away.",
           },
           {
             question: "Will my chat history stay synced across devices?",
@@ -381,7 +381,7 @@ export const SETTINGS_PAGE_CONTENT = {
           {
             question: "How do mood check-ins affect replies?",
             answer:
-              "Mood check-ins help SantumAI adapt tone, pacing, and encouragement so the conversation feels more appropriate for your day.",
+              "Mood check-ins help Sai adapt tone, pacing, and encouragement so the conversation feels more appropriate for your day.",
           },
         ],
       },

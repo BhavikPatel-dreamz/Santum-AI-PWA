@@ -10,8 +10,10 @@ import {
 import { getProfilePhone } from "@/lib/utills/profile";
 import { MessageSquare, RefreshCcw, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
+
+const CHAT_PAGE_SIZE = 10;
 
 function formatChatTimestamp(value) {
   if (!value) {
@@ -62,6 +64,7 @@ function getChatTitle(chat) {
 
 export default function ChatHistoryPage() {
   const router = useRouter();
+  const [visibleChatCount, setVisibleChatCount] = useState(CHAT_PAGE_SIZE);
   const { data: profile, error: profileError } = useGetProfileQuery();
   const profilePhone = getProfilePhone(profile);
   const {
@@ -76,6 +79,12 @@ export default function ChatHistoryPage() {
     refetchOnReconnect: true,
   });
   const [deleteChat, { isLoading: isDeletingChat }] = useDeleteChatMutation();
+
+  const visibleChats = useMemo(
+    () => chats.slice(0, visibleChatCount),
+    [chats, visibleChatCount],
+  );
+  const hasMoreChats = visibleChatCount < chats.length;
 
   useEffect(() => {
     if (!profileError) {
@@ -123,7 +132,7 @@ export default function ChatHistoryPage() {
   };
 
   return (
-    <StepPageShell title="History" contentClassName="overflow-y-auto">
+    <StepPageShell title="Chat History" contentClassName="overflow-y-auto">
       <div className="mb-6 grid grid-cols-3 gap-3">
         <div className="theme-card-muted rounded-[22px] border px-3 py-4 text-center">
           <p className="text-[16px] font-semibold leading-7 text-[#0F0F0F]">
@@ -193,7 +202,7 @@ export default function ChatHistoryPage() {
         </div>
       ) : (
         <div className="space-y-3">
-          {chats.map((chat) => (
+          {visibleChats.map((chat) => (
             <div
               key={String(chat._id)}
               className="theme-card rounded-[24px] border px-4 py-4 shadow-[0_12px_30px_rgba(15,15,15,0.04)]"
@@ -230,6 +239,26 @@ export default function ChatHistoryPage() {
               </div>
             </div>
           ))}
+
+          <div className="flex flex-col items-center gap-3 pt-2 sm:flex-row sm:justify-between">
+            <p className="font-satoshi text-[13px] leading-5 text-[#555]">
+              Showing {visibleChats.length} of {chats.length} chats
+            </p>
+
+            {hasMoreChats ? (
+              <button
+                type="button"
+                onClick={() =>
+                  setVisibleChatCount((currentCount) =>
+                    Math.min(currentCount + CHAT_PAGE_SIZE, chats.length),
+                  )
+                }
+                className="w-full rounded-[14px] bg-[#E8FFF1] px-5 py-3 text-[14px] font-semibold text-[#00A84D] transition-colors hover:bg-[#DDFBEA] sm:w-auto"
+              >
+                Load More
+              </button>
+            ) : null}
+          </div>
         </div>
       )}
 
