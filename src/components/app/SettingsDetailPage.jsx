@@ -99,6 +99,8 @@ export default function SettingsDetailPage({ content }) {
   const [feedbackText, setFeedbackText] = useState("");
   const [feedbackCategory, setFeedbackCategory] = useState("");
 
+  const isDisable = feedbackText.trim().length < 1
+
   const handleAction = async (action) => {
     if (action.href) {
       router.push(action.href);
@@ -444,6 +446,7 @@ export default function SettingsDetailPage({ content }) {
 
             <button
               type="button"
+              disabled={isDisable}
               onClick={() => {
                 if (!feedbackText.trim()) {
                   toast.error("Please add a little feedback first.");
@@ -453,7 +456,7 @@ export default function SettingsDetailPage({ content }) {
                 toast.success(section.submitToast || "Saved");
                 setFeedbackText("");
               }}
-              className="mt-4 w-full rounded-[14px] bg-[#00D061] px-4 py-4 text-[16px] font-semibold text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)]"
+              className={`mt-4 w-full ${isDisable?'cursor-not-allowed bg-gray-300 text-gray-500' : 'bg-[#00D061] text-white'} rounded-[14px]  px-4 py-4 text-[16px] font-semibold  shadow-[0_10px_24px_rgba(0,208,97,0.22)]`}
             >
               {section.submitLabel}
             </button>

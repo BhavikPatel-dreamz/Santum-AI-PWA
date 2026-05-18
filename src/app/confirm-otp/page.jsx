@@ -8,7 +8,7 @@ import { OTP_PHONE_STORAGE_KEY } from "../../lib/utills/phone";
 export default function ConfirmOtpPage() {
   const router = useRouter();
   const [otp, setOtp] = useState(["", "", "", ""]);
-  const [resendTimer, setResendTimer] = useState(30);
+  const [resendTimer, setResendTimer] = useState(60);
   const inputRefs = useRef([]);
   let storedEmail;
 

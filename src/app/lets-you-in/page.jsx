@@ -81,7 +81,7 @@ export default function LetsYouInPage() {
               WELCOME
             </h2>
             <p className="theme-text-primary text-[20px] font-semibold ">
-              Nice to see you here
+              Try it for free
             </p>
           </div>
 
@@ -90,7 +90,7 @@ export default function LetsYouInPage() {
             onClick={() => router.push("/sign-in")}
             className="w-full py-4 rounded-[14px] bg-[#00D061] text-white text-[18px] font-semibold tracking-wide hover:bg-[#24a063] hover:shadow-[0_6px_20px_rgba(43,182,115,0.45)] hover:-translate-y-px active:translate-y-0 transition-all duration-200 cursor-pointer"
           >
-            Sign in / Sign up
+            Get Started
           </button>
           {isFingerprintEnabled && (
             <button

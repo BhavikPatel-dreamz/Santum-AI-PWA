@@ -119,7 +119,7 @@ export default function SignInPage() {
             onClick={() => router.push("/sign-up")}
             className="w-full py-4 rounded-[14px] flex items-center justify-center bg-orange-400 text-white text-[18px] font-semibold tracking-wide hover:bg-orange-500 hover:shadow-[0_6px_20px_rgba(0,208,97,0.40)] hover:-translate-y-px active:translate-y-0 transition-all duration-200"
           >
-            Sign up
+            Get Free Trial
           </button>
         </div>
       </div>

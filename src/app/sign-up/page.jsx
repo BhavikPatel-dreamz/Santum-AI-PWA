@@ -94,9 +94,14 @@ export default function SignUpPage() {
 
         {/* ── White card ── */}
         <div className="theme-auth-card relative z-10 mx-3 -mt-26 w-auto rounded-[28px] px-6 pb-9 pt-8 transition-colors duration-300 sm:mx-5 sm:px-7 md:mx-8 lg:mx-auto lg:-mt-36 lg:w-full lg:max-w-[760px] lg:px-10 lg:pb-10">
-          <h2 className="theme-text-primary mb-6 text-center text-[24px] font-semibold leading-9">
-            Sign up
-          </h2>
+          <div className="text-center mb-6">
+            <h2 className="theme-text-primary mb-1 text-center text-[24px] font-semibold leading-9">
+              Sign up
+            </h2>
+            <p className="theme-text-primary text-[20px] font-semibold ">
+              and try it for free
+            </p>
+          </div>  
 
           <div className="theme-input-group mb-4 flex items-center gap-3 rounded-[14px] px-4 py-3.5">
             <Mail className="theme-text-secondary" size={22} />
@@ -149,7 +154,9 @@ export default function SignUpPage() {
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               className="theme-text-secondary shrink-0 p-1"
               aria-label={
-                showConfirmPassword ? "Hide confirm password" : "Show confirm password"
+                showConfirmPassword
+                  ? "Hide confirm password"
+                  : "Show confirm password"
               }
             >
               {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
