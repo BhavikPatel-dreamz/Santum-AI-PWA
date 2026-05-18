@@ -98,6 +98,13 @@ export default function SettingsDetailPage({ content }) {
   const [faqOpen, setFaqOpen] = useState(0);
   const [feedbackText, setFeedbackText] = useState("");
   const [feedbackCategory, setFeedbackCategory] = useState("");
+  const [activeLegalDocument, setActiveLegalDocument] = useState(() => {
+    const legalSection = content.sections.find(
+      (section) => section.type === "legal-content",
+    );
+
+    return legalSection?.documents?.[0]?.key || "";
+  });
 
   const isDisable = feedbackText.trim().length < 1
 
@@ -400,6 +407,94 @@ export default function SettingsDetailPage({ content }) {
               </div>
             ))}
           </div>
+        </div>
+      );
+    }
+
+    if (section.type === "legal-content") {
+      const activeDocument =
+        section.documents.find(
+          (document) => document.key === activeLegalDocument,
+        ) || section.documents[0];
+
+      return (
+        <div key={`${section.type}-${sectionIndex}`} className="mb-6">
+          <SectionHeading
+            title={section.title}
+            description={section.description}
+          />
+
+          <div className="theme-card-muted sticky top-0 z-10 mb-5 grid grid-cols-2 gap-2 rounded-[16px] border p-1">
+            {section.documents.map((document) => {
+              const isActive = activeDocument.key === document.key;
+
+              return (
+                <button
+                  key={document.key}
+                  type="button"
+                  onClick={() => setActiveLegalDocument(document.key)}
+                  className={`rounded-[12px] px-3 py-3 text-[13px] font-semibold transition-all sm:text-[14px] ${
+                    isActive
+                      ? "bg-[#00D061] text-white shadow-[0_10px_20px_rgba(0,208,97,0.2)]"
+                      : "theme-text-secondary"
+                  }`}
+                >
+                  {document.label}
+                </button>
+              );
+            })}
+          </div>
+
+          <article className="theme-card rounded-[22px] border px-4 py-5 sm:px-6 sm:py-6 lg:px-7">
+            <div className="theme-border border-b pb-5">
+              <h4 className="theme-text-primary text-[22px] font-semibold leading-8 sm:text-[26px] sm:leading-9">
+                {activeDocument.title}
+              </h4>
+              {activeDocument.description ? (
+                <p className="theme-text-secondary mt-2 max-w-[760px] font-satoshi text-[14px] leading-6 sm:text-[15px]">
+                  {activeDocument.description}
+                </p>
+              ) : null}
+            </div>
+
+            <div className="divide-y theme-border">
+              {activeDocument.sections.map((documentSection, itemIndex) => (
+                <section
+                  key={`${activeDocument.key}-${documentSection.heading}`}
+                  className={`${itemIndex === 0 ? "pt-5" : "py-5"} last:pb-0`}
+                >
+                  <h5 className="theme-text-primary text-[17px] font-semibold leading-7 sm:text-[19px]">
+                    {documentSection.heading}
+                  </h5>
+
+                  <div className="mt-3 space-y-3">
+                    {documentSection.paragraphs?.map((paragraph) => (
+                      <p
+                        key={paragraph}
+                        className="theme-text-secondary font-satoshi text-[14px] leading-7 sm:text-[15px]"
+                      >
+                        {paragraph}
+                      </p>
+                    ))}
+
+                    {documentSection.items?.length ? (
+                      <ul className="space-y-2">
+                        {documentSection.items.map((item) => (
+                          <li
+                            key={item}
+                            className="theme-text-secondary flex gap-3 font-satoshi text-[14px] leading-7 sm:text-[15px]"
+                          >
+                            <span className="mt-[11px] h-1.5 w-1.5 shrink-0 rounded-full bg-[#00D061]" />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : null}
+                  </div>
+                </section>
+              ))}
+            </div>
+          </article>
         </div>
       );
     }

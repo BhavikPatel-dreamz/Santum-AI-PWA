@@ -126,7 +126,7 @@ export default function ChatHistoryPage() {
     <StepPageShell title="History" contentClassName="overflow-y-auto">
       <div className="mb-6 grid grid-cols-3 gap-3">
         <div className="theme-card-muted rounded-[22px] border px-3 py-4 text-center">
-          <p className="text-[20px] font-semibold leading-7 text-[#0F0F0F]">
+          <p className="text-[16px] font-semibold leading-7 text-[#0F0F0F]">
             {chats.length}
           </p>
           <p className="mt-1 font-satoshi text-[13px] leading-5 text-[#555]">
@@ -134,7 +134,7 @@ export default function ChatHistoryPage() {
           </p>
         </div>
         <div className="theme-card-muted rounded-[22px] border px-3 py-4 text-center">
-          <p className="text-[20px] font-semibold leading-7 text-[#0F0F0F]">
+          <p className="text-[16px] font-semibold leading-7 text-[#0F0F0F]">
             {latestChat ? formatChatTimestamp(latestChat.updatedAt) : "--"}
           </p>
           <p className="mt-1 font-satoshi text-[13px] leading-5 text-[#555]">
@@ -142,7 +142,7 @@ export default function ChatHistoryPage() {
           </p>
         </div>
         <div className="theme-card-muted rounded-[22px] border px-3 py-4 text-center">
-          <p className="text-[20px] font-semibold leading-7 text-[#0F0F0F]">
+          <p className="text-[16px] font-semibold leading-7 text-[#0F0F0F]">
             {isFetching ? "Sync" : "Live"}
           </p>
           <p className="mt-1 font-satoshi text-[13px] leading-5 text-[#555]">
@@ -157,7 +157,7 @@ export default function ChatHistoryPage() {
             Recent sessions
           </h2>
           <p className="mt-1 font-satoshi text-[14px] leading-6 text-[#555]">
-            Open any saved thread and keep going where you left off.
+            Open any thread and keep going where you left off.
           </p>
         </div>
 

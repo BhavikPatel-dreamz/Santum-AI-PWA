@@ -527,7 +527,7 @@ export default function PersonalInformationPage() {
           <button
             type="button"
             onClick={handleChangePassword}
-            className="theme-secondary-button rounded-[14px] px-5 py-4 text-[16px] font-semibold"
+            className="theme-danger-card theme-danger-title rounded-[14px] px-5 py-4 text-[16px] font-semibold"
           >
             Change Password
           </button>

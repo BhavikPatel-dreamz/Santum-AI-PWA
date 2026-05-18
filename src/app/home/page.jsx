@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { Bell, ChevronRightIcon, Edit2Icon, Settings, X } from "lucide-react";
+import { Bell, ChevronRightIcon, Settings, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import MoodCheckInCard from "@/components/app/MoodCheckInCard";
@@ -84,7 +84,7 @@ const MENU_ITEMS = [
   //   ),
   // },
   {
-    label: "History",
+    label: "Chat History",
     hint: null,
     danger: false,
     icon: (
@@ -473,6 +473,36 @@ const MENU_ITEMS = [
       </svg>
     ),
   },
+  {
+    label: "Legal",
+    hint: null,
+    danger: false,
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="48"
+        height="48"
+        viewBox="0 0 48 48"
+        fill="none"
+      >
+        <rect opacity="0.08" width="48" height="48" rx="8" fill="#00D061" />
+        <path
+          d="M18 15H27L33 21V33H18V15Z"
+          stroke="#00D061"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M27 15V21H33M22 25H29M22 29H29"
+          stroke="#00D061"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    ),
+  },
   // {
   //   label: "Send Feedback",
   //   hint: null,
@@ -600,7 +630,7 @@ const MENU_ITEMS = [
 
 const MENU_ROUTES = {
   // "New Chat": "/santumai-chat",
-  History: "/settings/history",
+  "Chat History": "/settings/history",
   // "Banks & Cards": "/settings/banks-cards",
   // "Payment Methods": "/settings/payment-methods",
   // Credits: "/settings/credits",
@@ -613,6 +643,7 @@ const MENU_ROUTES = {
   FAQs: "/settings/faqs",
   // "Data & Privacy Policy": "/settings/privacy-policy",
   "About SantumAI": "/settings/about-santumai",
+  Legal: "/settings/legal",
   // "Send Feedback": "/settings/send-feedback",
   "Contact Us": "/settings/contact-us",
   // "Invite Friends": "/settings/invite-friends",
@@ -1085,11 +1116,11 @@ export default function HomeScreen() {
                   {profileInitials}
                 </span>
               </div>
-              <div>
+              <div className="max-w-40">
                 <p className="theme-text-primary text-[16px] font-medium">
                   {firstName}
                 </p>
-                <p className="text-[14px] text-[#555]">{contactLine}</p>
+                <p className="text-[14px] text-[#555] truncate">{contactLine}</p>
               </div>
             </div>
           </div>
@@ -1232,7 +1263,7 @@ export default function HomeScreen() {
           <h2 className="theme-text-primary mb-3 text-center text-[20px] font-semibold leading-[30px]">
             Logout
           </h2>
-          <p className="theme-text-secondary mb-6 text-center text-[18px] font-medium leading-6">
+          <p className="theme-text-secondary mb-6 text-center text-[16px] font-medium leading-6">
             Are you sure you want to log out?
           </p>
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
