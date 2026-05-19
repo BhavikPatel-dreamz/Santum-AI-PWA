@@ -10,11 +10,10 @@ export default function ConfirmOtpPage() {
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [resendTimer, setResendTimer] = useState(60);
   const inputRefs = useRef([]);
-  let storedEmail;
-
-  useEffect(() => {
-    storedEmail = sessionStorage.getItem(OTP_PHONE_STORAGE_KEY);
-  }, []);
+  
+  const [storedEmail] = useState(
+    () => sessionStorage.getItem(OTP_PHONE_STORAGE_KEY) || "",
+  );
 
   useEffect(() => {
     if (resendTimer === 0) {
@@ -73,7 +72,7 @@ export default function ConfirmOtpPage() {
   return (
     <StepPageShell title="Confirm OTP" contentClassName="overflow-y-auto">
       <p className="theme-text-secondary mb-6 text-center font-satoshi text-[16px] leading-6">
-        The code was sent to{" "}
+        4-digit OTP was sent to{" "}
         <span className="theme-text-primary font-semibold">{storedEmail}</span>
       </p>
 

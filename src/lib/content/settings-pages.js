@@ -356,32 +356,79 @@ export const SETTINGS_PAGE_CONTENT = {
     sections: [
       {
         type: "faq",
+        // items: [
+        //   {
+        //     question: "'Who', what is Sai?",
+        //     answer:
+        //       "Sai is short for Santum AI. it is an AI-powered mental wellness and psychotherapy support chatbot which provides private conversations to help you manage emotional challenges, and everyday mental wellbeing.",
+        //   },
+        //   {
+        //     question: "Can I chat with Sai without buying a plan?",
+        //     answer:
+        //       "Yes. Access depends on your active plan and available chat credits, and the core experience can still work on the free tier when credits are available.",
+        //   },
+        //   {
+        //     question:
+        //       "Is Sai a replacement for therapy or emergency care?",
+        //     answer:
+        //       "No. Sai is designed for everyday emotional support and reflection, not emergency or crisis response. If you are in immediate danger or need urgent help, contact local emergency services or a licensed crisis resource right away.",
+        //   },
+        //   {
+        //     question: "Will my chat history stay synced across devices?",
+        //     answer:
+        //       "Your saved conversations are tied to your account, so returning on the same account should keep recent sessions available across supported devices.",
+        //   },
+        //   {
+        //     question: "How do mood check-ins affect replies?",
+        //     answer:
+        //       "Mood check-ins help Sai adapt tone, pacing, and encouragement so the conversation feels more appropriate for your day.",
+        //   },
+        // ],
         items: [
           {
-            question: "'Who', what is Sai?",
+            question: "Is Santum AI a real therapist?",
             answer:
-              "Sai is short for Santum AI. it is an AI-powered mental wellness and psychotherapy support chatbot which provides private conversations to help you manage emotional challenges, and everyday mental wellbeing.",
+              "No. Santum AI is not a licensed psychologist, psychiatrist, or medical professional. It is an AI support tool designed to provide general mental wellness guidance and supportive conversation, but it does not replace professional therapy, diagnosis, or emergency care.",
           },
           {
-            question: "Can I chat with Sai without buying a plan?",
+            question: "What can Santum AI help with?",
             answer:
-              "Yes. Access depends on your active plan and available chat credits, and the core experience can still work on the free tier when credits are available.",
+              "Santum AI may help with stress, anxiety, low mood, emotional overwhelm, relationship challenges, self-reflection, coping strategies, and general mental wellbeing support. It can also provide grounding exercises, wellness education, and supportive check-ins.",
           },
           {
-            question:
-              "Is Sai a replacement for therapy or emergency care?",
+            question: "Is my conversation private?",
             answer:
-              "No. Sai is designed for everyday emotional support and reflection, not emergency or crisis response. If you are in immediate danger or need urgent help, contact local emergency services or a licensed crisis resource right away.",
+              "Santum AI is designed with privacy and confidentiality in mind. Conversations are handled securely, and users are not required to share highly sensitive personal, financial, or medical information.",
           },
           {
-            question: "Will my chat history stay synced across devices?",
+            question: "Can Santum AI diagnose mental health conditions?",
             answer:
-              "Your saved conversations are tied to your account, so returning on the same account should keep recent sessions available across supported devices.",
+              "No. Santum AI cannot diagnose mental health disorders or provide medical advice. Any information provided is for educational and supportive purposes only.",
           },
           {
-            question: "How do mood check-ins affect replies?",
+            question: "What should I do in a mental health emergency?",
             answer:
-              "Mood check-ins help Sai adapt tone, pacing, and encouragement so the conversation feels more appropriate for your day.",
+              "Santum AI is not an emergency or crisis service. If you are in danger, experiencing a crisis, or need urgent support, contact emergency services, a crisis hotline, or a licensed healthcare professional immediately.",
+          },
+          {
+            question: "Is Santum AI available all the time?",
+            answer:
+              "Yes. Santum AI is available 24 hours a day, 7 days a week, allowing users to access support whenever they need it.",
+          },
+          {
+            question: "Can Santum AI connect me with a human therapist?",
+            answer:
+              "Yes. Where appropriate, users may be guided to professional counselling and therapy services available through the broader Santum platform.",
+          },
+          {
+            question: "Is Santum AI free to use?",
+            answer:
+              "Santum AI offers both free trial and monthly subscription-based access tiers. Features, usage limits, and pricing varies depending on the selected plan.",
+          },
+          {
+            question: "Who should use Santum AI?",
+            answer:
+              "Santum AI is intended for individuals seeking accessible mental wellness support, emotional guidance, and self-help tools. It may be useful for people looking for private, convenient, and supportive conversations between or alongside professional therapy sessions.",
           },
         ],
       },
@@ -507,14 +554,14 @@ export const SETTINGS_PAGE_CONTENT = {
     sections: [
       {
         type: "legal-content",
-        title: "Terms Of Use And Privacy Policy",
+        title: "Service Agreements",
         description:
-          "Read the key legal documents that apply when you use Santum AI.",
+          "Please read key legal documents that apply when you use Sai services.",
         documents: [
           {
             key: "terms",
             label: "Terms",
-            title: "Terms Of Use",
+            title: "Terms & Conditions",
             description:
               "These Terms and Conditions govern your access to and use of Santum AI, including the website, applications, AI chatbot, and related services.",
             sections: [
@@ -551,7 +598,8 @@ export const SETTINGS_PAGE_CONTENT = {
                 ],
               },
               {
-                heading: "4. Use Of The Services, Content, And User Responsibility",
+                heading:
+                  "4. Use Of The Services, Content, And User Responsibility",
                 paragraphs: [
                   "All content, outputs, and responses provided through Santum AI are for general informational and educational purposes only and are not professional advice of any kind.",
                   "You confirm that information you provide through Santum AI is accurate, true, current, and complete. You agree to maintain and update this information so it remains accurate, current, and complete.",
@@ -814,7 +862,8 @@ export const SETTINGS_PAGE_CONTENT = {
                 ],
               },
               {
-                heading: "11. Indemnity And Limitation Of Liability For Data Breach",
+                heading:
+                  "11. Indemnity And Limitation Of Liability For Data Breach",
                 paragraphs: [
                   "Santum AI implements reasonable technical and organisational measures to safeguard personal information in accordance with applicable data protection laws, including POPIA.",
                   "You acknowledge that no method of transmission over the internet or electronic storage is completely secure, and that use of digital services involves inherent risks.",
@@ -1054,7 +1103,7 @@ export const SETTINGS_PAGE_CONTENT = {
         title: "Account Actions",
         items: [
           {
-            title: "Pause account for 30 days",
+            title: "Pause account",
             description:
               "Hide your account temporarily while keeping the option to return.",
             buttonLabel: "Pause",

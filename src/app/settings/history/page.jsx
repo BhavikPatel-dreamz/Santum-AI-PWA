@@ -133,6 +133,11 @@ export default function ChatHistoryPage() {
 
   return (
     <StepPageShell title="Chat History" contentClassName="overflow-y-auto">
+      <div>
+        <h4 className="theme-text-primary text-[20px] mb-4 font-semibold leading-6">
+          Overview
+        </h4>
+      </div>
       <div className="mb-6 grid grid-cols-3 gap-3">
         <div className="theme-card-muted rounded-[22px] border px-3 py-4 text-center">
           <p className="text-[16px] font-semibold leading-7 text-[#0F0F0F]">

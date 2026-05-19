@@ -71,13 +71,7 @@ export default function SignUpPage() {
 
       if (data.success) {
         toast.success(data.message || "Account created successfully");
-        sessionStorage.setItem(
-          OTP_PHONE_STORAGE_KEY,
-          JSON.stringify({
-            mobile: email.trim(),
-            dialCode: "",
-          }),
-        );
+        sessionStorage.setItem(OTP_PHONE_STORAGE_KEY, email.trim());
         router.replace("/verify-otp");
       }
     } catch (error) {
@@ -101,7 +95,7 @@ export default function SignUpPage() {
             <p className="theme-text-primary text-[20px] font-semibold ">
               and try it for free
             </p>
-          </div>  
+          </div>
 
           <div className="theme-input-group mb-4 flex items-center gap-3 rounded-[14px] px-4 py-3.5">
             <Mail className="theme-text-secondary" size={22} />
