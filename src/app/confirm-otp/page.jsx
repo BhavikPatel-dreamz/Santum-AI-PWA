@@ -10,10 +10,12 @@ export default function ConfirmOtpPage() {
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [resendTimer, setResendTimer] = useState(60);
   const inputRefs = useRef([]);
-  
-  const [storedEmail] = useState(
-    () => sessionStorage.getItem(OTP_PHONE_STORAGE_KEY) || "",
-  );
+  const [storedEmail, setStoredEmail] = useState("");
+
+  useEffect(() => {
+    const email = sessionStorage.getItem(OTP_PHONE_STORAGE_KEY) || "";
+    setStoredEmail(email);
+  }, []);
 
   useEffect(() => {
     if (resendTimer === 0) {
