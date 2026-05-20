@@ -73,9 +73,9 @@ export default function ConfirmOtpPage() {
 
   return (
     <StepPageShell title="Confirm OTP" contentClassName="overflow-y-auto">
-      <p className="theme-text-secondary mb-6 text-center font-satoshi text-[16px] leading-6">
+      <p className="theme-text-secondary mb-6 text-center font-satoshi text-[18px] leading-6">
         4-digit OTP was sent to{" "}
-        <span className="theme-text-primary font-semibold">{storedEmail}</span>
+        <span className="theme-text-primary font-semibold text-[14px]">{storedEmail}</span>
       </p>
 
       <div

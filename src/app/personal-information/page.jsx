@@ -543,7 +543,7 @@ export default function PersonalInformationPage() {
             isSavingProfile || !didInitialize ? "bg-[#A8F0CB]" : "bg-[#00D061]"
           } ${isOnboarding ? "sm:col-span-2" : ""}`}
         >
-          Back to home
+          Back Home
           {/* {isSavingProfile ? (
             <span className="inline-flex items-center gap-3">
               <span className="h-5 w-5 rounded-full border-[3px] border-white border-t-transparent animate-spin" />

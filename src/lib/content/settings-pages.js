@@ -356,35 +356,32 @@ export const SETTINGS_PAGE_CONTENT = {
     sections: [
       {
         type: "faq",
-        // items: [
-        //   {
-        //     question: "'Who', what is Sai?",
-        //     answer:
-        //       "Sai is short for Santum AI. it is an AI-powered mental wellness and psychotherapy support chatbot which provides private conversations to help you manage emotional challenges, and everyday mental wellbeing.",
-        //   },
-        //   {
-        //     question: "Can I chat with Sai without buying a plan?",
-        //     answer:
-        //       "Yes. Access depends on your active plan and available chat credits, and the core experience can still work on the free tier when credits are available.",
-        //   },
-        //   {
-        //     question:
-        //       "Is Sai a replacement for therapy or emergency care?",
-        //     answer:
-        //       "No. Sai is designed for everyday emotional support and reflection, not emergency or crisis response. If you are in immediate danger or need urgent help, contact local emergency services or a licensed crisis resource right away.",
-        //   },
-        //   {
-        //     question: "Will my chat history stay synced across devices?",
-        //     answer:
-        //       "Your saved conversations are tied to your account, so returning on the same account should keep recent sessions available across supported devices.",
-        //   },
-        //   {
-        //     question: "How do mood check-ins affect replies?",
-        //     answer:
-        //       "Mood check-ins help Sai adapt tone, pacing, and encouragement so the conversation feels more appropriate for your day.",
-        //   },
-        // ],
         items: [
+          {
+            question: "'Who', what is Sai?",
+            answer:
+              "Sai is short for Santum AI. it is an AI-powered mental wellness and psychotherapy support chatbot which provides private conversations to help you manage emotional challenges, and everyday mental wellbeing.",
+          },
+          {
+            question: "Can I chat with Sai without buying a plan?",
+            answer:
+              "Yes. Access depends on your active plan and available chat credits, and the core experience can still work on the free tier when credits are available.",
+          },
+          {
+            question: "Is Sai a replacement for therapy or emergency care?",
+            answer:
+              "No. Sai is designed for everyday emotional support and reflection, not emergency or crisis response. If you are in immediate danger or need urgent help, contact local emergency services or a licensed crisis resource right away.",
+          },
+          {
+            question: "Will my chat history stay synced across devices?",
+            answer:
+              "Your saved conversations are tied to your account, so returning on the same account should keep recent sessions available across supported devices.",
+          },
+          {
+            question: "How do mood check-ins affect replies?",
+            answer:
+              "Mood check-ins help Sai adapt tone, pacing, and encouragement so the conversation feels more appropriate for your day.",
+          },
           {
             question: "Is Santum AI a real therapist?",
             answer:
@@ -429,6 +426,26 @@ export const SETTINGS_PAGE_CONTENT = {
             question: "Who should use Santum AI?",
             answer:
               "Santum AI is intended for individuals seeking accessible mental wellness support, emotional guidance, and self-help tools. It may be useful for people looking for private, convenient, and supportive conversations between or alongside professional therapy sessions.",
+          },
+          {
+            question: "Is monthly talk time limited on Santum AI plans?",
+            answer:
+              "Yes. Monthly talk time and the number of sessions are based on the AI token allowance included in your subscription plan. Availability may vary depending on usage intensity. These limits are recommended by clinicians to help discourage overuse and unhealthy dependency. Token allowances are refreshed at the beginning of each monthly billing cycle.",
+          },
+          {
+            question: "Does Santum AI support biometric protection?",
+            answer:
+              "Yes. Santum AI supports fingerprint recognition login to provide additional account security and quicker access. This feature can be enabled from the Protection page within the application settings.",
+          },
+          {
+            question: "What happens if biometric access fails?",
+            answer:
+              "Biometric authentication is securely managed by your device. If fingerprint verification fails, the system automatically falls back to your device’s native security method, such as a PIN, password, or pattern lock.",
+          },
+          {
+            question: "Can I download or export my chat sessions?",
+            answer:
+              "No. To maintain privacy, safety, compliance, and data confidentiality standards, chat session history cannot be downloaded, exported, or shared outside the Santum AI platform. Users can refer to previous conversations through the Chat History feature available within the platform.",
           },
         ],
       },
@@ -540,7 +557,7 @@ export const SETTINGS_PAGE_CONTENT = {
         href: "/settings/send-feedback",
         variant: "primary",
       },
-      { label: "Back To Home", href: "/home", variant: "secondary" },
+      { label: "Back Home", href: "/home", variant: "secondary" },
     ],
   },
   legal: {
@@ -556,7 +573,7 @@ export const SETTINGS_PAGE_CONTENT = {
         type: "legal-content",
         title: "Service Agreements",
         description:
-          "Please read key legal documents that apply when you use Sai services.",
+          "Please read key legal documents that apply when you use Santum AI services.",
         documents: [
           {
             key: "terms",
@@ -950,7 +967,7 @@ export const SETTINGS_PAGE_CONTENT = {
       },
     ],
     footerActions: [
-      { label: "Back To Home", href: "/home", variant: "secondary" },
+      { label: "Back Home", href: "/home", variant: "secondary" },
     ],
   },
   "send-feedback": {
@@ -1086,7 +1103,7 @@ export const SETTINGS_PAGE_CONTENT = {
         toast: "Invite code copied.",
         variant: "primary",
       },
-      { label: "Back To Home", href: "/home", variant: "secondary" },
+      { label: "Back Home", href: "/home", variant: "secondary" },
     ],
   },
   "account-management": {
@@ -1108,12 +1125,12 @@ export const SETTINGS_PAGE_CONTENT = {
               "Hide your account temporarily while keeping the option to return.",
             buttonLabel: "Pause",
           },
-          {
-            title: "Export my chat archive",
-            description:
-              "Prepare a downloadable copy of saved conversations and account preferences.",
-            buttonLabel: "Request Export",
-          },
+          // {
+          //   title: "Export my chat archive",
+          //   description:
+          //     "Prepare a downloadable copy of saved conversations and account preferences.",
+          //   buttonLabel: "Request Export",
+          // },
           {
             title: "Delete account permanently",
             description:
@@ -1130,7 +1147,7 @@ export const SETTINGS_PAGE_CONTENT = {
         variant: "primary",
       },
       {
-        label: "Back To Home",
+        label: "Back Home",
         href: "/home",
         variant: "secondary",
       },

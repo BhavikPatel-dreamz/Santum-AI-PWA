@@ -245,8 +245,8 @@ export default function ChatHistoryPage() {
             </div>
           ))}
 
-          <div className="flex flex-col items-center gap-3 pt-2 sm:flex-row sm:justify-between">
-            <p className="font-satoshi text-[13px] leading-5 text-[#555]">
+          <div className="flex items-center justify-between gap-2 pt-2">
+            <p className="min-w-0 font-satoshi text-[12px] leading-5 text-[#555] sm:text-[13px]">
               Showing {visibleChats.length} of {chats.length} chats
             </p>
 
@@ -258,7 +258,7 @@ export default function ChatHistoryPage() {
                     Math.min(currentCount + CHAT_PAGE_SIZE, chats.length),
                   )
                 }
-                className="w-full rounded-[14px] bg-[#E8FFF1] px-5 py-3 text-[14px] font-semibold text-[#00A84D] transition-colors hover:bg-[#DDFBEA] sm:w-auto"
+                className="shrink-0 rounded-[12px] bg-[#E8FFF1] px-3 py-2 text-[12px] font-semibold text-[#00A84D] transition-colors hover:bg-[#DDFBEA] sm:px-4 sm:text-[13px]"
               >
                 Load More
               </button>
@@ -280,7 +280,7 @@ export default function ChatHistoryPage() {
           onClick={() => router.push("/home")}
           className="theme-secondary-button rounded-[14px] px-5 py-4 text-[16px] font-semibold"
         >
-          Back To Home
+          Back Home
         </button>
       </div>
     </StepPageShell>
