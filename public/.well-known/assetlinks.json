@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.vercel.santum_ai_pwa.twa",
+        "sha256_cert_fingerprints": ["0C:43:88:69:8C:6D:53:B5:09:CE:AF:A9:0D:4C:99:57:EA:46:22:8F:36:AF:84:37:86:16:37:ED:59:2E:CD:CA"]
+      }
+    }]
