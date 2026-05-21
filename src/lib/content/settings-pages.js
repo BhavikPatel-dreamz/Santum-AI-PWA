@@ -199,7 +199,7 @@ export const SETTINGS_PAGE_CONTENT = {
           {
             title: "Fingerprint unlock",
             description:
-              "Use local biometrics on supported devices for faster re-entry.",
+              "Use local biometrics on supported devices for enhanced protection.",
             meta: "Device ready",
           },
           // {
@@ -346,7 +346,7 @@ export const SETTINGS_PAGE_CONTENT = {
     ],
   },
   faqs: {
-    title: "FAQs",
+    title: "FAQ's",
     badge: "Quick Answers",
     heroTitle: "Make support feel clear, calm, and easy to self-serve",
     description:
@@ -358,44 +358,9 @@ export const SETTINGS_PAGE_CONTENT = {
         type: "faq",
         items: [
           {
-            question: "'Who', what is Sai?",
-            answer:
-              "Sai is short for Santum AI. it is an AI-powered mental wellness and psychotherapy support chatbot which provides private conversations to help you manage emotional challenges, and everyday mental wellbeing.",
-          },
-          {
-            question: "Can I chat with Sai without buying a plan?",
-            answer:
-              "Yes. Access depends on your active plan and available chat credits, and the core experience can still work on the free tier when credits are available.",
-          },
-          {
-            question: "Is Sai a replacement for therapy or emergency care?",
-            answer:
-              "No. Sai is designed for everyday emotional support and reflection, not emergency or crisis response. If you are in immediate danger or need urgent help, contact local emergency services or a licensed crisis resource right away.",
-          },
-          {
-            question: "Will my chat history stay synced across devices?",
-            answer:
-              "Your saved conversations are tied to your account, so returning on the same account should keep recent sessions available across supported devices.",
-          },
-          {
-            question: "How do mood check-ins affect replies?",
-            answer:
-              "Mood check-ins help Sai adapt tone, pacing, and encouragement so the conversation feels more appropriate for your day.",
-          },
-          {
-            question: "Is Santum AI a real therapist?",
-            answer:
-              "No. Santum AI is not a licensed psychologist, psychiatrist, or medical professional. It is an AI support tool designed to provide general mental wellness guidance and supportive conversation, but it does not replace professional therapy, diagnosis, or emergency care.",
-          },
-          {
             question: "What can Santum AI help with?",
             answer:
-              "Santum AI may help with stress, anxiety, low mood, emotional overwhelm, relationship challenges, self-reflection, coping strategies, and general mental wellbeing support. It can also provide grounding exercises, wellness education, and supportive check-ins.",
-          },
-          {
-            question: "Is my conversation private?",
-            answer:
-              "Santum AI is designed with privacy and confidentiality in mind. Conversations are handled securely, and users are not required to share highly sensitive personal, financial, or medical information.",
+            "Santum AI may help with stress, anxiety, low mood, emotional overwhelm, relationship challenges, self-reflection, coping strategies, and general mental wellbeing support. It can also provide grounding exercises, wellness education, and supportive check-ins.",
           },
           {
             question: "Can Santum AI diagnose mental health conditions?",
@@ -403,24 +368,9 @@ export const SETTINGS_PAGE_CONTENT = {
               "No. Santum AI cannot diagnose mental health disorders or provide medical advice. Any information provided is for educational and supportive purposes only.",
           },
           {
-            question: "What should I do in a mental health emergency?",
-            answer:
-              "Santum AI is not an emergency or crisis service. If you are in danger, experiencing a crisis, or need urgent support, contact emergency services, a crisis hotline, or a licensed healthcare professional immediately.",
-          },
-          {
-            question: "Is Santum AI available all the time?",
-            answer:
-              "Yes. Santum AI is available 24 hours a day, 7 days a week, allowing users to access support whenever they need it.",
-          },
-          {
             question: "Can Santum AI connect me with a human therapist?",
             answer:
               "Yes. Where appropriate, users may be guided to professional counselling and therapy services available through the broader Santum platform.",
-          },
-          {
-            question: "Is Santum AI free to use?",
-            answer:
-              "Santum AI offers both free trial and monthly subscription-based access tiers. Features, usage limits, and pricing varies depending on the selected plan.",
           },
           {
             question: "Who should use Santum AI?",
@@ -428,9 +378,44 @@ export const SETTINGS_PAGE_CONTENT = {
               "Santum AI is intended for individuals seeking accessible mental wellness support, emotional guidance, and self-help tools. It may be useful for people looking for private, convenient, and supportive conversations between or alongside professional therapy sessions.",
           },
           {
+            question: "'Who', what is Sai?",
+            answer:
+              "Sai is short for Santum AI. it is an AI-powered mental wellness and psychotherapy support chatbot which provides private conversations to help you manage emotional challenges, and everyday mental wellbeing.",
+          },
+          {
+            question: "Is Sai a replacement for therapy or emergency care?",
+            answer:
+            "No. Sai is designed for everyday emotional support and reflection, not emergency or crisis response. If you are in immediate danger or need urgent help, contact local emergency services or a licensed crisis resource right away.",
+          },
+          {
+            question: "Is my conversation private?",
+            answer:
+              "Santum AI is designed with privacy and confidentiality in mind. Conversations are handled securely, and users are not required to share highly sensitive personal, financial, or medical information.",
+          },
+          {
+            question: "How do mood check-ins affect replies?",
+            answer:
+              "Mood check-ins help Sai adapt tone, pacing, and encouragement so the conversation feels more appropriate for your day.",
+          },
+          {
+            question: "Is Santum AI free to use?",
+            answer:
+              "Santum AI offers both free trial and monthly subscription-based access tiers. Features, usage limits, and pricing varies depending on the selected plan.",
+          },
+          {
+            question: "Is Santum AI available all the time?",
+            answer:
+              "Yes. Santum AI is available 24 hours a day, 7 days a week, allowing users to access support whenever they need it.",
+          },
+          {
             question: "Is monthly talk time limited on Santum AI plans?",
             answer:
               "Yes. Monthly talk time and the number of sessions are based on the AI token allowance included in your subscription plan. Availability may vary depending on usage intensity. These limits are recommended by clinicians to help discourage overuse and unhealthy dependency. Token allowances are refreshed at the beginning of each monthly billing cycle.",
+          },
+          {
+            question: "Will my chat history stay synced across devices?",
+            answer:
+              "Your saved conversations are tied to your account, so returning on the same account should keep recent sessions available across supported devices.",
           },
           {
             question: "Does Santum AI support biometric protection?",
@@ -447,6 +432,21 @@ export const SETTINGS_PAGE_CONTENT = {
             answer:
               "No. To maintain privacy, safety, compliance, and data confidentiality standards, chat session history cannot be downloaded, exported, or shared outside the Santum AI platform. Users can refer to previous conversations through the Chat History feature available within the platform.",
           },
+          // {
+          //   question: "Can I chat with Sai without buying a plan?",
+          //   answer:
+          //     "Yes. Access depends on your active plan and available chat credits, and the core experience can still work on the free tier when credits are available.",
+          // },
+          // {
+          //   question: "Is Santum AI a real therapist?",
+          //   answer:
+          //     "No. Santum AI is not a licensed psychologist, psychiatrist, or medical professional. It is an AI support tool designed to provide general mental wellness guidance and supportive conversation, but it does not replace professional therapy, diagnosis, or emergency care.",
+          // },
+          // {
+          //   question: "What should I do in a mental health emergency?",
+          //   answer:
+          //     "Santum AI is not an emergency or crisis service. If you are in danger, experiencing a crisis, or need urgent support, contact emergency services, a crisis hotline, or a licensed healthcare professional immediately.",
+          // },
         ],
       },
     ],

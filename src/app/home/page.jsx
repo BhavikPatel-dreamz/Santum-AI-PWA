@@ -405,7 +405,7 @@ const MENU_ITEMS = [
   //   ),
   // },
   {
-    label: "FAQs",
+    label: "FAQ's",
     hint: null,
     danger: false,
     icon: (
@@ -640,7 +640,7 @@ const MENU_ROUTES = {
   // "Marketing Preferences": "/settings/marketing-preferences",
   // Language: "/language",
   // Currency: "/settings/currency",
-  FAQs: "/settings/faqs",
+  "FAQ's": "/settings/faqs",
   // "Data & Privacy Policy": "/settings/privacy-policy",
   "About SantumAI": "/settings/about-santumai",
   Legal: "/settings/legal",
@@ -651,30 +651,30 @@ const MENU_ROUTES = {
 };
 
 const QUICK_ACCESS_ITEMS = [
-  // {
-  //   label: "Inbox",
-  //   caption: "Unread updates",
-  //   value: "03",
-  //   href: "/notifications",
-  // },
-  {
-    label: "Protection",
-    caption: "Protect access",
-    value: "bio",
-    href: "/settings/security",
-  },
   {
     label: "Chat History",
     caption: "View Chat History",
     value: "Saved",
     href: "/settings/history",
   },
-  // {
-  //   label: "Plans",
-  //   caption: "See premium perks",
-  //   value: "Plus",
-  //   href: "/plus-subscription",
-  // },
+  {
+    label: "FAQ's",
+    caption: "Find Out More",
+    value: "Learn",
+    href: "/settings/faqs",
+  },
+  {
+    label: "Current Plan",
+    caption: "Your Subscription",
+    value: "Upgarde",
+    href: "/settings/subscriptions",
+  },
+  {
+    label: "Protection",
+    caption: "Add Security",
+    value: "bio",
+    href: "/settings/security",
+  },
 ];
 
 // ─── Dark-mode Toggle Switch ──────────────────────────────────────────────────
