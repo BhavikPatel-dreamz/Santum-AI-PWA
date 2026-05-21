@@ -7,9 +7,6 @@ import toast from "react-hot-toast";
 import { getClientErrorMessage } from "@/lib/api/error";
 import { useLoginMutation } from "@/lib/store";
 
-const validateEmailAddress = (value) =>
-  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
-
 export default function SignInPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,12 +20,8 @@ export default function SignInPage() {
       if (!email) return toast.error("Email is required");
       if (!password) return toast.error("Password is required");
 
-      // if (!validateEmailAddress(email)) {
-      //   return toast.error("Enter a valid email address");
-      // }
-
       const data = await login({
-        mobile: email.trim(),
+        email: email.trim(),
         password,
       }).unwrap();
 

@@ -5,7 +5,7 @@ type ApiRecord = Record<string, unknown>;
 type ApiList = ApiRecord[];
 
 type LoginPayload = {
-  mobile: string;
+  email: string;
   password: string;
 };
 
@@ -249,6 +249,12 @@ export const appApi = createApi({
         body,
       }),
     }),
+    resendOtp: builder.mutation<ApiRecord, void>({
+      query: () => ({
+        url: "/auth/resend",
+        method: "POST",
+      }),
+    }),
     logout: builder.mutation<ApiRecord, void>({
       query: () => ({
         url: "/auth/logout",
@@ -451,6 +457,7 @@ export const {
   useLoginMutation,
   useRegisterMutation,
   useVerifyMobileMutation,
+  useResendOtpMutation,
   useLogoutMutation,
   useGetProfileQuery,
   useUpdateBasicProfileMutation,

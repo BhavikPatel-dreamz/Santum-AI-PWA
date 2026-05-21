@@ -10,16 +10,16 @@ export async function POST(req) {
   try {
     const body = await req.json();
 
-    if (!body?.mobile || !body?.password) {
+    if (!body?.email || !body?.password) {
       return NextResponse.json(
-        { message: "Mobile number and password are required" },
+        { message: "Email and password are required" },
         { status: 400 },
       );
     }
 
-    const payload = new FormData();
-    payload.append("mobile", body.mobile);
-    payload.append("password", body.password);
+    const payload = new URLSearchParams();
+    payload.set("email", body.email.trim());
+    payload.set("password", body.password);
 
     const data = assertApiSuccess(
       await apiFetch("/v1/register", {

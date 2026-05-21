@@ -8,9 +8,6 @@ import { getClientErrorMessage } from "@/lib/api/error";
 import { useRegisterMutation } from "@/lib/store";
 import { OTP_PHONE_STORAGE_KEY } from "../../lib/utills/phone";
 
-const validateEmailAddress = (value) =>
-  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
-
 export default function SignUpPage() {
   const router = useRouter();
   const [password, setPassword] = useState("");
@@ -60,12 +57,8 @@ export default function SignUpPage() {
       const passwordError = validatePassword(password);
       if (passwordError) return toast.error(passwordError);
 
-      // if (!validateEmailAddress(email)) {
-      //   return toast.error("Enter a valid email address");
-      // }
-
       const data = await register({
-        mobile: email.trim(),
+        email: email.trim(),
         password,
       }).unwrap();
 

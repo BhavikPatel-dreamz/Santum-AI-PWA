@@ -6,32 +6,20 @@ import {
 } from "../../../../lib/api/server";
 import { clearAuthCookie } from "../../../../lib/auth/session";
 
-export async function POST(req) {
+export async function POST() {
   try {
-    const body = await req.json();
-
-    if (!body?.otp) {
-      return NextResponse.json(
-        { message: "OTP is required" },
-        { status: 400 },
-      );
-    }
-
-    const payload = new FormData();
-    payload.append("otp", body.otp);
-
     const data = assertApiSuccess(
-      await apiFetchWithAuth("/v1/register/verify/email", {
+      await apiFetchWithAuth("/v1/register/verify/email/resend", {
         method: "POST",
-        body: payload,
       }),
-      "OTP verification failed",
+      "Failed to send OTP",
     );
 
     return NextResponse.json({
+      otp: data?.data?.otp,
       success: true,
       message:
-        data?.data?.message || data?.message || "OTP verified successfully",
+        data?.data?.message || data?.message || "OTP resent successfully",
     });
   } catch (error) {
     if (error?.status === 401) {
@@ -43,6 +31,6 @@ export async function POST(req) {
       return clearAuthCookie(response);
     }
 
-    return createErrorResponse(error, "OTP verification failed");
+    return createErrorResponse(error, "Failed to send OTP");
   }
 }

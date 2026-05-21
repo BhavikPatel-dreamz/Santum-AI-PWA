@@ -5,36 +5,47 @@ import HeaderSection from "../../components/UI/HeaderSection";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
-import { useVerifyMobileMutation } from "@/lib/store";
+import { useResendOtpMutation, useVerifyMobileMutation } from "@/lib/store";
 import { maskPhoneNumber, OTP_PHONE_STORAGE_KEY } from "../../lib/utills/phone";
 import Image from "next/image";
+
+function getPendingOtpRecipient() {
+  if (typeof window === "undefined") {
+    return "";
+  }
+
+  const storedValue = sessionStorage.getItem(OTP_PHONE_STORAGE_KEY);
+
+  if (!storedValue) {
+    return "";
+  }
+
+  try {
+    const parsedValue = JSON.parse(storedValue);
+
+    if (parsedValue?.email) {
+      return parsedValue.email;
+    }
+
+    if (parsedValue?.mobile) {
+      return maskPhoneNumber(parsedValue.mobile, parsedValue.dialCode);
+    }
+  } catch {
+    return storedValue;
+  }
+
+  return "";
+}
 
 export default function OtpPage() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [resendTimer, setResendTimer] = useState(30);
   const inputRefs = useRef([]);
-  const [maskedPhone] = useState(() => {
-    if (typeof window === "undefined") {
-      return "";
-    }
-
-    try {
-      const storedPhone = sessionStorage.getItem(OTP_PHONE_STORAGE_KEY);
-
-      if (!storedPhone) {
-        return "";
-      }
-
-      const { mobile, dialCode } = JSON.parse(storedPhone);
-      return maskPhoneNumber(mobile, dialCode);
-    } catch (error) {
-      console.error("Unable to load pending OTP phone:", error);
-      return "";
-    }
-  });
+  const [otpRecipient] = useState(getPendingOtpRecipient);
   const router = useRouter();
   const [verifyMobile, { isLoading }] = useVerifyMobileMutation();
-  
+  const [resend] = useResendOtpMutation();
+
   const canResend = resendTimer === 0;
 
   useEffect(() => {
@@ -89,14 +100,22 @@ export default function OtpPage() {
     event.preventDefault();
   };
 
-  const handleResend = () => {
-    if (!canResend) {
-      return;
+  const handleResend = async () => {
+    try {
+      if (!canResend) {
+        return;
+      }
+      const res = await resend().unwrap();
+      if (res.success) {
+        toast.success(res.message || "OTP resent successfully");
+      }
+      setOtp(["", "", "", "", "", ""]);
+      setResendTimer(60);
+      inputRefs.current[0]?.focus();
+    } catch (error) {
+      console.error("resend otp error", error);
+      toast.error(getClientErrorMessage(error));
     }
-
-    setOtp(["", "", "", "", "", ""]);
-    setResendTimer(30);
-    inputRefs.current[0]?.focus();
   };
 
   const handleVerify = async () => {
@@ -126,7 +145,7 @@ export default function OtpPage() {
   return (
     <div className="theme-shell min-h-dvh transition-colors duration-300 lg:px-4 lg:py-4">
       <div className="theme-surface theme-border mx-auto flex min-h-dvh w-full max-w-[1200px] flex-col transition-colors duration-300 lg:min-h-[calc(100dvh-2rem)] lg:overflow-hidden lg:rounded-[36px] lg:border lg:shadow-[0_24px_64px_rgba(15,15,15,0.08)]">
-        <HeaderSection title={"Verify Phone Number"} />
+        <HeaderSection title={"Verify Email"} />
 
         <section className="theme-surface relative -mt-10 flex flex-1 flex-col rounded-t-[32px] px-4 pb-10 pt-3 transition-colors duration-300 sm:px-6 md:px-8 lg:px-10 lg:pb-12 lg:rounded-t-[40px]">
           <div className="mx-auto flex w-full max-w-[560px] flex-col items-center text-center lg:max-w-[720px]">
@@ -141,8 +160,10 @@ export default function OtpPage() {
             </div>
 
             <p className="theme-text-secondary mb-8 text-center font-satoshi text-[18px] leading-6">
-              Please enter the verification code we sent to your mobile{" "}
-              <span className="theme-text-primary font-semibold">{maskedPhone}</span>
+              Please enter the verification code we sent to your email{" "}
+              <span className="theme-text-primary font-semibold">
+                {otpRecipient}
+              </span>
             </p>
 
             <div
