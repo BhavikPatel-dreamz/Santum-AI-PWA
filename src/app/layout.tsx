@@ -78,15 +78,15 @@ const segoeUi = localFont({
   fallback: ["Segoe UI", "Arial", "sans-serif"],
 });
 
-export const metadata: Metadata = {
-  title: "SantumAI",
-  description:
-    "A standalone AI counselling PWA for text-based emotional wellbeing support.",
-  icons: {
-    icon: "/favicon/favicon.ico", // Main favicon
-    apple: "/favicon/apple-touch-icon.png", // Specifically for iPhone
-  },
-};
+// export const metadata: Metadata = {
+//   title: "Santum AI",
+//   description:
+//     "A standalone AI counselling PWA for text-based emotional wellbeing support.",
+//   icons: {
+//     icon: "/favicon/favicon.ico", // Main favicon
+//     apple: "/favicon/apple-touch-icon.png", // Specifically for iPhone
+//   },
+// };
 
 const themeInitScript = `
 (() => {
@@ -117,6 +117,9 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${segoeUi.variable} h-full antialiased`}
     >
+      <head>
+        <meta name="apple-mobile-web-app-title" content="Santum AI" />
+      </head>
       <body className="min-h-full flex flex-col font-sans">
         <Script
           id="theme-init"
