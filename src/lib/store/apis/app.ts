@@ -13,10 +13,23 @@ type VerifyOtpPayload = {
   otp: string;
 };
 
+type ForgetPasswordPayload = {
+  email: string;
+};
+
+type ResetPasswordPayload = {
+  email: string;
+  otp: string;
+  password: string;
+};
+
 type BasicProfilePayload = {
-  firstName: string;
-  lastName: string;
-  dob: string;
+  // firstName?: string;
+  // lastName?: string;
+  // dob?: string;
+  fingerprintEnabled?: boolean;
+  passkeyId?: string | number[];
+  paused?: boolean;
 };
 
 type PreferredLanguagePayload = {
@@ -71,7 +84,11 @@ function extractProfile(payload: unknown): ApiRecord | null {
     typeof record.user === "object" &&
     !Array.isArray(record.user)
   ) {
-    return record.user as ApiRecord;
+    const { user, ...otherProps } = record;
+    return {
+      ...(otherProps as ApiRecord),
+      ...(user as ApiRecord),
+    };
   }
 
   if (
@@ -253,6 +270,20 @@ export const appApi = createApi({
       query: () => ({
         url: "/auth/resend",
         method: "POST",
+      }),
+    }),
+    forgetPassword: builder.mutation<ApiRecord, ForgetPasswordPayload>({
+      query: (body) => ({
+        url: "/auth/forget-password",
+        method: "POST",
+        body,
+      }),
+    }),
+    resetPassword: builder.mutation<ApiRecord, ResetPasswordPayload>({
+      query: (body) => ({
+        url: "/auth/reset-password",
+        method: "POST",
+        body,
       }),
     }),
     logout: builder.mutation<ApiRecord, void>({
@@ -458,6 +489,8 @@ export const {
   useRegisterMutation,
   useVerifyMobileMutation,
   useResendOtpMutation,
+  useForgetPasswordMutation,
+  useResetPasswordMutation,
   useLogoutMutation,
   useGetProfileQuery,
   useUpdateBasicProfileMutation,

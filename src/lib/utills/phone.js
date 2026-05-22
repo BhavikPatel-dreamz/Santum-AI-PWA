@@ -1,7 +1,10 @@
-export const OTP_PHONE_STORAGE_KEY = "pendingOtpPhone";
+export const PASSWORD_RESET_EMAIL_STORAGE_KEY = "Email";
+export const PASSWORD_RESET_OTP_STORAGE_KEY = "ResetOtp";
 
 export function normalizePhoneNumber(phone = "") {
-  const cleanedPhone = String(phone).trim().replace(/[^\d+]/g, "");
+  const cleanedPhone = String(phone)
+    .trim()
+    .replace(/[^\d+]/g, "");
 
   if (!cleanedPhone) {
     return "";
@@ -28,7 +31,8 @@ export function maskPhoneNumber(phone = "", dialCode = "") {
     dialCodeDigits && phoneDigits.startsWith(dialCodeDigits)
       ? phoneDigits.slice(dialCodeDigits.length)
       : phoneDigits;
-  const visiblePrefix = normalizedDialCode || (normalizedPhone.startsWith("+") ? "+" : "");
+  const visiblePrefix =
+    normalizedDialCode || (normalizedPhone.startsWith("+") ? "+" : "");
 
   if (localDigits.length <= 2) {
     return [visiblePrefix, localDigits].filter(Boolean).join(" ").trim();
@@ -38,4 +42,3 @@ export function maskPhoneNumber(phone = "", dialCode = "") {
 
   return [visiblePrefix, maskedLocalDigits].filter(Boolean).join(" ").trim();
 }
-

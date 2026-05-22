@@ -1,26 +1,34 @@
 "use client";
 
 import StepPageShell from "@/components/app/StepPageShell";
-import { Mail, MessageSquare } from "lucide-react";
+import { Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { OTP_PHONE_STORAGE_KEY } from "../../lib/utills/phone";
+import { PASSWORD_RESET_EMAIL_STORAGE_KEY } from "../../lib/utills/phone";
 import toast from "react-hot-toast";
+import { useForgetPasswordMutation } from "@/lib/store";
+import { getClientErrorMessage } from "@/lib/api/error";
 
 export default function ForgetPasswordPage() {
   const [storedEmail, setStoredEmail] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [emailEntered, setEmailEntered] = useState(false);
+  const [forgetpassword, { isLoading: isSendingOtp }] =
+    useForgetPasswordMutation();
 
   const validateEmailAddress = (value) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 
   useEffect(() => {
-    const stored = sessionStorage.getItem(OTP_PHONE_STORAGE_KEY);
-    if (stored) {
-      setStoredEmail(stored);
-      setEmailEntered(true);
-    }
+    const timeoutId = setTimeout(() => {
+      const stored = sessionStorage.getItem(PASSWORD_RESET_EMAIL_STORAGE_KEY);
+      if (stored) {
+        setStoredEmail(stored);
+        setEmailEntered(true);
+      }
+    }, 0);
+
+    return () => clearTimeout(timeoutId);
   }, []);
 
   const RECOVERY_OPTIONS = [
@@ -33,21 +41,28 @@ export default function ForgetPasswordPage() {
     },
   ];
   const router = useRouter();
-  const [selectedOption, setSelectedOption] = useState("sms");
 
-  const handleSubmit = () => {
-    if (!userEmail && !emailEntered) {
+  const handleSubmit = async () => {
+    const email = (userEmail || storedEmail).trim();
+
+    if (!email) {
       return toast.error("Email is required");
     }
 
-    // if (!validateEmailAddress(userEmail)) {
-    //   return toast.error("Enter a valid email address");
-    // }
-    
-    router.replace("/confirm-otp");
-    if (userEmail.trim()) {
-      sessionStorage.setItem(OTP_PHONE_STORAGE_KEY, userEmail.trim());
-      setStoredEmail(userEmail.trim());
+    if (!validateEmailAddress(email)) {
+      return toast.error("Enter a valid email address");
+    }
+
+    try {
+      await forgetpassword({
+        email,
+      }).unwrap();
+      sessionStorage.setItem(PASSWORD_RESET_EMAIL_STORAGE_KEY, email);
+      setStoredEmail(email);
+      toast.success("OTP sent to your email.");
+      router.replace("/confirm-otp");
+    } catch (error) {
+      toast.error(getClientErrorMessage(error, "Unable to send OTP"));
     }
   };
 
@@ -93,7 +108,6 @@ export default function ForgetPasswordPage() {
               <button
                 key={option.id}
                 type="button"
-                onClick={() => setSelectedOption(option.id)}
                 className={`w-full rounded-[26px] border px-4 py-4 text-left transition-all duration-200 ${
                   isSelected
                     ? "theme-card-soft border-[#00D061] shadow-[0_12px_30px_rgba(0,208,97,0.12)]"
@@ -138,9 +152,14 @@ export default function ForgetPasswordPage() {
       <button
         type="button"
         onClick={() => handleSubmit()}
-        className="mt-auto rounded-[14px] bg-[#00D061] px-5 py-4 text-[18px] font-semibold text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)]"
+        disabled={isSendingOtp}
+        className={`mt-auto rounded-[14px] px-5 py-4 text-[18px] font-semibold text-white transition-all ${
+          isSendingOtp
+            ? "bg-[#A8F0CB]"
+            : "bg-[#00D061] shadow-[0_10px_24px_rgba(0,208,97,0.22)]"
+        }`}
       >
-        Continue
+        {isSendingOtp ? "Sending..." : "Continue"}
       </button>
     </StepPageShell>
   );

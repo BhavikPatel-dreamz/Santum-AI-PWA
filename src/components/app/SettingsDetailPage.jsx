@@ -5,6 +5,8 @@ import { Check, ChevronDown, ChevronRight, Copy } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import StepPageShell from "./StepPageShell";
+import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
+import { useUpdateBasicProfileMutation } from "@/lib/store";
 
 function SectionHeading({ title, description }) {
   if (!title && !description) {
@@ -66,6 +68,8 @@ function ActionButton({ action, onClick, fullWidth = false }) {
 
 export default function SettingsDetailPage({ content }) {
   const router = useRouter();
+  const [updateBasicProfile, { isLoading: isUpdatingBasicProfile }] =
+    useUpdateBasicProfileMutation();
   const [toggles, setToggles] = useState(() => {
     const initialState = {};
 
@@ -107,6 +111,21 @@ export default function SettingsDetailPage({ content }) {
   });
 
   const isDisable = feedbackText.trim().length < 1
+
+  const saveBasicProfilePatch = async (patch, fallbackMessage) => {
+    try {
+      const response = await updateBasicProfile(patch).unwrap();
+      return response;
+    } catch (error) {
+      if (isUnauthorizedError(error)) {
+        router.replace("/sign-in");
+        return null;
+      }
+
+      toast.error(getClientErrorMessage(error, fallbackMessage));
+      return null;
+    }
+  };
 
   const handleAction = async (action) => {
     if (action.href) {
@@ -224,7 +243,11 @@ export default function SettingsDetailPage({ content }) {
                 </div>
                 <Toggle
                   enabled={!!toggles[item.key]}
-                  onToggle={() => {
+                  onToggle={async () => {
+                    if (isUpdatingBasicProfile) {
+                      return;
+                    }
+
                     let togglevalue;
 
                     if (item.key === "biometricPrompt") {
@@ -232,18 +255,31 @@ export default function SettingsDetailPage({ content }) {
                       const isEnabled =
                         localStorage.getItem("fingerprintEnabled") === "true";
 
-                      if (finger) {
-                        togglevalue = !isEnabled;
-
-                        localStorage.setItem(
-                          "fingerprintEnabled",
-                          String(togglevalue),
-                        );
-                      } else {
+                      if (!finger) {
                         toast.error(
                           "Scan your finger to enable Fingerprint lock",
                         );
                         return;
+                      }
+
+                      togglevalue = !isEnabled;
+                      const response = await saveBasicProfilePatch(
+                        {
+                          fingerprintEnabled: togglevalue,
+                          passkeyId: finger,
+                        },
+                        "Unable to update fingerprint lock",
+                      );
+
+                      if (!response) {
+                        return;
+                      }
+
+                      if (finger) {
+                        localStorage.setItem(
+                          "fingerprintEnabled",
+                          String(togglevalue),
+                        );
                       }
                     } else {
                       togglevalue = !toggles[item.key];
@@ -621,14 +657,35 @@ export default function SettingsDetailPage({ content }) {
                 </p>
                 <button
                   type="button"
-                  onClick={() =>
+                  onClick={async () => {
+                    if (
+                      item.buttonLabel === "Pause" ||
+                      item.title.toLowerCase().includes("pause")
+                    ) {
+                      const response = await saveBasicProfilePatch(
+                        { paused: true },
+                        "Unable to pause account",
+                      );
+
+                      if (response) {
+                        toast.success(response.message || "Account paused");
+                      }
+
+                      return;
+                    }
+
                     toast.success(
                       `${item.buttonLabel} request captured in this session.`,
-                    )
-                  }
+                    );
+                  }}
+                  disabled={isUpdatingBasicProfile}
                   className="theme-surface theme-danger-title mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] font-semibold"
                 >
-                  {item.buttonLabel}
+                  {isUpdatingBasicProfile &&
+                  (item.buttonLabel === "Pause" ||
+                    item.title.toLowerCase().includes("pause"))
+                    ? "Pausing..."
+                    : item.buttonLabel}
                   <ChevronRight size={14} />
                 </button>
               </div>

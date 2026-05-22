@@ -4,12 +4,17 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import HeaderSection from "../UI/HeaderSection";
 import { useTheme } from "../providers/ThemeProvider";
+import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
+import { useUpdateBasicProfileMutation } from "@/lib/store";
+import toast from "react-hot-toast";
 
 export default function FingerPrintScan() {
   const router = useRouter();
   const { isDark } = useTheme();
   const [scanState, setScanState] = useState("idle");
   const [scanProgress, setScanProgress] = useState(0);
+  const [updateBasicProfile, { isLoading: isSavingFingerprint }] =
+    useUpdateBasicProfileMutation();
 
   // Simulate scanning animation when in "scanning" state
   // useEffect(() => {
@@ -78,7 +83,12 @@ export default function FingerPrintScan() {
       });
       const rawId = Array.from(new Uint8Array(createdCredential.rawId));
 
-      // store in localStorage
+      await updateBasicProfile({
+        fingerprintEnabled: true,
+        passkeyId: rawId,
+      }).unwrap();
+
+      // store locally after the account profile accepts the passkey
       localStorage.setItem("passkeyId", JSON.stringify(rawId));
       localStorage.setItem("fingerprintEnabled", "true");
 
@@ -109,13 +119,19 @@ export default function FingerPrintScan() {
       setScanProgress(100);
       setScanState("success");
     } catch (err) {
-      if (err.name === "NotAllowedError") {
+      if (err?.name === "NotAllowedError") {
         // user cancelled
         setScanState("idle");
         return;
       }
 
+      if (isUnauthorizedError(err)) {
+        router.replace("/sign-in");
+        return;
+      }
+
       console.error(err);
+      toast.error(getClientErrorMessage(err, "Unable to save fingerprint"));
       setScanState("error");
     }
   };
@@ -334,6 +350,7 @@ export default function FingerPrintScan() {
               <button
                 type="button"
                 onClick={handleContinue}
+                disabled={isSavingFingerprint}
                 className="mt-8 mx-auto w-full max-w-[343px] rounded-[14px] py-4 text-[18px] font-semibold tracking-wide text-white transition-all duration-200 sm:max-w-[380px] lg:max-w-[420px]"
                 style={{
                   background:
@@ -343,7 +360,11 @@ export default function FingerPrintScan() {
                   boxShadow: "0 4px 20px #23cf6740",
                 }}
               >
-                {scanState === "success" ? "Go To Home" : "Scan Fingerprint"}
+                {isSavingFingerprint
+                  ? "Saving..."
+                  : scanState === "success"
+                    ? "Go To Home"
+                    : "Scan Fingerprint"}
               </button>
 
               <button

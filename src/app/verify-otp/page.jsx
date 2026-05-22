@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
 import { useResendOtpMutation, useVerifyMobileMutation } from "@/lib/store";
-import { maskPhoneNumber, OTP_PHONE_STORAGE_KEY } from "../../lib/utills/phone";
+import { maskPhoneNumber, PASSWORD_RESET_EMAIL_STORAGE_KEY } from "../../lib/utills/phone";
 import Image from "next/image";
 
 function getPendingOtpRecipient() {
@@ -14,7 +14,7 @@ function getPendingOtpRecipient() {
     return "";
   }
 
-  const storedValue = sessionStorage.getItem(OTP_PHONE_STORAGE_KEY);
+  const storedValue = sessionStorage.getItem(PASSWORD_RESET_EMAIL_STORAGE_KEY);
 
   if (!storedValue) {
     return "";
@@ -124,10 +124,10 @@ export default function OtpPage() {
       const data = await verifyMobile({
         otp: otpValue,
       }).unwrap();
-      if (data.success) sessionStorage.removeItem(OTP_PHONE_STORAGE_KEY);
+      if (data.success) sessionStorage.removeItem(PASSWORD_RESET_EMAIL_STORAGE_KEY);
 
       toast.success(data.message || "OTP verified successfully");
-      router.replace("/personal-information?source=onboarding");
+      router.replace("/home");
     } catch (error) {
       console.error("Verify Error:", error);
 
@@ -151,7 +151,7 @@ export default function OtpPage() {
           <div className="mx-auto flex w-full max-w-[560px] flex-col items-center text-center lg:max-w-[720px]">
             <div className="theme-static-panel mb-8 mt-2 flex aspect-square w-full max-w-[343px] items-center justify-center rounded-[24px] border sm:max-w-[380px] lg:max-w-[460px]">
               <Image
-                src="/icons/artboard-2.jpg"
+                src="/Logo Source files 21-4/Logo/1x/Artboard3.png"
                 alt="Verification illustration"
                 width={343}
                 height={343}
@@ -167,7 +167,7 @@ export default function OtpPage() {
             </p>
 
             <div
-              className="mb-7 flex flex-wrap items-center justify-center gap-[10px]"
+              className="mb-7 flex items-center justify-center gap-[7px]"
               onPaste={handlePaste}
             >
               {otp.map((digit, index) => (
@@ -183,7 +183,7 @@ export default function OtpPage() {
                   onChange={(event) => handleChange(index, event.target.value)}
                   onKeyDown={(event) => handleKeyDown(index, event)}
                   aria-label={`OTP digit ${index + 1}`}
-                  className={`theme-otp-input h-[48px] w-[48px] rounded-full border text-center text-[20px] font-semibold outline-none transition-all duration-200 sm:h-[52px] sm:w-[52px] sm:text-[22px] ${
+                  className={`theme-otp-input h-[48px] w-[48px] rounded-full border text-center text-[20px] font-semibold outline-none transition-all duration-200 ${
                     digit ? "theme-otp-input-filled" : "theme-otp-input-empty"
                   }`}
                 />

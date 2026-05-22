@@ -11,6 +11,7 @@ import {
   useGetNotificationsQuery,
   useGetProfileQuery,
   useLogoutMutation,
+  useResendOtpMutation,
   useUpsertMoodCheckInMutation,
 } from "@/lib/store";
 import { getTodayMoodDateKey } from "@/lib/utills/mood";
@@ -653,21 +654,21 @@ const MENU_ROUTES = {
 const QUICK_ACCESS_ITEMS = [
   {
     label: "Chat History",
-    caption: "View Chat History",
-    value: "Saved",
+    caption: "Past Sessions",
+    value: "View",
     href: "/settings/history",
-  },
-  {
-    label: "FAQ's",
-    caption: "Find Out More",
-    value: "Learn",
-    href: "/settings/faqs",
   },
   {
     label: "Current Plan",
     caption: "Your Subscription",
     value: "Upgarde",
     href: "/settings/subscriptions",
+  },
+  {
+    label: "FAQ's",
+    caption: "Find Out More",
+    value: "Learn",
+    href: "/settings/faqs",
   },
   {
     label: "Protection",
@@ -720,6 +721,7 @@ export default function HomeScreen() {
     refetchOnFocus: true,
     refetchOnReconnect: true,
   });
+  const [resend] = useResendOtpMutation();
   const [logout] = useLogoutMutation();
   const {
     data: todayMoodCheckIn,
@@ -757,6 +759,17 @@ export default function HomeScreen() {
 
     toast.error(getClientErrorMessage(profileError, "Failed to load profile"));
   }, [profileError, router]);
+
+  useEffect(() => {
+    if (profile?.verification?.email === false) {
+      const sendOtp = async () => {
+        await resend().unwrap();
+        router.replace("/verify-otp");
+      };
+
+      sendOtp();
+    }
+  }, [profile]);
 
   useEffect(() => {
     if (!moodCheckInError) {
@@ -892,8 +905,8 @@ export default function HomeScreen() {
     ? "hover:bg-[#35191d] active:bg-[#431f24]"
     : "hover:bg-red-50 active:bg-red-100";
 
-  const displayName = getProfileFullName(profile) || "SantumAI member";
-  const firstName = getProfileFirstName(profile) || "Friend";
+  const displayName = getProfileFullName(profile) || "Anonymous Anonymous";
+  const firstName = getProfileFirstName(profile) || "Anonymous";
   const emailAddress = getProfileEmail(profile);
   const contactLine =
     emailAddress || profilePhone || "Managed from your Santum account";
@@ -1120,7 +1133,9 @@ export default function HomeScreen() {
                 <p className="theme-text-primary text-[16px] font-medium">
                   {firstName}
                 </p>
-                <p className="text-[14px] text-[#555] truncate">{contactLine}</p>
+                <p className="text-[14px] text-[#555] truncate">
+                  {contactLine}
+                </p>
               </div>
             </div>
           </div>

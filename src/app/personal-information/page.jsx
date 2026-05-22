@@ -27,7 +27,7 @@ import { CheckCircle2, Mail, Phone } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { OTP_PHONE_STORAGE_KEY } from "../../lib/utills/phone";
+import { PASSWORD_RESET_EMAIL_STORAGE_KEY } from "../../lib/utills/phone";
 
 const EMPTY_PROFILE_FORM = {
   firstName: "Anonymous",
@@ -71,88 +71,81 @@ function buildProfileForm(profile) {
     firstName: getProfileFirstName(profile),
     lastName: getProfileLastName(profile),
     email: getProfileEmail(profile),
-    preferredLanguage:
-      getProfilePreferredLanguage(profile) || PROFILE_LANGUAGES[0],
-    interests: getProfileInterests(profile),
   };
 }
 
-function normalizeInterests(values) {
-  return [...new Set(values.map((value) => value.trim()).filter(Boolean))];
-}
+// function normalizeInterests(values) {
+//   return [...new Set(values.map((value) => value.trim()).filter(Boolean))];
+// }
 
-function normalizeFormState(form) {
-  return {
-    firstName: form.firstName.trim(),
-    lastName: form.lastName.trim(),
-    email: form.email,
-    preferredLanguage: form.preferredLanguage.trim(),
-    interests: normalizeInterests(form.interests).sort((left, right) =>
-      left.localeCompare(right),
-    ),
-  };
-}
+// function normalizeFormState(form) {
+//   return {
+//     firstName: form.firstName.trim(),
+//     lastName: form.lastName.trim(),
+//     email: form.email,
+//   };
+// }
 
-function hasMatchingInterests(leftValues, rightValues) {
-  if (leftValues.length !== rightValues.length) {
-    return false;
-  }
+// function hasMatchingInterests(leftValues, rightValues) {
+//   if (leftValues.length !== rightValues.length) {
+//     return false;
+//   }
 
-  return leftValues.every((value, index) => value === rightValues[index]);
-}
+//   return leftValues.every((value, index) => value === rightValues[index]);
+// }
 
-function validateBasicProfile(form) {
-  if (!form.firstName.trim()) {
-    return "First name is required";
-  }
+// function validateBasicProfile(form) {
+//   if (!form.firstName.trim()) {
+//     return "First name is required";
+//   }
 
-  if (!form.lastName.trim()) {
-    return "Last name is required";
-  }
+//   if (!form.lastName.trim()) {
+//     return "Last name is required";
+//   }
 
-  if (!form.dob) {
-    return "Date of birth is required";
-  }
+//   if (!form.dob) {
+//     return "Date of birth is required";
+//   }
 
-  const birthDate = new Date(form.dob);
+//   const birthDate = new Date(form.dob);
 
-  if (Number.isNaN(birthDate.getTime())) {
-    return "Enter a valid date of birth";
-  }
+//   if (Number.isNaN(birthDate.getTime())) {
+//     return "Enter a valid date of birth";
+//   }
 
-  const ageDifference = Date.now() - birthDate.getTime();
-  const ageDate = new Date(ageDifference);
-  const age = Math.abs(ageDate.getUTCFullYear() - 1970);
+//   const ageDifference = Date.now() - birthDate.getTime();
+//   const ageDate = new Date(ageDifference);
+//   const age = Math.abs(ageDate.getUTCFullYear() - 1970);
 
-  if (age < 18) {
-    return "You must be at least 18 years old";
-  }
+//   if (age < 18) {
+//     return "You must be at least 18 years old";
+//   }
 
-  return null;
-}
+//   return null;
+// }
 
-function SelectionChip({ label, isSelected, onClick }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`rounded-full border px-4 py-2 text-[14px] font-medium transition-all ${
-        isSelected
-          ? "theme-choice-chip-selected"
-          : "theme-choice-chip hover:opacity-90"
-      }`}
-    >
-      {label}
-    </button>
-  );
-}
+// function SelectionChip({ label, isSelected, onClick }) {
+//   return (
+//     <button
+//       type="button"
+//       onClick={onClick}
+//       className={`rounded-full border px-4 py-2 text-[14px] font-medium transition-all ${
+//         isSelected
+//           ? "theme-choice-chip-selected"
+//           : "theme-choice-chip hover:opacity-90"
+//       }`}
+//     >
+//       {label}
+//     </button>
+//   );
+// }
 
 export default function PersonalInformationPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isOnboarding = searchParams.get("source") === "onboarding";
-  const [draftForm, setDraftForm] = useState(null);
-  const [savedBaseline, setSavedBaseline] = useState(null);
+  // const [draftForm, setDraftForm] = useState(null);
+  // const [savedBaseline, setSavedBaseline] = useState(null);
 
   const {
     data: profile,
@@ -162,15 +155,11 @@ export default function PersonalInformationPage() {
     refetchOnFocus: true,
     refetchOnReconnect: true,
   });
-  const [updateBasicProfile, { isLoading: isSavingBasic }] =
-    useUpdateBasicProfileMutation();
-  const [updatePreferredLanguage, { isLoading: isSavingLanguage }] =
-    useUpdatePreferredLanguageMutation();
-  const [updateInterests, { isLoading: isSavingInterests }] =
-    useUpdateInterestsMutation();
+  // const [updateBasicProfile, { isLoading: isSavingBasic }] =
+  //   useUpdateBasicProfileMutation();
   const profileForm = buildProfileForm(profile);
-  const form = draftForm ?? profileForm;
-  const baseline = savedBaseline ?? profileForm;
+  const form = profileForm;
+  // const baseline = savedBaseline ?? profileForm;
   const didInitialize = !isProfileLoading;
 
   useEffect(() => {
@@ -185,144 +174,131 @@ export default function PersonalInformationPage() {
 
     toast.error(getClientErrorMessage(profileError, "Unable to load profile"));
   }, [profileError, router]);
+// 
+  // const normalizedCurrent = normalizeFormState(form);
+  // const normalizedBaseline = normalizeFormState(baseline);
+  // const isBasicChanged =
+  //   normalizedCurrent.firstName !== normalizedBaseline.firstName ||
+  //   normalizedCurrent.lastName !== normalizedBaseline.lastName ||
+  //   normalizedCurrent.dob !== normalizedBaseline.dob;
 
-  const normalizedCurrent = normalizeFormState(form);
-  const normalizedBaseline = normalizeFormState(baseline);
-  const isBasicChanged =
-    normalizedCurrent.firstName !== normalizedBaseline.firstName ||
-    normalizedCurrent.lastName !== normalizedBaseline.lastName ||
-    normalizedCurrent.dob !== normalizedBaseline.dob;
-  const isLanguageChanged =
-    normalizedCurrent.preferredLanguage !==
-    normalizedBaseline.preferredLanguage;
-  const isInterestsChanged = !hasMatchingInterests(
-    normalizedCurrent.interests,
-    normalizedBaseline.interests,
-  );
-  const hasProfileChanges =
-    isBasicChanged || isLanguageChanged || isInterestsChanged;
-  const isSavingProfile =
-    isSavingBasic || isSavingLanguage || isSavingInterests;
-
-  const profileName =
-    [normalizedCurrent.firstName, normalizedCurrent.lastName]
-      .filter(Boolean)
-      .join(" ") ||
-    getProfileFullName(profile) ||
-    "Your Santum profile";
+  // const profileName =
+  //   [normalizedCurrent.firstName, normalizedCurrent.lastName]
+  //     .filter(Boolean)
+  //     .join(" ") ||
+  //   getProfileFullName(profile) ||
+  //   "Your Santum profile";
   const emailAddress = getProfileEmail(profile);
-  const phoneNumber = getProfilePhone(profile);
+  // const phoneNumber = getProfilePhone(profile);
   const profileInitials = buildProfileInitials(
-    normalizedCurrent.firstName,
-    normalizedCurrent.lastName,
+    EMPTY_PROFILE_FORM.firstName,
+    EMPTY_PROFILE_FORM.lastName,
   );
-  const completionScore = [
-    Boolean(normalizedCurrent.firstName && normalizedCurrent.lastName),
-    Boolean(normalizedCurrent.dob),
-    Boolean(normalizedCurrent.preferredLanguage),
-    normalizedCurrent.interests.length > 0,
-  ].filter(Boolean).length;
+  // const completionScore = [
+  //   Boolean(normalizedCurrent.firstName && normalizedCurrent.lastName),
+  //   Boolean(normalizedCurrent.dob),
+  // ].filter(Boolean).length;
 
-  const updateField = (field, value) => {
-    setDraftForm((currentForm) => ({
-      ...(currentForm ?? profileForm ?? EMPTY_PROFILE_FORM),
-      [field]: value,
-    }));
-  };
+  // const updateField = (field, value) => {
+  //   setDraftForm((currentForm) => ({
+  //     ...(currentForm ?? profileForm ?? EMPTY_PROFILE_FORM),
+  //     [field]: value,
+  //   }));
+  // };
 
-  const toggleInterest = (interest) => {
-    setDraftForm((currentForm) => {
-      const nextForm = currentForm ?? profileForm ?? EMPTY_PROFILE_FORM;
-      const isSelected = nextForm.interests.includes(interest);
+  // const toggleInterest = (interest) => {
+  //   setDraftForm((currentForm) => {
+  //     const nextForm = currentForm ?? profileForm ?? EMPTY_PROFILE_FORM;
+  //     const isSelected = nextForm.interests.includes(interest);
 
-      return {
-        ...nextForm,
-        interests: isSelected
-          ? nextForm.interests.filter((value) => value !== interest)
-          : [...nextForm.interests, interest],
-      };
-    });
-  };
+  //     return {
+  //       ...nextForm,
+  //       interests: isSelected
+  //         ? nextForm.interests.filter((value) => value !== interest)
+  //         : [...nextForm.interests, interest],
+  //     };
+  //   });
+  // };
 
-  const finishProfileFlow = () => {
-    if (isOnboarding) {
-      router.replace("/finger-scan");
-    }
-  };
+  // const finishProfileFlow = () => {
+  //   if (isOnboarding) {
+  //     router.replace("/finger-scan");
+  //   }
+  // };
 
   const handleChangePassword = () => {
-    sessionStorage.setItem(OTP_PHONE_STORAGE_KEY, form.email.trim());
+    sessionStorage.setItem(PASSWORD_RESET_EMAIL_STORAGE_KEY, form.email.trim());
     router.push("/forgot-password");
   };
 
-  const handleSaveProfile = async () => {
-    const basicValidationMessage = validateBasicProfile(normalizedCurrent);
+  // const handleSaveProfile = async () => {
+  //   const basicValidationMessage = validateBasicProfile(normalizedCurrent);
 
-    if (isOnboarding && basicValidationMessage) {
-      toast.error(basicValidationMessage);
-      return;
-    }
+  //   if (isOnboarding && basicValidationMessage) {
+  //     toast.error(basicValidationMessage);
+  //     return;
+  //   }
 
-    if (!hasProfileChanges) {
-      if (isOnboarding) {
-        finishProfileFlow();
-        return;
-      }
+  //   if (!hasProfileChanges) {
+  //     if (isOnboarding) {
+  //       finishProfileFlow();
+  //       return;
+  //     }
 
-      toast.success("Your profile is already up to date");
-      return;
-    }
+  //     toast.success("Your profile is already up to date");
+  //     return;
+  //   }
 
-    if (isBasicChanged && basicValidationMessage) {
-      toast.error(basicValidationMessage);
-      return;
-    }
+  //   if (isBasicChanged && basicValidationMessage) {
+  //     toast.error(basicValidationMessage);
+  //     return;
+  //   }
 
-    if (isInterestsChanged && normalizedCurrent.interests.length === 0) {
-      toast.error("Choose at least one interest before saving this section");
-      return;
-    }
+  //   if (isInterestsChanged && normalizedCurrent.interests.length === 0) {
+  //     toast.error("Choose at least one interest before saving this section");
+  //     return;
+  //   }
 
-    try {
-      if (isBasicChanged) {
-        await updateBasicProfile({
-          firstName: normalizedCurrent.firstName,
-          lastName: normalizedCurrent.lastName,
-          dob: normalizedCurrent.dob,
-        }).unwrap();
-      }
+  //   try {
+  //     if (isBasicChanged) {
+  //       await updateBasicProfile({
+  //         firstName: normalizedCurrent.firstName,
+  //         lastName: normalizedCurrent.lastName,
+  //         dob: normalizedCurrent.dob,
+  //       }).unwrap();
+  //     }
 
-      if (isLanguageChanged) {
-        await updatePreferredLanguage({
-          preferredLanguage: normalizedCurrent.preferredLanguage,
-        }).unwrap();
-      }
+  //     if (isLanguageChanged) {
+  //       await updatePreferredLanguage({
+  //         preferredLanguage: normalizedCurrent.preferredLanguage,
+  //       }).unwrap();
+  //     }
 
-      if (isInterestsChanged) {
-        await updateInterests({
-          interests: normalizedCurrent.interests,
-        }).unwrap();
-      }
+  //     if (isInterestsChanged) {
+  //       await updateInterests({
+  //         interests: normalizedCurrent.interests,
+  //       }).unwrap();
+  //     }
 
-      setSavedBaseline(normalizedCurrent);
-      setDraftForm(normalizedCurrent);
+  //     setSavedBaseline(normalizedCurrent);
+  //     setDraftForm(normalizedCurrent);
 
-      if (isOnboarding) {
-        toast.success("Profile completed");
-      } else {
-        toast.success("Profile changes saved");
-      }
+  //     if (isOnboarding) {
+  //       toast.success("Profile completed");
+  //     } else {
+  //       toast.success("Profile changes saved");
+  //     }
 
-      finishProfileFlow();
-    } catch (error) {
-      if (isUnauthorizedError(error)) {
-        router.replace("/sign-in");
-        return;
-      }
+  //     finishProfileFlow();
+  //   } catch (error) {
+  //     if (isUnauthorizedError(error)) {
+  //       router.replace("/sign-in");
+  //       return;
+  //     }
 
-      toast.error(getClientErrorMessage(error, "Unable to save profile"));
-    }
-  };
+  //     toast.error(getClientErrorMessage(error, "Unable to save profile"));
+  //   }
+  // };
 
   return (
     <StepPageShell
@@ -340,11 +316,10 @@ export default function PersonalInformationPage() {
                 Overview
               </p>
               <h2 className="theme-text-primary mt-2 truncate text-[24px] font-semibold leading-8">
-                {form.firstName ?? "Anonymous"}
+                Anonymous
               </h2>
               <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6">
                 {emailAddress ||
-                  phoneNumber ||
                   "Contact details are managed from your Santum account"}
               </p>
             </div>
@@ -399,7 +374,7 @@ export default function PersonalInformationPage() {
                 disabled={true}
                 id="first-name"
                 label="First Name"
-                value={form.firstName}
+                value={EMPTY_PROFILE_FORM.firstName}
                 // onChange={(event) =>
                 //   updateField("firstName", event.target.value)
                 // }
@@ -408,7 +383,7 @@ export default function PersonalInformationPage() {
                 disabled={true}
                 id="last-name"
                 label="Last Name"
-                value={form.lastName}
+                value={EMPTY_PROFILE_FORM.lastName}
                 // onChange={(event) =>
                 //   updateField("lastName", event.target.value)
                 // }
@@ -537,10 +512,12 @@ export default function PersonalInformationPage() {
         <button
           type="button"
           // onClick={handleSaveProfile}
-          onClick={()=>{router.push('/home')}}
-          disabled={!didInitialize || isSavingProfile}
+          onClick={() => {
+            router.push("/home");
+          }}
+          disabled={!didInitialize}
           className={`rounded-[14px] px-5 py-4 text-[16px] font-semibold text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)] ${
-            isSavingProfile || !didInitialize ? "bg-[#A8F0CB]" : "bg-[#00D061]"
+            !didInitialize ? "bg-[#A8F0CB]" : "bg-[#00D061]"
           } ${isOnboarding ? "sm:col-span-2" : ""}`}
         >
           Back Home

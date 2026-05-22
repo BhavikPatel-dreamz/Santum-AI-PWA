@@ -3,19 +3,37 @@
 import StepPageShell from "@/components/app/StepPageShell";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { OTP_PHONE_STORAGE_KEY } from "../../lib/utills/phone";
+import {
+  PASSWORD_RESET_EMAIL_STORAGE_KEY,
+  PASSWORD_RESET_OTP_STORAGE_KEY,
+} from "../../lib/utills/phone";
+import { useForgetPasswordMutation } from "@/lib/store";
+import toast from "react-hot-toast";
+import { getClientErrorMessage } from "@/lib/api/error";
 
 export default function ConfirmOtpPage() {
   const router = useRouter();
-  const [otp, setOtp] = useState(["", "", "", ""]);
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [resendTimer, setResendTimer] = useState(60);
   const inputRefs = useRef([]);
   const [storedEmail, setStoredEmail] = useState("");
+  const [forgetpassword, { isLoading: isResendingOtp }] =
+    useForgetPasswordMutation();
 
   useEffect(() => {
-    const email = sessionStorage.getItem(OTP_PHONE_STORAGE_KEY) || "";
-    setStoredEmail(email);
-  }, []);
+    const timeoutId = setTimeout(() => {
+      const email =
+        sessionStorage.getItem(PASSWORD_RESET_EMAIL_STORAGE_KEY) || "";
+      if (!email) {
+        router.replace("/forgot-password");
+        return;
+      }
+
+      setStoredEmail(email);
+    }, 0);
+
+    return () => clearTimeout(timeoutId);
+  }, [router]);
 
   useEffect(() => {
     if (resendTimer === 0) {
@@ -71,15 +89,40 @@ export default function ConfirmOtpPage() {
 
   const isComplete = otp.every((digit) => digit !== "");
 
+  const handleResendOtp = async () => {
+    if (!storedEmail || resendTimer > 0 || isResendingOtp) {
+      return;
+    }
+
+    try {
+      await forgetpassword({ email: storedEmail }).unwrap();
+      setOtp(["", "", "", "", "", ""]);
+      setResendTimer(60);
+      toast.success("OTP sent again.");
+      inputRefs.current[0]?.focus();
+    } catch (error) {
+      toast.error(getClientErrorMessage(error, "Unable to resend OTP"));
+    }
+  };
+
+  const handleVerifyOtp = () => {
+    if (!isComplete) {
+      return;
+    }
+
+    sessionStorage.setItem(PASSWORD_RESET_OTP_STORAGE_KEY, otp.join(""));
+    router.replace("/new-password");
+  };
+
   return (
     <StepPageShell title="Confirm OTP" contentClassName="overflow-y-auto">
       <p className="theme-text-secondary mb-6 text-center font-satoshi text-[18px] leading-6">
-        4-digit OTP was sent to{" "}
+        6-digit OTP was sent to{" "}
         <span className="theme-text-primary font-semibold text-[14px]">{storedEmail}</span>
       </p>
 
       <div
-        className="mb-6 flex items-center justify-center gap-[10px]"
+        className="mb-6 flex items-center justify-center gap-[7px]"
         onPaste={handlePaste}
       >
         {otp.map((digit, index) => (
@@ -95,7 +138,7 @@ export default function ConfirmOtpPage() {
             onChange={(event) => handleChange(index, event.target.value)}
             onKeyDown={(event) => handleKeyDown(index, event)}
             aria-label={`OTP digit ${index + 1}`}
-            className={`theme-otp-input h-[56px] w-[56px] rounded-full border text-center text-[22px] font-semibold outline-none transition-all duration-200 ${
+            className={`theme-otp-input h-[48px] w-[48px] rounded-full border text-center text-[20px] font-semibold outline-none transition-all duration-200 ${
               digit ? "theme-otp-input-filled" : "theme-otp-input-empty"
             }`}
           />
@@ -113,10 +156,11 @@ export default function ConfirmOtpPage() {
         ) : (
           <button
             type="button"
-            onClick={() => setResendTimer(30)}
+            onClick={handleResendOtp}
+            disabled={isResendingOtp}
             className="theme-text-primary font-semibold"
           >
-            Resend code
+            {isResendingOtp ? "Sending..." : "Resend code"}
           </button>
         )}
       </p>
@@ -124,10 +168,7 @@ export default function ConfirmOtpPage() {
       <button
         type="button"
         disabled={!isComplete}
-        onClick={() => {
-          router.replace("/new-password");
-          sessionStorage.removeItem(OTP_PHONE_STORAGE_KEY);
-        }}
+        onClick={handleVerifyOtp}
         className={`mt-auto rounded-[14px] px-5 py-4 text-[18px] font-semibold text-white transition-all duration-200 ${
           isComplete
             ? "bg-[#00D061] shadow-[0_10px_24px_rgba(0,208,97,0.22)]"

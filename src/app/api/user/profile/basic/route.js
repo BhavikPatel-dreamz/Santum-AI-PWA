@@ -10,17 +10,72 @@ export async function POST(req) {
   try {
     const body = await req.json();
 
-    if (!body?.firstName || !body?.lastName || !body?.dob) {
+    // const hasBasicProfile =
+    //   Boolean(body?.firstName) || Boolean(body?.lastName) || Boolean(body?.dob);
+    const hasFingerprintEnabled =
+      typeof body?.fingerprintEnabled === "boolean" ||
+      typeof body?.fingerprint_enabled === "boolean" ||
+      body?.fingerprintEnabled === 0 ||
+      body?.fingerprintEnabled === 1 ||
+      body?.fingerprint_enabled === 0 ||
+      body?.fingerprint_enabled === 1;
+    const hasPasskeyId =
+      typeof body?.passkeyId === "string" ||
+      Array.isArray(body?.passkeyId) ||
+      typeof body?.passkey_id === "string" ||
+      Array.isArray(body?.passkey_id);
+    const hasPaused =
+      typeof body?.paused === "boolean" ||
+      body?.paused === 0 ||
+      body?.paused === 1;
+
+    if (
+      // !hasBasicProfile &&
+      !hasFingerprintEnabled &&
+      !hasPasskeyId &&
+      !hasPaused
+    ) {
       return NextResponse.json(
-        { message: "First name, last name, and date of birth are required" },
+        { message: "No profile updates provided" },
         { status: 400 },
       );
     }
 
+    // if (
+    //   hasBasicProfile &&
+    //   (!body?.firstName || !body?.lastName || !body?.dob)
+    // ) {
+    //   return NextResponse.json(
+    //     { message: "First name, last name, and date of birth are required" },
+    //     { status: 400 },
+    //   );
+    // }
+
     const payload = new FormData();
-    payload.append("first_name", body.firstName);
-    payload.append("last_name", body.lastName);
-    payload.append("dob", body.dob);
+
+    // if (hasBasicProfile) {
+    //   payload.append("first_name", body.firstName);
+    //   payload.append("last_name", body.lastName);
+    //   payload.append("dob", body.dob);
+    // }
+
+    if (hasFingerprintEnabled) {
+      const fingerprintEnabled =
+        body.fingerprintEnabled ?? body.fingerprint_enabled;
+      payload.append("fingerprint_enabled", fingerprintEnabled ? "1" : "0");
+    }
+
+    if (hasPasskeyId) {
+      const passkeyId = body.passkeyId ?? body.passkey_id;
+      payload.append(
+        "passkey_id",
+        Array.isArray(passkeyId) ? JSON.stringify(passkeyId) : passkeyId,
+      );
+    }
+
+    if (hasPaused) {
+      payload.append("paused", body.paused ? "1" : "0");
+    }
 
     const data = assertApiSuccess(
       await apiFetchWithAuth("/v1/user/profile/basic", {

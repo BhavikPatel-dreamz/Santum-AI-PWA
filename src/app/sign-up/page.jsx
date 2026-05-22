@@ -6,7 +6,7 @@ import { Eye, EyeOff, LockIcon, Mail } from "lucide-react";
 import toast from "react-hot-toast";
 import { getClientErrorMessage } from "@/lib/api/error";
 import { useRegisterMutation } from "@/lib/store";
-import { OTP_PHONE_STORAGE_KEY } from "../../lib/utills/phone";
+import { PASSWORD_RESET_EMAIL_STORAGE_KEY } from "../../lib/utills/phone";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -64,7 +64,7 @@ export default function SignUpPage() {
 
       if (data.success) {
         toast.success(data.message || "Account created successfully");
-        sessionStorage.setItem(OTP_PHONE_STORAGE_KEY, email.trim());
+        sessionStorage.setItem(PASSWORD_RESET_EMAIL_STORAGE_KEY, email.trim());
         router.replace("/verify-otp");
       }
     } catch (error) {

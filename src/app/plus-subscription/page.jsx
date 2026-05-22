@@ -61,7 +61,7 @@ const PLANS = [
       "Relief tactics",
       "Complex reasoning",
       "Advanced chat memory",
-      "Approx 10hrs talk time*"
+      "Approx 10hrs talk time*",
     ],
     highlighted: false,
     tokens: "You Get Everything in FREE Plus:",
@@ -628,9 +628,12 @@ export default function PlusSubscriptionPage() {
       isPlansLoading);
 
   return (
-    <StepPageShell title="Santum AI Plans" contentClassName="overflow-y-auto bg-[#f2f2f2]">
+    <StepPageShell
+      title="Santum AI Plans"
+      contentClassName="overflow-y-auto bg-[#f2f2f2]"
+    >
       <div className="space-y-4">
-        {PLANS.map((plan, index) => {
+        {plans.map((plan, index) => {
           const planKey = getPlanKey(plan, index);
           const isSelected = plan.key === pressed;
 
@@ -673,7 +676,8 @@ export default function PlusSubscriptionPage() {
                           : `R${getPlanPrice(plan)}pm`}
                       </p>
                       <p className="text-[12px] font-semibold -m-1">
-                        {getPlanPrice(plan) != 0 && `(R${plan.billing_amount/30} per day)`}
+                        {getPlanPrice(plan) != 0 &&
+                          `(R${plan.billing_amount / 30} per day)`}
                       </p>
                     </div>
                     {/* {isActivePlan ? (
@@ -686,7 +690,7 @@ export default function PlusSubscriptionPage() {
                     {plan.description}
                   </p>
                   <p className="theme-text-primary mt-3 text-[12px] font-semibold tracking-[0.16em]">
-                    {plan.tokens}
+                    {plan.token_info}
                   </p>
                 </div>
               </div>

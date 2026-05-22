@@ -1,10 +1,16 @@
 "use client";
 
 import StepPageShell from "@/components/app/StepPageShell";
+import { getClientErrorMessage } from "@/lib/api/error";
+import { useResetPasswordMutation } from "@/lib/store";
 import { Eye, EyeOff, Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import {
+  PASSWORD_RESET_EMAIL_STORAGE_KEY,
+  PASSWORD_RESET_OTP_STORAGE_KEY,
+} from "../../lib/utills/phone";
 
 function PasswordField({
   id,
@@ -46,9 +52,52 @@ export default function CreateNewPasswordPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetOtp, setResetOtp] = useState("");
+  const [resetPassword, { isLoading: isResettingPassword }] =
+    useResetPasswordMutation();
 
   const isComplete = password.trim() !== "" && confirmPassword.trim() !== "";
   const isMatch = password === confirmPassword;
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      const email =
+        sessionStorage.getItem(PASSWORD_RESET_EMAIL_STORAGE_KEY) || "";
+      const otp = sessionStorage.getItem(PASSWORD_RESET_OTP_STORAGE_KEY) || "";
+
+      if (!email || !otp) {
+        router.replace("/forgot-password");
+        return;
+      }
+
+      setResetEmail(email);
+      setResetOtp(otp);
+    }, 0);
+
+    return () => clearTimeout(timeoutId);
+  }, [router]);
+
+  const handleChangePassword = async () => {
+    if (!isComplete || !isMatch || isResettingPassword) {
+      return;
+    }
+
+    try {
+      await resetPassword({
+        email: resetEmail,
+        otp: resetOtp,
+        password,
+      }).unwrap();
+
+      sessionStorage.removeItem(PASSWORD_RESET_EMAIL_STORAGE_KEY);
+      sessionStorage.removeItem(PASSWORD_RESET_OTP_STORAGE_KEY);
+      toast.success("Password changed successfully.");
+      router.replace("/sign-in");
+    } catch (error) {
+      toast.error(getClientErrorMessage(error, "Unable to change password"));
+    }
+  };
 
   return (
     <StepPageShell title="Create New Password" contentClassName="overflow-y-auto">
@@ -81,22 +130,15 @@ export default function CreateNewPasswordPage() {
 
       <button
         type="button"
-        onClick={() => {
-          if (!isComplete || !isMatch) {
-            return;
-          }
-
-          toast.success("Password reset flow completed.");
-          router.replace("/sign-in");
-        }}
-        disabled={!isComplete || !isMatch}
+        onClick={handleChangePassword}
+        disabled={!isComplete || !isMatch || isResettingPassword}
         className={`mt-auto rounded-[14px] px-5 py-4 text-[18px] font-semibold text-white transition-all duration-200 ${
-          isComplete && isMatch
+          isComplete && isMatch && !isResettingPassword
             ? "bg-[#00D061] shadow-[0_10px_24px_rgba(0,208,97,0.22)]"
             : "bg-[#A8F0CB]"
         }`}
       >
-        Change Password
+        {isResettingPassword ? "Changing..." : "Change Password"}
       </button>
     </StepPageShell>
   );
