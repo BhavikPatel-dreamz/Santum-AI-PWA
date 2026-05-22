@@ -125,7 +125,7 @@ export default function RootLayout({
         />
         <ReduxProvider>
           <ThemeProvider>
-            <LoadingScreenWrapper />
+            {/* <LoadingScreenWrapper /> */}
             <PageTransitionProvider>
               <Suspense>
                 <LayoutContent>

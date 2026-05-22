@@ -1,15 +1,15 @@
 export default function manifest() {
   return {
     id: "/",
-    name: "SantumAI",
-    short_name: "SantumAI",
+    name: "Santum AI",
+    short_name: "Best Viewed on Mobile",
     description:
       "A standalone AI counselling PWA for text-based emotional wellbeing support.",
     start_url: "/",
     scope: "/",
     display: "standalone",
-    background_color: "#323d51",
-    theme_color: "#323d51",
+    background_color: "#e4ffee",
+    theme_color: "#e4ffee",
     icons: [
       {
         src: "/favicon/no-mask-web-app-manifest-192x192.png",
@@ -17,7 +17,7 @@ export default function manifest() {
         type: "image/png",
       },
       {
-        src: "/favicon/no-mask-web-app-manifest-512x512.png",
+        src: "/Logo Source files 21-4/Logo/1x/Artboard2.png",
         sizes: "512x512",
         type: "image/png",
       },
@@ -28,7 +28,7 @@ export default function manifest() {
         purpose: "maskable",
       },
       {
-        src: "/favicon/web-app-manifest-512x512.png",
+        src: "/Logo Source files 21-4/Logo/1x/Artboard2.png",
         sizes: "512x512",
         type: "image/png",
         purpose: "maskable",

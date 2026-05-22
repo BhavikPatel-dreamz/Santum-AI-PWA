@@ -378,14 +378,14 @@ export const SETTINGS_PAGE_CONTENT = {
               "Santum AI is intended for individuals seeking accessible mental wellness support, emotional guidance, and self-help tools. It may be useful for people looking for private, convenient, and supportive conversations between or alongside professional therapy sessions.",
           },
           {
-            question: "'Who', what is Sai?",
+            question: "'Who or what is Sai?",
             answer:
-              "Sai is short for Santum AI. it is an AI-powered mental wellness and psychotherapy support chatbot which provides private conversations to help you manage emotional challenges, and everyday mental wellbeing.",
+              "Sai is short for Santum AI. it is a mental wellness and psychotherapy support chatbot which provides private conversations to help you manage emotional challenges, and everyday mental wellbeing. Sai is powered by advanced artificial inelligence counselling system.",
           },
           {
             question: "Is Sai a replacement for therapy or emergency care?",
             answer:
-            "No. Sai is designed for everyday emotional support and reflection, not emergency or crisis response. If you are in immediate danger or need urgent help, contact local emergency services or a licensed crisis resource right away.",
+            "No. Sai is designed for everyday emotional support, it is not meant to replace professional human therapy or crisis response. If you are in immediate danger or need urgent help, contact local emergency services or a licensed crisis resource right away.",
           },
           {
             question: "Is my conversation private?",
