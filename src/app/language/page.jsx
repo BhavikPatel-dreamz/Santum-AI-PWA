@@ -4,7 +4,14 @@ import { useState } from "react";
 import HeaderSection from "../../components/UI/HeaderSection";
 import toast from "react-hot-toast";
 import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
-import { useUpdatePreferredLanguageMutation } from "@/lib/store";
+import {
+  useGetProfileQuery,
+  useUpdatePreferredLanguageMutation,
+} from "@/lib/store";
+import {
+  PAUSED_ACCOUNT_MESSAGE,
+  isProfilePaused,
+} from "@/lib/utills/profile";
 
 const LANGUAGES = [
   "English",
@@ -21,10 +28,17 @@ const LANGUAGES = [
 const Page = () => {
   const router = useRouter();
   const [selected, setSelected] = useState("English");
+  const { data: profile } = useGetProfileQuery();
+  const isAccountPaused = isProfilePaused(profile);
   const [updatePreferredLanguage, { isLoading }] =
     useUpdatePreferredLanguageMutation();
 
   const handleSubmit = async () => {
+    if (isAccountPaused) {
+      toast.error(PAUSED_ACCOUNT_MESSAGE);
+      return;
+    }
+
     try {
       const res = await updatePreferredLanguage({
         preferredLanguage: selected,

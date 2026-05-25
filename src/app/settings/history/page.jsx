@@ -7,7 +7,11 @@ import {
   useGetChatsQuery,
   useGetProfileQuery,
 } from "@/lib/store";
-import { getProfilePhone } from "@/lib/utills/profile";
+import {
+  PAUSED_ACCOUNT_MESSAGE,
+  getProfilePhone,
+  isProfilePaused,
+} from "@/lib/utills/profile";
 import { MessageSquare, RefreshCcw, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -66,6 +70,7 @@ export default function ChatHistoryPage() {
   const router = useRouter();
   const [visibleChatCount, setVisibleChatCount] = useState(CHAT_PAGE_SIZE);
   const { data: profile, error: profileError } = useGetProfileQuery();
+  const isAccountPaused = isProfilePaused(profile);
   const profilePhone = getProfilePhone(profile);
   const {
     data: chats = [],
@@ -117,6 +122,11 @@ export default function ChatHistoryPage() {
   const latestChat = chats[0] ?? null;
 
   const handleDeleteChat = async (chatId) => {
+    if (isAccountPaused) {
+      toast.error(PAUSED_ACCOUNT_MESSAGE);
+      return;
+    }
+
     if (!window.confirm("Delete this conversation and its saved messages?")) {
       return;
     }

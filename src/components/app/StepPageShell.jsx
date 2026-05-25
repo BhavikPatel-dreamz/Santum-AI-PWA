@@ -7,7 +7,7 @@ export default function StepPageShell({
 }) {
   return (
     <div className="theme-shell min-h-dvh transition-colors duration-300 lg:px-4 lg:py-4">
-      <div className="theme-surface theme-border mx-auto flex min-h-dvh w-full max-w-[1200px] flex-col transition-colors duration-300 lg:min-h-[calc(100dvh-2rem)] lg:overflow-hidden lg:rounded-[36px] lg:border lg:shadow-[0_24px_64px_rgba(15,15,15,0.08)]">
+      <div className="theme-surface theme-border mx-auto flex min-h-dvh w-full lg:max-w-3xl flex-col transition-colors duration-300 lg:min-h-[calc(100dvh-2rem)] lg:overflow-hidden lg:rounded-[36px] lg:border lg:shadow-[0_24px_64px_rgba(15,15,15,0.08)]">
         <HeaderSection title={title} />
 
         <section

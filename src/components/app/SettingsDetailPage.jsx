@@ -2,11 +2,15 @@
 
 import { useState } from "react";
 import { Check, ChevronDown, ChevronRight, Copy } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import StepPageShell from "./StepPageShell";
 import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
-import { useUpdateBasicProfileMutation } from "@/lib/store";
+import { useGetProfileQuery, useUpdateBasicProfileMutation } from "@/lib/store";
+import {
+  PAUSED_ACCOUNT_MESSAGE,
+  isProfilePaused,
+} from "@/lib/utills/profile";
 
 function SectionHeading({ title, description }) {
   if (!title && !description) {
@@ -68,8 +72,15 @@ function ActionButton({ action, onClick, fullWidth = false }) {
 
 export default function SettingsDetailPage({ content }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const { data: profile } = useGetProfileQuery();
   const [updateBasicProfile, { isLoading: isUpdatingBasicProfile }] =
     useUpdateBasicProfileMutation();
+  const isAccountPaused = isProfilePaused(profile);
+  const isPausedFeatureLocked =
+    isAccountPaused &&
+    pathname !== "/settings/security" &&
+    pathname !== "/settings/account-management";
   const [toggles, setToggles] = useState(() => {
     const initialState = {};
 
@@ -141,6 +152,11 @@ export default function SettingsDetailPage({ content }) {
         toast.error("Unable to copy right now");
       }
 
+      return;
+    }
+
+    if (isPausedFeatureLocked) {
+      toast.error(PAUSED_ACCOUNT_MESSAGE);
       return;
     }
 
@@ -579,6 +595,11 @@ export default function SettingsDetailPage({ content }) {
               type="button"
               disabled={isDisable}
               onClick={() => {
+                if (isPausedFeatureLocked) {
+                  toast.error(PAUSED_ACCOUNT_MESSAGE);
+                  return;
+                }
+
                 if (!feedbackText.trim()) {
                   toast.error("Please add a little feedback first.");
                   return;
@@ -644,52 +665,72 @@ export default function SettingsDetailPage({ content }) {
           />
 
           <div className="space-y-3">
-            {section.items.map((item) => (
-              <div
-                key={item.title}
-                className="theme-danger-card rounded-[22px] border px-4 py-4"
-              >
-                <h4 className="theme-danger-title text-[16px] font-semibold leading-6">
-                  {item.title}
-                </h4>
-                <p className="theme-danger-copy mt-2 font-satoshi text-[14px] leading-6">
-                  {item.description}
-                </p>
-                <button
-                  type="button"
-                  onClick={async () => {
-                    if (
-                      item.buttonLabel === "Pause" ||
-                      item.title.toLowerCase().includes("pause")
-                    ) {
-                      const response = await saveBasicProfilePatch(
-                        { paused: true },
-                        "Unable to pause account",
-                      );
+            {section.items.map((item) => {
+              const isPauseAction =
+                item.buttonLabel === "Pause" ||
+                item.title.toLowerCase().includes("pause");
+              const pauseActionLabel = isAccountPaused ? "Resume" : "Pause";
+              const buttonLabel = isPauseAction
+                ? pauseActionLabel
+                : item.buttonLabel;
+              const loadingLabel = isAccountPaused
+                ? "Resuming..."
+                : "Pausing...";
 
-                      if (response) {
-                        toast.success(response.message || "Account paused");
+              return (
+                <div
+                  key={item.title}
+                  className="theme-danger-card rounded-[22px] border px-4 py-4"
+                >
+                  <h4 className="theme-danger-title text-[16px] font-semibold leading-6">
+                    {isPauseAction && isAccountPaused
+                      ? "Resume account"
+                      : item.title}
+                  </h4>
+                  <p className="theme-danger-copy mt-2 font-satoshi text-[14px] leading-6">
+                    {isPauseAction && isAccountPaused
+                      ? "Turn your Santum AI account back on and restore normal access."
+                      : item.description}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (isPauseAction) {
+                        const nextPaused = !isAccountPaused;
+                        const response = await saveBasicProfilePatch(
+                          { paused: nextPaused },
+                          nextPaused
+                            ? "Unable to pause account"
+                            : "Unable to resume account",
+                        );
+
+                        if (response) {
+                          toast.success(
+                            response.message ||
+                              (nextPaused
+                                ? "Account paused"
+                                : "Account resumed"),
+                          );
+                        }
+
+                        return;
                       }
 
-                      return;
-                    }
-
-                    toast.success(
-                      `${item.buttonLabel} request captured in this session.`,
-                    );
-                  }}
-                  disabled={isUpdatingBasicProfile}
-                  className="theme-surface theme-danger-title mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] font-semibold"
-                >
-                  {isUpdatingBasicProfile &&
-                  (item.buttonLabel === "Pause" ||
-                    item.title.toLowerCase().includes("pause"))
-                    ? "Pausing..."
-                    : item.buttonLabel}
-                  <ChevronRight size={14} />
-                </button>
-              </div>
-            ))}
+                      toast.success(
+                        `${item.buttonLabel} request captured in this session.`,
+                      );
+                    }}
+                    disabled={isUpdatingBasicProfile}
+                    className="theme-surface theme-danger-title mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] font-semibold disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {isUpdatingBasicProfile && isPauseAction
+                      ? loadingLabel
+                      : buttonLabel}
+                    <ChevronRight size={14} />
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </div>
       );

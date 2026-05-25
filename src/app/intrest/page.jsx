@@ -4,7 +4,11 @@ import { useState } from "react";
 import HeaderSection from "../../components/UI/HeaderSection";
 import toast from "react-hot-toast";
 import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
-import { useUpdateInterestsMutation } from "@/lib/store";
+import { useGetProfileQuery, useUpdateInterestsMutation } from "@/lib/store";
+import {
+  PAUSED_ACCOUNT_MESSAGE,
+  isProfilePaused,
+} from "@/lib/utills/profile";
 
 const interests = [
   { id: 1, label: "History", checked: false },
@@ -35,9 +39,16 @@ const Page = () => {
   const [selected, setSelected] = useState(
     interests.filter((interest) => interest.checked).map((interest) => interest.id),
   );
+  const { data: profile } = useGetProfileQuery();
+  const isAccountPaused = isProfilePaused(profile);
   const [updateInterests, { isLoading }] = useUpdateInterestsMutation();
 
   const handleSubmit = async () => {
+    if (isAccountPaused) {
+      toast.error(PAUSED_ACCOUNT_MESSAGE);
+      return;
+    }
+
     try {
       const selectedInterests = selected
         .map((id) => interests.find((interest) => interest.id === id)?.label)

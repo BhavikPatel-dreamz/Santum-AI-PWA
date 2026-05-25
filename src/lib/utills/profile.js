@@ -83,6 +83,9 @@ function formatDateToInputString(date) {
   )}`;
 }
 
+export const PAUSED_ACCOUNT_MESSAGE =
+  "Resume your account to access all features.";
+
 export function formatProfileDobForInput(value) {
   const normalizedValue = normalizeTextValue(value);
 
@@ -216,6 +219,26 @@ export function getProfileInterests(profile) {
       "topics",
     ]),
   );
+}
+
+export function isProfilePaused(profile) {
+  const pausedValue = getFirstValue(profile, ["paused"]);
+
+  if (typeof pausedValue === "boolean") {
+    return pausedValue;
+  }
+
+  if (typeof pausedValue === "number") {
+    return pausedValue === 1;
+  }
+
+  if (typeof pausedValue === "string") {
+    return ["1", "true", "yes", "paused"].includes(
+      pausedValue.trim().toLowerCase(),
+    );
+  }
+
+  return false;
 }
 
 export function buildProfileInitials(firstName, lastName) {

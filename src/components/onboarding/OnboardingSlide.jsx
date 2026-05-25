@@ -13,7 +13,7 @@ export default function OnboardingSlide({
 }) {
   return (
     <div
-      className={`theme-shell theme-border mx-auto flex min-h-dvh w-full max-w-[1200px] flex-col overflow-hidden transition-colors duration-300 lg:my-4 lg:min-h-[calc(100dvh-2rem)] lg:rounded-[36px] lg:border lg:shadow-[0_24px_64px_rgba(15,15,15,0.08)] ${animClass}`}
+      className={`theme-shell theme-border mx-auto flex min-h-dvh w-full lg:max-w-3xl flex-col overflow-hidden transition-colors duration-300 lg:my-4 lg:min-h-[calc(100dvh-2rem)] lg:rounded-[36px] lg:border lg:shadow-[0_24px_64px_rgba(15,15,15,0.08)] ${animClass}`}
     >
       {/* Image area */}
       <div className="flex min-h-[44vh] items-center justify-center px-6 pt-10 sm:min-h-[48vh] sm:px-10 lg:min-h-[52vh] lg:px-16 lg:pt-12">

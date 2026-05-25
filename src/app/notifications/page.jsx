@@ -9,9 +9,14 @@ import {
 } from "@/lib/push/client";
 import {
   useGetNotificationsQuery,
+  useGetProfileQuery,
   useMarkAllNotificationsReadMutation,
   useMarkNotificationReadMutation,
 } from "@/lib/store";
+import {
+  PAUSED_ACCOUNT_MESSAGE,
+  isProfilePaused,
+} from "@/lib/utills/profile";
 import {
   Bell,
   CheckCheck,
@@ -182,6 +187,8 @@ async function getPushPermissionState() {
 
 export default function NotificationsPage() {
   const router = useRouter();
+  const { data: profile } = useGetProfileQuery();
+  const isAccountPaused = isProfilePaused(profile);
   const [isPushSupported, setIsPushSupported] = useState(true);
   const [pushPermission, setPushPermission] = useState("default");
   const [isPushEnabled, setIsPushEnabled] = useState(false);
@@ -265,6 +272,11 @@ export default function NotificationsPage() {
   }, []);
 
   const handleMarkAllAsRead = async () => {
+    if (isAccountPaused) {
+      toast.error(PAUSED_ACCOUNT_MESSAGE);
+      return;
+    }
+
     try {
       await markAllNotificationsRead().unwrap();
       toast.success("All notifications marked as read.");
@@ -276,6 +288,16 @@ export default function NotificationsPage() {
   };
 
   const handleOpenNotification = async (notification) => {
+    if (isAccountPaused) {
+      if (notification.actionHref) {
+        router.push(notification.actionHref);
+        return;
+      }
+
+      toast.error(PAUSED_ACCOUNT_MESSAGE);
+      return;
+    }
+
     try {
       if (notification.unread) {
         await markNotificationRead(notification.id).unwrap();
@@ -293,6 +315,11 @@ export default function NotificationsPage() {
 
   const handleTogglePushNotifications = async () => {
     if (isUpdatingPush) {
+      return;
+    }
+
+    if (isAccountPaused) {
+      toast.error(PAUSED_ACCOUNT_MESSAGE);
       return;
     }
 

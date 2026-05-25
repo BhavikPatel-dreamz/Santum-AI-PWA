@@ -57,7 +57,7 @@ export default function LetsYouInPage() {
 
   return (
     <div className="theme-auth-shell min-h-dvh flex flex-col items-center font-sans transition-colors duration-300">
-      <div className="bg-[#323d51] theme-border relative flex min-h-dvh w-full max-w-[1200px] flex-col transition-colors duration-300 lg:my-4 lg:min-h-[calc(100dvh-2rem)] lg:overflow-hidden lg:rounded-[36px] lg:border lg:shadow-[0_24px_64px_rgba(15,15,15,0.08)]">
+      <div className="bg-[#323d51] theme-border relative flex min-h-dvh w-full lg:max-w-3xl flex-col transition-colors duration-300 lg:my-4 lg:min-h-[calc(100dvh-2rem)] lg:overflow-hidden lg:rounded-[36px] lg:border lg:shadow-[0_24px_64px_rgba(15,15,15,0.08)]">
         {/* ── Top green section ── */}
         {/* <GreenSection show={false} /> */}
         <div>
@@ -75,7 +75,7 @@ export default function LetsYouInPage() {
           </div>
         </div>
         {/* ── White card ── */}
-        <div className="theme-auth-card-bg relative z-10 mx-3 -mt-13 w-auto rounded-[28px] px-6 pb-9 pt-8 transition-colors duration-300 sm:mx-5 sm:px-7 md:mx-8 lg:mx-auto lg:-mt-24 lg:w-full lg:max-w-[760px] lg:px-10 lg:pb-10">
+        <div className="theme-auth-card-bg relative z-10 mx-3 -mt-13 w-auto rounded-[28px] px-6 pb-9 pt-8 transition-colors duration-300 sm:mx-5 sm:px-7 md:mx-8">
           <div className="text-center mb-6">
             <h2 className="text-gray-600 text-[38px] font-bold leading-[1.1] tracking-[5px] mb-3">
               WELCOME

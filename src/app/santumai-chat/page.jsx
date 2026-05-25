@@ -16,7 +16,11 @@ import {
 } from "@/lib/store";
 import { extractCreditBalance, formatCreditAmount } from "@/lib/utills/credit";
 import { getTodayMoodDateKey } from "@/lib/utills/mood";
-import { getProfilePhone } from "@/lib/utills/profile";
+import {
+  PAUSED_ACCOUNT_MESSAGE,
+  getProfilePhone,
+  isProfilePaused,
+} from "@/lib/utills/profile";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast";
@@ -177,6 +181,7 @@ export default function SantumAIChatPage() {
   const [upsertMoodCheckIn, { isLoading: isSavingMoodCheckIn }] =
     useUpsertMoodCheckInMutation();
 
+  const isAccountPaused = isProfilePaused(profile);
   const profilePhone = getProfilePhone(profile);
   const activePlanLevel =
     typeof subscriptionStatus?.active_plan_level === "string"
@@ -445,6 +450,11 @@ export default function SantumAIChatPage() {
   };
 
   const handleSaveMoodCheckIn = async (values) => {
+    if (isAccountPaused) {
+      toast.error(PAUSED_ACCOUNT_MESSAGE);
+      return;
+    }
+
     try {
       await upsertMoodCheckIn({
         dateKey: todayMoodDateKey,
@@ -469,6 +479,11 @@ export default function SantumAIChatPage() {
     const text = nextMessage.trim();
 
     if (!text || isReplying) {
+      return;
+    }
+
+    if (isAccountPaused) {
+      toast.error(PAUSED_ACCOUNT_MESSAGE);
       return;
     }
 

@@ -5,10 +5,15 @@ import { useTheme } from "@/components/providers/ThemeProvider";
 import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
 import {
   useGetCreditBalanceQuery,
+  useGetProfileQuery,
   useGetSubscriptionPlansQuery,
   useGetSubscriptionStatusQuery,
 } from "@/lib/store";
 import { extractCreditBalance, formatCreditAmount } from "@/lib/utills/credit";
+import {
+  PAUSED_ACCOUNT_MESSAGE,
+  isProfilePaused,
+} from "@/lib/utills/profile";
 import {
   getPlanCheckoutUrl,
   getPlanId,
@@ -325,6 +330,8 @@ export default function PlusSubscriptionPage() {
   const [isManualSyncing, setIsManualSyncing] = useState(false);
   const router = useRouter();
   const { isDark } = useTheme();
+  const { data: profile } = useGetProfileQuery();
+  const isAccountPaused = isProfilePaused(profile);
   const {
     data: plansData,
     error: plansError,
@@ -535,6 +542,11 @@ export default function PlusSubscriptionPage() {
   }, [pendingCheckout]);
 
   function handleCheckoutRedirect() {
+    if (isAccountPaused) {
+      toast.error(PAUSED_ACCOUNT_MESSAGE);
+      return;
+    }
+
     if (!selectedPlan) {
       toast.error("Select a plan to continue");
       return;
@@ -563,6 +575,11 @@ export default function PlusSubscriptionPage() {
   }
 
   async function handlePrimaryAction() {
+    if (isAccountPaused) {
+      toast.error(PAUSED_ACCOUNT_MESSAGE);
+      return;
+    }
+
     if (purchaseSummary || isSelectedPlanActive) {
       router.push("/santumai-chat");
       return;
@@ -578,6 +595,11 @@ export default function PlusSubscriptionPage() {
 
   function handleSecondaryAction() {
     if (pendingCheckout) {
+      if (isAccountPaused) {
+        toast.error(PAUSED_ACCOUNT_MESSAGE);
+        return;
+      }
+
       const checkoutUrl =
         pendingCheckout.checkoutUrl || selectedPlanCheckoutUrl || null;
 

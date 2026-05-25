@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Bell, ChevronRightIcon, Settings, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -22,6 +22,8 @@ import {
   getProfileFullName,
   getProfileLastName,
   getProfilePhone,
+  PAUSED_ACCOUNT_MESSAGE,
+  isProfilePaused,
 } from "@/lib/utills/profile";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { registerPushServiceWorker } from "@/lib/push/client";
@@ -733,7 +735,8 @@ export default function HomeScreen() {
   });
   const [upsertMoodCheckIn, { isLoading: isSavingMoodCheckIn }] =
     useUpsertMoodCheckInMutation();
-  const profile = profileData ?? {};
+  const profile = useMemo(() => profileData ?? {}, [profileData]);
+  const isAccountPaused = isProfilePaused(profile);
   const profilePhone = getProfilePhone(profile);
   const unreadNotificationCount =
     typeof notificationsFeed?.stats?.unread === "number"
@@ -769,7 +772,7 @@ export default function HomeScreen() {
 
       sendOtp();
     }
-  }, [profile]);
+  }, [profile, resend, router]);
 
   useEffect(() => {
     if (!moodCheckInError) {
@@ -848,6 +851,11 @@ export default function HomeScreen() {
   };
 
   const handleSaveMoodCheckIn = async (values) => {
+    if (isAccountPaused) {
+      toast.error(PAUSED_ACCOUNT_MESSAGE);
+      return;
+    }
+
     try {
       await upsertMoodCheckIn({
         dateKey: todayMoodDateKey,
@@ -871,6 +879,11 @@ export default function HomeScreen() {
   const handleOpenChat = () => {
     setDrawerOpen(false);
     setLogoutOpen(false);
+
+    if (isAccountPaused) {
+      toast.error(PAUSED_ACCOUNT_MESSAGE);
+      return;
+    }
 
     if (!isMoodCheckInLoading && !moodCheckInError && !hasTodayMoodCheckIn) {
       focusMoodCheckIn();
@@ -917,7 +930,7 @@ export default function HomeScreen() {
 
   return (
     <div className="theme-shell min-h-dvh flex justify-center lg:px-4 lg:py-4">
-      <div className="theme-surface theme-border relative flex min-h-dvh w-full max-w-[1200px] flex-col overflow-hidden lg:min-h-[calc(100dvh-2rem)] lg:rounded-[36px] lg:border lg:shadow-[0_24px_64px_rgba(15,15,15,0.08)]">
+      <div className="theme-surface theme-border relative flex min-h-dvh w-full lg:max-w-3xl flex-col overflow-hidden lg:min-h-[calc(100dvh-2rem)] lg:rounded-[36px] lg:border lg:shadow-[0_24px_64px_rgba(15,15,15,0.08)]">
         {/* ── Green header background ── */}
         <div className="relative overflow-hidden bg-[#323d51] px-4 pb-4 pt-3 sm:px-6 sm:pt-9 lg:px-10 lg:pb-6 lg:pt-10">
           {/* Circuit background */}
@@ -1052,7 +1065,7 @@ export default function HomeScreen() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            <div className="grid grid-cols-2 gap-3">
               {QUICK_ACCESS_ITEMS.map((item) => (
                 <button
                   key={item.label}
