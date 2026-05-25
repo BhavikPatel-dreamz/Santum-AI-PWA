@@ -1,4 +1,5 @@
 import { enqueuePushNotificationJob } from "./queue";
+import { createNotificationForUser } from "@/lib/notifications/server";
 
 function normalizeText(value) {
   return typeof value === "string" ? value.trim() : "";
@@ -19,6 +20,14 @@ export async function notifyMoodCheckInSuccess(userId) {
         data: { type: "mood_checkin_success" },
       },
     });
+    await createNotificationForUser({
+      user: userId,
+      type: "mood_checkin_success",
+      title: "Mood Check-in Saved 😊",
+      description: "Thank you for sharing how you're feeling today!",
+      priority: "normal",
+      metadata: { type: "mood_checkin_success" },
+    }).catch(console.error);
   } catch (error) {
     console.error("[push-triggers] failed to send mood check-in notification:", error);
   }
@@ -44,6 +53,18 @@ export async function notifyMoodCheckInReminder(userIds) {
         data: { type: "mood_checkin_reminder" },
       },
     });
+    await Promise.all(
+      userIds.map((userId) =>
+        createNotificationForUser({
+          user: userId,
+          type: "mood_checkin_reminder",
+          title: "Daily Mood Check-in 💭",
+          description: "How are you feeling today? Share your mood to track your wellness.",
+          priority: "normal",
+          metadata: { type: "mood_checkin_reminder" },
+        }).catch(console.error)
+      )
+    );
   } catch (error) {
     console.error("[push-triggers] failed to send mood reminder notification:", error);
   }
@@ -64,6 +85,15 @@ export async function notifyCreditAdded(userId, amount) {
         data: { type: "credit_added", amount },
       },
     });
+    await createNotificationForUser({
+      user: userId,
+      type: "credit_added",
+      title: "Credits Added! 🎉",
+      description: `+${amount} credits added to your account`,
+      actionHref: "/settings/credits",
+      priority: "high",
+      metadata: { type: "credit_added", amount },
+    }).catch(console.error);
   } catch (error) {
     console.error("[push-triggers] failed to send credit added notification:", error);
   }
@@ -84,6 +114,15 @@ export async function notifyCreditUsed(userId, tokensUsed, remainingBalance) {
         data: { type: "credit_used", tokensUsed, remainingBalance },
       },
     });
+    await createNotificationForUser({
+      user: userId,
+      type: "credit_used",
+      title: "Credits Used",
+      description: `${tokensUsed} tokens used. ${remainingBalance} remaining.`,
+      actionHref: "/settings/credits",
+      priority: "normal",
+      metadata: { type: "credit_used", tokensUsed, remainingBalance },
+    }).catch(console.error);
   } catch (error) {
     console.error("[push-triggers] failed to send credit used notification:", error);
   }
@@ -105,6 +144,15 @@ export async function notifyLowCredits(userId, remainingBalance) {
         data: { type: "low_credits", remainingBalance },
       },
     });
+    await createNotificationForUser({
+      user: userId,
+      type: "low_credits",
+      title: "Low Credits ⚠️",
+      description: `You have only ${remainingBalance} credits remaining. Upgrade your plan to continue.`,
+      actionHref: "/plus-subscription",
+      priority: "high",
+      metadata: { type: "low_credits", remainingBalance },
+    }).catch(console.error);
   } catch (error) {
     console.error("[push-triggers] failed to send low credits notification:", error);
   }
@@ -126,6 +174,15 @@ export async function notifyOutOfCredits(userId) {
         data: { type: "out_of_credits" },
       },
     });
+    await createNotificationForUser({
+      user: userId,
+      type: "out_of_credits",
+      title: "Out of Credits 😢",
+      description: "You've run out of credits. Purchase a plan to continue chatting.",
+      actionHref: "/plus-subscription",
+      priority: "high",
+      metadata: { type: "out_of_credits" },
+    }).catch(console.error);
   } catch (error) {
     console.error("[push-triggers] failed to send out of credits notification:", error);
   }
@@ -146,6 +203,15 @@ export async function notifySubscriptionChanged(userId, newPlanName) {
         data: { type: "subscription_changed", planName: newPlanName },
       },
     });
+    await createNotificationForUser({
+      user: userId,
+      type: "subscription_changed",
+      title: "Subscription Updated! 🎉",
+      description: `You're now on the ${newPlanName} plan`,
+      actionHref: "/plus-subscription",
+      priority: "high",
+      metadata: { type: "subscription_changed", planName: newPlanName },
+    }).catch(console.error);
   } catch (error) {
     console.error("[push-triggers] failed to send subscription notification:", error);
   }
@@ -166,6 +232,15 @@ export async function notifySubscriptionCanceled(userId) {
         data: { type: "subscription_canceled" },
       },
     });
+    await createNotificationForUser({
+      user: userId,
+      type: "subscription_canceled",
+      title: "Subscription Canceled",
+      description: "Your subscription has been canceled. You can re-subscribe anytime.",
+      actionHref: "/plus-subscription",
+      priority: "normal",
+      metadata: { type: "subscription_canceled" },
+    }).catch(console.error);
   } catch (error) {
     console.error("[push-triggers] failed to send subscription cancel notification:", error);
   }

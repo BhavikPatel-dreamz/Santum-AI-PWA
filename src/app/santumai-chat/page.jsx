@@ -12,7 +12,6 @@ import {
   useGetMoodCheckInQuery,
   useGetProfileQuery,
   useGetSubscriptionStatusQuery,
-  useUpsertMoodCheckInMutation,
 } from "@/lib/store";
 import { extractCreditBalance, formatCreditAmount } from "@/lib/utills/credit";
 import { getTodayMoodDateKey } from "@/lib/utills/mood";
@@ -178,11 +177,9 @@ export default function SantumAIChatPage() {
     refetchOnReconnect: true,
   });
   const [createChat] = useCreateChatMutation();
-  const [upsertMoodCheckIn, { isLoading: isSavingMoodCheckIn }] =
-    useUpsertMoodCheckInMutation();
 
   const isAccountPaused = isProfilePaused(profile);
-  const profilePhone = getProfilePhone(profile);
+  const userId = profile?.id.toString();
   const activePlanLevel =
     typeof subscriptionStatus?.active_plan_level === "string"
       ? subscriptionStatus.active_plan_level
@@ -270,7 +267,7 @@ export default function SantumAIChatPage() {
       return createChatPromiseRef.current;
     }
 
-    if (!profilePhone) {
+    if (!userId) {
       throw { message: "Your profile is still loading. Please try again." };
     }
 
@@ -281,7 +278,7 @@ export default function SantumAIChatPage() {
     }
 
     createChatPromiseRef.current = createChat({
-      user: profilePhone,
+      user: userId,
       planType: activePlanLevel,
     })
       .unwrap()
@@ -414,12 +411,12 @@ export default function SantumAIChatPage() {
   }, [router, storedMessagesError]);
 
   useEffect(() => {
-    if (requestedChatId || !profilePhone || isSubscriptionStatusLoading) {
+    if (requestedChatId || !userId || isSubscriptionStatusLoading) {
       return;
     }
 
     initializeChat();
-  }, [isSubscriptionStatusLoading, profilePhone, requestedChatId]);
+  }, [isSubscriptionStatusLoading, userId, requestedChatId]);
 
   useEffect(() => {
     if (isCreditDepleted) {
@@ -447,32 +444,6 @@ export default function SantumAIChatPage() {
 
     toast.error(nextMessage);
     await loadCreditBalance({ silent: true });
-  };
-
-  const handleSaveMoodCheckIn = async (values) => {
-    if (isAccountPaused) {
-      toast.error(PAUSED_ACCOUNT_MESSAGE);
-      return;
-    }
-
-    try {
-      await upsertMoodCheckIn({
-        dateKey: todayMoodDateKey,
-        happiness: values.happiness,
-        stress: values.stress,
-        energy: values.energy,
-      }).unwrap();
-      toast.success("Mood check-in saved. You can start chatting now.");
-    } catch (error) {
-      if (isUnauthorizedError(error)) {
-        router.replace("/sign-in");
-        return;
-      }
-
-      toast.error(
-        getClientErrorMessage(error, "Unable to save your mood check-in"),
-      );
-    }
   };
 
   const sendMessage = async (nextMessage) => {

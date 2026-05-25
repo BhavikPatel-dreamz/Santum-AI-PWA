@@ -32,7 +32,7 @@ export async function POST(req) {
 
     // Expected payload format from WordPress webhook
     const eventType = body?.event_type; // "subscription_activated", "subscription_upgraded", "subscription_canceled"
-    const userId = body?.user_id ?? body?.user;
+    const userId = body?.id ?? body?.user;
     const planName = body?.plan_name ?? body?.plan ?? "Premium";
     const planId = body?.plan_id;
 
@@ -44,10 +44,7 @@ export async function POST(req) {
     }
 
     // Convert numeric user_id to user key format if needed
-    let userKey = userId;
-    if (typeof userId === "number") {
-      userKey = `profile:${userId}`;
-    }
+    let userKey = `${userId}`;
 
     if (eventType === "subscription_canceled") {
       await notifySubscriptionCanceled(userKey);

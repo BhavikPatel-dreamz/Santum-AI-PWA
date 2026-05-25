@@ -71,15 +71,15 @@ export default function ChatHistoryPage() {
   const [visibleChatCount, setVisibleChatCount] = useState(CHAT_PAGE_SIZE);
   const { data: profile, error: profileError } = useGetProfileQuery();
   const isAccountPaused = isProfilePaused(profile);
-  const profilePhone = getProfilePhone(profile);
+  const userId = profile?.id.toString();
   const {
     data: chats = [],
     error: chatsError,
     isLoading,
     isFetching,
     refetch,
-  } = useGetChatsQuery(profilePhone, {
-    skip: !profilePhone,
+  } = useGetChatsQuery(userId, {
+    skip: !userId,
     refetchOnFocus: true,
     refetchOnReconnect: true,
   });

@@ -175,7 +175,7 @@ export function getProfileIdentityKey(profile) {
   const profileId = getProfileId(profile);
 
   if (profileId) {
-    return `profile:${profileId}`;
+    return `${profileId}`;
   }
 
   const phone = getProfilePhone(profile);
