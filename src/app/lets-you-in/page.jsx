@@ -2,9 +2,13 @@
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect } from "react";
 import Image from "next/image";
+import { useLoginWithPasskeyMutation } from "@/lib/store";
+import toast from "react-hot-toast";
+import { getClientErrorMessage } from "@/lib/api/error";
 
 export default function LetsYouInPage() {
   const router = useRouter();
+  const [loginWithPasskey] = useLoginWithPasskeyMutation();
   const isFingerprintEnabled =
     typeof window !== "undefined" &&
     localStorage.getItem("fingerprintEnabled") === "true";
@@ -19,7 +23,7 @@ export default function LetsYouInPage() {
       const challenge = new Uint8Array(32);
       window.crypto.getRandomValues(challenge);
 
-      const credential = await navigator.credentials.get({
+      await navigator.credentials.get({
         publicKey: {
           challenge,
           allowCredentials: [
@@ -33,13 +37,20 @@ export default function LetsYouInPage() {
         },
       });
 
+      const data = await loginWithPasskey({
+        passkey: stored,
+      }).unwrap();
+
+      toast.success(data.message || "Signed in successfully");
+
       //Redirect after success
-      router.push("/home");
+      router.replace("/home");
     } catch (err) {
       if (err.name === "NotAllowedError") {
         return;
       }
-      console.error("Fingerprint Sigh In failed:", err);
+      console.log("Fingerprint Sigh In failed:", err);
+      toast.error("Invalid Fingerprint");
     }
   }, [router]);
 
@@ -92,14 +103,6 @@ export default function LetsYouInPage() {
           >
             Get Started
           </button>
-          {isFingerprintEnabled && (
-            <button
-              onClick={handleFingerprintLogin}
-              className="w-full mt-3 py-4 rounded-[14px] border border-gray-300 text-[18px]"
-            >
-              Sign In with Fingerprint
-            </button>
-          )}
         </div>
         <p className="text-center text-[10px] text-[#dedede] pt-12 p-5">
           Powered by: <br /> Advanced AI Counselling System

@@ -1,16 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Check, ChevronDown, ChevronRight, Copy } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import StepPageShell from "./StepPageShell";
 import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
 import { useGetProfileQuery, useUpdateBasicProfileMutation } from "@/lib/store";
-import {
-  PAUSED_ACCOUNT_MESSAGE,
-  isProfilePaused,
-} from "@/lib/utills/profile";
+import { PAUSED_ACCOUNT_MESSAGE, isProfilePaused } from "@/lib/utills/profile";
 
 function SectionHeading({ title, description }) {
   if (!title && !description) {
@@ -89,9 +86,7 @@ export default function SettingsDetailPage({ content }) {
         section.items.forEach((item) => {
           if (item.key === "biometricPrompt")
             initialState[item.key] =
-              localStorage.getItem("fingerprintEnabled") === "true"
-                ? true
-                : false;
+              profile?.fingerprint_enabled === true ? true : false;
           else initialState[item.key] = item.enabled;
         });
       }
@@ -121,7 +116,16 @@ export default function SettingsDetailPage({ content }) {
     return legalSection?.documents?.[0]?.key || "";
   });
 
-  const isDisable = feedbackText.trim().length < 1
+  const isDisable = feedbackText.trim().length < 1;
+
+  useEffect(() => {
+    if (profile) {
+      setToggles((prev) => ({
+        ...prev,
+        biometricPrompt: profile?.fingerprint_enabled === true,
+      }));
+    }
+  }, [profile]);
 
   const saveBasicProfilePatch = async (patch, fallbackMessage) => {
     try {
@@ -268,8 +272,7 @@ export default function SettingsDetailPage({ content }) {
 
                     if (item.key === "biometricPrompt") {
                       const finger = localStorage.getItem("passkeyId");
-                      const isEnabled =
-                        localStorage.getItem("fingerprintEnabled") === "true";
+                      const isEnabled = profile.fingerprint_enabled;
 
                       if (!finger) {
                         toast.error(
@@ -281,21 +284,14 @@ export default function SettingsDetailPage({ content }) {
                       togglevalue = !isEnabled;
                       const response = await saveBasicProfilePatch(
                         {
-                          fingerprintEnabled: togglevalue,
-                          passkeyId: finger,
+                          fingerprint_enabled: togglevalue,
+                          passkey_id: finger,
                         },
                         "Unable to update fingerprint lock",
                       );
 
                       if (!response) {
                         return;
-                      }
-
-                      if (finger) {
-                        localStorage.setItem(
-                          "fingerprintEnabled",
-                          String(togglevalue),
-                        );
                       }
                     } else {
                       togglevalue = !toggles[item.key];
@@ -608,7 +604,7 @@ export default function SettingsDetailPage({ content }) {
                 toast.success(section.submitToast || "Saved");
                 setFeedbackText("");
               }}
-              className={`mt-4 w-full ${isDisable?'cursor-not-allowed bg-gray-300 text-gray-500' : 'bg-[#00D061] text-white'} rounded-[14px]  px-4 py-4 text-[16px] font-semibold  shadow-[0_10px_24px_rgba(0,208,97,0.22)]`}
+              className={`mt-4 w-full ${isDisable ? "cursor-not-allowed bg-gray-300 text-gray-500" : "bg-[#00D061] text-white"} rounded-[14px]  px-4 py-4 text-[16px] font-semibold  shadow-[0_10px_24px_rgba(0,208,97,0.22)]`}
             >
               {section.submitLabel}
             </button>

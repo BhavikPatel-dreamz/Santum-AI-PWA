@@ -5,13 +5,14 @@ import { useRouter } from "next/navigation";
 import HeaderSection from "../UI/HeaderSection";
 import { useTheme } from "../providers/ThemeProvider";
 import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
-import { useUpdateBasicProfileMutation } from "@/lib/store";
+import { useUpdateBasicProfileMutation, useGetProfileQuery } from "@/lib/store";
 import toast from "react-hot-toast";
 
 export default function FingerPrintScan() {
   const router = useRouter();
   const { isDark } = useTheme();
   const [scanState, setScanState] = useState("idle");
+  const { data: profile } = useGetProfileQuery();
   const [scanProgress, setScanProgress] = useState(0);
   const [updateBasicProfile, { isLoading: isSavingFingerprint }] =
     useUpdateBasicProfileMutation();
@@ -42,7 +43,10 @@ export default function FingerPrintScan() {
 
   const handleScannerPress = async () => {
     if (scanState === "scanning") return;
-    const storedPasskey = localStorage.getItem("passkeyId");
+    let storedPasskey;
+    if (profile?.passkey_id) {
+      storedPasskey = localStorage.getItem("passkeyId");
+    }
     try {
       if (!navigator.credentials || !navigator.credentials.get) {
         alert("Biometric not supported on this device");
@@ -60,6 +64,11 @@ export default function FingerPrintScan() {
         }
 
         // remove old
+        await updateBasicProfile({
+          fingerprint_enabled: false,
+          passkey_id: null,
+        }).unwrap();
+
         localStorage.removeItem("passkeyId");
         localStorage.removeItem("fingerprintEnabled");
       }
@@ -84,8 +93,8 @@ export default function FingerPrintScan() {
       const rawId = Array.from(new Uint8Array(createdCredential.rawId));
 
       await updateBasicProfile({
-        fingerprintEnabled: true,
-        passkeyId: rawId,
+        fingerprint_enabled: true,
+        passkey_id: rawId,
       }).unwrap();
 
       // store locally after the account profile accepts the passkey

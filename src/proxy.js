@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const AUTH_PAGE_PREFIXES = ["/sign-in", "/sign-up"];
+const AUTH_PAGE_PREFIXES = ["/sign-in", "/sign-up", "/lets-you-in"];
 const PROTECTED_PREFIXES = [
   "/home",
   "/verify-otp",
@@ -29,7 +29,7 @@ export function proxy(req) {
   );
 
   if (!token && isProtected) {
-    return NextResponse.redirect(new URL("/sign-in", req.url));
+    return NextResponse.redirect(new URL("/lets-you-in", req.url));
   }
 
   if (token && isAuthPage) {
@@ -57,5 +57,6 @@ export const config = {
     "/settings/:path*",
     "/sign-in",
     "/sign-up",
+    "/lets-you-in",
   ],
 };

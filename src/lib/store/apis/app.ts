@@ -9,6 +9,10 @@ type LoginPayload = {
   password: string;
 };
 
+type passkeyPayload ={
+  passkey: string;
+}
+
 type VerifyOtpPayload = {
   otp: string;
 };
@@ -27,8 +31,8 @@ type BasicProfilePayload = {
   // firstName?: string;
   // lastName?: string;
   // dob?: string;
-  fingerprintEnabled?: boolean;
-  passkeyId?: string | number[];
+  fingerprint_enabled?: boolean;
+  passkey_id?: string | number[];
   paused?: boolean;
 };
 
@@ -248,6 +252,13 @@ export const appApi = createApi({
     login: builder.mutation<ApiRecord, LoginPayload>({
       query: (body) => ({
         url: "/auth/login",
+        method: "POST",
+        body,
+      }),
+    }),
+    loginWithPasskey: builder.mutation<ApiRecord, passkeyPayload>({
+      query: (body) => ({
+        url: "/auth/login/passkey",
         method: "POST",
         body,
       }),
@@ -486,6 +497,7 @@ export const appApi = createApi({
 
 export const {
   useLoginMutation,
+  useLoginWithPasskeyMutation,
   useRegisterMutation,
   useVerifyMobileMutation,
   useResendOtpMutation,
