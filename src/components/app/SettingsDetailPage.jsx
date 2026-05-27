@@ -6,7 +6,11 @@ import { usePathname, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import StepPageShell from "./StepPageShell";
 import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
-import { useGetProfileQuery, useUpdateBasicProfileMutation } from "@/lib/store";
+import {
+  useGetProfileQuery,
+  useGetSubscriptionStatusQuery,
+  useUpdateBasicProfileMutation,
+} from "@/lib/store";
 import { PAUSED_ACCOUNT_MESSAGE, isProfilePaused } from "@/lib/utills/profile";
 
 function SectionHeading({ title, description }) {
@@ -67,10 +71,93 @@ function ActionButton({ action, onClick, fullWidth = false }) {
   );
 }
 
+function formatStatusValue(value, fallback = "Not available") {
+  if (typeof value !== "string" || !value.trim()) {
+    return fallback;
+  }
+
+  return value
+    .trim()
+    .split(/[_\s-]+/)
+    .filter(Boolean)
+    .map((token) => token.charAt(0).toUpperCase() + token.slice(1))
+    .join(" ");
+}
+
+function formatCyclePeriod(value) {
+  if (typeof value !== "string" || !value.trim()) {
+    return "Monthly";
+  }
+
+  const normalizedValue = value.trim().toLowerCase();
+
+  if (normalizedValue === "month") {
+    return "Monthly";
+  }
+
+  if (normalizedValue === "year") {
+    return "Yearly";
+  }
+
+  if (normalizedValue === "week") {
+    return "Weekly";
+  }
+
+  return formatStatusValue(value, "Monthly");
+}
+
+function buildSubscriptionStats(subscriptionStatus, isLoading) {
+  if (isLoading) {
+    return [
+      { label: "Plan", value: "Loading" },
+      { label: "Renewal", value: "Loading" },
+      { label: "Check-ins", value: "Daily" },
+    ];
+  }
+
+  return [
+    {
+      label: "Plan",
+      value: subscriptionStatus?.active_plan_name || "No active plan",
+    },
+    {
+      label: "Renewal",
+      value: formatCyclePeriod(subscriptionStatus?.cycle_period),
+    },
+    {
+      label: "Check-ins",
+      value: "Daily",
+    },
+  ];
+}
+
+function buildSubscriptionFeatureItems(subscriptionStatus) {
+  const planFeatures = Array.isArray(subscriptionStatus?.active_plan_features)
+    ? subscriptionStatus.active_plan_features
+    : [];
+
+  return planFeatures.map((feature) => ({
+    title: feature,
+    description: "",
+  }));
+}
+
 export default function SettingsDetailPage({ content }) {
   const router = useRouter();
   const pathname = usePathname();
+  const isSubscriptionsPage = pathname === "/settings/subscriptions";
   const { data: profile } = useGetProfileQuery();
+  const {
+    data: subscriptionStatus,
+    error: subscriptionStatusError,
+    isFetching: isSubscriptionStatusFetching,
+    isLoading: isSubscriptionStatusLoading,
+  } = useGetSubscriptionStatusQuery(undefined, {
+    skip: !isSubscriptionsPage,
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true,
+    refetchOnReconnect: true,
+  });
   const [updateBasicProfile, { isLoading: isUpdatingBasicProfile }] =
     useUpdateBasicProfileMutation();
   const isAccountPaused = isProfilePaused(profile);
@@ -84,10 +171,7 @@ export default function SettingsDetailPage({ content }) {
     content.sections.forEach((section) => {
       if (section.type === "toggles") {
         section.items.forEach((item) => {
-          if (item.key === "biometricPrompt")
-            initialState[item.key] =
-              profile?.fingerprint_enabled === true ? true : false;
-          else initialState[item.key] = item.enabled;
+          initialState[item.key] = item.enabled;
         });
       }
     });
@@ -119,13 +203,22 @@ export default function SettingsDetailPage({ content }) {
   const isDisable = feedbackText.trim().length < 1;
 
   useEffect(() => {
-    if (profile) {
-      setToggles((prev) => ({
-        ...prev,
-        biometricPrompt: profile?.fingerprint_enabled === true,
-      }));
+    if (!subscriptionStatusError) {
+      return;
     }
-  }, [profile]);
+
+    if (isUnauthorizedError(subscriptionStatusError)) {
+      router.replace("/sign-in");
+      return;
+    }
+
+    toast.error(
+      getClientErrorMessage(
+        subscriptionStatusError,
+        "Unable to load subscription status",
+      ),
+    );
+  }, [router, subscriptionStatusError]);
 
   const saveBasicProfilePatch = async (patch, fallbackMessage) => {
     try {
@@ -169,6 +262,14 @@ export default function SettingsDetailPage({ content }) {
 
   const renderSection = (section, sectionIndex) => {
     if (section.type === "stats") {
+      const items =
+        isSubscriptionsPage && section.title === "Plan Snapshot"
+          ? buildSubscriptionStats(
+              subscriptionStatus,
+              isSubscriptionStatusLoading || isSubscriptionStatusFetching,
+            )
+          : section.items;
+
       return (
         <div key={`${section.type}-${sectionIndex}`} className="mb-6">
           <SectionHeading
@@ -177,7 +278,7 @@ export default function SettingsDetailPage({ content }) {
           />
 
           <div className="grid grid-cols-3 gap-3">
-            {section.items.map((item) => (
+            {items.map((item) => (
               <div
                 key={item.label}
                 className="theme-card-muted rounded-[20px] border px-3 py-4 text-center"
@@ -196,15 +297,53 @@ export default function SettingsDetailPage({ content }) {
     }
 
     if (section.type === "list") {
+      const isSubscriptionFeatureSection =
+        isSubscriptionsPage && section.title === "Plan Upgrade Gets You:";
+      const isSubscriptionStatusBusy =
+        isSubscriptionStatusLoading || isSubscriptionStatusFetching;
+      const items =
+        isSubscriptionFeatureSection && !isSubscriptionStatusBusy
+          ? buildSubscriptionFeatureItems(subscriptionStatus)
+          : section.items;
+      const title =
+        isSubscriptionFeatureSection
+          ? "Active Plan Features"
+          : section.title;
+
       return (
         <div key={`${section.type}-${sectionIndex}`} className="mb-6">
           <SectionHeading
-            title={section.title}
+            title={title}
             description={section.description}
           />
 
           <div className="space-y-3">
-            {section.items.map((item) => (
+            {isSubscriptionFeatureSection && isSubscriptionStatusBusy ? (
+              <div className="theme-card rounded-[22px] border px-4 py-4">
+                <p className="theme-text-primary text-[16px] font-semibold leading-6">
+                  Loading plan features
+                </p>
+                <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6">
+                  Fetching your active plan from Santum.
+                </p>
+              </div>
+            ) : null}
+
+            {items.length === 0 &&
+            isSubscriptionFeatureSection &&
+            !isSubscriptionStatusBusy ? (
+              <div className="theme-card rounded-[22px] border px-4 py-4">
+                <p className="theme-text-primary text-[16px] font-semibold leading-6">
+                  No active plan features available yet.
+                </p>
+                <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6">
+                  Features will appear here once the available plans API returns
+                  them for your active plan.
+                </p>
+              </div>
+            ) : null}
+
+            {!isSubscriptionStatusBusy ? items.map((item) => (
               <div
                 key={`${item.title}-${item.meta || ""}`}
                 className="theme-card rounded-[22px] border px-4 py-4"
@@ -222,9 +361,11 @@ export default function SettingsDetailPage({ content }) {
                         </span>
                       ) : null}
                     </div>
-                    <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6">
-                      {item.description}
-                    </p>
+                    {item.description ? (
+                      <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6">
+                        {item.description}
+                      </p>
+                    ) : null}
                     {item.meta ? (
                       <p className="mt-2 text-[12px] font-medium uppercase tracking-[0.14em] text-[#7E8A83]">
                         {item.meta}
@@ -233,7 +374,7 @@ export default function SettingsDetailPage({ content }) {
                   </div>
                 </div>
               </div>
-            ))}
+            )) : null}
           </div>
         </div>
       );
@@ -262,7 +403,11 @@ export default function SettingsDetailPage({ content }) {
                   </p>
                 </div>
                 <Toggle
-                  enabled={!!toggles[item.key]}
+                  enabled={
+                    item.key === "biometricPrompt"
+                      ? profile?.fingerprint_enabled === true
+                      : !!toggles[item.key]
+                  }
                   onToggle={async () => {
                     if (isUpdatingBasicProfile) {
                       return;
@@ -272,7 +417,7 @@ export default function SettingsDetailPage({ content }) {
 
                     if (item.key === "biometricPrompt") {
                       const finger = localStorage.getItem("passkeyId");
-                      const isEnabled = profile.fingerprint_enabled;
+                      const isEnabled = profile?.fingerprint_enabled === true;
 
                       if (!finger) {
                         toast.error(

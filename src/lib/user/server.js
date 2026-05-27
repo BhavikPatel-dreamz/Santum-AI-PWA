@@ -24,7 +24,10 @@ export function normalizeProfilePayload(payload) {
         typeof payload.data.data.user === "object" &&
         !Array.isArray(payload.data.data.user)
       ) {
-        return payload.data.data.user;
+        return {
+          ...payload.data.data,
+          ...payload.data.data.user,
+        };
       }
 
       return payload.data.data;
@@ -35,7 +38,10 @@ export function normalizeProfilePayload(payload) {
       typeof payload.data.user === "object" &&
       !Array.isArray(payload.data.user)
     ) {
-      return payload.data.user;
+      return {
+        ...payload.data,
+        ...payload.data.user,
+      };
     }
 
     return payload.data;
@@ -46,7 +52,10 @@ export function normalizeProfilePayload(payload) {
     typeof payload.user === "object" &&
     !Array.isArray(payload.user)
   ) {
-    return payload.user;
+    return {
+      ...payload,
+      ...payload.user,
+    };
   }
 
   return payload;

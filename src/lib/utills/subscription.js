@@ -35,6 +35,18 @@ const PLAN_RECORD_KEYS = [
 const PLAN_LIST_KEYS = ["memberships", "subscriptions", "plans"];
 
 const PLAN_ID_KEYS = [
+  "active_plan_id",
+  "activePlanId",
+  "current_plan_id",
+  "currentPlanId",
+  "active_membership_id",
+  "activeMembershipId",
+  "current_membership_id",
+  "currentMembershipId",
+  "active_subscription_id",
+  "activeSubscriptionId",
+  "current_subscription_id",
+  "currentSubscriptionId",
   "membership_id",
   "membershipId",
   "subscription_id",
@@ -51,8 +63,22 @@ const PLAN_ID_KEYS = [
 ];
 
 const PLAN_NAME_KEYS = [
+  "active_plan_name",
+  "activePlanName",
+  "current_plan_name",
+  "currentPlanName",
+  "active_membership_name",
+  "activeMembershipName",
+  "current_membership_name",
+  "currentMembershipName",
+  "active_subscription_name",
+  "activeSubscriptionName",
+  "current_subscription_name",
+  "currentSubscriptionName",
   "membership_name",
   "membershipName",
+  "membership_title",
+  "membershipTitle",
   "subscription_name",
   "subscriptionName",
   "plan_name",
@@ -63,6 +89,10 @@ const PLAN_NAME_KEYS = [
 ];
 
 const PLAN_LEVEL_KEYS = [
+  "active_plan_level",
+  "activePlanLevel",
+  "current_plan_level",
+  "currentPlanLevel",
   "plan_level",
   "planLevel",
   "membership_level",
@@ -104,6 +134,17 @@ const RENEWAL_DATE_KEYS = [
   "billingDate",
 ];
 
+const START_DATE_KEYS = ["start_date", "startDate", "started_at", "startedAt"];
+
+const CYCLE_PERIOD_KEYS = [
+  "cycle_period",
+  "cyclePeriod",
+  "billing_cycle",
+  "billingCycle",
+  "renewal_cycle",
+  "renewalCycle",
+];
+
 const EXPIRY_DATE_KEYS = [
   "expires_at",
   "expiresAt",
@@ -114,6 +155,15 @@ const EXPIRY_DATE_KEYS = [
   "end_date",
   "endDate",
 ];
+
+const DESCRIPTION_KEYS = [
+  "membership_description",
+  "membershipDescription",
+  "description",
+  "summary",
+];
+
+const FEATURE_KEYS = ["features", "benefits", "included_features"];
 
 function normalizeTextValue(value) {
   if (typeof value === "string") {
@@ -311,7 +361,9 @@ export function getPlanId(plan) {
 }
 
 export function getPlanName(plan) {
-  return normalizeTextValue(plan?.name ?? plan?.title ?? plan?.plan_name);
+  return normalizeTextValue(
+    plan?.name ?? plan?.title ?? plan?.plan_name ?? plan?.membership_title,
+  );
 }
 
 export function getPlanPrice(plan) {
@@ -326,6 +378,52 @@ export function getPlanPrice(plan) {
 export function getPlanTokenLimit(plan) {
   const tokenAmount = extractPlanCreditAmount(plan);
   return Number.isFinite(tokenAmount) ? tokenAmount : null;
+}
+
+function getPlanDescription(plan) {
+  for (const key of DESCRIPTION_KEYS) {
+    const candidate = normalizeTextValue(plan?.[key]);
+
+    if (candidate) {
+      return candidate;
+    }
+  }
+
+  return "";
+}
+
+function getPlanCyclePeriod(planRecords) {
+  return getFirstRecordValue(planRecords, CYCLE_PERIOD_KEYS);
+}
+
+function getPlanFeatures(plan) {
+  if (!plan || typeof plan !== "object" || Array.isArray(plan)) {
+    return [];
+  }
+
+  for (const key of FEATURE_KEYS) {
+    const value = plan[key];
+
+    if (Array.isArray(value)) {
+      return value
+        .map((feature) => {
+          if (typeof feature === "string") {
+            return feature.trim();
+          }
+
+          if (feature && typeof feature === "object" && !Array.isArray(feature)) {
+            return normalizeTextValue(
+              feature.title ?? feature.label ?? feature.name ?? feature.description,
+            );
+          }
+
+          return "";
+        })
+        .filter(Boolean);
+    }
+  }
+
+  return [];
 }
 
 export function getPlanLevel(plan) {
@@ -386,6 +484,29 @@ export function isPlanExplicitlyActive(plan) {
   return activeKeys.some((key) => normalizeFlagValue(plan[key]) === true);
 }
 
+function isPlanMarkedCurrent(plan) {
+  if (!plan || typeof plan !== "object") {
+    return false;
+  }
+
+  const currentKeys = [
+    "active",
+    "is_active",
+    "isActive",
+    "current",
+    "is_current",
+    "isCurrent",
+    "selected",
+    "is_selected",
+    "isSelected",
+    "subscribed",
+    "is_subscribed",
+    "isSubscribed",
+  ];
+
+  return currentKeys.some((key) => normalizeFlagValue(plan[key]) === true);
+}
+
 export function extractProfilePlanReferences(profile) {
   const records = collectPlanRecords(profile);
   const ids = [];
@@ -408,12 +529,6 @@ export function extractProfilePlanReferences(profile) {
 export function resolveActiveSubscriptionPlan({ plans, profile }) {
   if (!Array.isArray(plans) || plans.length === 0) {
     return null;
-  }
-
-  const explicitlyActivePlan = plans.find((plan) => isPlanExplicitlyActive(plan));
-
-  if (explicitlyActivePlan) {
-    return explicitlyActivePlan;
   }
 
   const profileReferences = extractProfilePlanReferences(profile);
@@ -449,11 +564,7 @@ export function resolveActiveSubscriptionPlan({ plans, profile }) {
     }
   }
 
-  return (
-    plans.find((plan) => getPlanLevel(plan) === "free") ??
-    plans.find((plan) => getPlanPrice(plan) <= 0) ??
-    plans[0]
-  );
+  return plans.find((plan) => isPlanMarkedCurrent(plan)) ?? null;
 }
 
 export function isSamePlan(plan, reference = {}) {
@@ -496,7 +607,13 @@ export function buildSubscriptionSnapshot({ plans, profile }) {
     normalizeStatusToken,
   );
   const renewalDate = getFirstRecordValue(planRecords, RENEWAL_DATE_KEYS);
+  const startDate = getFirstRecordValue(planRecords, START_DATE_KEYS);
   const expiryDate = getFirstRecordValue(planRecords, EXPIRY_DATE_KEYS);
+  const cyclePeriod = getPlanCyclePeriod(planRecords);
+  const activePlanDescription = activePlan
+    ? getPlanDescription(activePlan) || getFirstRecordValue(planRecords, DESCRIPTION_KEYS)
+    : getFirstRecordValue(planRecords, DESCRIPTION_KEYS);
+  const activePlanFeatures = activePlan ? getPlanFeatures(activePlan) : [];
 
   return {
     has_active_plan: Boolean(activePlan),
@@ -505,11 +622,16 @@ export function buildSubscriptionSnapshot({ plans, profile }) {
     active_plan_level: activePlanLevel,
     active_plan_tokens: Number.isFinite(activePlanTokens) ? activePlanTokens : null,
     active_plan_checkout_url: activePlanCheckoutUrl,
+    active_plan_description: activePlanDescription || null,
+    active_plan_features: activePlanFeatures,
+    active_plan_billing_amount: activePlan ? getPlanPrice(activePlan) : null,
     is_paid_active: isPaidActive,
     subscription_status: subscriptionStatus || null,
     payment_status: paymentStatus || null,
+    start_date: startDate || null,
     renewal_date: renewalDate || null,
     expiry_date: expiryDate || null,
+    cycle_period: cyclePeriod || null,
   };
 }
 

@@ -34,7 +34,7 @@ export const SETTINGS_PAGE_CONTENT = {
           {
             title: "Secure checkout",
             description:
-              "Payments are completed on Santum.net before the PWA syncs the latest membership state.",
+              "Payments are completed on Santum.net before you return to your current plan in the PWA.",
           },
           {
             title: "Receipts and renewals",
@@ -170,7 +170,7 @@ export const SETTINGS_PAGE_CONTENT = {
     ],
     footerActions: [
       {
-        label: "Upgrade to Standard",
+        label: "View Plans",
         href: "/plus-subscription",
         variant: "primary",
       },

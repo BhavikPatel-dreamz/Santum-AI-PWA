@@ -9,6 +9,8 @@ import { extractCreditBalance } from "../../../../../lib/utills/credit";
 import { buildBillingSnapshot } from "../../../../../lib/notifications/server";
 import { normalizeProfilePayload } from "../../../../../lib/user/server";
 
+export const dynamic = "force-dynamic";
+
 function extractPlans(payload) {
   if (Array.isArray(payload)) {
     return payload;
@@ -81,7 +83,7 @@ export async function GET() {
         );
       } catch (creditBalanceError) {
         console.error(
-          "Unable to load credit balance while syncing membership notifications:",
+          "Unable to load credit balance while loading membership notifications:",
           creditBalanceError,
         );
       }

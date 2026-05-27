@@ -34,9 +34,7 @@ const QUICK_PROMPTS = [
 const CREDIT_LIMIT_MESSAGE =
   "You have reached your chat credit limit. Purchase a plan to continue your support conversations with SantumAI.";
 const PURCHASE_PLAN_PATH = "/plus-subscription";
-const DEFAULT_PLAN_LEVEL = "free";
 const RECENT_MESSAGE_LIMIT = 6;
-const MAX_CREDITS = 20000; // change this to dynamic
 const STARTER_MESSAGES = [
   {
     id: "starter-assistant",
@@ -177,6 +175,8 @@ export default function SantumAIChatPage() {
     refetchOnReconnect: true,
   });
   const [createChat] = useCreateChatMutation();
+  const DEFAULT_PLAN_LEVEL = profile?.membership.membership_title;
+  const MAX_CREDITS = subscriptionStatus?.active_plan_tokens; // change this to dynamic
 
   const isAccountPaused = isProfilePaused(profile);
   const userId = profile?.id.toString();
@@ -273,7 +273,7 @@ export default function SantumAIChatPage() {
 
     if (isSubscriptionStatusLoading) {
       throw {
-        message: "Membership status is still syncing. Please try again.",
+        message: "Membership status is still loading. Please try again.",
       };
     }
 
@@ -459,7 +459,7 @@ export default function SantumAIChatPage() {
     }
 
     if (isSubscriptionStatusLoading) {
-      toast.error("Membership status is still syncing. Please wait a moment.");
+      toast.error("Membership status is still loading. Please wait a moment.");
       return;
     }
 
