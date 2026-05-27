@@ -6,7 +6,10 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
 import { useResendOtpMutation, useVerifyMobileMutation } from "@/lib/store";
-import { maskPhoneNumber, PASSWORD_RESET_EMAIL_STORAGE_KEY } from "../../lib/utills/phone";
+import {
+  maskPhoneNumber,
+  PASSWORD_RESET_EMAIL_STORAGE_KEY,
+} from "../../lib/utills/phone";
 import Image from "next/image";
 
 function getPendingOtpRecipient() {
@@ -38,7 +41,7 @@ function getPendingOtpRecipient() {
 }
 
 export default function OtpPage() {
-  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [otp, setOtp] = useState(["", "", "", ""]);
   const [resendTimer, setResendTimer] = useState(30);
   const inputRefs = useRef([]);
   const [otpRecipient] = useState(getPendingOtpRecipient);
@@ -109,7 +112,7 @@ export default function OtpPage() {
       if (res.success) {
         toast.success(res.message || "OTP resent successfully");
       }
-      setOtp(["", "", "", "", "", ""]);
+      setOtp(["", "", "", ""]);
       setResendTimer(60);
       inputRefs.current[0]?.focus();
     } catch (error) {
@@ -124,7 +127,8 @@ export default function OtpPage() {
       const data = await verifyMobile({
         otp: otpValue,
       }).unwrap();
-      if (data.success) sessionStorage.removeItem(PASSWORD_RESET_EMAIL_STORAGE_KEY);
+      if (data.success)
+        sessionStorage.removeItem(PASSWORD_RESET_EMAIL_STORAGE_KEY);
 
       toast.success(data.message || "OTP verified successfully");
       router.replace("/home");
@@ -149,7 +153,7 @@ export default function OtpPage() {
 
         <section className="theme-surface relative -mt-10 flex flex-1 flex-col rounded-t-[32px] px-4 pb-10 pt-3 transition-colors duration-300 sm:px-6 md:px-8 lg:px-10 lg:pb-12 lg:rounded-t-[40px]">
           <div className="mx-auto flex w-full max-w-[560px] flex-col items-center text-center lg:max-w-[720px]">
-            <div className="theme-static-panel mb-8 mt-2 flex aspect-square w-full max-w-[343px] items-center justify-center rounded-[24px] border sm:max-w-[380px] lg:max-w-[460px]">
+            {/* <div className="theme-static-panel mb-8 mt-2 flex aspect-square w-full max-w-[343px] items-center justify-center rounded-[24px] border sm:max-w-[380px] lg:max-w-[460px]">
               <Image
                 src="/Logo Source files 21-4/Logo/1x/Artboard3.png"
                 alt="Verification illustration"
@@ -157,7 +161,7 @@ export default function OtpPage() {
                 height={343}
                 className="h-auto w-full"
               />
-            </div>
+            </div> */}
 
             <p className="theme-text-secondary mb-8 text-center font-satoshi text-[18px] leading-6">
               Please enter the verification code we sent to your email{" "}

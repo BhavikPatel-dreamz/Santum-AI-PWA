@@ -1,13 +1,13 @@
 {
   "id": "/",
-  "name": "Best Viewed on Mobile",
+  "name": "Santum AI",
   "short_name": "Santum AI",
   "description": "A standalone AI counselling PWA for text-based emotional wellbeing support.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#e4ffee",
-  "theme_color": "#e4ffee",
+  "background_color": "#323d51",
+  "theme_color": "#323d51",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",

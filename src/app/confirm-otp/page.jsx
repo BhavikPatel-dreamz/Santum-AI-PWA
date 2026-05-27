@@ -13,7 +13,7 @@ import { getClientErrorMessage } from "@/lib/api/error";
 
 export default function ConfirmOtpPage() {
   const router = useRouter();
-  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [otp, setOtp] = useState(["", "", "", ""]);
   const [resendTimer, setResendTimer] = useState(60);
   const inputRefs = useRef([]);
   const [storedEmail, setStoredEmail] = useState("");
@@ -96,7 +96,7 @@ export default function ConfirmOtpPage() {
 
     try {
       await forgetpassword({ email: storedEmail }).unwrap();
-      setOtp(["", "", "", "", "", ""]);
+      setOtp(["", "", "", ""]);
       setResendTimer(60);
       toast.success("OTP sent again.");
       inputRefs.current[0]?.focus();
@@ -117,7 +117,7 @@ export default function ConfirmOtpPage() {
   return (
     <StepPageShell title="Confirm OTP" contentClassName="overflow-y-auto">
       <p className="theme-text-secondary mb-6 text-center font-satoshi text-[18px] leading-6">
-        6-digit OTP was sent to{" "}
+        4-digit OTP was sent to{" "}
         <span className="theme-text-primary font-semibold text-[14px]">{storedEmail}</span>
       </p>
 

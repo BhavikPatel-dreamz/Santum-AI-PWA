@@ -10,10 +10,7 @@ import {
   useGetSubscriptionStatusQuery,
 } from "@/lib/store";
 import { extractCreditBalance, formatCreditAmount } from "@/lib/utills/credit";
-import {
-  PAUSED_ACCOUNT_MESSAGE,
-  isProfilePaused,
-} from "@/lib/utills/profile";
+import { PAUSED_ACCOUNT_MESSAGE, isProfilePaused } from "@/lib/utills/profile";
 import {
   getPlanCheckoutUrl,
   getPlanId,
@@ -593,6 +590,17 @@ export default function PlusSubscriptionPage() {
     handleCheckoutRedirect();
   }
 
+  function roundIfGreaterThanHalf(num) {
+    // Get just the decimal part of the number
+    let decimal = num % 1;
+
+    if (decimal > 0.5) {
+      return Math.ceil(num).toFixed(2); // Round UP
+    } else {
+      return num.toFixed(2); // Round DOWN
+    }
+  }
+
   function handleSecondaryAction() {
     if (pendingCheckout) {
       if (isAccountPaused) {
@@ -699,7 +707,7 @@ export default function PlusSubscriptionPage() {
                       </p>
                       <p className="text-[12px] font-semibold -m-1">
                         {getPlanPrice(plan) != 0 &&
-                          `(R${plan.billing_amount / 30} per day)`}
+                          `(R${roundIfGreaterThanHalf(plan.billing_amount / 30)}/day)`}
                       </p>
                     </div>
                     {/* {isActivePlan ? (

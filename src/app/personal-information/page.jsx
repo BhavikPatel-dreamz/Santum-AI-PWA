@@ -373,19 +373,10 @@ export default function PersonalInformationPage() {
               <FloatingInput
                 disabled={true}
                 id="first-name"
-                label="First Name"
+                label="Username"
                 value={EMPTY_PROFILE_FORM.firstName}
                 // onChange={(event) =>
                 //   updateField("firstName", event.target.value)
-                // }
-              />
-              <FloatingInput
-                disabled={true}
-                id="last-name"
-                label="Last Name"
-                value={EMPTY_PROFILE_FORM.lastName}
-                // onChange={(event) =>
-                //   updateField("lastName", event.target.value)
                 // }
               />
               <FloatingInput
