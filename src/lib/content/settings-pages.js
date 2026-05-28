@@ -170,7 +170,7 @@ export const SETTINGS_PAGE_CONTENT = {
     ],
     footerActions: [
       {
-        label: "View Plans",
+        label: "Loading Plan...",
         href: "/plus-subscription",
         variant: "primary",
       },
@@ -1126,8 +1126,8 @@ export const SETTINGS_PAGE_CONTENT = {
             buttonLabel: "Pause",
           },
           // {
-          //   title: "Export my chat archive",
-          //   description:
+          //   title: "Export my cha archive",
+          //   description:t
           //     "Prepare a downloadable copy of saved conversations and account preferences.",
           //   buttonLabel: "Request Export",
           // },

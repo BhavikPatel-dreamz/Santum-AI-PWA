@@ -9,9 +9,9 @@ type LoginPayload = {
   password: string;
 };
 
-type passkeyPayload ={
+type passkeyPayload = {
   passkey: string;
-}
+};
 
 type VerifyOtpPayload = {
   otp: string;
@@ -34,6 +34,7 @@ type BasicProfilePayload = {
   fingerprint_enabled?: boolean;
   passkey_id?: string | number[];
   paused?: boolean;
+  delete?: boolean;
 };
 
 type PreferredLanguagePayload = {

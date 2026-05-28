@@ -29,11 +29,17 @@ export async function POST(req) {
       body?.paused === 0 ||
       body?.paused === 1;
 
+    const hasDelete =
+      typeof body?.delete === "boolean" ||
+      body?.delete === 0 ||
+      body?.delete === 1;
+
     if (
       // !hasBasicProfile &&
       !hasFingerprintEnabled &&
       !hasPasskeyId &&
-      !hasPaused
+      !hasPaused &&
+      !hasDelete
     ) {
       return NextResponse.json(
         { message: "No profile updates provided" },
@@ -75,6 +81,10 @@ export async function POST(req) {
 
     if (hasPaused) {
       payload.append("paused", body.paused ? "1" : "0");
+    }
+
+    if (hasDelete) {
+      payload.append("delete", body.delete ? "1" : "0");
     }
 
     const data = assertApiSuccess(

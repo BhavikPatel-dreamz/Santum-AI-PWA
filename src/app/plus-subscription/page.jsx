@@ -141,14 +141,12 @@ export default function PlusSubscriptionPage() {
     refetchOnMountOrArgChange: true,
     refetchOnReconnect: true,
   });
-  const {
-    data: subscriptionStatus,
-    error: subscriptionStatusError,
-  } = useGetSubscriptionStatusQuery(undefined, {
-    refetchOnFocus: true,
-    refetchOnMountOrArgChange: true,
-    refetchOnReconnect: true,
-  });
+  const { data: subscriptionStatus, error: subscriptionStatusError } =
+    useGetSubscriptionStatusQuery(undefined, {
+      refetchOnFocus: true,
+      refetchOnMountOrArgChange: true,
+      refetchOnReconnect: true,
+    });
 
   const hasLivePlans = Array.isArray(plansData) && plansData.length > 0;
   const plans = hasLivePlans ? plansData.map(enrichPlan) : [];
@@ -164,10 +162,7 @@ export default function PlusSubscriptionPage() {
     }
 
     toast.error(
-      getClientErrorMessage(
-        plansError,
-        "Unable to load live plans.",
-      ),
+      getClientErrorMessage(plansError, "Unable to load live plans."),
     );
   }, [plansError, router]);
 
@@ -230,7 +225,7 @@ export default function PlusSubscriptionPage() {
       return;
     }
 
-    if (isSelectedPlanActive) {
+    if (isSelectedPlanActive || selectedPlanKey == "17") {
       router.push("/santumai-chat");
       return;
     }
@@ -258,15 +253,16 @@ export default function PlusSubscriptionPage() {
     router.push("/home");
   }
 
-  const primaryButtonLabel = isSelectedPlanActive
-    ? "Start Chatting"
-    : selectedPlan
-      ? selectedPlanCheckoutUrl
-        ? "Continue On Santum.net"
-        : "Checkout Unavailable"
-      : isPlansLoading
-        ? "Loading Plans..."
-        : "Select A Plan";
+  const primaryButtonLabel =
+    isSelectedPlanActive || selectedPlanKey == "17"
+      ? "Start Chatting"
+      : selectedPlan
+        ? selectedPlanCheckoutUrl
+          ? "Continue On Santum.net"
+          : "Checkout Unavailable"
+        : isPlansLoading
+          ? "Loading Plans..."
+          : "Select A Plan";
 
   const secondaryButtonLabel = isSelectedPlanActive
     ? "My Current Plan"
@@ -347,7 +343,7 @@ export default function PlusSubscriptionPage() {
                   <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6">
                     {plan.description}
                   </p>
-                  <p className="theme-text-primary mt-3 text-[12px] font-semibold tracking-[0.16em]">
+                  <p className="theme-text-primary mt-3 text-[15  px] font-semibold tracking-[0.16em]">
                     {plan.token_info}
                   </p>
                 </div>
@@ -367,31 +363,30 @@ export default function PlusSubscriptionPage() {
                   ))}
                 </div>
               ) : null}
-              <p className="theme-text-secondary mt-3 font-satoshi text-[14px] leading-6">
-                {plan.tip}
+              <p className="theme-text-secondary mt-3 font-satoshi text-[11px] leading-6">
+                {planKey != "17" &&
+                  "*Monthly talk time depends on multiple factors and is approximate"}
               </p>
             </button>
           );
         })}
       </div>
 
-      <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <button
-          type="button"
-          onClick={handlePrimaryAction}
-          disabled={isPrimaryButtonDisabled}
-          className="rounded-[14px] bg-[#00D061] px-5 py-4 text-[16px] font-semibold text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)] disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {primaryButtonLabel}
-        </button>
-        <button
+      <button
+        type="button"
+        onClick={handlePrimaryAction}
+        disabled={isPrimaryButtonDisabled}
+        className="mt-6 rounded-[14px] bg-[#00D061] px-5 py-4 text-[16px] font-semibold text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)] disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        {primaryButtonLabel}
+      </button>
+      {/* <button
           type="button"
           onClick={handleSecondaryAction}
           className="theme-secondary-button rounded-[14px] px-5 py-4 text-[16px] font-semibold"
         >
           {secondaryButtonLabel}
-        </button>
-      </div>
+        </button> */}
     </StepPageShell>
   );
 }

@@ -9,6 +9,7 @@ import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
 import {
   useGetProfileQuery,
   useGetSubscriptionStatusQuery,
+  useLogoutMutation,
   useUpdateBasicProfileMutation,
 } from "@/lib/store";
 import { PAUSED_ACCOUNT_MESSAGE, isProfilePaused } from "@/lib/utills/profile";
@@ -59,7 +60,6 @@ function ActionButton({ action, onClick, fullWidth = false }) {
     action.variant === "secondary"
       ? "theme-secondary-button hover:opacity-90"
       : "bg-[#00D061] text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)] hover:bg-[#00b856]";
-
   return (
     <button
       type="button"
@@ -160,7 +160,10 @@ export default function SettingsDetailPage({ content }) {
   });
   const [updateBasicProfile, { isLoading: isUpdatingBasicProfile }] =
     useUpdateBasicProfileMutation();
+
+  const [logout] = useLogoutMutation();
   const isAccountPaused = isProfilePaused(profile);
+  const isAccountDeleted = false;
   const isPausedFeatureLocked =
     isAccountPaused &&
     pathname !== "/settings/security" &&
@@ -178,6 +181,7 @@ export default function SettingsDetailPage({ content }) {
 
     return initialState;
   });
+  const [activeAction, setActiveAction] = useState(null);
   const [choices, setChoices] = useState(() => {
     const initialState = {};
 
@@ -189,6 +193,23 @@ export default function SettingsDetailPage({ content }) {
 
     return initialState;
   });
+  const [footerActions, setFooterActions] = useState(content.footerActions);
+
+  useEffect(() => {
+    if (subscriptionStatus?.next_plan_name) {
+      setFooterActions((prev) => {
+        const updated = [...prev];
+
+        updated[0] = {
+          ...updated[0],
+          label: subscriptionStatus.next_plan_name,
+        };
+
+        return updated;
+      });
+    }
+  }, [subscriptionStatus]);
+
   const [faqOpen, setFaqOpen] = useState(0);
   const [feedbackText, setFeedbackText] = useState("");
   const [feedbackCategory, setFeedbackCategory] = useState("");
@@ -270,6 +291,8 @@ export default function SettingsDetailPage({ content }) {
             )
           : section.items;
 
+      console.log(items, "here");
+
       return (
         <div key={`${section.type}-${sectionIndex}`} className="mb-6">
           <SectionHeading
@@ -284,7 +307,9 @@ export default function SettingsDetailPage({ content }) {
                 className="theme-card-muted rounded-[20px] border px-3 py-4 text-center"
               >
                 <p className="theme-text-primary text-[16px] font-semibold leading-7">
-                  {item.value}
+                  {item.label == "Renewal" && item.value == "0"
+                    ? "No"
+                    : item.value}
                 </p>
                 <p className="theme-text-secondary mt-1 font-satoshi text-[12px] leading-5">
                   {item.label}
@@ -305,17 +330,13 @@ export default function SettingsDetailPage({ content }) {
         isSubscriptionFeatureSection && !isSubscriptionStatusBusy
           ? buildSubscriptionFeatureItems(subscriptionStatus)
           : section.items;
-      const title =
-        isSubscriptionFeatureSection
-          ? "Active Plan Features"
-          : section.title;
+      const title = isSubscriptionFeatureSection
+        ? "Active Plan Features"
+        : section.title;
 
       return (
         <div key={`${section.type}-${sectionIndex}`} className="mb-6">
-          <SectionHeading
-            title={title}
-            description={section.description}
-          />
+          <SectionHeading title={title} description={section.description} />
 
           <div className="space-y-3">
             {isSubscriptionFeatureSection && isSubscriptionStatusBusy ? (
@@ -342,14 +363,53 @@ export default function SettingsDetailPage({ content }) {
                 </p>
               </div>
             ) : null}
-
-            {!isSubscriptionStatusBusy ? items.map((item) => (
+            <div className="theme-card rounded-[22px] border">
+              {!isSubscriptionStatusBusy
+                ? items.map((item) => (
+                    <div
+                      key={`${item.title}-${item.meta || ""}`}
+                      className="px-4 py-4"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="mt-2 h-2.5 w-2.5 rounded-full bg-[#00D061]" />
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <h4 className="theme-text-primary text-[16px] font-semibold leading-6">
+                              {item.title}
+                            </h4>
+                            {item.badge ? (
+                              <span className="rounded-full bg-[#E8FFF1] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#00A84D]">
+                                {item.badge}
+                              </span>
+                            ) : null}
+                          </div>
+                          {item.description ? (
+                            <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6">
+                              {item.description}
+                            </p>
+                          ) : null}
+                          {item.meta ? (
+                            <p className="mt-2 text-[12px] font-medium uppercase tracking-[0.14em] text-[#7E8A83]">
+                              {item.meta}
+                            </p>
+                          ) : null}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                : null}
+            </div>
+            <SectionHeading
+              title={section.title}
+              description={section.description}
+            />
+            {section.items.map((item) => (
               <div
                 key={`${item.title}-${item.meta || ""}`}
                 className="theme-card rounded-[22px] border px-4 py-4"
               >
                 <div className="flex items-start gap-3">
-                  <div className="mt-1 h-2.5 w-2.5 rounded-full bg-[#00D061]" />
+                  <div className="mt-2 h-2.5 w-2.5 rounded-full bg-[#00D061]" />
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <h4 className="theme-text-primary text-[16px] font-semibold leading-6">
@@ -374,7 +434,7 @@ export default function SettingsDetailPage({ content }) {
                   </div>
                 </div>
               </div>
-            )) : null}
+            ))}
           </div>
         </div>
       );
@@ -807,9 +867,10 @@ export default function SettingsDetailPage({ content }) {
 
           <div className="space-y-3">
             {section.items.map((item) => {
-              const isPauseAction =
-                item.buttonLabel === "Pause" ||
-                item.title.toLowerCase().includes("pause");
+              const isPauseAction = item.title.toLowerCase().includes("pause");
+              const isDeleteAction = item.title
+                .toLowerCase()
+                .includes("delete");
               const pauseActionLabel = isAccountPaused ? "Resume" : "Pause";
               const buttonLabel = isPauseAction
                 ? pauseActionLabel
@@ -818,6 +879,17 @@ export default function SettingsDetailPage({ content }) {
                 ? "Resuming..."
                 : "Pausing...";
 
+              let buttonText = buttonLabel;
+
+              if (isUpdatingBasicProfile) {
+                if (activeAction === "pause" && isPauseAction) {
+                  buttonText = loadingLabel;
+                }
+
+                if (activeAction === "delete" && isDeleteAction) {
+                  buttonText = "Deleting...";
+                }
+              }
               return (
                 <div
                   key={item.title}
@@ -836,14 +908,40 @@ export default function SettingsDetailPage({ content }) {
                   <button
                     type="button"
                     onClick={async () => {
+                      if (isDeleteAction) {
+                        setActiveAction("delete");
+
+                        const response = await saveBasicProfilePatch(
+                          {
+                            delete: true,
+                          },
+                          "Unable to delete account",
+                        );
+
+                        console.log("avi gayo bhai delete ma");
+                        setActiveAction(null);
+
+                        if (response) {
+                          toast.success("Account Deleted Successfully");
+
+                          await logout().unwrap();
+                        }
+
+                        return router.replace("/");
+                      }
                       if (isPauseAction) {
+                        setActiveAction("pause");
+
                         const nextPaused = !isAccountPaused;
+
                         const response = await saveBasicProfilePatch(
                           { paused: nextPaused },
                           nextPaused
                             ? "Unable to pause account"
                             : "Unable to resume account",
                         );
+
+                        setActiveAction(null);
 
                         if (response) {
                           toast.success(
@@ -856,17 +954,11 @@ export default function SettingsDetailPage({ content }) {
 
                         return;
                       }
-
-                      toast.success(
-                        `${item.buttonLabel} request captured in this session.`,
-                      );
                     }}
                     disabled={isUpdatingBasicProfile}
                     className="theme-surface theme-danger-title mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] font-semibold disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    {isUpdatingBasicProfile && isPauseAction
-                      ? loadingLabel
-                      : buttonLabel}
+                    {buttonText}
                     <ChevronRight size={14} />
                   </button>
                 </div>
@@ -890,12 +982,12 @@ export default function SettingsDetailPage({ content }) {
         <div
           className={`mt-auto pt-4 ${content.footerActions.length > 1 ? "grid grid-cols-1 gap-3 sm:grid-cols-2" : ""}`}
         >
-          {content.footerActions.map((action) => (
+          {footerActions.map((action) => (
             <ActionButton
               key={action.label}
               action={action}
               onClick={handleAction}
-              fullWidth={content.footerActions.length === 1}
+              fullWidth={footerActions.length === 1}
             />
           ))}
         </div>

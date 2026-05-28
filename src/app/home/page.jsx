@@ -675,7 +675,7 @@ const QUICK_ACCESS_ITEMS = [
   {
     label: "Protection",
     caption: "Add Security",
-    value: "bio",
+    value: "Biometrics",
     href: "/settings/security",
   },
 ];

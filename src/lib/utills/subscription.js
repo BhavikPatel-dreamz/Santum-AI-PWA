@@ -344,7 +344,9 @@ export function normalizePlanName(value) {
 }
 
 export function getPlanCheckoutUrl(plan) {
-  const rawUrl = normalizeTextValue(plan?.url ?? plan?.checkout_url ?? plan?.href);
+  const rawUrl = normalizeTextValue(
+    plan?.url ?? plan?.checkout_url ?? plan?.href,
+  );
   return isAbsoluteHttpUrl(rawUrl) ? rawUrl : null;
 }
 
@@ -369,7 +371,10 @@ export function getPlanName(plan) {
 export function getPlanPrice(plan) {
   const price =
     normalizeNumericValue(
-      plan?.billing_amount ?? plan?.price ?? plan?.amount ?? plan?.initial_payment,
+      plan?.billing_amount ??
+        plan?.price ??
+        plan?.amount ??
+        plan?.initial_payment,
     ) ?? 0;
 
   return price > 0 ? price : 0;
@@ -411,9 +416,16 @@ function getPlanFeatures(plan) {
             return feature.trim();
           }
 
-          if (feature && typeof feature === "object" && !Array.isArray(feature)) {
+          if (
+            feature &&
+            typeof feature === "object" &&
+            !Array.isArray(feature)
+          ) {
             return normalizeTextValue(
-              feature.title ?? feature.label ?? feature.name ?? feature.description,
+              feature.title ??
+                feature.label ??
+                feature.name ??
+                feature.description,
             );
           }
 
@@ -534,33 +546,61 @@ export function resolveActiveSubscriptionPlan({ plans, profile }) {
   const profileReferences = extractProfilePlanReferences(profile);
 
   if (profileReferences.ids.length > 0) {
-    const matchedPlanById = plans.find((plan) => {
+    let nextindex;
+    const matchedPlanById = plans.find((plan, index) => {
+      nextindex = plans.length - 1 != index ? index + 1 : null;
       const planId = getPlanId(plan);
       return planId ? profileReferences.ids.includes(planId) : false;
     });
 
     if (matchedPlanById) {
-      return matchedPlanById;
+      return {
+        ...matchedPlanById,
+        nextplan:
+          nextindex != null
+            ? `Upgrade to ${plans[nextindex].name}`
+            : "View Plans",
+      };
     }
   }
 
   if (profileReferences.names.length > 0) {
-    const matchedPlanByName = plans.find((plan) =>
-      profileReferences.names.includes(normalizePlanName(getPlanName(plan))),
-    );
+    let nextindex;
+    const matchedPlanByName = plans.find((plan, index) => {
+      nextindex = plans.length - 1 != index ? index + 1 : null;
+      return profileReferences.names.includes(
+        normalizePlanName(getPlanName(plan)),
+      );
+    });
 
     if (matchedPlanByName) {
-      return matchedPlanByName;
+      return {
+        ...matchedPlanByName,
+        nextplan:
+          nextindex != null
+            ? `Upgrade to ${plans[nextindex].name}`
+            : "View Plans",
+      };
     }
   }
 
   if (profileReferences.levels.length > 0) {
-    const matchedPlanByLevel = plans.find((plan) =>
-      profileReferences.levels.includes(normalizePlanName(getPlanLevel(plan))),
-    );
+    let nextindex;
+    const matchedPlanByLevel = plans.find((plan, index) => {
+      nextindex = plans.length - 1 != index ? index + 1 : null;
+      return profileReferences.levels.includes(
+        normalizePlanName(getPlanLevel(plan)),
+      );
+    });
 
     if (matchedPlanByLevel) {
-      return matchedPlanByLevel;
+      return {
+        ...matchedPlanByLevel,
+        nextplan:
+          nextindex != null
+            ? `Upgrade to ${plans[nextindex].name}`
+            : "View Plans",
+      };
     }
   }
 
@@ -587,6 +627,7 @@ export function isSamePlan(plan, reference = {}) {
 
 export function buildSubscriptionSnapshot({ plans, profile }) {
   const activePlan = resolveActiveSubscriptionPlan({ plans, profile });
+
   const planRecords = activePlan
     ? [activePlan, ...collectPlanRecords(profile)]
     : collectPlanRecords(profile);
@@ -594,7 +635,9 @@ export function buildSubscriptionSnapshot({ plans, profile }) {
   const activePlanName = activePlan ? getPlanName(activePlan) : null;
   const activePlanLevel = activePlan ? getPlanLevel(activePlan) : "free";
   const activePlanTokens = activePlan ? getPlanTokenLimit(activePlan) : null;
-  const activePlanCheckoutUrl = activePlan ? getPlanCheckoutUrl(activePlan) : null;
+  const activePlanCheckoutUrl = activePlan
+    ? getPlanCheckoutUrl(activePlan)
+    : null;
   const isPaidActive = activePlan ? getPlanPrice(activePlan) > 0 : false;
   const subscriptionStatus = getFirstRecordValue(
     planRecords,
@@ -611,7 +654,8 @@ export function buildSubscriptionSnapshot({ plans, profile }) {
   const expiryDate = getFirstRecordValue(planRecords, EXPIRY_DATE_KEYS);
   const cyclePeriod = getPlanCyclePeriod(planRecords);
   const activePlanDescription = activePlan
-    ? getPlanDescription(activePlan) || getFirstRecordValue(planRecords, DESCRIPTION_KEYS)
+    ? getPlanDescription(activePlan) ||
+      getFirstRecordValue(planRecords, DESCRIPTION_KEYS)
     : getFirstRecordValue(planRecords, DESCRIPTION_KEYS);
   const activePlanFeatures = activePlan ? getPlanFeatures(activePlan) : [];
 
@@ -620,12 +664,15 @@ export function buildSubscriptionSnapshot({ plans, profile }) {
     active_plan_id: activePlanId || null,
     active_plan_name: activePlanName || null,
     active_plan_level: activePlanLevel,
-    active_plan_tokens: Number.isFinite(activePlanTokens) ? activePlanTokens : null,
+    active_plan_tokens: Number.isFinite(activePlanTokens)
+      ? activePlanTokens
+      : null,
     active_plan_checkout_url: activePlanCheckoutUrl,
     active_plan_description: activePlanDescription || null,
     active_plan_features: activePlanFeatures,
     active_plan_billing_amount: activePlan ? getPlanPrice(activePlan) : null,
     is_paid_active: isPaidActive,
+    next_plan_name: activePlan?.nextplan,
     subscription_status: subscriptionStatus || null,
     payment_status: paymentStatus || null,
     start_date: startDate || null,
