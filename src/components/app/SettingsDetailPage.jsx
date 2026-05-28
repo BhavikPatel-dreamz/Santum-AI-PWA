@@ -182,6 +182,8 @@ export default function SettingsDetailPage({ content }) {
     return initialState;
   });
   const [activeAction, setActiveAction] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [confirmText, setConfirmText] = useState("");
   const [choices, setChoices] = useState(() => {
     const initialState = {};
 
@@ -279,6 +281,33 @@ export default function SettingsDetailPage({ content }) {
     }
 
     toast.success(action.toast || `${action.label} saved in this session.`);
+  };
+  const handlePermanentDelete = async () => {
+    if (confirmText !== "DELETE") {
+      toast.error('Type "DELETE" to confirm');
+      return;
+    }
+
+    setActiveAction("delete");
+
+    const response = await saveBasicProfilePatch(
+      {
+        delete: true,
+      },
+      "Unable to delete account",
+    );
+
+    setActiveAction(null);
+
+    if (response) {
+      toast.success("Account Deleted Successfully");
+
+      setShowDeleteConfirm(false);
+
+      await logout().unwrap();
+
+      router.replace("/");
+    }
   };
 
   const renderSection = (section, sectionIndex) => {
@@ -909,25 +938,8 @@ export default function SettingsDetailPage({ content }) {
                     type="button"
                     onClick={async () => {
                       if (isDeleteAction) {
-                        setActiveAction("delete");
-
-                        const response = await saveBasicProfilePatch(
-                          {
-                            delete: true,
-                          },
-                          "Unable to delete account",
-                        );
-
-                        console.log("avi gayo bhai delete ma");
-                        setActiveAction(null);
-
-                        if (response) {
-                          toast.success("Account Deleted Successfully");
-
-                          await logout().unwrap();
-                        }
-
-                        return router.replace("/");
+                        setShowDeleteConfirm(true);
+                        return;
                       }
                       if (isPauseAction) {
                         setActiveAction("pause");
@@ -992,6 +1004,56 @@ export default function SettingsDetailPage({ content }) {
           ))}
         </div>
       ) : null}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
+          <div className="theme-card w-full max-w-md rounded-[28px] border p-6">
+            <h2 className="theme-text-primary text-[22px] font-semibold">
+              Delete Account Permanently
+            </h2>
+
+            <p className="theme-text-secondary mt-3 text-[15px] leading-6">
+              This action cannot be undone. All your chats, subscription data,
+              and account information will be permanently deleted.
+            </p>
+
+            <div className="mt-5 rounded-[16px] bg-red-500/10 p-4">
+              <p className="text-sm font-medium text-red-500">
+                Type DELETE below to confirm permanent deletion.
+              </p>
+            </div>
+
+            <input
+              type="text"
+              value={confirmText}
+              onChange={(e) => setConfirmText(e.target.value)}
+              placeholder='Type "DELETE"'
+              className="theme-input-surface mt-5 w-full rounded-[16px] px-4 py-3 outline-none"
+            />
+
+            <div className="mt-6 flex gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowDeleteConfirm(false);
+                  setConfirmText("");
+                }}
+                className="theme-secondary-button flex-1 rounded-[14px] px-4 py-3 font-semibold"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                onClick={handlePermanentDelete}
+                disabled={isUpdatingBasicProfile}
+                className="flex-1 rounded-[14px] bg-red-500 px-4 py-3 font-semibold text-white disabled:opacity-60"
+              >
+                {isUpdatingBasicProfile ? "Deleting..." : "Delete Permanently"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </StepPageShell>
   );
 }
