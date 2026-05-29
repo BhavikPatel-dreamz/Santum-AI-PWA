@@ -397,7 +397,7 @@ export default function SettingsDetailPage({ content }) {
                 ? items.map((item) => (
                     <div
                       key={`${item.title}-${item.meta || ""}`}
-                      className="px-4 py-4"
+                      className="px-4 py-1"
                     >
                       <div className="flex items-start gap-3">
                         <div className="mt-2 h-2.5 w-2.5 rounded-full bg-[#00D061]" />
