@@ -454,7 +454,7 @@ const MENU_ITEMS = [
   //   ),
   // },
   {
-    label: "About SantumAI",
+    label: "System Overview",
     hint: null,
     danger: false,
     icon: (
@@ -498,6 +498,36 @@ const MENU_ITEMS = [
         />
         <path
           d="M27 15V21H33M22 25H29M22 29H29"
+          stroke="#00D061"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    ),
+  },
+  {
+    label: "Notifications",
+    hint: null,
+    danger: false,
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="48"
+        height="48"
+        viewBox="0 0 48 48"
+        fill="none"
+      >
+        <rect opacity="0.08" width="48" height="48" rx="8" fill="#00D061" />
+        <path
+          d="M24 34C25.1046 34 26 33.1046 26 32H22C22 33.1046 22.8954 34 24 34Z"
+          stroke="#00D061"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M30 20C30 16.6863 27.3137 14 24 14C20.6863 14 18 16.6863 18 20V24L16 28H32L30 24V20Z"
           stroke="#00D061"
           strokeWidth="2"
           strokeLinecap="round"
@@ -647,6 +677,7 @@ const MENU_ROUTES = {
   // "Data & Privacy Policy": "/settings/privacy-policy",
   "About SantumAI": "/settings/about-santumai",
   Legal: "/settings/legal",
+  Notifications: "/notifications",
   // "Send Feedback": "/settings/send-feedback",
   "Contact Us": "/settings/contact-us",
   // "Invite Friends": "/settings/invite-friends",
