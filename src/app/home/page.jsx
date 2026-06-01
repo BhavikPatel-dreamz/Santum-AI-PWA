@@ -675,7 +675,7 @@ const MENU_ROUTES = {
   // Currency: "/settings/currency",
   "FAQ's": "/settings/faqs",
   // "Data & Privacy Policy": "/settings/privacy-policy",
-  "About SantumAI": "/settings/about-santumai",
+  "System Overview": "/settings/about-santumai",
   Legal: "/settings/legal",
   Notifications: "/notifications",
   // "Send Feedback": "/settings/send-feedback",

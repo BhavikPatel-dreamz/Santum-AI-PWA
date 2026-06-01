@@ -283,7 +283,7 @@ export default function SettingsDetailPage({ content }) {
     index === 0 && subscriptionStatus?.next_plan_name
       ? {
           ...action,
-          label: formatUpgradePlanLabel(subscriptionStatus.next_plan_name),
+          label: `Upgarde to ${formatUpgradePlanLabel(subscriptionStatus.next_plan_name)}`,
         }
       : action,
   );
