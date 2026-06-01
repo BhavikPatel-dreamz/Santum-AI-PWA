@@ -60,7 +60,7 @@ export default function ForgetPasswordPage() {
       sessionStorage.setItem(PASSWORD_RESET_EMAIL_STORAGE_KEY, email);
       setStoredEmail(email);
       toast.success("OTP sent to your email.");
-      router.replace("/confirm-otp");
+      router.replace("/new-password");
     } catch (error) {
       toast.error(getClientErrorMessage(error, "Unable to send OTP"));
     }

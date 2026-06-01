@@ -477,36 +477,6 @@ const MENU_ITEMS = [
     ),
   },
   {
-    label: "Legal",
-    hint: null,
-    danger: false,
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="48"
-        height="48"
-        viewBox="0 0 48 48"
-        fill="none"
-      >
-        <rect opacity="0.08" width="48" height="48" rx="8" fill="#00D061" />
-        <path
-          d="M18 15H27L33 21V33H18V15Z"
-          stroke="#00D061"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M27 15V21H33M22 25H29M22 29H29"
-          stroke="#00D061"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    ),
-  },
-  {
     label: "Notifications",
     hint: null,
     danger: false,
@@ -582,6 +552,36 @@ const MENU_ITEMS = [
       </svg>
     ),
   },
+  {
+    label: "Legal",
+    hint: null,
+    danger: false,
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="48"
+        height="48"
+        viewBox="0 0 48 48"
+        fill="none"
+      >
+        <rect opacity="0.08" width="48" height="48" rx="8" fill="#00D061" />
+        <path
+          d="M18 15H27L33 21V33H18V15Z"
+          stroke="#00D061"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M27 15V21H33M22 25H29M22 29H29"
+          stroke="#00D061"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    ),
+  },
   // {
   //   label: "Invite Friends",
   //   hint: null,
@@ -606,6 +606,30 @@ const MENU_ITEMS = [
   //   ),
   // },
   {
+    label: "Logout",
+    hint: null,
+    danger: true,
+    isLogout: true,
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="48"
+        height="48"
+        viewBox="0 0 48 48"
+        fill="none"
+      >
+        <rect opacity="0.08" width="48" height="48" rx="8" fill="#FF484D" />
+        <path
+          d="M26 20V18C26 17.47 25.789 16.961 25.414 16.586C25.039 16.211 24.53 16 24 16H17C16.47 16 15.961 16.211 15.586 16.586C15.211 16.961 15 17.47 15 18V30C15 30.53 15.211 31.039 15.586 31.414C15.961 31.789 16.47 32 17 32H24C24.53 32 25.039 31.789 25.414 31.414C25.789 31.039 26 30.53 26 30V28M21 24H33L30 21M30 27L33 24"
+          stroke="#FF484D"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    ),
+  },
+  {
     label: "Pause or Delete",
     hint: null,
     danger: true,
@@ -627,30 +651,6 @@ const MENU_ITEMS = [
         />
         <path
           d="M24 15C31.2 15 33 16.8 33 24C33 31.2 31.2 33 24 33C16.8 33 15 31.2 15 24C15 16.8 16.8 15 24 15Z"
-          stroke="#FF484D"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    ),
-  },
-  {
-    label: "Logout",
-    hint: null,
-    danger: true,
-    isLogout: true,
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="48"
-        height="48"
-        viewBox="0 0 48 48"
-        fill="none"
-      >
-        <rect opacity="0.08" width="48" height="48" rx="8" fill="#FF484D" />
-        <path
-          d="M26 20V18C26 17.47 25.789 16.961 25.414 16.586C25.039 16.211 24.53 16 24 16H17C16.47 16 15.961 16.211 15.586 16.586C15.211 16.961 15 17.47 15 18V30C15 30.53 15.211 31.039 15.586 31.414C15.961 31.789 16.47 32 17 32H24C24.53 32 25.039 31.789 25.414 31.414C25.789 31.039 26 30.53 26 30V28M21 24H33L30 21M30 27L33 24"
           stroke="#FF484D"
           strokeWidth="2"
           strokeLinecap="round"
