@@ -142,6 +142,85 @@ function buildSubscriptionFeatureItems(subscriptionStatus) {
   }));
 }
 
+function getUpgradePlanKey(value) {
+  if (typeof value !== "string") {
+    return "";
+  }
+
+  const normalizedValue = value.trim().toLowerCase();
+
+  if (normalizedValue.includes("standard")) {
+    return "standard";
+  }
+
+  if (normalizedValue.includes("premium")) {
+    return "premium";
+  }
+
+  return "";
+}
+
+function formatUpgradePlanLabel(value) {
+  const planKey = getUpgradePlanKey(value);
+
+  if (planKey === "standard") {
+    return "Standard";
+  }
+
+  if (planKey === "premium") {
+    return "Premium";
+  }
+
+  return "View plans";
+}
+
+function setUpgradePlanItems(nextPlan, items) {
+  const nextPlanKey = getUpgradePlanKey(nextPlan);
+  const itemsMap = {
+    "Longer talk time":
+      nextPlanKey === "standard"
+        ? "Enjoy 8-10 hours of talk time, refreshed at the start of each monthly billing cycle."
+        : nextPlanKey === "premium"
+          ? "Enjoy 18-20 hours of talk time, refreshed at the start of each monthly billing cycle."
+          : "",
+
+    "Advanced techniques":
+      nextPlanKey === "standard"
+        ? "Emotional Context. Understand emotional context behind thoughts and behaviours that can unlock meaningful insight and personal growth."
+        : nextPlanKey === "premium"
+          ? "Empower yourself with deeper self-understanding and stronger coping strategies through evidence-based therapeutic support."
+          : "",
+
+    "Practical strategies":
+      nextPlanKey === "standard"
+        ? "Complex Reasoning. Develop deeper understanding and discover practical pathways to emotional relief and positive change."
+        : nextPlanKey === "premium"
+          ? "Strengthen your mindset, focus, and emotional regulation through cognitive training and behavioral management."
+          : "",
+  };
+
+  return items.map((item) => ({
+    ...item,
+    description: itemsMap[item.title] || item.description || "",
+  }));
+}
+
+function buildPlanUpgradeGetYouItems(subscriptionStatus, sections) {
+  const upgradeSection = sections.find(
+    (section) =>
+      section.type === "list" && section.title === "Plan Upgrade Gets You:",
+  );
+
+  if (!upgradeSection) {
+    return [];
+  }
+
+  return setUpgradePlanItems(
+    subscriptionStatus.next_plan_name,
+    upgradeSection.items,
+  );
+}
+
 export default function SettingsDetailPage({ content }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -163,7 +242,6 @@ export default function SettingsDetailPage({ content }) {
 
   const [logout] = useLogoutMutation();
   const isAccountPaused = isProfilePaused(profile);
-  const isAccountDeleted = false;
   const isPausedFeatureLocked =
     isAccountPaused &&
     pathname !== "/settings/security" &&
@@ -195,22 +273,20 @@ export default function SettingsDetailPage({ content }) {
 
     return initialState;
   });
-  const [footerActions, setFooterActions] = useState(content.footerActions);
-
-  useEffect(() => {
-    if (subscriptionStatus?.next_plan_name) {
-      setFooterActions((prev) => {
-        const updated = [...prev];
-
-        updated[0] = {
-          ...updated[0],
-          label: subscriptionStatus.next_plan_name,
-        };
-
-        return updated;
-      });
-    }
-  }, [subscriptionStatus]);
+  const hasUpgradePlan = Boolean(
+    getUpgradePlanKey(subscriptionStatus?.next_plan_name),
+  );
+  const listActions = hasUpgradePlan
+    ? buildPlanUpgradeGetYouItems(subscriptionStatus, content.sections)
+    : content.sections;
+  const footerActions = (content.footerActions ?? []).map((action, index) =>
+    index === 0 && subscriptionStatus?.next_plan_name
+      ? {
+          ...action,
+          label: formatUpgradePlanLabel(subscriptionStatus.next_plan_name),
+        }
+      : action,
+  );
 
   const [faqOpen, setFaqOpen] = useState(0);
   const [feedbackText, setFeedbackText] = useState("");
@@ -320,8 +396,6 @@ export default function SettingsDetailPage({ content }) {
             )
           : section.items;
 
-      console.log(items, "here");
-
       return (
         <div key={`${section.type}-${sectionIndex}`} className="mb-6">
           <SectionHeading
@@ -365,7 +439,9 @@ export default function SettingsDetailPage({ content }) {
 
       return (
         <div key={`${section.type}-${sectionIndex}`} className="mb-6">
-          <SectionHeading title={title} description={section.description} />
+          {isSubscriptionsPage && (
+            <SectionHeading title={title} description={section.description} />
+          )}
 
           <div className="space-y-3">
             {isSubscriptionFeatureSection && isSubscriptionStatusBusy ? (
@@ -392,78 +468,124 @@ export default function SettingsDetailPage({ content }) {
                 </p>
               </div>
             ) : null}
-            <div className="theme-card rounded-[22px] border">
-              {!isSubscriptionStatusBusy
-                ? items.map((item) => (
-                    <div
-                      key={`${item.title}-${item.meta || ""}`}
-                      className="px-4 py-1"
-                    >
-                      <div className="flex items-start gap-3">
-                        <div className="mt-2 h-2.5 w-2.5 rounded-full bg-[#00D061]" />
-                        <div className="min-w-0 flex-1">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <h4 className="theme-text-primary text-[16px] font-semibold leading-6">
-                              {item.title}
-                            </h4>
-                            {item.badge ? (
-                              <span className="rounded-full bg-[#E8FFF1] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#00A84D]">
-                                {item.badge}
-                              </span>
-                            ) : null}
-                          </div>
-                          {item.description ? (
-                            <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6">
-                              {item.description}
-                            </p>
-                          ) : null}
-                          {item.meta ? (
-                            <p className="mt-2 text-[12px] font-medium uppercase tracking-[0.14em] text-[#7E8A83]">
-                              {item.meta}
-                            </p>
+
+            {!isSubscriptionStatusBusy && isSubscriptionsPage && (
+              <div className="theme-card rounded-[22px] border">
+                {items.map((item) => (
+                  <div
+                    key={`${item.title}-${item.meta || ""}`}
+                    className="px-4 py-1"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="mt-2 h-2.5 w-2.5 rounded-full bg-[#00D061]" />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h4 className="theme-text-primary text-[16px] font-semibold leading-6">
+                            {item.title}
+                          </h4>
+                          {item.badge ? (
+                            <span className="rounded-full bg-[#E8FFF1] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#00A84D]">
+                              {item.badge}
+                            </span>
                           ) : null}
                         </div>
+                        {item.description ? (
+                          <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6">
+                            {item.description}
+                          </p>
+                        ) : null}
+                        {item.meta ? (
+                          <p className="mt-2 text-[12px] font-medium uppercase tracking-[0.14em] text-[#7E8A83]">
+                            {item.meta}
+                          </p>
+                        ) : null}
                       </div>
                     </div>
-                  ))
-                : null}
-            </div>
-            <SectionHeading
-              title={section.title}
-              description={section.description}
-            />
-            {section.items.map((item) => (
-              <div
-                key={`${item.title}-${item.meta || ""}`}
-                className="theme-card rounded-[22px] border px-4 py-4"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="mt-2 h-2.5 w-2.5 rounded-full bg-[#00D061]" />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h4 className="theme-text-primary text-[16px] font-semibold leading-6">
-                        {item.title}
-                      </h4>
-                      {item.badge ? (
-                        <span className="rounded-full bg-[#E8FFF1] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#00A84D]">
-                          {item.badge}
-                        </span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {hasUpgradePlan && isSubscriptionsPage && (
+              <>
+                <SectionHeading
+                  title={section.title}
+                  description={section.description}
+                />
+                {listActions.map((item) => (
+                  <div
+                    key={`${item.title}-${item.meta || ""}`}
+                    className="theme-card rounded-[22px] border px-4 py-4"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="mt-2 h-2.5 w-2.5 rounded-full bg-[#00D061]" />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h4 className="theme-text-primary text-[16px] font-semibold leading-6">
+                            {item.title}
+                          </h4>
+                          {item.badge ? (
+                            <span className="rounded-full bg-[#E8FFF1] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#00A84D]">
+                              {item.badge}
+                            </span>
+                          ) : null}
+                        </div>
+                        {item.description ? (
+                          <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6">
+                            {item.description}
+                          </p>
+                        ) : null}
+                        {item.meta ? (
+                          <p className="mt-2 text-[12px] font-medium uppercase tracking-[0.14em] text-[#7E8A83]">
+                            {item.meta}
+                          </p>
+                        ) : null}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
+
+            {!isSubscriptionsPage && (
+              <SectionHeading
+                title={section.title}
+                description={section.description}
+              />
+            )}
+            {!isSubscriptionsPage &&
+              section.items.map((item) => (
+                <div
+                  key={`${item.title}-${item.meta || ""}`}
+                  className="theme-card rounded-[22px] border px-4 py-4"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="mt-2 h-2.5 w-2.5 rounded-full bg-[#00D061]" />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h4 className="theme-text-primary text-[16px] font-semibold leading-6">
+                          {item.title}
+                        </h4>
+                        {item.badge ? (
+                          <span className="rounded-full bg-[#E8FFF1] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#00A84D]">
+                            {item.badge}
+                          </span>
+                        ) : null}
+                      </div>
+                      {item.description ? (
+                        <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6">
+                          {item.description}
+                        </p>
+                      ) : null}
+                      {item.meta ? (
+                        <p className="mt-2 text-[12px] font-medium uppercase tracking-[0.14em] text-[#7E8A83]">
+                          {item.meta}
+                        </p>
                       ) : null}
                     </div>
-                    {item.description ? (
-                      <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6">
-                        {item.description}
-                      </p>
-                    ) : null}
-                    {item.meta ? (
-                      <p className="mt-2 text-[12px] font-medium uppercase tracking-[0.14em] text-[#7E8A83]">
-                        {item.meta}
-                      </p>
-                    ) : null}
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       );
@@ -1008,7 +1130,7 @@ export default function SettingsDetailPage({ content }) {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
           <div className="theme-card w-full max-w-md rounded-[28px] border p-6">
             <h2 className="theme-text-primary text-[22px] font-semibold">
-              Delete Account Permanently
+              Delete Account
             </h2>
 
             <p className="theme-text-secondary mt-3 text-[15px] leading-6">
@@ -1048,7 +1170,7 @@ export default function SettingsDetailPage({ content }) {
                 disabled={isUpdatingBasicProfile}
                 className="flex-1 rounded-[14px] bg-red-500 px-4 py-3 font-semibold text-white disabled:opacity-60"
               >
-                {isUpdatingBasicProfile ? "Deleting..." : "Delete Permanently"}
+                {isUpdatingBasicProfile ? "Deleting..." : "Delete"}
               </button>
             </div>
           </div>

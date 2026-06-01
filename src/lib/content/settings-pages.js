@@ -153,16 +153,16 @@ export const SETTINGS_PAGE_CONTENT = {
         title: "Plan Upgrade Gets You:",
         items: [
           {
-            title: "Longer conversations",
+            title: "Longer talk time",
             description:
               "Keep more context available while you unpack harder moments.",
           },
           {
-            title: "Priority responses",
+            title: "Advanced techniques",
             description: "Move active members into a faster reply lane.",
           },
           {
-            title: "Guided reflections",
+            title: "Practical strategies",
             description: "Unlock deeper prompts and calmer support flows.",
           },
         ],
@@ -370,7 +370,7 @@ export const SETTINGS_PAGE_CONTENT = {
           {
             question: "Can Santum AI connect me with a human therapist?",
             answer:
-              "Yes. Where appropriate, users may be guided to professional counselling and therapy services available through the broader Santum platform.",
+              "Yes. Where appropriate, you may be guided to professional counselling and therapy services available through the broader Santum platform.",
           },
           {
             question: "Who should use Santum AI?",
@@ -390,7 +390,7 @@ export const SETTINGS_PAGE_CONTENT = {
           {
             question: "Is my conversation private?",
             answer:
-              "Santum AI is designed with privacy and confidentiality in mind. Conversations are handled securely, and users are not required to share highly sensitive personal, financial, or medical information.",
+              "Santum AI is designed with privacy and confidentiality in mind. Conversations are handled securely, and you are not required to share highly sensitive personal, financial, or medical information.",
           },
           {
             question: "How do mood check-ins affect replies?",
@@ -405,12 +405,12 @@ export const SETTINGS_PAGE_CONTENT = {
           {
             question: "How do I pay for my plan?",
             answer:
-              "You can pay for your plan from the billing section of your account, where you can manage payment methods and subscription details.",
+              "Second and third tier plans are purchased on monthly subscription basis. These can be paid for by a credit card, cheque card or a debit card, and are auto-renewed at the beginning of each billing cycle.",
           },
           {
             question: "Is Santum AI available all the time?",
             answer:
-              "Yes. Santum AI is available 24 hours a day, 7 days a week, allowing users to access support whenever they need it.",
+              "Yes. Santum AI is available 24 hours a day, 7 days a week, allowing you to access support whenever you need it.",
           },
           {
             question: "Is monthly talk time limited on Santum AI plans?",
@@ -438,9 +438,9 @@ export const SETTINGS_PAGE_CONTENT = {
               "No. To maintain privacy, safety, compliance, and data confidentiality standards, chat session history cannot be downloaded, exported, or shared outside the Santum AI platform. Users can refer to previous conversations through the Chat History feature available within the platform.",
           },
           {
-            question: "Can I cancel or pause my account at any time?",
+            question: "Can I delete or pause my account at any time?",
             answer:
-              "Yes. You can cancel or pause your account whenever you need, and manage your subscription settings at any time.",
+              " Yes. When you achieve your goals, you can simply delete your account. Alternatively, you can opt to 'Pause' the account, in which case you will be able to resume using the same access details.",
           },
           // {
           //   question: "Can I chat with Sai without buying a plan?",
@@ -994,15 +994,16 @@ export const SETTINGS_PAGE_CONTENT = {
         key: "feedback",
         title: "What should we improve?",
         placeholder:
-          "Tell us what felt helpful, what felt confusing, or what would make Sai feel safer and more human...",
+          "Tell us what suggestions, concerns or issues you are having...",
         submitLabel: "Submit Feedback",
         submitToast: "Feedback captured in this session.",
         categories: [
           "Talk Time",
           "Design",
           "Speed",
+          "Plan",
           "Billing",
-          "Trust & Safety",
+          "Privacy",
           "Chat Quality",
         ],
       },
@@ -1030,8 +1031,8 @@ export const SETTINGS_PAGE_CONTENT = {
     ],
     footerActions: [
       {
-        label: "Contact Team",
-        href: "/settings/contact-us",
+        label: "Back Home",
+        href: "/home",
         variant: "secondary",
       },
     ],
@@ -1047,27 +1048,27 @@ export const SETTINGS_PAGE_CONTENT = {
     sections: [
       {
         type: "list",
-        title: "Support Channels",
+        title: "Support",
         items: [
           {
-            title: "In-app support",
+            title: "In-app feedback",
             description:
-              "The fastest path for account access, billing, and app-navigation issues.",
-            meta: "Fastest",
-            badge: "Recommended",
+              "The best path for account enquiries, billing, app-navigation, reply quality and emotional safety matters.",
+            // meta: "Fastest",
+            // badge: "Recommended",
           },
-          {
-            title: "Care experience review",
-            description:
-              "Use this for feedback on tone, reply quality, or how emotionally safe the app feels.",
-            meta: "Thoughtful follow-up",
-          },
-          {
-            title: "Membership and billing help",
-            description:
-              "Best for plan questions, credit issues, or checkout follow-up.",
-            meta: "Business hours",
-          },
+          // {
+          //   title: "Care experience review",
+          //   description:
+          //     "Use this for feedback on tone, reply quality, or how emotionally safe the app feels.",
+          //   meta: "Thoughtful follow-up",
+          // },
+          // {
+          //   title: "Membership and billing help",
+          //   description:
+          //     "Best for plan questions, credit issues, or checkout follow-up.",
+          //   meta: "Business hours",
+          // },
         ],
       },
     ],
