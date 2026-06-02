@@ -81,109 +81,116 @@ export default function SignUpPage() {
 
         {/* ── White card ── */}
         <div className="theme-auth-card relative z-10 mx-3 mb-9 -mt-26 w-auto rounded-[28px] px-6 pb-9 pt-8 transition-colors duration-300 sm:mx-5 sm:px-7 md:mx-8">
-          <div className="text-center mb-6">
-            <h2 className="theme-text-primary mb-1 text-center text-[24px] font-semibold leading-9">
-              Sign up
-            </h2>
-            <p className="theme-text-primary text-[20px] font-semibold ">
-              and try it for free
-            </p>
-          </div>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit();
+            }}
+          >
+            <div className="text-center mb-6">
+              <h2 className="theme-text-primary mb-1 text-center text-[24px] font-semibold leading-9">
+                Sign up
+              </h2>
+              <p className="theme-text-primary text-[20px] font-semibold ">
+                and try it for free
+              </p>
+            </div>
 
-          <div className="theme-input-group mb-4 flex items-center gap-3 rounded-[14px] px-4 py-3.5">
-            <Mail className="theme-text-secondary" size={22} />
-            <input
-              type="email"
-              inputMode="email"
-              autoComplete="email"
-              placeholder="Your Email Address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="theme-input-field min-w-0 flex-1 text-[16px] outline-none"
-            />
-          </div>
+            <div className="theme-input-group mb-4 flex items-center gap-3 rounded-[14px] px-4 py-3.5">
+              <Mail className="theme-text-secondary" size={22} />
+              <input
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                placeholder="Your Email Address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="theme-input-field min-w-0 flex-1 text-[16px] outline-none"
+              />
+            </div>
 
-          <div className="theme-input-group mb-4 flex items-center gap-3 rounded-[14px] px-4 py-3.5">
-            <LockIcon className="theme-text-secondary" size={22} />
+            <div className="theme-input-group mb-4 flex items-center gap-3 rounded-[14px] px-4 py-3.5">
+              <LockIcon className="theme-text-secondary" size={22} />
 
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Your Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="theme-input-field min-w-0 flex-1 text-[16px] outline-none"
-            />
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Your Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="theme-input-field min-w-0 flex-1 text-[16px] outline-none"
+              />
 
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="theme-text-secondary shrink-0 p-1"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+
+            {/* confirm password */}
+            <div className="theme-input-group mb-4 flex items-center gap-3 rounded-[14px] px-4 py-3.5">
+              <LockIcon className="theme-text-secondary" size={22} />
+
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="theme-input-field min-w-0 flex-1 text-[16px] outline-none"
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="theme-text-secondary shrink-0 p-1"
+                aria-label={
+                  showConfirmPassword
+                    ? "Hide confirm password"
+                    : "Show confirm password"
+                }
+              >
+                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+
+            <div className="mb-4 flex items-center gap-3">
+              <input
+                type="checkbox"
+                id="ageCheck"
+                checked={isAdult}
+                onChange={(e) => setIsAdult(e.target.checked)}
+                className="w-5 h-5 cursor-pointer"
+              />
+              <label htmlFor="ageCheck" className="text-sm cursor-pointer">
+                I am over 18 years old
+              </label>
+            </div>
+
+            {/* Sign Up button */}
             <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="theme-text-secondary shrink-0 p-1"
-              aria-label={showPassword ? "Hide password" : "Show password"}
-            >
-              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-            </button>
-          </div>
-
-          {/* confirm password */}
-          <div className="theme-input-group mb-4 flex items-center gap-3 rounded-[14px] px-4 py-3.5">
-            <LockIcon className="theme-text-secondary" size={22} />
-
-            <input
-              type={showConfirmPassword ? "text" : "password"}
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="theme-input-field min-w-0 flex-1 text-[16px] outline-none"
-            />
-
-            <button
-              type="button"
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="theme-text-secondary shrink-0 p-1"
-              aria-label={
-                showConfirmPassword
-                  ? "Hide confirm password"
-                  : "Show confirm password"
-              }
-            >
-              {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-            </button>
-          </div>
-
-          <div className="mb-4 flex items-center gap-3">
-            <input
-              type="checkbox"
-              id="ageCheck"
-              checked={isAdult}
-              onChange={(e) => setIsAdult(e.target.checked)}
-              className="w-5 h-5 cursor-pointer"
-            />
-            <label htmlFor="ageCheck" className="text-sm cursor-pointer">
-              I am over 18 years old
-            </label>
-          </div>
-
-          {/* Sign Up button */}
-          <button
-            disabled={isLoading || !isAdult}
-            onClick={() => handleSubmit()}
-            className={`w-full py-4 rounded-[14px] flex items-center justify-center text-[18px] font-semibold tracking-wide transition-all duration-200
+              disabled={isLoading || !isAdult}
+              type="submit"
+              className={`w-full py-4 rounded-[14px] flex items-center justify-center text-[18px] font-semibold tracking-wide transition-all duration-200
               ${
                 isAdult
                   ? "bg-[#00D061] text-white hover:bg-[#00b856] hover:shadow-[0_6px_20px_rgba(0,208,97,0.40)] hover:-translate-y-px"
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
               }
             `}
-          >
-            {isLoading ? (
-              <div className="flex items-center gap-3">
-                <div className="w-5 h-5 border-[3px] border-white border-t-transparent rounded-full animate-spin" />
-                <span>Signing up...</span>
-              </div>
-            ) : (
-              "Sign up"
-            )}
-          </button>
+            >
+              {isLoading ? (
+                <div className="flex items-center gap-3">
+                  <div className="w-5 h-5 border-[3px] border-white border-t-transparent rounded-full animate-spin" />
+                  <span>Signing up...</span>
+                </div>
+              ) : (
+                "Sign up"
+              )}
+            </button>
+          </form>
         </div>
       </div>
     </div>

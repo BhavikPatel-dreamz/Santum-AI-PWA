@@ -174,35 +174,48 @@ function formatUpgradePlanLabel(value) {
   return "View plans";
 }
 
-function setUpgradePlanItems(nextPlan, items) {
+ function setUpgradePlanItems(nextPlan, items) {
   const nextPlanKey = getUpgradePlanKey(nextPlan);
   const itemsMap = {
-    "Longer talk time":
-      nextPlanKey === "standard"
-        ? "Enjoy 8-10 hours of talk time, refreshed at the start of each monthly billing cycle."
-        : nextPlanKey === "premium"
-          ? "Enjoy 18-20 hours of talk time, refreshed at the start of each monthly billing cycle."
-          : "",
-
-    "Advanced techniques":
-      nextPlanKey === "standard"
-        ? "Emotional Context. Understand emotional context behind thoughts and behaviours that can unlock meaningful insight and personal growth."
-        : nextPlanKey === "premium"
-          ? "Empower yourself with deeper self-understanding and stronger coping strategies through evidence-based therapeutic support."
-          : "",
-
-    "Practical strategies":
-      nextPlanKey === "standard"
-        ? "Complex Reasoning. Develop deeper understanding and discover practical pathways to emotional relief and positive change."
-        : nextPlanKey === "premium"
-          ? "Strengthen your mindset, focus, and emotional regulation through cognitive training and behavioral management."
-          : "",
+    "Longer talk time": {
+      standard: {
+        title: "Longer talk time",
+        description:
+          "Enjoy 8-10 hours of talk time, refreshed at the start of each monthly billing cycle.",
+      },
+      premium: {
+        title: "Longer talk time",
+        description:
+          "Enjoy 18-20 hours of talk time, refreshed at the start of each monthly billing cycle.",
+      },
+    },
+    "Advanced techniques": {
+      standard: {
+        title: "Emotional Context",
+        description:
+          "Understand emotional context behind thoughts and behaviours that can unlock meaningful insight and personal growth.",
+      },
+      premium: {
+        title: "Advanced techniques",
+        description:
+          "Empower yourself with deeper self-understanding and stronger coping strategies through evidence-based therapeutic support.",
+      },
+    },
+    "Practical strategies": {
+      standard: {
+        title: "Complex Reasoning",
+        description:
+          "Develop deeper understanding and discover practical pathways to emotional relief and positive change.",
+      },
+      premium: {
+        title: "Practical strategies",
+        description:
+          "Strengthen your mindset, focus, and emotional regulation through cognitive training and behavioral management.",
+      },
+    },
   };
 
-  return items.map((item) => ({
-    ...item,
-    description: itemsMap[item.title] || item.description || "",
-  }));
+  return items.map((item) => itemsMap[item.title][nextPlanKey]);
 }
 
 function buildPlanUpgradeGetYouItems(subscriptionStatus, sections) {
@@ -283,7 +296,7 @@ export default function SettingsDetailPage({ content }) {
     index === 0 && subscriptionStatus?.next_plan_name
       ? {
           ...action,
-          label: `Upgarde to ${formatUpgradePlanLabel(subscriptionStatus.next_plan_name)}`,
+          label: subscriptionStatus.next_plan_name,
         }
       : action,
   );
@@ -434,7 +447,7 @@ export default function SettingsDetailPage({ content }) {
           ? buildSubscriptionFeatureItems(subscriptionStatus)
           : section.items;
       const title = isSubscriptionFeatureSection
-        ? "Active Plan Features"
+        ? "Unique Plan Features"
         : section.title;
 
       return (
@@ -450,7 +463,7 @@ export default function SettingsDetailPage({ content }) {
                   Loading plan features
                 </p>
                 <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6">
-                  Fetching your active plan from Santum.
+                  Fetching your plan from Santum.
                 </p>
               </div>
             ) : null}
@@ -460,11 +473,11 @@ export default function SettingsDetailPage({ content }) {
             !isSubscriptionStatusBusy ? (
               <div className="theme-card rounded-[22px] border px-4 py-4">
                 <p className="theme-text-primary text-[16px] font-semibold leading-6">
-                  No active plan features available yet.
+                  No plan features available yet.
                 </p>
                 <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6">
                   Features will appear here once the available plans API returns
-                  them for your active plan.
+                  them for your plan.
                 </p>
               </div>
             ) : null}

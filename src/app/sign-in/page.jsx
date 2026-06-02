@@ -40,80 +40,87 @@ export default function SignInPage() {
         <GreenSection />
         {/* ── White card ── */}
         <div className="theme-auth-card relative z-10 mx-3 mb-9 -mt-26 w-auto rounded-[28px] px-6 pb-9 pt-8 transition-colors duration-300 sm:mx-5 sm:px-7 md:mx-8">
-          <h2 className="theme-text-primary mb-6 text-center text-[24px] font-semibold leading-9">
-            Sign in
-          </h2>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit();
+            }}
+          >
+            <h2 className="theme-text-primary mb-6 text-center text-[24px] font-semibold leading-9">
+              Sign in
+            </h2>
 
-          <div className="theme-input-group mb-4 flex items-center gap-3 rounded-[14px] px-4 py-3.5">
-            <Mail className="theme-text-secondary" size={22} />
-            <input
-              type="email"
-              inputMode="email"
-              autoComplete="email"
-              placeholder="Your Email Address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="theme-input-field min-w-0 flex-1 text-[16px] outline-none"
-            />
-          </div>
+            <div className="theme-input-group mb-4 flex items-center gap-3 rounded-[14px] px-4 py-3.5">
+              <Mail className="theme-text-secondary" size={22} />
+              <input
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                placeholder="Your Email Address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="theme-input-field min-w-0 flex-1 text-[16px] outline-none"
+              />
+            </div>
 
-          <div className="theme-input-group mb-4 flex items-center gap-3 rounded-[14px] px-4 py-3.5">
-            <LockIcon className="theme-text-secondary" size={22} />
+            <div className="theme-input-group mb-4 flex items-center gap-3 rounded-[14px] px-4 py-3.5">
+              <LockIcon className="theme-text-secondary" size={22} />
 
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Your Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="theme-input-field min-w-0 flex-1 text-[16px] outline-none"
-            />
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Your Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="theme-input-field min-w-0 flex-1 text-[16px] outline-none"
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="theme-text-secondary shrink-0 p-1"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+
+            <div className="mb-5 flex justify-end">
+              <button
+                type="button"
+                onClick={() => router.push("/forgot-password")}
+                className="theme-text-primary font-satoshi text-[14px] font-semibold"
+              >
+                Forgot password?
+              </button>
+            </div>
+
+            {/* Sign In button */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-4 rounded-[14px] flex items-center justify-center bg-[#00D061] text-white text-[18px] font-semibold tracking-wide hover:bg-[#00b856] hover:shadow-[0_6px_20px_rgba(0,208,97,0.40)] hover:-translate-y-px active:translate-y-0 transition-all duration-200 mb-6"
+            >
+              {isLoading ? (
+                <div className="flex items-center gap-3">
+                  <div className="w-5 h-5 border-[3px] border-white border-t-transparent rounded-full animate-spin" />
+                  <span>Signing in...</span>
+                </div>
+              ) : (
+                "Sign in"
+              )}
+            </button>
+            </form>
+            <p className="theme-text-primary font-semibold font-satoshi px-4 text-center text-[14px]">
+              Don&apos;t have an account?
+            </p>
 
             <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="theme-text-secondary shrink-0 p-1"
-              aria-label={showPassword ? "Hide password" : "Show password"}
+              disabled={isLoading}
+              onClick={() => router.push("/sign-up")}
+              className="w-full py-4 rounded-[14px] flex items-center justify-center bg-orange-400 text-white text-[18px] font-semibold tracking-wide hover:bg-orange-500 hover:shadow-[0_6px_20px_rgba(0,208,97,0.40)] hover:-translate-y-px active:translate-y-0 transition-all duration-200"
             >
-              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              Get Free Trial
             </button>
-          </div>
-
-          <div className="mb-5 flex justify-end">
-            <button
-              type="button"
-              onClick={() => router.push("/forgot-password")}
-              className="theme-text-primary font-satoshi text-[14px] font-semibold"
-            >
-              Forgot password?
-            </button>
-          </div>
-
-          {/* Sign In button */}
-          <button
-            disabled={isLoading}
-            onClick={handleSubmit}
-            className="w-full py-4 rounded-[14px] flex items-center justify-center bg-[#00D061] text-white text-[18px] font-semibold tracking-wide hover:bg-[#00b856] hover:shadow-[0_6px_20px_rgba(0,208,97,0.40)] hover:-translate-y-px active:translate-y-0 transition-all duration-200 mb-6"
-          >
-            {isLoading ? (
-              <div className="flex items-center gap-3">
-                <div className="w-5 h-5 border-[3px] border-white border-t-transparent rounded-full animate-spin" />
-                <span>Signing in...</span>
-              </div>
-            ) : (
-              "Sign in"
-            )}
-          </button>
-          <p className="theme-text-primary font-semibold font-satoshi px-4 text-center text-[14px]">
-            Don&apos;t have an account?
-          </p>
-
-          <button
-            disabled={isLoading}
-            onClick={() => router.push("/sign-up")}
-            className="w-full py-4 rounded-[14px] flex items-center justify-center bg-orange-400 text-white text-[18px] font-semibold tracking-wide hover:bg-orange-500 hover:shadow-[0_6px_20px_rgba(0,208,97,0.40)] hover:-translate-y-px active:translate-y-0 transition-all duration-200"
-          >
-            Get Free Trial
-          </button>
         </div>
       </div>
     </div>

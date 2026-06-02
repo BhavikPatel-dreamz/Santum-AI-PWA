@@ -2,13 +2,10 @@
 
 import StepPageShell from "@/components/app/StepPageShell";
 import { getClientErrorMessage } from "@/lib/api/error";
-import {
-  useForgetPasswordMutation,
-  useResetPasswordMutation,
-} from "@/lib/store";
+import { useResetPasswordMutation } from "@/lib/store";
 import { Eye, EyeOff, Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import {
   PASSWORD_RESET_EMAIL_STORAGE_KEY,
@@ -48,23 +45,14 @@ function PasswordField({ id, label, value, onChange, show, onToggle }) {
 
 export default function CreateNewPasswordPage() {
   const router = useRouter();
-
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [resendTimer, setResendTimer] = useState(60);
-
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
-  const [otp, setOtp] = useState(["", "", "", ""]);
-
   const [resetOtp, setResetOtp] = useState("");
-  const inputRefs = useRef([]);
   const [resetPassword, { isLoading: isResettingPassword }] =
     useResetPasswordMutation();
-
-  const [forgetpassword, { isLoading: isResendingOtp }] =
-    useForgetPasswordMutation();
 
   const isComplete = password.trim() !== "" && confirmPassword.trim() !== "";
   const isMatch = password === confirmPassword;
@@ -73,6 +61,7 @@ export default function CreateNewPasswordPage() {
     const timeoutId = setTimeout(() => {
       const email =
         sessionStorage.getItem(PASSWORD_RESET_EMAIL_STORAGE_KEY) || "";
+      const otp = sessionStorage.getItem(PASSWORD_RESET_OTP_STORAGE_KEY) || "";
 
       if (!email || !otp) {
         router.replace("/forgot-password");
@@ -80,22 +69,11 @@ export default function CreateNewPasswordPage() {
       }
 
       setResetEmail(email);
+      setResetOtp(otp);
     }, 0);
 
     return () => clearTimeout(timeoutId);
   }, [router]);
-
-  useEffect(() => {
-    if (resendTimer === 0) {
-      return;
-    }
-
-    const timeoutId = setTimeout(() => {
-      setResendTimer((currentValue) => currentValue - 1);
-    }, 1000);
-
-    return () => clearTimeout(timeoutId);
-  }, [resendTimer]);
 
   const handleChangePassword = async () => {
     if (!isComplete || !isMatch || isResettingPassword) {
@@ -105,7 +83,7 @@ export default function CreateNewPasswordPage() {
     try {
       await resetPassword({
         email: resetEmail,
-        otp: otp.join(""),
+        otp: resetOtp,
         password,
       }).unwrap();
 
@@ -118,119 +96,12 @@ export default function CreateNewPasswordPage() {
     }
   };
 
-  const handlePaste = (event) => {
-    const pastedValue = event.clipboardData
-      .getData("text")
-      .replace(/\D/g, "")
-      .slice(0, otp.length);
-
-    if (!pastedValue) {
-      return;
-    }
-
-    const nextOtp = Array(otp.length).fill("");
-    pastedValue.split("").forEach((character, index) => {
-      nextOtp[index] = character;
-    });
-
-    setOtp(nextOtp);
-    inputRefs.current[Math.min(pastedValue.length, otp.length - 1)]?.focus();
-    event.preventDefault();
-  };
-
-  const handleKeyDown = (index, event) => {
-    if (event.key === "Backspace" && !otp[index] && index > 0) {
-      inputRefs.current[index - 1]?.focus();
-    }
-  };
-
-  const handleChange = (index, value) => {
-    if (!/^\d?$/.test(value)) {
-      return;
-    }
-
-    const nextOtp = [...otp];
-    nextOtp[index] = value;
-    setOtp(nextOtp);
-
-    if (value && index < otp.length - 1) {
-      inputRefs.current[index + 1]?.focus();
-    }
-  };
-  const isOTPComplete = otp.every((digit) => digit !== "");
-
-  const handleResendOtp = async () => {
-    if (!resetEmail || resendTimer > 0 || isResendingOtp) {
-      return;
-    }
-
-    try {
-      await forgetpassword({ email: resetEmail }).unwrap();
-      setOtp(["", "", "", ""]);
-      setResendTimer(60);
-      toast.success("OTP sent again.");
-      inputRefs.current[0]?.focus();
-    } catch (error) {
-      toast.error(getClientErrorMessage(error, "Unable to resend OTP"));
-    }
-  };
-
   return (
     <StepPageShell
       title="Create New Password"
       contentClassName="overflow-y-auto"
     >
-      <p className="theme-text-secondary mb-6 text-center font-satoshi text-[18px] leading-6">
-        4-digit OTP was sent to{" "}
-        <span className="theme-text-primary font-semibold text-[14px]">
-          {resetEmail}
-        </span>
-      </p>
-
-      <div
-        className="mb-6 flex items-center justify-center gap-[7px]"
-        onPaste={handlePaste}
-      >
-        {otp.map((digit, index) => (
-          <input
-            key={index}
-            ref={(element) => {
-              inputRefs.current[index] = element;
-            }}
-            type="tel"
-            inputMode="numeric"
-            maxLength={1}
-            value={digit}
-            onChange={(event) => handleChange(index, event.target.value)}
-            onKeyDown={(event) => handleKeyDown(index, event)}
-            aria-label={`OTP digit ${index + 1}`}
-            className={`theme-otp-input h-[48px] w-[48px] rounded-full border text-center text-[20px] font-semibold outline-none transition-all duration-200 ${
-              digit ? "theme-otp-input-filled" : "theme-otp-input-empty"
-            }`}
-          />
-        ))}
-      </div>
-
-      <p className="theme-text-secondary text-center font-satoshi text-[15px] leading-6">
-        {resendTimer > 0 ? (
-          <>
-            Code expires in{" "}
-            <span className="theme-text-primary font-semibold">
-              {resendTimer}s
-            </span>
-          </>
-        ) : (
-          <button
-            type="button"
-            onClick={handleResendOtp}
-            disabled={isResendingOtp}
-            className="theme-text-primary font-semibold"
-          >
-            {isResendingOtp ? "Sending..." : "Resend code"}
-          </button>
-        )}
-      </p>
-      <div className="space-y-4 py-4">
+      <div className="space-y-4">
         <PasswordField
           id="new-password"
           label="New password"
@@ -260,9 +131,7 @@ export default function CreateNewPasswordPage() {
       <button
         type="button"
         onClick={handleChangePassword}
-        disabled={
-          !isComplete || !isMatch || isResettingPassword || !isOTPComplete
-        }
+        disabled={!isComplete || !isMatch || isResettingPassword}
         className={`mt-auto rounded-[14px] px-5 py-4 text-[18px] font-semibold text-white transition-all duration-200 ${
           isComplete && isMatch && !isResettingPassword
             ? "bg-[#00D061] shadow-[0_10px_24px_rgba(0,208,97,0.22)]"

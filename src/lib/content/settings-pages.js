@@ -174,7 +174,7 @@ export const SETTINGS_PAGE_CONTENT = {
         href: "/plus-subscription",
         variant: "primary",
       },
-      { label: "Home", href: "/home", variant: "secondary" },
+      { label: "Back Home", href: "/home", variant: "secondary" },
     ],
   },
   security: {
