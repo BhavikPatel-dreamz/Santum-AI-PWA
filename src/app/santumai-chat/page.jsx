@@ -185,7 +185,7 @@ export default function SantumAIChatPage() {
       ? subscriptionStatus.active_plan_level
       : DEFAULT_PLAN_LEVEL;
   const creditBalance = extractCreditBalance(balanceResponse);
-  const usedBalance = MAX_CREDITS - creditBalance;
+  const usedBalance = Math.max(0, MAX_CREDITS - creditBalance);
   const creditPercentage =
     usedBalance !== null ? Math.min((usedBalance / MAX_CREDITS) * 100, 100) : 0;
   const isCreditDepleted = creditBalance !== null && creditBalance <= 0;
