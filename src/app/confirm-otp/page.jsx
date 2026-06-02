@@ -16,6 +16,7 @@ export default function ConfirmOtpPage() {
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [resendTimer, setResendTimer] = useState(60);
   const inputRefs = useRef([]);
+  const [loading, setLoading] = useState(false);
   const [storedEmail, setStoredEmail] = useState("");
   const [forgetpassword, { isLoading: isResendingOtp }] =
     useForgetPasswordMutation();
@@ -106,19 +107,28 @@ export default function ConfirmOtpPage() {
   };
 
   const handleVerifyOtp = () => {
-    if (!isComplete) {
-      return;
-    }
+    setLoading(true);
 
-    sessionStorage.setItem(PASSWORD_RESET_OTP_STORAGE_KEY, otp.join(""));
-    router.replace("/new-password");
+    const storedOTP = sessionStorage.getItem(PASSWORD_RESET_OTP_STORAGE_KEY);
+    const isMatched = storedOTP === otp.join("");
+    if (isMatched) {
+      toast.success("OTP verified successfully");
+      router.replace("/new-password");
+      setLoading(false);
+    } else {
+      toast.error("Invalid OTP");
+      setLoading(false);
+    }
+    setLoading(false);
   };
 
   return (
     <StepPageShell title="Confirm OTP" contentClassName="overflow-y-auto">
       <p className="theme-text-secondary mb-6 text-center font-satoshi text-[18px] leading-6">
         4-digit OTP was sent to{" "}
-        <span className="theme-text-primary font-semibold text-[14px]">{storedEmail}</span>
+        <span className="theme-text-primary font-semibold text-[14px]">
+          {storedEmail}
+        </span>
       </p>
 
       <div
@@ -167,15 +177,15 @@ export default function ConfirmOtpPage() {
 
       <button
         type="button"
-        disabled={!isComplete}
+        disabled={!isComplete || loading}
         onClick={handleVerifyOtp}
         className={`mt-auto rounded-[14px] px-5 py-4 text-[18px] font-semibold text-white transition-all duration-200 ${
-          isComplete
+          isComplete || loading
             ? "bg-[#00D061] shadow-[0_10px_24px_rgba(0,208,97,0.22)]"
             : "bg-[#A8F0CB]"
         }`}
       >
-        Verify
+        {loading ? "Verifying..." : "Verify"}
       </button>
     </StepPageShell>
   );

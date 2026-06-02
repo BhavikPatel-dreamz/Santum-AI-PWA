@@ -4,7 +4,10 @@ import StepPageShell from "@/components/app/StepPageShell";
 import { Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { PASSWORD_RESET_EMAIL_STORAGE_KEY } from "../../lib/utills/phone";
+import {
+  PASSWORD_RESET_EMAIL_STORAGE_KEY,
+  PASSWORD_RESET_OTP_STORAGE_KEY,
+} from "../../lib/utills/phone";
 import toast from "react-hot-toast";
 import { useForgetPasswordMutation } from "@/lib/store";
 import { getClientErrorMessage } from "@/lib/api/error";
@@ -54,11 +57,12 @@ export default function ForgetPasswordPage() {
     }
 
     try {
-      await forgetpassword({
+      const res = await forgetpassword({
         email,
       }).unwrap();
       sessionStorage.setItem(PASSWORD_RESET_EMAIL_STORAGE_KEY, email);
       setStoredEmail(email);
+      sessionStorage.setItem(PASSWORD_RESET_OTP_STORAGE_KEY, res.otp);
       toast.success("OTP sent to your email.");
       router.replace("/confirm-otp");
     } catch (error) {

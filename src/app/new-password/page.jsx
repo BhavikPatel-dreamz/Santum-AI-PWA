@@ -11,6 +11,7 @@ import {
   PASSWORD_RESET_EMAIL_STORAGE_KEY,
   PASSWORD_RESET_OTP_STORAGE_KEY,
 } from "../../lib/utills/phone";
+import { validatePassword } from "@/lib/utills/profile";
 
 function PasswordField({ id, label, value, onChange, show, onToggle }) {
   return (
@@ -79,6 +80,9 @@ export default function CreateNewPasswordPage() {
     if (!isComplete || !isMatch || isResettingPassword) {
       return;
     }
+
+    const passwordError = validatePassword(password);
+    if (passwordError) return toast.error(passwordError);
 
     try {
       await resetPassword({
