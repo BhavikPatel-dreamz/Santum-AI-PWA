@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import { createErrorResponse } from "@/lib/api/server";
 import { MoodCheckIn } from "@/models/mood-checkin.model";
-import { notifyMoodCheckInReminder } from "@/lib/push/triggers";
 
 export const runtime = "nodejs";
 
@@ -77,9 +76,6 @@ export async function POST(req) {
         remindedCount: 0,
       });
     }
-
-    // Send reminder notifications
-    await notifyMoodCheckInReminder(usersToRemind);
 
     return NextResponse.json({
       success: true,

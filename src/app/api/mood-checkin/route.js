@@ -9,7 +9,6 @@ import {
   sanitizeMoodCheckInEntry,
   serializeMoodCheckIn,
 } from "@/lib/utills/mood";
-import { notifyMoodCheckInSuccess } from "@/lib/push/triggers";
 
 function createUnauthorizedResponse() {
   const response = NextResponse.json(
@@ -100,11 +99,6 @@ export async function POST(request) {
         setDefaultsOnInsert: true,
       },
     ).lean();
-
-    // Send notification to user for successful mood check-in
-    notifyMoodCheckInSuccess(userKey).catch(error =>
-      console.error("[mood-checkin] failed to send notification:", error)
-    );
     
     return NextResponse.json({
       success: true,

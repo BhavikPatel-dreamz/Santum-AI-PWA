@@ -385,6 +385,117 @@ export function getPlanTokenLimit(plan) {
   return Number.isFinite(tokenAmount) ? tokenAmount : null;
 }
 
+export function normalizeHighlightedFlag(value) {
+  if (typeof value === "boolean") {
+    return value;
+  }
+
+  if (typeof value === "number") {
+    return value === 1;
+  }
+
+  if (typeof value === "string") {
+    return ["1", "true", "yes"].includes(value.trim().toLowerCase());
+  }
+
+  return false;
+}
+
+export function getPlanKey(plan, index = 0) {
+  const planId = getPlanId(plan);
+
+  if (planId) {
+    return planId;
+  }
+
+  if (typeof plan?.slug === "string" && plan.slug.trim()) {
+    return plan.slug.trim();
+  }
+
+  if (typeof plan?.name === "string" && plan.name.trim()) {
+    return plan.name.trim().toLowerCase();
+  }
+
+  return `plan-${index}`;
+}
+
+export function enrichSubscriptionPlan(plan, index = 0) {
+  const hasHighlightedFlag =
+    plan && Object.prototype.hasOwnProperty.call(plan, "highlighted");
+  const planFeatures = getPlanFeatures(plan);
+
+  return {
+    ...plan,
+    name: getPlanName(plan) || `Plan ${index + 1}`,
+    description:
+      getPlanDescription(plan) ||
+      "Review your membership details, then continue to Santum.net to complete checkout.",
+    features: planFeatures,
+    highlighted: hasHighlightedFlag
+      ? normalizeHighlightedFlag(plan.highlighted)
+      : false,
+    billing_amount: plan?.billing_amount ?? getPlanPrice(plan),
+    tokens: getPlanTokenLimit(plan),
+  };
+}
+
+export function getPlanPurchaseHref(plan, source = "plans") {
+  if (!plan) {
+    return "/buy-plan";
+  }
+
+  const params = new URLSearchParams();
+  params.set("plan", getPlanKey(plan));
+
+  if (source) {
+    params.set("source", source);
+  }
+
+  return `/buy-plan?${params.toString()}`;
+}
+
+export function getPlanPurchaseHrefByLevel(level, source = "current-plan") {
+  const normalizedLevel = normalizeTextValue(level).toLowerCase();
+  const params = new URLSearchParams();
+
+  if (normalizedLevel) {
+    params.set("plan", normalizedLevel);
+  }
+
+  if (source) {
+    params.set("source", source);
+  }
+
+  const queryString = params.toString();
+  return queryString ? `/buy-plan?${queryString}` : "/buy-plan";
+}
+
+export function findPlanByPurchaseReference(plans, reference) {
+  const normalizedReference = normalizeTextValue(reference).toLowerCase();
+
+  if (!normalizedReference || !Array.isArray(plans) || plans.length === 0) {
+    return null;
+  }
+
+  return (
+    plans.find((plan, index) => {
+      const planKey = normalizeTextValue(getPlanKey(plan, index)).toLowerCase();
+      const planId = normalizeTextValue(getPlanId(plan)).toLowerCase();
+      const planName = normalizePlanName(getPlanName(plan));
+      const planSlug = normalizeTextValue(plan?.slug).toLowerCase();
+      const planLevel = normalizeTextValue(getPlanLevel(plan)).toLowerCase();
+
+      return [
+        planKey,
+        planId,
+        planName,
+        planSlug,
+        planLevel,
+      ].includes(normalizedReference);
+    }) ?? null
+  );
+}
+
 function getPlanDescription(plan) {
   for (const key of DESCRIPTION_KEYS) {
     const candidate = normalizeTextValue(plan?.[key]);

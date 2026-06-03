@@ -13,6 +13,7 @@ import {
   useUpdateBasicProfileMutation,
 } from "@/lib/store";
 import { PAUSED_ACCOUNT_MESSAGE, isProfilePaused } from "@/lib/utills/profile";
+import { getPlanPurchaseHrefByLevel } from "@/lib/utills/subscription";
 
 function SectionHeading({ title, description }) {
   if (!title && !description) {
@@ -160,20 +161,6 @@ function getUpgradePlanKey(value) {
   return "";
 }
 
-function formatUpgradePlanLabel(value) {
-  const planKey = getUpgradePlanKey(value);
-
-  if (planKey === "standard") {
-    return "Standard";
-  }
-
-  if (planKey === "premium") {
-    return "Premium";
-  }
-
-  return "View plans";
-}
-
  function setUpgradePlanItems(nextPlan, items) {
   const nextPlanKey = getUpgradePlanKey(nextPlan);
   const itemsMap = {
@@ -292,14 +279,21 @@ export default function SettingsDetailPage({ content }) {
   const listActions = hasUpgradePlan
     ? buildPlanUpgradeGetYouItems(subscriptionStatus, content.sections)
     : content.sections;
-  const footerActions = (content.footerActions ?? []).map((action, index) =>
-    index === 0 && subscriptionStatus?.next_plan_name
-      ? {
-          ...action,
-          label: subscriptionStatus.next_plan_name,
-        }
-      : action,
-  );
+  const footerActions = (content.footerActions ?? []).map((action, index) => {
+    if (index !== 0 || !subscriptionStatus?.next_plan_name) {
+      return action;
+    }
+
+    const upgradePlanKey = getUpgradePlanKey(subscriptionStatus.next_plan_name);
+
+    return {
+      ...action,
+      label: subscriptionStatus.next_plan_name,
+      href: upgradePlanKey
+        ? getPlanPurchaseHrefByLevel(upgradePlanKey)
+        : action.href,
+    };
+  });
 
   const [faqOpen, setFaqOpen] = useState(0);
   const [feedbackText, setFeedbackText] = useState("");

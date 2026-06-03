@@ -10,74 +10,17 @@ import {
 } from "@/lib/store";
 import { PAUSED_ACCOUNT_MESSAGE, isProfilePaused } from "@/lib/utills/profile";
 import {
+  enrichSubscriptionPlan,
   getPlanCheckoutUrl,
-  getPlanId,
-  getPlanName,
+  getPlanKey,
+  getPlanPurchaseHref,
   getPlanPrice,
-  getPlanTokenLimit,
   isSamePlan,
 } from "@/lib/utills/subscription";
 import { Check } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-
-function normalizeHighlightedFlag(value) {
-  if (typeof value === "boolean") {
-    return value;
-  }
-
-  if (typeof value === "number") {
-    return value === 1;
-  }
-
-  if (typeof value === "string") {
-    return ["1", "true", "yes"].includes(value.trim().toLowerCase());
-  }
-
-  return false;
-}
-
-function getPlanKey(plan, index) {
-  const planId = getPlanId(plan);
-
-  if (planId) {
-    return planId;
-  }
-
-  if (typeof plan?.slug === "string" && plan.slug.trim()) {
-    return plan.slug.trim();
-  }
-
-  if (typeof plan?.name === "string" && plan.name.trim()) {
-    return plan.name.trim().toLowerCase();
-  }
-
-  return `plan-${index}`;
-}
-
-function enrichPlan(plan, index) {
-  const hasHighlightedFlag =
-    plan && Object.prototype.hasOwnProperty.call(plan, "highlighted");
-  const planFeatures =
-    Array.isArray(plan?.features) && plan.features.length > 0
-      ? plan.features
-      : [];
-
-  return {
-    ...plan,
-    name: getPlanName(plan) || `Plan ${index + 1}`,
-    description:
-      plan?.description ||
-      "Complete checkout on Santum.net. Santum.net will send you back to your current plan when payment is done.",
-    features: planFeatures,
-    highlighted: hasHighlightedFlag
-      ? normalizeHighlightedFlag(plan.highlighted)
-      : false,
-    billing_amount: plan?.billing_amount ?? getPlanPrice(plan),
-    tokens: getPlanTokenLimit(plan),
-  };
-}
 
 function findPlanByReference(plans, reference) {
   if (!reference || !Array.isArray(plans) || plans.length === 0) {
@@ -149,7 +92,7 @@ export default function PlusSubscriptionPage() {
     });
 
   const hasLivePlans = Array.isArray(plansData) && plansData.length > 0;
-  const plans = hasLivePlans ? plansData.map(enrichPlan) : [];
+  const plans = hasLivePlans ? plansData.map(enrichSubscriptionPlan) : [];
 
   useEffect(() => {
     if (!plansError) {
@@ -200,7 +143,7 @@ export default function PlusSubscriptionPage() {
     selectedPlan && isSamePlan(selectedPlan, activePlanReference),
   );
 
-  function handleCheckoutRedirect() {
+  function handlePlanPurchase() {
     if (isAccountPaused) {
       toast.error(PAUSED_ACCOUNT_MESSAGE);
       return;
@@ -211,12 +154,7 @@ export default function PlusSubscriptionPage() {
       return;
     }
 
-    if (!selectedPlanCheckoutUrl) {
-      toast.error("Checkout URL is not available for this plan yet");
-      return;
-    }
-
-    window.location.assign(selectedPlanCheckoutUrl);
+    router.push(getPlanPurchaseHref(selectedPlan, "view-plans"));
   }
 
   function handlePrimaryAction() {
@@ -230,7 +168,7 @@ export default function PlusSubscriptionPage() {
       return;
     }
 
-    handleCheckoutRedirect();
+    handlePlanPurchase();
   }
 
   function roundIfGreaterThanHalf(num) {
@@ -244,29 +182,16 @@ export default function PlusSubscriptionPage() {
     }
   }
 
-  function handleSecondaryAction() {
-    if (isSelectedPlanActive) {
-      router.push("/settings/subscriptions");
-      return;
-    }
-
-    router.push("/home");
-  }
-
   const primaryButtonLabel =
     isSelectedPlanActive || selectedPlanKey == "17"
       ? "Start Chatting"
       : selectedPlan
         ? selectedPlanCheckoutUrl
-          ? "Continue On Santum.net"
+          ? "Continue"
           : "Checkout Unavailable"
         : isPlansLoading
           ? "Loading Plans..."
           : "Select A Plan";
-
-  const secondaryButtonLabel = isSelectedPlanActive
-    ? "My Current Plan"
-    : "Maybe Later";
 
   const isPrimaryButtonDisabled =
     !selectedPlan ||

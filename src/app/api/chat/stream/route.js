@@ -19,7 +19,6 @@ import {
   sanitizeMoodCheckInEntry,
 } from "../../../../lib/utills/mood";
 import {
-  notifyCreditUsed,
   notifyLowCredits,
   notifyOutOfCredits,
 } from "../../../../lib/push/triggers";
@@ -269,15 +268,7 @@ async function reduceCreditsAfterChat({ amount, message }) {
     if (Number.isFinite(remainingBalance)) {
       const userId = await resolveCurrentUserKey();
 
-      // Notify about credit usage (only for significant amounts)
-      if (amount >= 5) {
-        notifyCreditUsed(userId, amount, remainingBalance).catch((error) =>
-          console.error("[chat] failed to notify credit used:", error)
-        );
-      }
-
-      // Warn if credits are running low (< 10 remaining)
-      if (remainingBalance < 10 && remainingBalance > 0) {
+      if (remainingBalance < 100 && remainingBalance > 0) {
         notifyLowCredits(userId, remainingBalance).catch((error) =>
           console.error("[chat] failed to notify low credits:", error)
         );
