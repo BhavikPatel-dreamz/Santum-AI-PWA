@@ -179,7 +179,7 @@ export default function BuyPlanClient() {
 
   return (
     <StepPageShell
-      title="Buy Plan"
+      title="Purchase Plan"
       contentClassName="overflow-y-auto bg-[#f2f2f2]"
     >
       {!isBusy && plans.length === 0 ? (
@@ -214,8 +214,8 @@ export default function BuyPlanClient() {
             </p>
           </div>
 
-          <div
-            className={`w-full shrink-0 rounded-[18px] bg-orange-400 px-7 pb-4 pt-3 text-center min-[520px]:w-auto ${getPricePillClasses(
+          <div onClick={handleBuyNow}
+            className={`w-full shrink-0 hover:cursor-pointer rounded-[18px] bg-orange-400 px-7 pb-4 pt-3 text-center min-[520px]:w-auto ${getPricePillClasses(
               isDark,
             )}`}
           >
@@ -248,7 +248,7 @@ export default function BuyPlanClient() {
       </div> */}
 
       <div className="mt-5 theme-card rounded-[24px] border px-5 py-5">
-        <div className="flex items-start gap-3 sm:items-center">
+        {/* <div className="flex items-start gap-3 sm:items-center">
           <div className="theme-pill flex h-10 w-10 shrink-0 items-center justify-center rounded-full">
             <Sparkles size={18} />
           </div>
@@ -260,10 +260,10 @@ export default function BuyPlanClient() {
               Key benefits available with this membership.
             </p>
           </div>
-        </div>
+        </div> */}
 
         {featureList.length > 0 ? (
-          <div className="mt-5 space-y-3">
+          <div className=" space-y-3">
             {featureList.map((feature) => (
               <div key={feature} className="flex items-start gap-3">
                 <div className="theme-pill mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full">
@@ -294,13 +294,6 @@ export default function BuyPlanClient() {
       <div className="mt-auto grid grid-cols-1 gap-3 pt-6 sm:grid-cols-2">
         <button
           type="button"
-          onClick={() => router.push("/plus-subscription")}
-          className="theme-secondary-button w-full rounded-[14px] px-5 py-4 text-[16px] font-semibold"
-        >
-          Change Plan
-        </button>
-        <button
-          type="button"
           onClick={handleBuyNow}
           disabled={
             isBusy ||
@@ -309,8 +302,14 @@ export default function BuyPlanClient() {
           }
           className="inline-flex w-full items-center justify-center gap-2 rounded-[14px] bg-[#00D061] px-5 py-4 text-[16px] font-semibold text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)] disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {isSelectedPlanActive ? "Open Chat" : "Buy Now"}
-          <ArrowRight size={18} />
+          {isSelectedPlanActive ? "Open Chat" : "Buy This Plan"}
+        </button>
+        <button
+          type="button"
+          onClick={() => router.push("/plus-subscription")}
+          className="theme-secondary-button w-full rounded-[14px] px-5 py-4 text-[16px] font-semibold"
+        >
+          Change Plan
         </button>
       </div>
     </StepPageShell>

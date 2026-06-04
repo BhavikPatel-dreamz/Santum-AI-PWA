@@ -48,8 +48,8 @@ function getDefaultSelectedPlanKey(plans, preferredReference) {
 function getPlanCardClasses({ isDark, isSelected, isHighlighted }) {
   if (isSelected) {
     return isDark
-      ? "border-[#2FD97C] bg-[linear-gradient(135deg,#183324_0%,#112119_55%,#1a2a21_100%)] shadow-[0_16px_36px_rgba(0,0,0,0.28)]"
-      : "border-[#00D061] bg-[linear-gradient(135deg,#F3FFF8_0%,#FFFFFF_100%)] shadow-[0_16px_36px_rgba(0,208,97,0.12)]";
+      ? "border-[#2FD97C] bg-[#e4ffee]"
+      : "border-[#00D061] bg-[#e4ffee]";
   }
 
   if (isHighlighted) {
