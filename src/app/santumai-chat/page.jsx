@@ -739,11 +739,10 @@ export default function SantumAIChatPage() {
                   type="button"
                   onClick={() => sendMessage(prompt)}
                   disabled={areChatActionsDisabled}
-                  className={`rounded-full px-4 py-2 text-[13px] font-semibold transition-all ${
-                    areChatActionsDisabled
-                      ? "bg-[#EDF2EE] text-[#93A099]"
-                      : "bg-[#F4F7F5] text-[#0F0F0F] hover:bg-[#E8FFF1]"
-                  }`}
+                  className={`rounded-full px-4 py-2 text-[13px] font-semibold transition-all ${areChatActionsDisabled
+                    ? "bg-[#EDF2EE] text-[#93A099]"
+                    : "bg-[#F4F7F5] text-[#0F0F0F] hover:bg-[#E8FFF1]"
+                    }`}
                 >
                   {prompt}
                 </button>
@@ -775,16 +774,14 @@ export default function SantumAIChatPage() {
               messages.map((message) => (
                 <div
                   key={message.id}
-                  className={`flex ${
-                    message.role === "user" ? "justify-end" : "justify-start"
-                  }`}
+                  className={`flex ${message.role === "user" ? "justify-end" : "justify-start"
+                    }`}
                 >
                   <div
-                    className={`max-w-[94%] rounded-[22px] px-3 py-3 sm:max-w-[88%] sm:px-4 ${
-                      message.role === "user"
-                        ? "rounded-br-[8px] bg-[#00D061] text-white"
-                        : "bg-[#e4ffee] rounded-bl-[8px] text-[#0F0F0F] shadow-[0_10px_24px_rgba(15,15,15,0.05)]"
-                    }`}
+                    className={`max-w-[94%] rounded-[22px] px-3 py-3 sm:max-w-[88%] sm:px-4 ${message.role === "user"
+                      ? "rounded-br-[8px] bg-[#00D061] text-white"
+                      : "bg-[#e4ffee] rounded-bl-[8px] text-[#0F0F0F] shadow-[0_10px_24px_rgba(15,15,15,0.05)]"
+                      }`}
                   >
                     <div className="font-satoshi text-[15px] leading-6 whitespace-pre-wrap">
                       <ReactMarkdown
@@ -883,13 +880,13 @@ export default function SantumAIChatPage() {
                       strokeLinecap="round"
                       className="stroke-[#00D061] transition-all duration-500"
                       strokeDasharray={264}
-                      strokeDashoffset={264 - (264 * creditPercentage) / 100}
+                      strokeDashoffset={!creditPercentage ? 264 / 100 : 264 - (264 * creditPercentage) / 100}
                     />
                   </svg>
                   {/* this svg only show for free & standard */}
                   {/* Percentage Text */}
                   <span className="absolute text-[10px] font-semibold text-[#0F0F0F] sm:text-[11px]">
-                    {Math.round(creditPercentage)}%
+                    {!creditPercentage ? 100 : Math.round(creditPercentage)}%
                   </span>
                 </div>
 
@@ -898,11 +895,10 @@ export default function SantumAIChatPage() {
                   type="button"
                   onClick={() => sendMessage(composer)}
                   disabled={!composer.trim() || areChatActionsDisabled}
-                  className={`rounded-full px-5 py-3 text-[14px] font-semibold transition-all ${
-                    !composer.trim() || areChatActionsDisabled
-                      ? "bg-[#CBEEDB] text-white"
-                      : "bg-[#00D061] text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)]"
-                  }`}
+                  className={`rounded-full px-5 py-3 text-[14px] font-semibold transition-all ${!composer.trim() || areChatActionsDisabled
+                    ? "bg-[#CBEEDB] text-white"
+                    : "bg-[#00D061] text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)]"
+                    }`}
                 >
                   Send
                 </button>
