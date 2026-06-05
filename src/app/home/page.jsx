@@ -1040,7 +1040,7 @@ export default function HomeScreen() {
                 <h4 className="text-[#0F0F0F] text-[22px] font-semibold leading-[30px]">
                   Santum AI Plans
                 </h4>
-                <p className="mt-1 max-w-[320px] text-[14px] font-medium leading-6 text-[#555] lg:text-[15px]">
+                <p className="mt-1 text-[14px] font-medium leading-6 text-[#555] lg:text-[15px]">
                   Unlock advanced features for deeper support and faster replies
                 </p>
               </div>

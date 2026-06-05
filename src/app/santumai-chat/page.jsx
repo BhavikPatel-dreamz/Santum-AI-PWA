@@ -1,5 +1,6 @@
 "use client";
 
+import MoodCheckInCard from "@/components/app/MoodCheckInCard";
 import StepPageShell from "@/components/app/StepPageShell";
 import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
 import {
@@ -12,6 +13,7 @@ import {
   useGetMoodCheckInQuery,
   useGetProfileQuery,
   useGetSubscriptionStatusQuery,
+  useUpsertMoodCheckInMutation,
 } from "@/lib/store";
 import { extractCreditBalance, formatCreditAmount } from "@/lib/utills/credit";
 import { getTodayMoodDateKey } from "@/lib/utills/mood";
@@ -134,6 +136,8 @@ export default function SantumAIChatPage() {
     refetchOnFocus: true,
     refetchOnReconnect: true,
   });
+  const [upsertMoodCheckIn, { isLoading: isSavingMoodCheckIn }] =
+    useUpsertMoodCheckInMutation();
   const {
     data: balanceResponse,
     error: balanceError,
@@ -300,31 +304,31 @@ export default function SantumAIChatPage() {
     });
   });
 
-  useEffect(() => {
-    const QUICK_PROMPTS = {
-      free: [
-        "Help me slow down after a stressful day",
-        "I feel overwhelmed and need perspective",
-        "Guide me through a grounding exercise",
-      ],
+  // useEffect(() => {
+  //   const QUICK_PROMPTS = {
+  //     free: [
+  //       "Help me slow down after a stressful day",
+  //       "I feel overwhelmed and need perspective",
+  //       "Guide me through a grounding exercise",
+  //     ],
 
-      standard: [
-        "Help me identify patterns behind my stress",
-        "Create a personalized weekly self-care plan",
-        "Guide me through a deep reflection session",
-      ],
+  //     standard: [
+  //       "Help me identify patterns behind my stress",
+  //       "Create a personalized weekly self-care plan",
+  //       "Guide me through a deep reflection session",
+  //     ],
 
-      premium: [
-        "Act as my personal wellness coach and build a growth roadmap",
-        "Analyze my recent challenges and suggest actionable improvements",
-        "Design a customized mindfulness and productivity routine",
-      ],
-    };
+  //     premium: [
+  //       "Act as my personal wellness coach and build a growth roadmap",
+  //       "Analyze my recent challenges and suggest actionable improvements",
+  //       "Design a customized mindfulness and productivity routine",
+  //     ],
+  //   };
 
-    setQuickPrompts(
-      QUICK_PROMPTS[profile?.membership?.membership_title.toLowerCase()],
-    );
-  }, [profile]);
+  //   setQuickPrompts(
+  //     QUICK_PROMPTS[profile?.membership?.membership_title.toLowerCase()],
+  //   );
+  // }, [profile]);
 
   useEffect(() => {
     if (!profileError) {
@@ -465,6 +469,32 @@ export default function SantumAIChatPage() {
 
     toast.error(nextMessage);
     await loadCreditBalance({ silent: true });
+  };
+
+  const handleSaveMoodCheckIn = async (values) => {
+    if (isAccountPaused) {
+      toast.error(PAUSED_ACCOUNT_MESSAGE);
+      return;
+    }
+
+    try {
+      await upsertMoodCheckIn({
+        dateKey: todayMoodDateKey,
+        happiness: values.happiness,
+        stress: values.stress,
+        energy: values.energy,
+      }).unwrap();
+      toast.success("Mood check-in saved for today");
+    } catch (error) {
+      if (isUnauthorizedError(error)) {
+        router.replace("/sign-in");
+        return;
+      }
+
+      toast.error(
+        getClientErrorMessage(error, "Unable to save your mood check-in"),
+      );
+    }
   };
 
   const sendMessage = async (nextMessage) => {
@@ -670,9 +700,9 @@ export default function SantumAIChatPage() {
       contentClassName="h-[100dvh] overflow-hidden pb-4"
     >
       <div className="flex h-full min-h-0 flex-col">
-        {/* <div className="flex min-h-0 flex-col lg:overflow-y-auto lg:pr-1">
+        <div className="flex min-h-0 flex-col lg:overflow-y-auto lg:pr-1">
 
-          <div className="theme-card-muted mb-4 rounded-[22px] border px-4 py-4">
+          {/* <div className="theme-card-muted mb-4 rounded-[22px] border px-4 py-4">
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#7E8A83]">
@@ -694,7 +724,7 @@ export default function SantumAIChatPage() {
               SantumAI checks this balance before each support chat and stores
               each finished reply back into your conversation history.
             </p>
-          </div>
+          </div> */}
 
           {purchasePromptMessage || isCreditDepleted ? (
             <div className="mb-4 rounded-[24px] border border-[#FFD9B8] bg-[linear-gradient(135deg,#FFF5EA_0%,#FFFFFF_100%)] px-4 py-4 shadow-[0_12px_30px_rgba(15,15,15,0.04)]">
@@ -740,7 +770,7 @@ export default function SantumAIChatPage() {
           {!isMoodCheckInLoading && !hasTodayMoodCheckIn ? (
             <MoodCheckInCard
               key={`chat-mood-${todayMoodDateKey}`}
-              className="mb-4"
+              className=""
               entry={null}
               isSaving={isSavingMoodCheckIn}
               onSubmit={handleSaveMoodCheckIn}
@@ -749,10 +779,10 @@ export default function SantumAIChatPage() {
               showUpdateAction={false}
             />
           ) : null}
-        </div> */}
+        </div>
 
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[24px] bg-[#F8FFFB] p-3 sm:p-4 md:p-5">
-          {messages.length <= 1 && (
+          {/* {messages.length <= 1 && (
             <div className="mb-4 flex flex-wrap gap-2">
               {quickPrompts?.length > 0 ? (
                 quickPrompts?.map((prompt) => (
@@ -777,7 +807,7 @@ export default function SantumAIChatPage() {
                 </div>
               )}
             </div>
-          )}
+          )} */}
 
           <div className="mb-3 flex items-center justify-between gap-3">
             <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#7E8A83]">
