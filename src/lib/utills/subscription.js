@@ -165,6 +165,9 @@ const DESCRIPTION_KEYS = [
 
 const FEATURE_KEYS = ["features", "benefits", "included_features"];
 
+const PAID_PLAN_PURCHASE_BLOCK_MESSAGE =
+  "Cancel auto-pay for your current plan and wait until it ends before buying another plan.";
+
 function normalizeTextValue(value) {
   if (typeof value === "string") {
     const trimmedValue = value.trim();
@@ -219,6 +222,15 @@ function normalizeStatusToken(value) {
   return normalizeTextValue(value)
     .toLowerCase()
     .replace(/[\s-]+/g, "_");
+}
+
+function normalizeDateValue(value) {
+  if (!value) {
+    return null;
+  }
+
+  const date = value instanceof Date ? value : new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
 }
 
 function dedupe(values) {
@@ -581,6 +593,32 @@ export function getPlanLevel(plan) {
   }
 
   return getPlanPrice(plan) > 0 ? "premium" : "free";
+}
+
+export function getPlanPurchaseBlockReason(plan, subscriptionStatus) {
+  if (!plan || getPlanPrice(plan) <= 0) {
+    return "";
+  }
+
+  const activePlanLevel = normalizeTextValue(
+    subscriptionStatus?.active_plan_level,
+  ).toLowerCase();
+  const activePlanBillingAmount = normalizeNumericValue(
+    subscriptionStatus?.active_plan_billing_amount,
+  );
+  const isPaidPlanActive =
+    subscriptionStatus?.is_paid_active === true ||
+    activePlanLevel === "standard" ||
+    activePlanLevel === "premium" ||
+    (activePlanBillingAmount !== null && activePlanBillingAmount > 0);
+  const expiryDate = normalizeDateValue(subscriptionStatus?.expiry_date);
+  const hasEnded = expiryDate ? expiryDate.getTime() <= Date.now() : false;
+
+  if (isPaidPlanActive && !hasEnded) {
+    return PAID_PLAN_PURCHASE_BLOCK_MESSAGE;
+  }
+
+  return "";
 }
 
 export function isPlanExplicitlyActive(plan) {

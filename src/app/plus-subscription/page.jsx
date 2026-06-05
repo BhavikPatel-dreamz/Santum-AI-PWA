@@ -13,6 +13,7 @@ import {
   enrichSubscriptionPlan,
   getPlanCheckoutUrl,
   getPlanKey,
+  getPlanPurchaseBlockReason,
   getPlanPurchaseHref,
   getPlanPrice,
   isSamePlan,
@@ -84,12 +85,16 @@ export default function PlusSubscriptionPage() {
     refetchOnMountOrArgChange: true,
     refetchOnReconnect: true,
   });
-  const { data: subscriptionStatus, error: subscriptionStatusError } =
-    useGetSubscriptionStatusQuery(undefined, {
-      refetchOnFocus: true,
-      refetchOnMountOrArgChange: true,
-      refetchOnReconnect: true,
-    });
+  const {
+    data: subscriptionStatus,
+    error: subscriptionStatusError,
+    isFetching: isSubscriptionStatusFetching,
+    isLoading: isSubscriptionStatusLoading,
+  } = useGetSubscriptionStatusQuery(undefined, {
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true,
+    refetchOnReconnect: true,
+  });
 
   const hasLivePlans = Array.isArray(plansData) && plansData.length > 0;
   const plans = hasLivePlans ? plansData.map(enrichSubscriptionPlan) : [];
@@ -142,6 +147,20 @@ export default function PlusSubscriptionPage() {
   const isSelectedPlanActive = Boolean(
     selectedPlan && isSamePlan(selectedPlan, activePlanReference),
   );
+  const subscriptionPurchaseBlockReason = !isSelectedPlanActive
+    ? getPlanPurchaseBlockReason(selectedPlan, subscriptionStatus)
+    : "";
+  const subscriptionStatusUnavailableReason =
+    !isSelectedPlanActive &&
+    selectedPlan &&
+    getPlanPrice(selectedPlan) > 0 &&
+    subscriptionStatusError
+      ? "Unable to confirm subscription status. Please try again."
+      : "";
+  const purchaseRestrictionReason =
+    subscriptionPurchaseBlockReason || subscriptionStatusUnavailableReason;
+  const isSubscriptionStatusBusy =
+    isSubscriptionStatusLoading || isSubscriptionStatusFetching;
 
   function handlePlanPurchase() {
     if (isAccountPaused) {
@@ -151,6 +170,11 @@ export default function PlusSubscriptionPage() {
 
     if (!selectedPlan) {
       toast.error("Select a plan to continue");
+      return;
+    }
+
+    if (purchaseRestrictionReason) {
+      toast.error(purchaseRestrictionReason);
       return;
     }
 
@@ -185,18 +209,22 @@ export default function PlusSubscriptionPage() {
   const primaryButtonLabel =
     isSelectedPlanActive || selectedPlanKey == "17"
       ? "Start Chatting"
-      : selectedPlan
-        ? selectedPlanCheckoutUrl
-          ? "Continue"
-          : "Checkout Unavailable"
-        : isPlansLoading
-          ? "Loading Plans..."
-          : "Select A Plan";
+      : purchaseRestrictionReason
+        ? "Purchase Locked"
+        : selectedPlan
+          ? selectedPlanCheckoutUrl
+            ? "Buy Selected Plan"
+            : "Checkout Unavailable"
+          : isPlansLoading
+            ? "Loading Plans..."
+            : "Select A Plan";
 
   const isPrimaryButtonDisabled =
     !selectedPlan ||
     (!isSelectedPlanActive && !selectedPlanCheckoutUrl) ||
-    isPlansLoading;
+    Boolean(purchaseRestrictionReason) ||
+    isPlansLoading ||
+    isSubscriptionStatusBusy;
 
   return (
     <StepPageShell
@@ -305,6 +333,11 @@ export default function PlusSubscriptionPage() {
       >
         {primaryButtonLabel}
       </button>
+      {purchaseRestrictionReason ? (
+        <p className="theme-text-secondary mt-3 font-satoshi text-[13px] leading-5">
+          {purchaseRestrictionReason}
+        </p>
+      ) : null}
       {/* <button
           type="button"
           onClick={handleSecondaryAction}

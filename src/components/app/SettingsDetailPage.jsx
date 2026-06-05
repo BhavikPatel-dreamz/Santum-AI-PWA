@@ -13,7 +13,10 @@ import {
   useUpdateBasicProfileMutation,
 } from "@/lib/store";
 import { PAUSED_ACCOUNT_MESSAGE, isProfilePaused } from "@/lib/utills/profile";
-import { getPlanPurchaseHrefByLevel } from "@/lib/utills/subscription";
+import {
+  getPlanPurchaseBlockReason,
+  getPlanPurchaseHrefByLevel,
+} from "@/lib/utills/subscription";
 
 function SectionHeading({ title, description }) {
   if (!title && !description) {
@@ -41,14 +44,12 @@ function Toggle({ enabled, onToggle }) {
     <button
       type="button"
       onClick={onToggle}
-      className={`relative h-[30px] w-[54px] shrink-0 rounded-full transition-all duration-300 ${
-        enabled ? "bg-[#00D061]" : "theme-surface-secondary"
-      }`}
+      className={`relative h-[30px] w-[54px] shrink-0 rounded-full transition-all duration-300 ${enabled ? "bg-[#00D061]" : "theme-surface-secondary"
+        }`}
     >
       <span
-        className={`theme-surface absolute top-[3px] h-6 w-6 rounded-full shadow-sm transition-all duration-300 ${
-          enabled ? "left-[26px]" : "left-[3px]"
-        }`}
+        className={`theme-surface absolute top-[3px] h-6 w-6 rounded-full shadow-sm transition-all duration-300 ${enabled ? "left-[26px]" : "left-[3px]"
+          }`}
       />
     </button>
   );
@@ -56,19 +57,29 @@ function Toggle({ enabled, onToggle }) {
 
 function ActionButton({ action, onClick, fullWidth = false }) {
   const baseClassName =
-    "flex items-center justify-center rounded-[14px] px-5 py-4 text-[16px] font-semibold transition-all duration-200";
+    "flex w-full items-center justify-center rounded-[14px] px-5 py-4 text-[16px] font-semibold transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-60";
   const variantClassName =
     action.variant === "secondary"
       ? "theme-secondary-button hover:opacity-90"
       : "bg-[#00D061] text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)] hover:bg-[#00b856]";
   return (
-    <button
-      type="button"
-      onClick={() => onClick(action)}
-      className={`${baseClassName} ${variantClassName} ${fullWidth ? "w-full" : "flex-1"}`}
-    >
-      {action.label}
-    </button>
+    <div className={fullWidth ? "w-full" : ""}>
+      <button
+        type="button"
+        disabled={action.disabled}
+        onClick={() => onClick(action)}
+        className={`${baseClassName} ${variantClassName}`}
+      >
+        {action.disabledLabel && action.disabled
+          ? action.disabledLabel
+          : action.label}
+      </button>
+      {action.disabledReason ? (
+        <p className="theme-text-secondary mt-2 font-satoshi text-[12px] leading-5">
+          {action.disabledReason}
+        </p>
+      ) : null}
+    </div>
   );
 }
 
@@ -161,7 +172,7 @@ function getUpgradePlanKey(value) {
   return "";
 }
 
- function setUpgradePlanItems(nextPlan, items) {
+function setUpgradePlanItems(nextPlan, items) {
   const nextPlanKey = getUpgradePlanKey(nextPlan);
   const itemsMap = {
     "Longer talk time": {
@@ -285,10 +296,22 @@ export default function SettingsDetailPage({ content }) {
     }
 
     const upgradePlanKey = getUpgradePlanKey(subscriptionStatus.next_plan_name);
+    const purchaseBlockReason = getPlanPurchaseBlockReason(
+      upgradePlanKey
+        ? {
+          name: upgradePlanKey,
+          billing_amount: 1,
+        }
+        : null,
+      subscriptionStatus,
+    );
 
     return {
       ...action,
       label: subscriptionStatus.next_plan_name,
+      disabled: Boolean(purchaseBlockReason),
+      disabledLabel: "Purchase Locked",
+      disabledReason: purchaseBlockReason,
       href: upgradePlanKey
         ? getPlanPurchaseHrefByLevel(upgradePlanKey)
         : action.href,
@@ -398,9 +421,9 @@ export default function SettingsDetailPage({ content }) {
       const items =
         isSubscriptionsPage && section.title === "Plan Snapshot"
           ? buildSubscriptionStats(
-              subscriptionStatus,
-              isSubscriptionStatusLoading || isSubscriptionStatusFetching,
-            )
+            subscriptionStatus,
+            isSubscriptionStatusLoading || isSubscriptionStatusFetching,
+          )
           : section.items;
 
       return (
@@ -463,8 +486,8 @@ export default function SettingsDetailPage({ content }) {
             ) : null}
 
             {items.length === 0 &&
-            isSubscriptionFeatureSection &&
-            !isSubscriptionStatusBusy ? (
+              isSubscriptionFeatureSection &&
+              !isSubscriptionStatusBusy ? (
               <div className="theme-card rounded-[22px] border px-4 py-4">
                 <p className="theme-text-primary text-[16px] font-semibold leading-6">
                   No plan features available yet.
@@ -516,7 +539,7 @@ export default function SettingsDetailPage({ content }) {
             {hasUpgradePlan && isSubscriptionsPage && (
               <>
                 <SectionHeading
-                  title={section.title}
+                  title={`${subscriptionStatus?.next_plan_name} Gets You`}
                   description={section.description}
                 />
                 {listActions.map((item) => (
@@ -695,19 +718,17 @@ export default function SettingsDetailPage({ content }) {
                       [section.key]: item.label,
                     }))
                   }
-                  className={`w-full rounded-[22px] border px-4 py-4 text-left transition-all duration-200 ${
-                    isSelected
-                      ? "border-[#00D061] bg-[#F2FFF7] shadow-[0_12px_30px_rgba(0,208,97,0.12)]"
-                      : "theme-card"
-                  }`}
+                  className={`w-full rounded-[22px] border px-4 py-4 text-left transition-all duration-200 ${isSelected
+                    ? "border-[#00D061] bg-[#F2FFF7] shadow-[0_12px_30px_rgba(0,208,97,0.12)]"
+                    : "theme-card"
+                    }`}
                 >
                   <div className="flex items-start gap-3">
                     <div
-                      className={`mt-1 flex h-6 w-6 items-center justify-center rounded-full border ${
-                        isSelected
-                          ? "border-[#00D061] bg-[#00D061] text-white"
-                          : "theme-surface theme-border border text-transparent"
-                      }`}
+                      className={`mt-1 flex h-6 w-6 items-center justify-center rounded-full border ${isSelected
+                        ? "border-[#00D061] bg-[#00D061] text-white"
+                        : "theme-surface theme-border border text-transparent"
+                        }`}
                     >
                       <Check size={14} />
                     </div>
@@ -750,9 +771,8 @@ export default function SettingsDetailPage({ content }) {
                     </span>
                     <ChevronDown
                       size={18}
-                      className={`shrink-0 text-[#00D061] transition-transform duration-200 ${
-                        isOpen ? "rotate-180" : ""
-                      }`}
+                      className={`shrink-0 text-[#00D061] transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+                        }`}
                     />
                   </button>
                   {isOpen ? (
@@ -844,11 +864,10 @@ export default function SettingsDetailPage({ content }) {
                   key={document.key}
                   type="button"
                   onClick={() => setActiveLegalDocument(document.key)}
-                  className={`rounded-[12px] px-3 py-3 text-[13px] font-semibold transition-all sm:text-[14px] ${
-                    isActive
-                      ? "bg-[#00D061] text-white shadow-[0_10px_20px_rgba(0,208,97,0.2)]"
-                      : "theme-text-secondary"
-                  }`}
+                  className={`rounded-[12px] px-3 py-3 text-[13px] font-semibold transition-all sm:text-[14px] ${isActive
+                    ? "bg-[#00D061] text-white shadow-[0_10px_20px_rgba(0,208,97,0.2)]"
+                    : "theme-text-secondary"
+                    }`}
                 >
                   {document.label}
                 </button>
@@ -928,11 +947,10 @@ export default function SettingsDetailPage({ content }) {
                     key={category}
                     type="button"
                     onClick={() => setFeedbackCategory(category)}
-                    className={`rounded-full px-3 py-2 text-[13px] font-semibold transition-all ${
-                      isSelected
-                        ? "bg-[#00D061] text-white"
-                        : "theme-secondary-button"
-                    }`}
+                    className={`rounded-full px-3 py-2 text-[13px] font-semibold transition-all ${isSelected
+                      ? "bg-[#00D061] text-white"
+                      : "theme-secondary-button"
+                      }`}
                   >
                     {category}
                   </button>
@@ -1087,9 +1105,9 @@ export default function SettingsDetailPage({ content }) {
                         if (response) {
                           toast.success(
                             response.message ||
-                              (nextPaused
-                                ? "Account paused"
-                                : "Account resumed"),
+                            (nextPaused
+                              ? "Account paused"
+                              : "Account resumed"),
                           );
                         }
 

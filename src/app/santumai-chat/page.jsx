@@ -25,12 +25,6 @@ import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import ReactMarkdown from "react-markdown";
 
-const QUICK_PROMPTS = [
-  "Help me slow down after a stressful day",
-  "I feel overwhelmed and need perspective",
-  "Guide me through a grounding exercise",
-];
-
 const CREDIT_LIMIT_MESSAGE =
   "You have reached your chat credit limit. Purchase a plan to continue your support conversations with SantumAI.";
 const PURCHASE_PLAN_PATH = "/plus-subscription";
@@ -127,6 +121,7 @@ export default function SantumAIChatPage() {
   const [isReplying, setIsReplying] = useState(false);
   const [purchasePromptMessage, setPurchasePromptMessage] = useState("");
   const [draftMessages, setDraftMessages] = useState([]);
+  const [quickPrompts, setQuickPrompts] = useState([]);
   const [hasDraftMessages, setHasDraftMessages] = useState(false);
   const createChatPromiseRef = useRef(null);
 
@@ -304,6 +299,32 @@ export default function SantumAIChatPage() {
       toast.error(getClientErrorMessage(error, "Unable to start a new chat"));
     });
   });
+
+  useEffect(() => {
+    const QUICK_PROMPTS = {
+      free: [
+        "Help me slow down after a stressful day",
+        "I feel overwhelmed and need perspective",
+        "Guide me through a grounding exercise",
+      ],
+
+      standard: [
+        "Help me identify patterns behind my stress",
+        "Create a personalized weekly self-care plan",
+        "Guide me through a deep reflection session",
+      ],
+
+      premium: [
+        "Act as my personal wellness coach and build a growth roadmap",
+        "Analyze my recent challenges and suggest actionable improvements",
+        "Design a customized mindfulness and productivity routine",
+      ],
+    };
+
+    setQuickPrompts(
+      QUICK_PROMPTS[profile?.membership?.membership_title.toLowerCase()],
+    );
+  }, [profile]);
 
   useEffect(() => {
     if (!profileError) {
@@ -733,20 +754,28 @@ export default function SantumAIChatPage() {
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[24px] bg-[#F8FFFB] p-3 sm:p-4 md:p-5">
           {messages.length <= 1 && (
             <div className="mb-4 flex flex-wrap gap-2">
-              {QUICK_PROMPTS.map((prompt) => (
-                <button
-                  key={prompt}
-                  type="button"
-                  onClick={() => sendMessage(prompt)}
-                  disabled={areChatActionsDisabled}
-                  className={`rounded-full px-4 py-2 text-[13px] font-semibold transition-all ${areChatActionsDisabled
-                    ? "bg-[#EDF2EE] text-[#93A099]"
-                    : "bg-[#F4F7F5] text-[#0F0F0F] hover:bg-[#E8FFF1]"
-                    }`}
-                >
-                  {prompt}
-                </button>
-              ))}
+              {quickPrompts?.length > 0 ? (
+                quickPrompts?.map((prompt) => (
+                  <button
+                    key={prompt}
+                    type="button"
+                    onClick={() => sendMessage(prompt)}
+                    disabled={areChatActionsDisabled}
+                    className={`rounded-full px-4 py-2 text-[13px] font-semibold transition-all ${areChatActionsDisabled
+                      ? "bg-[#EDF2EE] text-[#93A099]"
+                      : "bg-[#F4F7F5] text-[#0F0F0F] hover:bg-[#E8FFF1]"
+                      }`}
+                  >
+                    {prompt}
+                  </button>
+                ))
+              ) : (
+                <div className="px-4 py-4 ">
+                  <p className="font-satoshi text-[14px] leading-6 text-[#555]">
+                    loading quick prompts...
+                  </p>
+                </div>
+              )}
             </div>
           )}
 
@@ -880,7 +909,11 @@ export default function SantumAIChatPage() {
                       strokeLinecap="round"
                       className="stroke-[#00D061] transition-all duration-500"
                       strokeDasharray={264}
-                      strokeDashoffset={!creditPercentage ? 264 / 100 : 264 - (264 * creditPercentage) / 100}
+                      strokeDashoffset={
+                        !creditPercentage
+                          ? 264 / 100
+                          : 264 - (264 * creditPercentage) / 100
+                      }
                     />
                   </svg>
                   {/* this svg only show for free & standard */}

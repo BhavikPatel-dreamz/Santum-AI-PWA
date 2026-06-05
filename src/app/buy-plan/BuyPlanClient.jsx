@@ -13,19 +13,13 @@ import {
   enrichSubscriptionPlan,
   findPlanByPurchaseReference,
   getPlanCheckoutUrl,
+  getPlanPurchaseBlockReason,
   getPlanPrice,
   isSamePlan,
 } from "@/lib/utills/subscription";
-import {
-  ArrowRight,
-  Check,
-  CreditCard,
-  MessageCircle,
-  ShieldCheck,
-  Sparkles,
-} from "lucide-react";
+import { Check } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 function roundIfGreaterThanHalf(num) {
@@ -63,22 +57,6 @@ function getPricePillClasses(isDark) {
     : "bg-[#0F0F0F] text-white";
 }
 
-function PlanMetric({ label, value, icon: Icon }) {
-  return (
-    <div className="theme-card-muted min-w-0 rounded-[20px] border px-4 py-4">
-      <div className="theme-pill flex h-9 w-9 items-center justify-center rounded-full">
-        <Icon size={17} />
-      </div>
-      <p className="theme-text-primary mt-3 break-words text-[15px] font-semibold leading-6 sm:text-[16px]">
-        {value}
-      </p>
-      <p className="theme-text-secondary mt-1 font-satoshi text-[12px] font-medium uppercase tracking-[0.12em]">
-        {label}
-      </p>
-    </div>
-  );
-}
-
 export default function BuyPlanClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -96,12 +74,16 @@ export default function BuyPlanClient() {
     refetchOnMountOrArgChange: true,
     refetchOnReconnect: true,
   });
-  const { data: subscriptionStatus, error: subscriptionStatusError } =
-    useGetSubscriptionStatusQuery(undefined, {
-      refetchOnFocus: true,
-      refetchOnMountOrArgChange: true,
-      refetchOnReconnect: true,
-    });
+  const {
+    data: subscriptionStatus,
+    error: subscriptionStatusError,
+    isFetching: isSubscriptionStatusFetching,
+    isLoading: isSubscriptionStatusLoading,
+  } = useGetSubscriptionStatusQuery(undefined, {
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true,
+    refetchOnReconnect: true,
+  });
 
   const plans = Array.isArray(plansData)
     ? plansData.map(enrichSubscriptionPlan)
@@ -112,13 +94,35 @@ export default function BuyPlanClient() {
   const isSelectedPlanActive = Boolean(
     selectedPlan && isSamePlan(selectedPlan, subscriptionStatus),
   );
+  const isSubscriptionStatusBusy =
+    isSubscriptionStatusLoading || isSubscriptionStatusFetching;
+  const subscriptionPurchaseBlockReason = !isSelectedPlanActive
+    ? getPlanPurchaseBlockReason(selectedPlan, subscriptionStatus)
+    : "";
+  const subscriptionStatusUnavailableReason =
+    !isSelectedPlanActive &&
+      selectedPlan &&
+      getPlanPrice(selectedPlan) > 0 &&
+      subscriptionStatusError
+      ? "Unable to confirm subscription status. Please try again."
+      : "";
+  const purchaseRestrictionReason =
+    subscriptionPurchaseBlockReason || subscriptionStatusUnavailableReason;
   const isBusy = isPlansLoading || isPlansFetching;
+  const isCheckoutActionDisabled =
+    isBusy ||
+    isSubscriptionStatusBusy ||
+    !selectedPlan ||
+    (!isSelectedPlanActive &&
+      (!checkoutUrl || Boolean(purchaseRestrictionReason)));
   const featureList = selectedPlan?.features ?? [];
   const isPaidPlan = selectedPlan ? getPlanPrice(selectedPlan) > 0 : false;
   const dailyPrice =
     selectedPlan?.billing_amount && getPlanPrice(selectedPlan) > 0
       ? `R${roundIfGreaterThanHalf(selectedPlan.billing_amount / 30)}/day`
       : "Included";
+
+  const [isRedirecting, setIsRedirecting] = useState(false)
 
   useEffect(() => {
     if (!plansError) {
@@ -169,17 +173,26 @@ export default function BuyPlanClient() {
       return;
     }
 
+    if (purchaseRestrictionReason) {
+      toast.error(purchaseRestrictionReason);
+      return;
+    }
+
     if (!checkoutUrl) {
       toast.error("Checkout URL is not available for this plan yet");
       return;
     }
-
+    setIsRedirecting(true)
     window.location.assign(checkoutUrl);
+    setTimeout(() => {
+      setIsRedirecting(false)
+    }, 3000);
+
   }
 
   return (
     <StepPageShell
-      title="Purchase Plan"
+      title="Plan Purchase"
       contentClassName="overflow-y-auto bg-[#f2f2f2]"
     >
       {!isBusy && plans.length === 0 ? (
@@ -194,11 +207,10 @@ export default function BuyPlanClient() {
       ) : null}
 
       <div
-        className={`rounded-[26px] border px-4 py-5 sm:rounded-[28px] sm:px-5 ${
-          isDark
-            ? "border-[#294536] bg-[linear-gradient(135deg,#15261d_0%,#101915_100%)]"
-            : "border-[#D6F5E4] bg-[linear-gradient(135deg,#F2FFF7_0%,#FFFFFF_100%)]"
-        }`}
+        className={`rounded-[26px] border px-4 py-5 sm:rounded-[28px] sm:px-5 ${isDark
+          ? "border-[#294536] bg-[linear-gradient(135deg,#15261d_0%,#101915_100%)]"
+          : "border-[#D6F5E4] bg-[linear-gradient(135deg,#F2FFF7_0%,#FFFFFF_100%)]"
+          }`}
       >
         <div className="flex flex-col gap-4 min-[520px]:flex-row min-[520px]:items-start min-[520px]:justify-between">
           <div className="min-w-0">
@@ -214,17 +226,33 @@ export default function BuyPlanClient() {
             </p>
           </div>
 
-          <div onClick={handleBuyNow}
-            className={`w-full shrink-0 hover:cursor-pointer rounded-[18px] bg-orange-400 px-7 pb-4 pt-3 text-center min-[520px]:w-auto ${getPricePillClasses(
-              isDark,
-            )}`}
+          <div
+            role="button"
+            // aria-disabled={isCheckoutActionDisabled}
+            onClick={() => {
+              if (!isCheckoutActionDisabled) {
+                handleBuyNow();
+              }
+            }}
+            className={`w-full shrink-0 rounded-[18px] bg-orange-400 px-7 pb-4 pt-3 text-center min-[520px]:w-auto ${isCheckoutActionDisabled
+              ? "cursor-not-allowed opacity-60"
+              : "hover:cursor-pointer"
+              } ${getPricePillClasses(
+                isDark,
+              )}`}
           >
-            <p className="text-[20px] font-semibold leading-7">
-              {selectedPlan ? formatPrice(selectedPlan) : "Loading"}
-            </p>
-            <p className="-m-1 text-[12px] font-semibold text-white/70">
-              {isPaidPlan ? `(${dailyPrice})` : "No monthly charge"}
-            </p>
+            {!isRedirecting ? <div>
+              <p className="text-[20px] font-semibold leading-7">
+                {selectedPlan ? formatPrice(selectedPlan) : "Loading"}
+              </p>
+              <p className="-m-1 text-[12px] font-semibold text-white/70">
+                {isPaidPlan ? `(${dailyPrice})` : "No monthly charge"}
+              </p>
+            </div>
+              : <div>
+                <p className="text-[20px] font-semibold leading-7">Redirecting...</p>
+                <p className="-m-1 text-[12px] font-semibold text-white/70">to santum.net</p>
+              </div>}
           </div>
         </div>
 
@@ -291,18 +319,26 @@ export default function BuyPlanClient() {
         </p>
       ) : null}
 
+      {purchaseRestrictionReason ? (
+        <p className="theme-text-secondary mt-4 font-satoshi text-[13px] leading-5">
+          {purchaseRestrictionReason}
+        </p>
+      ) : null}
+
       <div className="mt-auto grid grid-cols-1 gap-3 pt-6 sm:grid-cols-2">
         <button
           type="button"
           onClick={handleBuyNow}
-          disabled={
-            isBusy ||
-            !selectedPlan ||
-            (!isSelectedPlanActive && !checkoutUrl)
-          }
+          disabled={isCheckoutActionDisabled}
           className="inline-flex w-full items-center justify-center gap-2 rounded-[14px] bg-[#00D061] px-5 py-4 text-[16px] font-semibold text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)] disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {isSelectedPlanActive ? "Open Chat" : "Buy This Plan"}
+          {isRedirecting
+            ? "Redirecting..."
+            : isSelectedPlanActive
+              ? "Open Chat"
+              : purchaseRestrictionReason
+                ? "Purchase Locked"
+                : "Buy This Plan"}
         </button>
         <button
           type="button"
