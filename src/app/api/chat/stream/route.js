@@ -26,7 +26,7 @@ import { resolveCurrentUserKey } from "../../../../lib/user/server";
 
 const STREAM_METADATA_SEPARATOR = "\n\n{";
 const CREDIT_LIMIT_MESSAGE =
-  "You have reached your chat credit limit. Purchase a plan to continue your support conversations with SantumAI.";
+  "You have reached your chat credit limit. Purchase a plan to continue your support conversations with Sai.";
 const RECENT_HISTORY_LIMIT = 10;
 const NEW_MESSAGES_PER_TURN = 2;
 const DEFAULT_AI_API_URL = "http://localhost:8000";

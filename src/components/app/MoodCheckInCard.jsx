@@ -49,7 +49,7 @@ export default function MoodCheckInCard({
   isSaving = false,
   onSubmit,
   className = "",
-  title = "How are you feeling today?",
+  title = "How are you feeling?",
   description =
     "A quick check-in allows Sai respond with more balanced, and stuctured support.",
   submitLabel = "Save today's check-in",

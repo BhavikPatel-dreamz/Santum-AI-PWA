@@ -211,7 +211,7 @@ export default function ChatHistoryPage() {
             No saved chats yet
           </h3>
           <p className="mt-2 font-satoshi text-[14px] leading-6 text-[#555]">
-            Start a support conversation with SantumAI and it will appear here
+            Start a conversation with Sai and it will appear here
             once the reply is finished and stored.
           </p>
         </div>

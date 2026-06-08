@@ -225,7 +225,7 @@ export default function FingerPrintScan() {
             {/* ── Subtitle ── */}
             <div className="px-6 pb-2 pt-5 sm:px-8 lg:px-10">
               <p className="theme-text-secondary text-center font-satoshi text-[18px] leading-6">
-                Add biometric unlock so returning to SantumAI feels secure and
+                Add biometric unlock so returning to Sai feels secure and
                 effortless.
               </p>
             </div>

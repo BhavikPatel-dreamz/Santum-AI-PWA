@@ -33,6 +33,11 @@ const moodCheckInSchema = new Schema(
       min: 0,
       max: 10,
     },
+    expireAt: {
+      type: Date,
+      default: () => new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+      index: { expires: 0 },
+    },
   },
   { timestamps: true },
 );

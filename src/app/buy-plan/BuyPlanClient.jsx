@@ -251,7 +251,6 @@ export default function BuyPlanClient() {
             </div>
               : <div>
                 <p className="text-[20px] font-semibold leading-7">Redirecting...</p>
-                <p className="-m-1 text-[12px] font-semibold text-white/70">to santum.net</p>
               </div>}
           </div>
         </div>

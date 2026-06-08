@@ -22,13 +22,14 @@ import {
   getProfilePhone,
   isProfilePaused,
 } from "@/lib/utills/profile";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import ReactMarkdown from "react-markdown";
 
 const CREDIT_LIMIT_MESSAGE =
-  "You have reached your chat credit limit. Purchase a plan to continue your support conversations with SantumAI.";
+  "You have reached your chat credit limit. Purchase a plan to continue your support conversations with Sai.";
 const PURCHASE_PLAN_PATH = "/plus-subscription";
 const RECENT_MESSAGE_LIMIT = 6;
 const STARTER_MESSAGES = [
@@ -521,7 +522,7 @@ export default function SantumAIChatPage() {
 
     if (!hasTodayMoodCheckIn) {
       toast.error(
-        "Complete today's mood check-in before starting a support chat with SantumAI.",
+        "Complete today's mood check-in before starting a support chat with Sai.",
       );
       return;
     }
@@ -573,7 +574,7 @@ export default function SantumAIChatPage() {
         }
 
         throw {
-          message: errorData?.message || "Unable to reach SantumAI right now",
+          message: errorData?.message || "Unable to reach Sai right now",
           status: response.status,
           data: errorData,
         };
@@ -675,7 +676,7 @@ export default function SantumAIChatPage() {
       }
 
       toast.error(
-        getClientErrorMessage(error, "Unable to connect to SantumAI right now"),
+        getClientErrorMessage(error, "Unable to connect to Sai right now"),
       );
       setHasDraftMessages(true);
       setDraftMessages((currentMessages) => [
@@ -685,7 +686,7 @@ export default function SantumAIChatPage() {
         {
           id: buildTempMessageId("assistant-error"),
           role: "assistant",
-          text: "Sorry, I'm having trouble connecting to SantumAI right now. Please check your connection and try again in a moment.",
+          text: "Sorry, I'm having trouble connecting to Sai right now. Please check your connection and try again in a moment.",
         },
       ]);
     } finally {
@@ -756,6 +757,16 @@ export default function SantumAIChatPage() {
             </div>
           ) : null}
 
+          {todayMoodCheckIn && (
+            <div className="flex items-center justify-center my-3">
+              <Image
+                src="/Logo Source files 21-4/Icon/SVG/Artboard1.svg"
+                alt=""
+                width={200}
+                height={200}
+                className="" />
+            </div>)}
+
           {isMoodCheckInLoading && !todayMoodCheckIn ? (
             <div className="theme-card mb-4 rounded-[24px] border px-4 py-4 shadow-[0_12px_30px_rgba(15,15,15,0.04)]">
               <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#00A84D]">
@@ -774,7 +785,7 @@ export default function SantumAIChatPage() {
               entry={null}
               isSaving={isSavingMoodCheckIn}
               onSubmit={handleSaveMoodCheckIn}
-              description="Before we start, take 10 seconds to share how today feels so SantumAI can respond with steadier tone and more relevant support."
+              description="Please take 10 seconds to share how you feel today, so Sai respond with steadier tone and more relevant support."
               submitLabel="Save and unlock chat"
               showUpdateAction={false}
             />
@@ -907,9 +918,9 @@ export default function SantumAIChatPage() {
                 {isMoodCheckInLoading
                   ? "Checking today's mood check-in before chat unlocks."
                   : !hasTodayMoodCheckIn
-                    ? "Share your mood first so SantumAI can respond with better context."
+                    ? "Share your mood first so Sai can respond with better context."
                     : isCreditDepleted
-                      ? "Purchase a plan to continue SantumAI support chats."
+                      ? "Purchase a plan to continue Sai support chats."
                       : "Powered by advanced artificial intelligence counseling system."}
               </p>
               <div className="flex items-center justify-end gap-3">

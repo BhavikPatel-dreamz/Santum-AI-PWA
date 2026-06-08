@@ -146,7 +146,7 @@ export default function CreditsSettingsPage() {
             Chat spends credits automatically
           </h3>
           <p className="mt-3 font-satoshi text-[15px] leading-6 text-[#555]">
-            Before a reply starts, SantumAI reads your current balance. After the
+            Before a reply starts, Sai reads your current balance. After the
             AI reply finishes, the app deducts usage from the token data
             returned by the AI service.
           </p>
