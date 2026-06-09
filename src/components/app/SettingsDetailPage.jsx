@@ -539,7 +539,7 @@ export default function SettingsDetailPage({ content }) {
             {hasUpgradePlan && isSubscriptionsPage && (
               <>
                 <SectionHeading
-                  title={`${subscriptionStatus?.next_plan_name} Gets You`}
+                  title={`${subscriptionStatus?.next_plan_name} & Get:`}
                   description={section.description}
                 />
                 {listActions.map((item) => (

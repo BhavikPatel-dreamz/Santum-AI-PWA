@@ -314,7 +314,7 @@ export default function BuyPlanClient() {
 
       {isPaidPlan ? (
         <p className="theme-text-secondary mt-4 font-satoshi text-[12px] leading-5">
-          Monthly talk time depends on multiple factors and is approximate.
+          *Monthly talk time is approximate.
         </p>
       ) : null}
 

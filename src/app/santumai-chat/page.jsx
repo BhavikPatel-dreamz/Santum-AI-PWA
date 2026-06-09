@@ -697,6 +697,7 @@ export default function SantumAIChatPage() {
 
   return (
     <StepPageShell
+      showImage={false}
       title="Chat with Sai..."
       contentClassName="h-[100dvh] overflow-hidden pb-4"
     >
@@ -758,7 +759,7 @@ export default function SantumAIChatPage() {
           ) : null}
 
           {todayMoodCheckIn && (
-            <div className="flex items-center justify-center my-3">
+            <div className="flex items-center justify-center mb-4">
               <Image
                 src="/Logo Source files 21-4/Icon/SVG/Artboard1.svg"
                 alt=""
@@ -785,7 +786,7 @@ export default function SantumAIChatPage() {
               entry={null}
               isSaving={isSavingMoodCheckIn}
               onSubmit={handleSaveMoodCheckIn}
-              description="Please take 10 seconds to share how you feel today, so Sai respond with steadier tone and more relevant support."
+              description="Please take 10sec to share how you feel today, so Sai can respond with more accurate and relevant support."
               submitLabel="Save and unlock chat"
               showUpdateAction={false}
             />

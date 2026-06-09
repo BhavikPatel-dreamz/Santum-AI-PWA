@@ -1,8 +1,9 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/components/providers/ThemeProvider";
+import { MessagesSquare } from "lucide-react";
 
-const HeaderSection = ({ title }) => {
+const HeaderSection = ({ title, showImage = true }) => {
   const router = useRouter();
   const { isDark } = useTheme();
 
@@ -33,13 +34,19 @@ const HeaderSection = ({ title }) => {
           <h1 className="text-[18px] font-medium leading-6 text-[#dedede] sm:text-[20px] lg:text-[24px] lg:leading-8">
             {title}
           </h1>
-          <Image
+          {showImage ? <Image
             src="/Logo Source files 21-4/Icon/SVG/Artboard1.svg"
             alt=""
             width={95}
             height={95}
             className=""
-          />
+          /> : <Image
+            src="/message.png"
+            alt=""
+            width={80}
+            height={80}
+            className=""
+          />}
         </div>
       </div>
     </header>
