@@ -1022,7 +1022,7 @@ export default function HomeScreen() {
               </span>
             </h2>
             <h3 className="mt-3 text-[18px] font-semibold leading-6 text-[#dedede] sm:text-[20px] lg:text-[22px]">
-              I&apos;m Sai, short for Santum AI
+              I&apos;m Sai,
             </h3>
             <p className="mb-3 mt-2 pb-3 font-satoshi text-[16px] font-medium leading-[24px] text-white sm:text-[17px] lg:max-w-[640px] lg:text-[18px] lg:leading-[28px]">
               I&apos;m here to listen and help you make sense of what

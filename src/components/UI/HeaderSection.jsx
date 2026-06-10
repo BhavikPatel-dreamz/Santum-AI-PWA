@@ -34,19 +34,21 @@ const HeaderSection = ({ title, showImage = true }) => {
           <h1 className="text-[18px] font-medium leading-6 text-[#dedede] sm:text-[20px] lg:text-[24px] lg:leading-8">
             {title}
           </h1>
-          {showImage ? <Image
-            src="/Logo Source files 21-4/Icon/SVG/Artboard1.svg"
-            alt=""
-            width={95}
-            height={95}
-            className=""
-          /> : <Image
-            src="/message.png"
-            alt=""
-            width={80}
-            height={80}
-            className=""
-          />}
+          <div className="flex items-center justify-end w-[95px] h-[63.33px]">
+            {showImage ? <Image
+              src="/Logo Source files 21-4/Icon/SVG/Artboard1.svg"
+              alt=""
+              width={95}
+              height={95}
+              className=""
+            /> : <Image
+              src="/message.png"
+              alt=""
+              width={64}
+              height={64}
+              className=""
+            />}
+          </div>
         </div>
       </div>
     </header>
