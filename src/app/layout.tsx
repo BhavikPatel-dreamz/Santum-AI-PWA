@@ -2,6 +2,7 @@ import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import LoadingScreenWrapper from "@/components/onboarding/LoadingScreenWrapper";
 import { PageTransitionProvider } from "@/components/providers/PageTransitionProvider";
 import { ReduxProvider } from "@/components/providers/ReduxProvider";
+import OfflineDetector from "@/components/OfflineDetector";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import Script from "next/script";
@@ -78,15 +79,22 @@ const segoeUi = localFont({
   fallback: ["Segoe UI", "Arial", "sans-serif"],
 });
 
-// export const metadata: Metadata = {
-//   title: "Santum AI",
-//   description:
-//     "A standalone AI counselling PWA for text-based emotional wellbeing support.",
-//   icons: {
-//     icon: "/favicon/favicon.ico", // Main favicon
-//     apple: "/favicon/apple-touch-icon.png", // Specifically for iPhone
-//   },
-// };
+export const metadata: Metadata = {
+  title: "Santum AI",
+  description:
+    "A standalone AI counselling PWA for text-based emotional wellbeing support.",
+  manifest: "/manifest.json",
+
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Santum AI",
+  },
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-icon.png",
+  },
+};
 
 const themeInitScript = `
 (() => {
@@ -119,6 +127,9 @@ export default function RootLayout({
     >
       <head>
         <meta name="apple-mobile-web-app-title" content="Santum AI" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>
       <body className="min-h-full flex flex-col font-sans">
         <Script
@@ -128,6 +139,7 @@ export default function RootLayout({
         />
         <ReduxProvider>
           <ThemeProvider>
+            <OfflineDetector />
             <LoadingScreenWrapper />
             <PageTransitionProvider>
               <Suspense>

@@ -19,6 +19,7 @@
 /public/workbox-*.js
 /public/worker-*.js
 /public/sw.js
+/public/fallback-*.js
 
 # production
 /build

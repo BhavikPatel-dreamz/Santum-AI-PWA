@@ -2,7 +2,11 @@
 
 import MoodCheckInCard from "@/components/app/MoodCheckInCard";
 import StepPageShell from "@/components/app/StepPageShell";
-import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
+import {
+  OFFLINE_ERROR_MESSAGE,
+  getClientErrorMessage,
+  isUnauthorizedError,
+} from "@/lib/api/error";
 import {
   appApi,
   useAppDispatch,
@@ -529,6 +533,11 @@ export default function SantumAIChatPage() {
 
     if (isCreditDepleted) {
       await promptPlanPurchase(CREDIT_LIMIT_MESSAGE, text);
+      return;
+    }
+
+    if (typeof navigator !== "undefined" && navigator.onLine === false) {
+      toast.error(OFFLINE_ERROR_MESSAGE);
       return;
     }
 

@@ -16,6 +16,7 @@ const PUBLIC_ROUTES = new Set([
   "/forgot-password",
   "/new-password",
   "/lets-you-in",
+  "/offline",
 ]);
 
 export default function LayoutContent({
@@ -41,6 +42,7 @@ export default function LayoutContent({
     "/verify-otp",
     "/finger-scan",
     "/lets-you-in",
+    "/offline",
     "/",
   ];
   const shouldHideFooter: boolean = hideFooterRoutes.includes(currentPath);

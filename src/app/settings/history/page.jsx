@@ -280,7 +280,7 @@ export default function ChatHistoryPage() {
       <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
         <button
           type="button"
-          onClick={() => router.push("/santumai-chat")}
+          onClick={() => router.push("/santumai-chat?new")}
           className="rounded-[14px] bg-[#00D061] px-5 py-4 text-[16px] font-semibold text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)]"
         >
           Start New Chat

@@ -3,10 +3,17 @@ import withPWAInit from 'next-pwa';
 
 const withPWA = withPWAInit({
   dest: 'public',
-  register: false,
+  register: true,
   skipWaiting: true,
   disable: false,
   customWorkerDir: 'worker',
+  fallbacks: {
+    document: '/offline',
+    image: '',
+    audio: '',
+    video: '',
+    font: '',
+  },
   runtimeCaching: [
     {
       urlPattern: /^https?.*/,

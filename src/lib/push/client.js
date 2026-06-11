@@ -1,3 +1,5 @@
+import { OFFLINE_ERROR_MESSAGE } from "@/lib/api/error";
+
 const PUSH_DEVICE_ID_STORAGE_KEY = "push_device_id";
 
 function normalizeText(value) {
@@ -58,6 +60,25 @@ function createRequestError(response, payload, fallbackMessage) {
   return error;
 }
 
+function createOfflineError() {
+  const error = new Error(OFFLINE_ERROR_MESSAGE);
+
+  error.status = "CUSTOM_ERROR";
+  error.error = "OFFLINE";
+  error.data = {
+    offline: true,
+    message: OFFLINE_ERROR_MESSAGE,
+  };
+
+  return error;
+}
+
+function assertOnline() {
+  if (typeof navigator !== "undefined" && navigator.onLine === false) {
+    throw createOfflineError();
+  }
+}
+
 export async function registerPushServiceWorker() {
   if (typeof window === "undefined" || !("serviceWorker" in navigator)) {
     return null;
@@ -84,6 +105,7 @@ export async function subscribeCurrentBrowserToPush() {
     throw new Error("Missing NEXT_PUBLIC_VAPID_PUBLIC_KEY");
   }
 
+  assertOnline();
   await registerPushServiceWorker();
   const registration = await navigator.serviceWorker.ready;
   const permission =
@@ -147,6 +169,8 @@ export async function unsubscribeCurrentBrowserFromPush() {
   const registration = await navigator.serviceWorker.ready;
   const subscription = await registration.pushManager.getSubscription();
   const endpoint = normalizeText(subscription?.endpoint);
+
+  assertOnline();
 
   if (subscription) {
     const unsubscribed = await subscription.unsubscribe();
