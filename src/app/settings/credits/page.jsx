@@ -129,8 +129,8 @@ export default function CreditsSettingsPage() {
       </div>
 
       {balanceResponse && creditBalance === null ? (
-        <div className="mt-4 rounded-[22px] border border-[#FFE9B6] bg-[#FFF8E6] px-4 py-4">
-          <p className="text-[14px] font-medium leading-6 text-[#6D5200]">
+        <div className="theme-warning-card mt-4 rounded-[22px] border px-4 py-4">
+          <p className="theme-warning-copy text-[14px] font-medium leading-6">
             The balance request is connected, but the response did not expose a
             numeric balance field in one of the common keys this page checks.
           </p>

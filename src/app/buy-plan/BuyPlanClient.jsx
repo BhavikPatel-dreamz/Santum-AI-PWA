@@ -193,7 +193,7 @@ export default function BuyPlanClient() {
   return (
     <StepPageShell
       title="Plan Purchase"
-      contentClassName="overflow-y-auto bg-[#f2f2f2]"
+      contentClassName={`overflow-y-auto ${isDark ? "theme-surface" : "bg-[#f2f2f2]"}`}
     >
       {!isBusy && plans.length === 0 ? (
         <div className="theme-card rounded-[22px] border px-5 py-5 text-center">
@@ -303,8 +303,8 @@ export default function BuyPlanClient() {
             ))}
           </div>
         ) : (
-          <div className="mt-5 rounded-[18px] border border-[#FFE9B6] bg-[#FFF8E6] px-4 py-4">
-            <p className="text-[14px] font-medium leading-6 text-[#6D5200]">
+          <div className="theme-warning-card mt-5 rounded-[18px] border px-4 py-4">
+            <p className="theme-warning-copy text-[14px] font-medium leading-6">
               Detailed features will appear once the plans API returns them for
               this membership.
             </p>
@@ -342,7 +342,7 @@ export default function BuyPlanClient() {
         <button
           type="button"
           onClick={() => router.push("/plus-subscription")}
-          className="theme-secondary-button w-full rounded-[14px] px-5 py-4 text-[16px] font-semibold"
+          className="theme-secondary-button theme-border w-full rounded-[14px] border px-5 py-4 text-[16px] font-semibold transition-opacity duration-200 hover:opacity-90"
         >
           Change Plan
         </button>

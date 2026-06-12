@@ -1002,7 +1002,7 @@ export default function SettingsDetailPage({ content }) {
             description={section.description}
           />
 
-          <div className="rounded-[26px] bg-[linear-gradient(135deg,#E9FFF3_0%,#FFFFFF_100%)] p-5 shadow-[0_12px_30px_rgba(15,15,15,0.04)]">
+          <div className="theme-referral-card rounded-[26px] p-5">
             <p className="text-[12px] font-semibold uppercase tracking-[0.2em] text-[#00A84D]">
               Referral code
             </p>

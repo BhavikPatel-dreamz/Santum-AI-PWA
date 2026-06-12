@@ -738,14 +738,14 @@ export default function SantumAIChatPage() {
           </div> */}
 
           {purchasePromptMessage || isCreditDepleted ? (
-            <div className="mb-4 rounded-[24px] border border-[#FFD9B8] bg-[linear-gradient(135deg,#FFF5EA_0%,#FFFFFF_100%)] px-4 py-4 shadow-[0_12px_30px_rgba(15,15,15,0.04)]">
-              <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#C56B1F]">
+            <div className="theme-warning-card mb-4 rounded-[24px] border px-4 py-4 shadow-[0_12px_30px_rgba(15,15,15,0.04)]">
+              <p className="theme-warning-copy text-[12px] font-semibold uppercase tracking-[0.16em]">
                 Purchase Required
               </p>
               <h2 className="mt-2 text-[20px] font-semibold leading-7 text-[#0F0F0F]">
                 Your credits are used up
               </h2>
-              <p className="mt-2 font-satoshi text-[14px] leading-6 text-[#5F4A33]">
+              <p className="theme-warning-copy mt-2 font-satoshi text-[14px] leading-6">
                 {purchasePromptMessage || CREDIT_LIMIT_MESSAGE}
               </p>
               <div className="mt-4 flex flex-wrap gap-3">
