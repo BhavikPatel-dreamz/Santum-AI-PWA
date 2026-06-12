@@ -8,7 +8,7 @@ export const metadata = {
 
 export default function NotFound() {
   return (
-    <div className="theme-surface flex min-h-dvh items-center justify-center px-5 py-8 text-[#323d51] transition-colors duration-300 sm:px-8 md:px-10">
+    <div className="theme-surface theme-text-primary flex min-h-dvh items-center justify-center px-5 py-8 transition-colors duration-300 sm:px-8 md:px-10">
       <section className="flex w-full max-w-[680px] flex-col items-center text-center">
         <div className="flex w-full items-center justify-center">
           <Image
