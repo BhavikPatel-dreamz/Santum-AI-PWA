@@ -1,10 +1,6 @@
 import { enqueuePushNotificationJob } from "./queue";
 import { createNotificationForUser } from "@/lib/notifications/server";
 
-function normalizeText(value) {
-  return typeof value === "string" ? value.trim() : "";
-}
-
 /**
  * Send mood check-in confirmation notification
  */

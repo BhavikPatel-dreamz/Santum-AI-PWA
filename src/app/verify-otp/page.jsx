@@ -10,7 +10,6 @@ import {
   maskPhoneNumber,
   PASSWORD_RESET_EMAIL_STORAGE_KEY,
 } from "../../lib/utills/phone";
-import Image from "next/image";
 
 function getPendingOtpRecipient() {
   if (typeof window === "undefined") {

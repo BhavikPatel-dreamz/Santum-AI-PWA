@@ -86,21 +86,6 @@ function getNotificationStats(feed) {
   };
 }
 
-function getNotificationTag(notification) {
-  switch (notification?.category) {
-    case "billing":
-      return "Billing";
-    case "credits":
-      return "Credits";
-    case "wellness":
-      return "Wellness";
-    case "account":
-      return "Account";
-    default:
-      return "Update";
-  }
-}
-
 function getNotificationIcon(notification) {
   switch (notification?.category) {
     case "credits":

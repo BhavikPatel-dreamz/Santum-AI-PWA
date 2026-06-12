@@ -152,9 +152,9 @@ export default function PlusSubscriptionPage() {
     : "";
   const subscriptionStatusUnavailableReason =
     !isSelectedPlanActive &&
-    selectedPlan &&
-    getPlanPrice(selectedPlan) > 0 &&
-    subscriptionStatusError
+      selectedPlan &&
+      getPlanPrice(selectedPlan) > 0 &&
+      subscriptionStatusError
       ? "Unable to confirm subscription status. Please try again."
       : "";
   const purchaseRestrictionReason =
@@ -212,12 +212,8 @@ export default function PlusSubscriptionPage() {
       : purchaseRestrictionReason
         ? "Purchase Locked"
         : selectedPlan
-          ? selectedPlanCheckoutUrl
-            ? "Buy Selected Plan"
-            : "Checkout Unavailable"
-          : isPlansLoading
-            ? "Loading Plans..."
-            : "Select A Plan";
+          ? "Select This Plan"
+          : "Checkout Unavailable"
 
   const isPrimaryButtonDisabled =
     !selectedPlan ||
@@ -232,13 +228,13 @@ export default function PlusSubscriptionPage() {
       contentClassName="overflow-y-auto bg-[#f2f2f2]"
     >
       <div className="space-y-4">
-        {!isPlansLoading && plans.length === 0 ? (
+        {isPlansLoading ? (
           <div className="theme-card rounded-[22px] border px-5 py-5 text-center">
             <p className="theme-text-primary text-[16px] font-semibold">
-              No plans are available right now.
+              Loading Plans...
             </p>
             <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6">
-              Please try again in a moment.
+              Please wait a moment.
             </p>
           </div>
         ) : null}
@@ -249,7 +245,7 @@ export default function PlusSubscriptionPage() {
           const isActivePlan = isSamePlan(plan, activePlanReference);
 
           return (
-            <button
+            <div
               key={planKey}
               type="button"
               aria-pressed={isSelected}
@@ -320,12 +316,25 @@ export default function PlusSubscriptionPage() {
                 {planKey != "17" &&
                   "*Monthly talk time depends on multiple factors and is approximate"}
               </p>
-            </button>
+              <div className="flex justify-center">{isSelected && primaryButtonLabel != "Start Chatting" ? <button
+                type="button"
+                onClick={handlePrimaryAction}
+                disabled={isPrimaryButtonDisabled}
+                className="mt-6 w-full rounded-[14px] bg-[#00D061] px-5 py-4 text-[16px] font-semibold text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {primaryButtonLabel}
+              </button> : null}</div>
+              {purchaseRestrictionReason && isSelected ? (
+                <p className="theme-text-secondary mt-3 font-satoshi text-[13px] leading-5">
+                  {purchaseRestrictionReason}
+                </p>
+              ) : null}
+            </div>
           );
         })}
       </div>
 
-      <button
+      {/* <button
         type="button"
         onClick={handlePrimaryAction}
         disabled={isPrimaryButtonDisabled}
@@ -337,7 +346,7 @@ export default function PlusSubscriptionPage() {
         <p className="theme-text-secondary mt-3 font-satoshi text-[13px] leading-5">
           {purchaseRestrictionReason}
         </p>
-      ) : null}
+      ) : null} */}
       {/* <button
           type="button"
           onClick={handleSecondaryAction}

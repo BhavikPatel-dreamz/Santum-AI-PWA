@@ -2,30 +2,15 @@
 
 import StepPageShell from "@/components/app/StepPageShell";
 import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
-import {
-  PROFILE_INTERESTS,
-  PROFILE_LANGUAGES,
-} from "@/lib/content/profile-options";
-import {
-  useGetProfileQuery,
-  useUpdateBasicProfileMutation,
-  useUpdateInterestsMutation,
-  useUpdatePreferredLanguageMutation,
-} from "@/lib/store";
+import { useGetProfileQuery } from "@/lib/store";
 import {
   buildProfileInitials,
-  getProfileDob,
   getProfileEmail,
   getProfileFirstName,
-  getProfileFullName,
-  getProfileInterests,
   getProfileLastName,
-  getProfilePhone,
-  getProfilePreferredLanguage,
 } from "@/lib/utills/profile";
-import { CheckCircle2, Mail, Phone } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { PASSWORD_RESET_EMAIL_STORAGE_KEY } from "../../lib/utills/phone";
 
@@ -155,11 +140,8 @@ export default function PersonalInformationPage() {
     refetchOnFocus: true,
     refetchOnReconnect: true,
   });
-  // const [updateBasicProfile, { isLoading: isSavingBasic }] =
-  //   useUpdateBasicProfileMutation();
   const profileForm = buildProfileForm(profile);
   const form = profileForm;
-  // const baseline = savedBaseline ?? profileForm;
   const didInitialize = !isProfileLoading;
 
   useEffect(() => {
@@ -174,90 +156,17 @@ export default function PersonalInformationPage() {
 
     toast.error(getClientErrorMessage(profileError, "Unable to load profile"));
   }, [profileError, router]);
-// 
-  // const normalizedCurrent = normalizeFormState(form);
-  // const normalizedBaseline = normalizeFormState(baseline);
-  // const isBasicChanged =
-  //   normalizedCurrent.firstName !== normalizedBaseline.firstName ||
-  //   normalizedCurrent.lastName !== normalizedBaseline.lastName ||
-  //   normalizedCurrent.dob !== normalizedBaseline.dob;
-
-  // const profileName =
-  //   [normalizedCurrent.firstName, normalizedCurrent.lastName]
-  //     .filter(Boolean)
-  //     .join(" ") ||
-  //   getProfileFullName(profile) ||
-  //   "Your Santum profile";
   const emailAddress = getProfileEmail(profile);
-  // const phoneNumber = getProfilePhone(profile);
   const profileInitials = buildProfileInitials(
     EMPTY_PROFILE_FORM.firstName,
     EMPTY_PROFILE_FORM.lastName,
   );
-  // const completionScore = [
-  //   Boolean(normalizedCurrent.firstName && normalizedCurrent.lastName),
-  //   Boolean(normalizedCurrent.dob),
-  // ].filter(Boolean).length;
-
-  // const updateField = (field, value) => {
-  //   setDraftForm((currentForm) => ({
-  //     ...(currentForm ?? profileForm ?? EMPTY_PROFILE_FORM),
-  //     [field]: value,
-  //   }));
-  // };
-
-  // const toggleInterest = (interest) => {
-  //   setDraftForm((currentForm) => {
-  //     const nextForm = currentForm ?? profileForm ?? EMPTY_PROFILE_FORM;
-  //     const isSelected = nextForm.interests.includes(interest);
-
-  //     return {
-  //       ...nextForm,
-  //       interests: isSelected
-  //         ? nextForm.interests.filter((value) => value !== interest)
-  //         : [...nextForm.interests, interest],
-  //     };
-  //   });
-  // };
-
-  // const finishProfileFlow = () => {
-  //   if (isOnboarding) {
-  //     router.replace("/finger-scan");
-  //   }
-  // };
 
   const handleChangePassword = () => {
     sessionStorage.setItem(PASSWORD_RESET_EMAIL_STORAGE_KEY, form.email.trim());
     router.push("/forgot-password");
   };
 
-  // const handleSaveProfile = async () => {
-  //   const basicValidationMessage = validateBasicProfile(normalizedCurrent);
-
-  //   if (isOnboarding && basicValidationMessage) {
-  //     toast.error(basicValidationMessage);
-  //     return;
-  //   }
-
-  //   if (!hasProfileChanges) {
-  //     if (isOnboarding) {
-  //       finishProfileFlow();
-  //       return;
-  //     }
-
-  //     toast.success("Your profile is already up to date");
-  //     return;
-  //   }
-
-  //   if (isBasicChanged && basicValidationMessage) {
-  //     toast.error(basicValidationMessage);
-  //     return;
-  //   }
-
-  //   if (isInterestsChanged && normalizedCurrent.interests.length === 0) {
-  //     toast.error("Choose at least one interest before saving this section");
-  //     return;
-  //   }
 
   //   try {
   //     if (isBasicChanged) {

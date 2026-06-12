@@ -9,7 +9,6 @@ import {
 } from "@/lib/store";
 import {
   PAUSED_ACCOUNT_MESSAGE,
-  getProfilePhone,
   isProfilePaused,
 } from "@/lib/utills/profile";
 import { MessageSquare, RefreshCcw, Trash2 } from "lucide-react";

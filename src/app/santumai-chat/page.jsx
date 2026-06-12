@@ -19,13 +19,9 @@ import {
   useGetSubscriptionStatusQuery,
   useUpsertMoodCheckInMutation,
 } from "@/lib/store";
-import { extractCreditBalance, formatCreditAmount } from "@/lib/utills/credit";
+import { extractCreditBalance } from "@/lib/utills/credit";
 import { getTodayMoodDateKey } from "@/lib/utills/mood";
-import {
-  PAUSED_ACCOUNT_MESSAGE,
-  getProfilePhone,
-  isProfilePaused,
-} from "@/lib/utills/profile";
+import { isProfilePaused } from "@/lib/utills/profile";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
@@ -128,7 +124,6 @@ export default function SantumAIChatPage() {
   const [isReplying, setIsReplying] = useState(false);
   const [purchasePromptMessage, setPurchasePromptMessage] = useState("");
   const [draftMessages, setDraftMessages] = useState([]);
-  const [quickPrompts, setQuickPrompts] = useState([]);
   const [hasDraftMessages, setHasDraftMessages] = useState(false);
   const createChatPromiseRef = useRef(null);
 
@@ -146,7 +141,6 @@ export default function SantumAIChatPage() {
   const {
     data: balanceResponse,
     error: balanceError,
-    isLoading: isBalanceLoading,
     refetch: refetchBalance,
   } = useGetCreditBalanceQuery(undefined, {
     refetchOnFocus: true,
@@ -308,32 +302,6 @@ export default function SantumAIChatPage() {
       toast.error(getClientErrorMessage(error, "Unable to start a new chat"));
     });
   });
-
-  // useEffect(() => {
-  //   const QUICK_PROMPTS = {
-  //     free: [
-  //       "Help me slow down after a stressful day",
-  //       "I feel overwhelmed and need perspective",
-  //       "Guide me through a grounding exercise",
-  //     ],
-
-  //     standard: [
-  //       "Help me identify patterns behind my stress",
-  //       "Create a personalized weekly self-care plan",
-  //       "Guide me through a deep reflection session",
-  //     ],
-
-  //     premium: [
-  //       "Act as my personal wellness coach and build a growth roadmap",
-  //       "Analyze my recent challenges and suggest actionable improvements",
-  //       "Design a customized mindfulness and productivity routine",
-  //     ],
-  //   };
-
-  //   setQuickPrompts(
-  //     QUICK_PROMPTS[profile?.membership?.membership_title.toLowerCase()],
-  //   );
-  // }, [profile]);
 
   useEffect(() => {
     if (!profileError) {
@@ -866,7 +834,7 @@ export default function SantumAIChatPage() {
                     <div className="font-satoshi text-[15px] leading-6 whitespace-pre-wrap">
                       <ReactMarkdown
                         components={{
-                          a: ({ node, ...props }) => (
+                          a: ({ ...props }) => (
                             <a
                               {...props}
                               target="_blank"

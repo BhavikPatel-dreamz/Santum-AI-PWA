@@ -1,11 +1,8 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useTheme } from "@/components/providers/ThemeProvider";
-import { MessagesSquare } from "lucide-react";
 
 const HeaderSection = ({ title, showImage = true }) => {
   const router = useRouter();
-  const { isDark } = useTheme();
 
   return (
     <header className=" h-[120px] overflow-hidden bg-[#323d51] px-5 pt-3 sm:h-[136px] sm:px-6 sm:pt-7 lg:h-[156px] lg:px-10 lg:pt-8">

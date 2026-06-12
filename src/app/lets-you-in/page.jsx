@@ -9,9 +9,6 @@ import { getClientErrorMessage } from "@/lib/api/error";
 export default function LetsYouInPage() {
   const router = useRouter();
   const [loginWithPasskey] = useLoginWithPasskeyMutation();
-  const isFingerprintEnabled =
-    typeof window !== "undefined" &&
-    localStorage.getItem("fingerprintEnabled") === "true";
   const handleFingerprintLogin = useCallback(async () => {
     try {
       const stored = localStorage.getItem("passkeyId");
@@ -50,9 +47,9 @@ export default function LetsYouInPage() {
         return;
       }
       console.log("Fingerprint Sigh In failed:", err);
-      toast.error("Invalid Fingerprint");
+      toast.error(getClientErrorMessage(err, "Invalid Fingerprint"));
     }
-  }, [router]);
+  }, [loginWithPasskey, router]);
 
   useEffect(() => {
     const enabled = localStorage.getItem("fingerprintEnabled");

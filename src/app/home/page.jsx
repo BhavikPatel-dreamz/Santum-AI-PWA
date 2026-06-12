@@ -56,36 +56,6 @@ const CollapseIcon = () => (
 // ─── Settings menu items data ─────────────────────────────────────────────────
 
 const MENU_ITEMS = [
-  // {
-  //   label: "New Chat",
-  //   hint: null,
-  //   danger: false,
-  //   icon: (
-  //     <svg
-  //       xmlns="http://www.w3.org/2000/svg"
-  //       width="48"
-  //       height="48"
-  //       viewBox="0 0 48 48"
-  //       fill="none"
-  //     >
-  //       <rect opacity="0.08" width="48" height="48" rx="8" fill="#00D061" />
-  //       <path
-  //         d="M24 17V31"
-  //         stroke="#00D061"
-  //         strokeWidth="2"
-  //         strokeLinecap="round"
-  //         strokeLinejoin="round"
-  //       />
-  //       <path
-  //         d="M17 24H31"
-  //         stroke="#00D061"
-  //         strokeWidth="2"
-  //         strokeLinecap="round"
-  //         strokeLinejoin="round"
-  //       />
-  //     </svg>
-  //   ),
-  // },
   {
     label: "Chat History",
     hint: null,
@@ -116,131 +86,6 @@ const MENU_ITEMS = [
       </svg>
     ),
   },
-  // {
-  //   label: "Banks & Cards",
-  //   hint: null,
-  //   danger: false,
-  //   icon: (
-  //     <svg
-  //       xmlns="http://www.w3.org/2000/svg"
-  //       width="48"
-  //       height="48"
-  //       viewBox="0 0 48 48"
-  //       fill="none"
-  //     >
-  //       <rect opacity="0.08" width="48" height="48" rx="8" fill="#00D061" />
-  //       <path
-  //         d="M15 33H33"
-  //         stroke="#00D061"
-  //         strokeWidth="2"
-  //         strokeLinecap="round"
-  //         strokeLinejoin="round"
-  //       />
-  //       <path
-  //         d="M15 22H33"
-  //         stroke="#00D061"
-  //         strokeWidth="2"
-  //         strokeLinecap="round"
-  //         strokeLinejoin="round"
-  //       />
-  //       <path
-  //         d="M17 18L24 15L31 18"
-  //         stroke="#00D061"
-  //         strokeWidth="2"
-  //         strokeLinecap="round"
-  //         strokeLinejoin="round"
-  //       />
-  //       <path
-  //         d="M16 22V33"
-  //         stroke="#00D061"
-  //         strokeWidth="2"
-  //         strokeLinecap="round"
-  //         strokeLinejoin="round"
-  //       />
-  //       <path
-  //         d="M32 22V33"
-  //         stroke="#00D061"
-  //         strokeWidth="2"
-  //         strokeLinecap="round"
-  //         strokeLinejoin="round"
-  //       />
-  //       <path
-  //         d="M20 26V29M24 26V29M28 26V29"
-  //         stroke="#00D061"
-  //         strokeWidth="2"
-  //         strokeLinecap="round"
-  //         strokeLinejoin="round"
-  //       />
-  //     </svg>
-  //   ),
-  // },
-  // {
-  //   label: "Payment Methods",
-  //   hint: null,
-  //   danger: false,
-  //   icon: (
-  //     <svg
-  //       xmlns="http://www.w3.org/2000/svg"
-  //       width="48"
-  //       height="48"
-  //       viewBox="0 0 48 48"
-  //       fill="none"
-  //     >
-  //       <rect opacity="0.08" width="48" height="48" rx="8" fill="#00D061" />
-  //       <path
-  //         d="M29 20V17C29 16.735 28.895 16.48 28.707 16.293C28.52 16.105 28.265 16 28 16H18C17.47 16 16.961 16.211 16.586 16.586C16.211 16.961 16 17.47 16 18M16 18C16 18.53 16.211 19.039 16.586 19.414C16.961 19.789 17.47 20 18 20H30C30.265 20 30.52 20.105 30.707 20.293C30.895 20.48 31 20.735 31 21V24M16 18V30C16 30.53 16.211 31.039 16.586 31.414C16.961 31.789 17.47 32 18 32H30C30.265 32 30.52 31.895 30.707 31.707C30.895 31.52 31 31.265 31 31V28"
-  //         stroke="#00D061"
-  //         strokeWidth="2"
-  //         strokeLinecap="round"
-  //         strokeLinejoin="round"
-  //       />
-  //       <path
-  //         d="M32 24V28H28C27.47 28 26.961 27.789 26.586 27.414C26.211 27.039 26 26.53 26 26C26 25.47 26.211 24.961 26.586 24.586C26.961 24.211 27.47 24 28 24H32Z"
-  //         stroke="#00D061"
-  //         strokeWidth="2"
-  //         strokeLinecap="round"
-  //         strokeLinejoin="round"
-  //       />
-  //     </svg>
-  //   ),
-  // },
-  // {
-  //   label: "Credits",
-  //   hint: null,
-  //   danger: false,
-  //   icon: (
-  //     <svg
-  //       xmlns="http://www.w3.org/2000/svg"
-  //       width="48"
-  //       height="48"
-  //       viewBox="0 0 48 48"
-  //       fill="none"
-  //     >
-  //       <rect opacity="0.08" width="48" height="48" rx="8" fill="#00D061" />
-  //       <path
-  //         d="M16 19C16 17.939 16.421 16.922 17.172 16.172C17.922 15.421 18.939 15 20 15H28C29.061 15 30.078 15.421 30.828 16.172C31.579 16.922 32 17.939 32 19C32 20.061 31.579 21.078 30.828 21.828C30.078 22.579 29.061 23 28 23H20C18.939 23 17.922 22.579 17.172 21.828C16.421 21.078 16 20.061 16 19Z"
-  //         stroke="#00D061"
-  //         strokeWidth="2"
-  //         strokeLinecap="round"
-  //         strokeLinejoin="round"
-  //       />
-  //       <path
-  //         d="M19 29C19 27.939 19.421 26.922 20.172 26.172C20.922 25.421 21.939 25 23 25H31C32.061 25 33.078 25.421 33.828 26.172C34.579 26.922 35 27.939 35 29C35 30.061 34.579 31.078 33.828 31.828C33.078 32.579 32.061 33 31 33H23C21.939 33 20.922 32.579 20.172 31.828C19.421 31.078 19 30.061 19 29Z"
-  //         stroke="#00D061"
-  //         strokeWidth="2"
-  //         strokeLinecap="round"
-  //         strokeLinejoin="round"
-  //       />
-  //       <path
-  //         d="M22 19H26M25 29H29"
-  //         stroke="#00D061"
-  //         strokeWidth="2"
-  //         strokeLinecap="round"
-  //         strokeLinejoin="round"
-  //       />
-  //     </svg>
-  //   ),
-  // },
   {
     label: "Current Plan",
     hint: null,
@@ -338,75 +183,6 @@ const MENU_ITEMS = [
       </svg>
     ),
   },
-  // {
-  //   label: "Marketing Preferences",
-  //   hint: null,
-  //   danger: false,
-  //   icon: (
-  //     <svg
-  //       xmlns="http://www.w3.org/2000/svg"
-  //       width="48"
-  //       height="48"
-  //       viewBox="0 0 48 48"
-  //       fill="none"
-  //     >
-  //       <rect opacity="0.08" width="48" height="48" rx="8" fill="#00D061" />
-  //       <path
-  //         d="M30 20C30.796 20 31.559 20.316 32.121 20.879C32.684 21.441 33 22.204 33 23C33 23.796 32.684 24.559 32.121 25.121C31.559 25.684 30.796 26 30 26M22 20V31C22 31.265 21.895 31.52 21.707 31.707C21.52 31.895 21.265 32 21 32H20C19.735 32 19.48 31.895 19.293 31.707C19.105 31.52 19 31.265 19 31V26M24 20L28.524 16.23C28.655 16.12 28.815 16.051 28.985 16.029C29.155 16.007 29.327 16.034 29.482 16.107C29.637 16.179 29.768 16.294 29.86 16.439C29.951 16.583 30 16.751 30 16.922V29.078C30 29.249 29.951 29.417 29.86 29.561C29.768 29.706 29.637 29.821 29.482 29.893C29.327 29.966 29.155 29.993 28.985 29.971C28.815 29.949 28.655 29.879 28.524 29.77L24 26H16C15.735 26 15.48 25.895 15.293 25.707C15.105 25.52 15 25.265 15 25V21C15 20.735 15.105 20.48 15.293 20.293C15.48 20.105 15.735 20 16 20H24Z"
-  //         stroke="#00D061"
-  //         strokeWidth="2"
-  //         strokeLinecap="round"
-  //         strokeLinejoin="round"
-  //       />
-  //     </svg>
-  //   ),
-  // },
-  // {
-  //   label: "Language",
-  //   hint: "English (US)",
-  //   danger: false,
-  //   icon: (
-  //     <svg
-  //       xmlns="http://www.w3.org/2000/svg"
-  //       width="48"
-  //       height="48"
-  //       viewBox="0 0 48 48"
-  //       fill="none"
-  //     >
-  //       <rect opacity="0.08" width="48" height="48" rx="8" fill="#00D061" />
-  //       <path
-  //         d="M15 19V17H28V19M22 17V31M24 31H20M27 25V24H33V25M30 24V31M29 31H31"
-  //         stroke="#00D061"
-  //         strokeWidth="2"
-  //         strokeLinecap="round"
-  //         strokeLinejoin="round"
-  //       />
-  //     </svg>
-  //   ),
-  // },
-  // {
-  //   label: "Currency",
-  //   hint: "USD",
-  //   danger: false,
-  //   icon: (
-  //     <svg
-  //       xmlns="http://www.w3.org/2000/svg"
-  //       width="48"
-  //       height="48"
-  //       viewBox="0 0 48 48"
-  //       fill="none"
-  //     >
-  //       <rect opacity="0.08" width="48" height="48" rx="8" fill="#00D061" />
-  //       <path
-  //         d="M28.7 20C28.501 19.435 28.137 18.943 27.656 18.587C27.175 18.23 26.598 18.026 26 18H22C21.204 18 20.441 18.316 19.879 18.879C19.316 19.441 19 20.204 19 21C19 21.796 19.316 22.559 19.879 23.121C20.441 23.684 21.204 24 22 24H26C26.796 24 27.559 24.316 28.121 24.879C28.684 25.441 29 26.204 29 27C29 27.796 28.684 28.559 28.121 29.121C27.559 29.684 26.796 30 26 30H22C21.402 29.974 20.825 29.77 20.344 29.414C19.863 29.057 19.499 28.565 19.3 28M24 15V18M24 30V33"
-  //         stroke="#00D061"
-  //         strokeWidth="2"
-  //         strokeLinecap="round"
-  //         strokeLinejoin="round"
-  //       />
-  //     </svg>
-  //   ),
-  // },
   {
     label: "FAQ's",
     hint: null,
@@ -430,29 +206,6 @@ const MENU_ITEMS = [
       </svg>
     ),
   },
-  // {
-  //   label: "Data & Privacy Policy",
-  //   hint: null,
-  //   danger: false,
-  //   icon: (
-  //     <svg
-  //       xmlns="http://www.w3.org/2000/svg"
-  //       width="48"
-  //       height="48"
-  //       viewBox="0 0 48 48"
-  //       fill="none"
-  //     >
-  //       <rect opacity="0.08" width="48" height="48" rx="8" fill="#00D061" />
-  //       <path
-  //         d="M29 23H19C17.895 23 17 23.895 17 25V31C17 32.105 17.895 33 19 33H29C30.105 33 31 32.105 31 31V25C31 23.895 30.105 23 29 23ZM24 29C24.552 29 25 28.552 25 28C25 27.448 24.552 27 24 27C23.448 27 23 27.448 23 28C23 28.552 23.448 29 24 29ZM20 23V19C20 17.939 20.421 16.921 21.172 16.172C21.922 15.421 22.939 15 24 15C25.061 15 26.078 15.421 26.828 16.172C27.579 16.921 28 17.939 28 19V23"
-  //         stroke="#00D061"
-  //         strokeWidth="2"
-  //         strokeLinecap="round"
-  //         strokeLinejoin="round"
-  //       />
-  //     </svg>
-  //   ),
-  // },
   {
     label: "System Overview",
     hint: null,
@@ -506,29 +259,6 @@ const MENU_ITEMS = [
       </svg>
     ),
   },
-  // {
-  //   label: "Send Feedback",
-  //   hint: null,
-  //   danger: false,
-  //   icon: (
-  //     <svg
-  //       xmlns="http://www.w3.org/2000/svg"
-  //       width="48"
-  //       height="48"
-  //       viewBox="0 0 48 48"
-  //       fill="none"
-  //     >
-  //       <rect opacity="0.08" width="48" height="48" rx="8" fill="#00D061" />
-  //       <path
-  //         d="M16 32H20L30.5 21.5C31.03 20.97 31.328 20.25 31.328 19.5C31.328 18.75 31.03 18.03 30.5 17.5C29.97 16.97 29.25 16.672 28.5 16.672C27.75 16.672 27.03 16.97 26.5 17.5L16 28V32ZM25.5 18.5L29.5 22.5"
-  //         stroke="#00D061"
-  //         strokeWidth="2"
-  //         strokeLinecap="round"
-  //         strokeLinejoin="round"
-  //       />
-  //     </svg>
-  //   ),
-  // },
   {
     label: "Contact Us",
     hint: null,
@@ -582,29 +312,6 @@ const MENU_ITEMS = [
       </svg>
     ),
   },
-  // {
-  //   label: "Invite Friends",
-  //   hint: null,
-  //   danger: false,
-  //   icon: (
-  //     <svg
-  //       xmlns="http://www.w3.org/2000/svg"
-  //       width="48"
-  //       height="48"
-  //       viewBox="0 0 48 48"
-  //       fill="none"
-  //     >
-  //       <rect opacity="0.08" width="48" height="48" rx="8" fill="#00D061" />
-  //       <path
-  //         d="M21 23C23.209 23 25 21.209 25 19C25 16.791 23.209 15 21 15C18.791 15 17 16.791 17 19C17 21.209 18.791 23 21 23ZM15 33V31C15 29.939 15.421 28.922 16.172 28.172C16.922 27.421 17.939 27 19 27H23C24.061 27 25.078 27.421 25.828 28.172C26.579 28.922 27 29.939 27 31V33M28 23H34M31 20V26"
-  //         stroke="#00D061"
-  //         strokeWidth="2"
-  //         strokeLinecap="round"
-  //         strokeLinejoin="round"
-  //       />
-  //     </svg>
-  //   ),
-  // },
   {
     label: "Logout",
     hint: null,
@@ -662,25 +369,15 @@ const MENU_ITEMS = [
 ];
 
 const MENU_ROUTES = {
-  // "New Chat": "/santumai-chat",
   "Chat History": "/settings/history",
-  // "Banks & Cards": "/settings/banks-cards",
-  // "Payment Methods": "/settings/payment-methods",
-  // Credits: "/settings/credits",
   "Current Plan": "/settings/subscriptions",
   "Profile Info": "/personal-information",
   Protection: "/settings/security",
-  // "Marketing Preferences": "/settings/marketing-preferences",
-  // Language: "/language",
-  // Currency: "/settings/currency",
   "FAQ's": "/settings/faqs",
-  // "Data & Privacy Policy": "/settings/privacy-policy",
   "System Overview": "/settings/about-santumai",
   Legal: "/settings/legal",
   Notifications: "/notifications",
-  // "Send Feedback": "/settings/send-feedback",
   "Contact Us": "/settings/contact-us",
-  // "Invite Friends": "/settings/invite-friends",
   "Pause or Delete": "/settings/account-management",
 };
 
@@ -964,14 +661,6 @@ export default function HomeScreen() {
       <div className="theme-surface theme-border relative flex min-h-dvh w-full lg:max-w-3xl flex-col overflow-hidden lg:min-h-[calc(100dvh-2rem)] lg:rounded-[36px] lg:border lg:shadow-[0_24px_64px_rgba(15,15,15,0.08)]">
         {/* ── Green header background ── */}
         <div className="relative overflow-hidden bg-[#323d51] px-4 pb-4 pt-3 sm:px-6 sm:pt-9 lg:px-10 lg:pb-6 lg:pt-10">
-          {/* Circuit background */}
-          {/* <Image
-            src="/icons/let-you-screen-main-img.jpg"
-            alt=""
-            fill
-            className="object-cover opacity-20 pointer-events-none"
-            priority
-          /> */}
 
           {/* Nav row */}
           <div className="relative z-10 flex items-center justify-between">

@@ -237,112 +237,11 @@ export const SETTINGS_PAGE_CONTENT = {
       },
     ],
     footerActions: [
-      // { label: "Create PIN", href: "/create-pin", variant: "secondary" },
       {
         label: "Scan Fingerprint",
         href: "/finger-scan",
         variant: "primary",
       },
-    ],
-  },
-  "marketing-preferences": {
-    title: "Message Preferences",
-    badge: "Message Control",
-    heroTitle: "Choose the updates that actually feel useful",
-    description:
-      "Control which product, wellbeing, and membership messages you want to receive from SantumAI.",
-    imageSrc: "/icons/robot-slider-img2.png",
-    imageAlt: "Message preferences",
-    sections: [
-      {
-        type: "toggles",
-        title: "Channels And Topics",
-        items: [
-          {
-            key: "featureDrops",
-            label: "Feature announcements",
-            description:
-              "Hear about important product changes and major releases.",
-            enabled: true,
-          },
-          {
-            key: "promos",
-            label: "Membership offers",
-            description:
-              "Receive pricing updates or limited membership campaigns.",
-            enabled: true,
-          },
-          {
-            key: "tips",
-            label: "Weekly reflection tips",
-            description:
-              "Get small ideas for journaling, emotional check-ins, and calmer routines.",
-            enabled: false,
-          },
-          {
-            key: "partnerNews",
-            label: "Community updates",
-            description:
-              "Optional news about guided programs, resources, or partner initiatives.",
-            enabled: false,
-          },
-        ],
-      },
-    ],
-    footerActions: [
-      {
-        label: "Save Choices",
-        toast: "Message preferences saved in this session.",
-        variant: "primary",
-      },
-      {
-        label: "Contact Support",
-        href: "/settings/contact-us",
-        variant: "secondary",
-      },
-    ],
-  },
-  currency: {
-    title: "Currency",
-    badge: "Regional Setup",
-    heroTitle: "Choose the currency that feels most natural for billing",
-    description:
-      "This affects how plans, credits, and receipts are presented inside the membership flow.",
-    imageSrc: "/icons/robot-slider-img2.png",
-    imageAlt: "Currency selection",
-    sections: [
-      {
-        type: "choices",
-        key: "currency",
-        title: "Preferred Currency",
-        selected: "USD",
-        items: [
-          {
-            label: "USD",
-            description: "Useful for global pricing and cross-border billing.",
-          },
-          {
-            label: "INR",
-            description: "Helpful when you prefer local pricing and invoices.",
-          },
-          {
-            label: "EUR",
-            description: "A clean fit for European billing and receipts.",
-          },
-          {
-            label: "GBP",
-            description: "A good match for UK-based membership payments.",
-          },
-        ],
-      },
-    ],
-    footerActions: [
-      {
-        label: "Update Currency",
-        toast: "Preferred currency updated in this session.",
-        variant: "primary",
-      },
-      { label: "View Plans", href: "/plus-subscription", variant: "secondary" },
     ],
   },
   faqs: {
@@ -471,65 +370,6 @@ export const SETTINGS_PAGE_CONTENT = {
         href: "/settings/send-feedback",
         variant: "secondary",
       },
-    ],
-  },
-  "privacy-policy": {
-    title: "Data & Privacy Policy",
-    badge: "Trust Layer",
-    heroTitle:
-      "Explain how support data is handled without hiding it in legal language",
-    description:
-      "A readable privacy summary for profile data, mood check-ins, conversation history, and account controls.",
-    imageSrc: "/icons/finger-print-img-white.png",
-    imageAlt: "Privacy shield",
-    sections: [
-      {
-        type: "text",
-        title: "How SantumAI Handles Data",
-        items: [
-          {
-            heading: "Profile basics",
-            body: "Name, language, and interests help tailor onboarding, settings, and the overall support experience.",
-          },
-          {
-            heading: "Conversation context",
-            body: "Saved chats and summaries help you return to past reflections and let the app keep a lighter sense of continuity.",
-          },
-          {
-            heading: "Mood check-ins",
-            body: "Daily mood scores help SantumAI adjust tone, pacing, and support style before a conversation starts.",
-          },
-        ],
-      },
-      {
-        type: "list",
-        title: "Privacy Principles",
-        items: [
-          {
-            title: "Clarity first",
-            description:
-              "Tell people what is stored, why it matters, and where they can change it.",
-          },
-          {
-            title: "Control by default",
-            description:
-              "Make key account, security, and messaging choices easy to review and update.",
-          },
-          {
-            title: "Respect sensitive moments",
-            description:
-              "Private conversation features should never feel surprising or careless.",
-          },
-        ],
-      },
-    ],
-    footerActions: [
-      {
-        label: "Contact About Privacy",
-        href: "/settings/contact-us",
-        variant: "primary",
-      },
-      { label: "Back To Settings", href: "/home", variant: "secondary" },
     ],
   },
   "about-santumai": {
@@ -1079,42 +919,6 @@ export const SETTINGS_PAGE_CONTENT = {
         variant: "primary",
       },
       { label: "Back To FAQs", href: "/settings/faqs", variant: "secondary" },
-    ],
-  },
-  "invite-friends": {
-    title: "Invite Friends",
-    badge: "Share Support",
-    heroTitle: "Make referrals feel warm, clear, and easy to pass along",
-    description:
-      "Invite someone who might benefit from a calmer space for reflection and everyday emotional support.",
-    imageSrc: "/icons/friend10.jpg",
-    imageAlt: "Invite friends",
-    sections: [
-      {
-        type: "referral",
-        title: "Your Invite Code",
-        code: "SANTUMAI-2026",
-        reward:
-          "Give friends 14 days of guided support features and unlock bonus reflections for yourself.",
-      },
-      {
-        type: "steps",
-        title: "How It Works",
-        items: [
-          "Share the code with a friend.",
-          "They sign up and complete onboarding.",
-          "Referral rewards unlock automatically once the eligibility steps are met.",
-        ],
-      },
-    ],
-    footerActions: [
-      {
-        label: "Copy Invite Code",
-        copyText: "SANTUMAI-2026",
-        toast: "Invite code copied.",
-        variant: "primary",
-      },
-      { label: "Back Home", href: "/home", variant: "secondary" },
     ],
   },
   "account-management": {

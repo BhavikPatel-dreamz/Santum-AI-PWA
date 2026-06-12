@@ -1,23 +1,6 @@
 "use client";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Footer from "@/components/app/Footer";
-import { useGetProfileQuery } from "@/lib/store";
-import {
-  PAUSED_ACCOUNT_MESSAGE,
-  isProfilePaused,
-} from "@/lib/utills/profile";
-
-const PUBLIC_ROUTES = new Set([
-  "/",
-  "/sign-in",
-  "/sign-up",
-  "/verify-otp",
-  "/confirm-otp",
-  "/forgot-password",
-  "/new-password",
-  "/lets-you-in",
-  "/offline",
-]);
 
 export default function LayoutContent({
   children,
@@ -25,17 +8,7 @@ export default function LayoutContent({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const router = useRouter();
   const currentPath = pathname ?? "";
-  const shouldSkipProfile = PUBLIC_ROUTES.has(currentPath);
-  const { data: profile } = useGetProfileQuery(undefined, {
-    skip: shouldSkipProfile,
-    refetchOnFocus: true,
-    refetchOnReconnect: true,
-  });
-  const isPaused = isProfilePaused(profile);
-  const shouldShowPausedBanner =
-    isPaused && !shouldSkipProfile && currentPath !== "/settings/account-management";
   const hideFooterRoutes: string[] = [
     "/sign-in",
     "/sign-up",
