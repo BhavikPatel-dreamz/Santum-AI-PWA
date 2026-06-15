@@ -257,9 +257,14 @@ export const SETTINGS_PAGE_CONTENT = {
         type: "faq",
         items: [
           {
+            question: "Who should use Santum AI?",
+            answer:
+              "Santum AI is intended for individuals seeking accessible mental wellness support, emotional guidance, and self-help tools. It may be useful for people looking for private, convenient, and supportive conversations between or alongside professional therapy sessions.",
+          },
+          {
             question: "What can Santum AI help with?",
             answer:
-              "Santum AI may help with stress, anxiety, low mood, emotional overwhelm, relationship challenges, self-reflection, coping strategies, and general mental wellbeing support. It can also provide grounding exercises, wellness education, and supportive check-ins.",
+              "Santum AI may help with stress, anxiety, low mood, emotional overwhelm, relationship challenges, self-reflection, coping strategies, and general mental wellbeing support. It can also provide grounding exercises, wellness education, and therapeutic tools(available in Premium plan).",
           },
           {
             question: "Can Santum AI diagnose mental health conditions?",
@@ -272,11 +277,6 @@ export const SETTINGS_PAGE_CONTENT = {
               "Yes. Where appropriate, you may be guided to professional counselling and therapy services available through the broader Santum platform.",
           },
           {
-            question: "Who should use Santum AI?",
-            answer:
-              "Santum AI is intended for individuals seeking accessible mental wellness support, emotional guidance, and self-help tools. It may be useful for people looking for private, convenient, and supportive conversations between or alongside professional therapy sessions.",
-          },
-          {
             question: "Who or what is Sai?",
             answer:
               "Sai is short for Santum AI. it is a mental wellness and psychotherapy support chatbot which provides private conversations to help you manage emotional challenges, and everyday mental wellbeing. Sai is powered by advanced artificial inelligence counselling system.",
@@ -284,7 +284,7 @@ export const SETTINGS_PAGE_CONTENT = {
           {
             question: "Is Sai a replacement for therapy or emergency care?",
             answer:
-              "No. Sai is designed for everyday emotional support, it is not meant to replace professional human therapy or crisis response. If you are in immediate danger or need urgent help, contact local emergency services or a licensed crisis resource right away.",
+              "No. Sai is designed for everyday emotional support, it is not meant to replace professional human therapy or crisis response. If you are in immediate danger or need urgent help, contact local emergency services or a licensed Santum.net therapist.",
           },
           {
             question: "Is my conversation private?",
@@ -304,7 +304,7 @@ export const SETTINGS_PAGE_CONTENT = {
           {
             question: "How do I pay for my plan?",
             answer:
-              "Second and third tier plans are purchased on monthly subscription basis. These can be paid for by a credit card, cheque card or a debit card, and are auto-renewed at the beginning of each billing cycle.",
+              "Standard and Premium plans are purchased on monthly subscription basis. These can be paid for by a credit card, cheque card or a debit card, and are auto-renewed at the beginning of each billing cycle.",
           },
           {
             question: "Is Santum AI available all the time?",

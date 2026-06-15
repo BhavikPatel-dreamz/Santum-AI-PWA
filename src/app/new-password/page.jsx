@@ -29,7 +29,7 @@ function PasswordField({ id, label, value, onChange, show, onToggle }) {
           type={show ? "text" : "password"}
           value={value}
           onChange={onChange}
-          className="theme-input-field flex-1 text-[15px] outline-none"
+          className="theme-input-field min-w-1 flex-1 text-[15px] outline-none"
           placeholder={label}
         />
         <button
