@@ -11,6 +11,10 @@ import { Toaster } from "react-hot-toast";
 import "./globals.css";
 import LayoutContent from "@/components/app/LayoutConetent";
 
+const siteUrl = new URL(
+  process.env.NEXT_PUBLIC_SITE_URL || "https://santum-ai-pwa.vercel.app",
+);
+
 const segoeUi = localFont({
   src: [
     {
@@ -80,19 +84,63 @@ const segoeUi = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Santum AI",
+  metadataBase: siteUrl,
+  title: {
+    default: "Santum AI",
+    template: "%s | Santum AI",
+  },
   description:
     "A standalone AI counselling PWA for text-based emotional wellbeing support.",
+  viewport: "width=device-width, initial-scale=1",
+  keywords: [
+    "Santum AI",
+    "AI counselling",
+    "emotional wellbeing",
+    "mental health app",
+    "PWA",
+    "chat support",
+  ],
   manifest: "/manifest.json",
-
+  alternates: {
+    canonical: siteUrl.toString(),
+  },
+  openGraph: {
+    title: "Santum AI",
+    description:
+      "A standalone AI counselling PWA for text-based emotional wellbeing support.",
+    url: siteUrl.toString(),
+    siteName: "Santum AI",
+    type: "website",
+    images: [
+      {
+        url: `${siteUrl}/icons/logo.png`,
+        width: 1200,
+        height: 630,
+        alt: "Santum AI logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Santum AI",
+    description:
+      "A standalone AI counselling PWA for text-based emotional wellbeing support.",
+    images: [`${siteUrl}/icons/logo.png`],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    nocache: false,
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
     title: "Santum AI",
   },
   icons: {
-    icon: "/favicon.ico",
-    apple: "/apple-icon.png",
+    icon: "/icons/favicon.png",
+    shortcut: "/icons/favicon.png",
+    apple: "/icons/logo.png",
   },
 };
 
