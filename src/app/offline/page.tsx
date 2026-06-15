@@ -1,4 +1,13 @@
+import type { Metadata } from "next";
 import { WifiOff } from "lucide-react";
+import { createSeoMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = createSeoMetadata({
+  title: "Offline",
+  description: "Reconnect to continue using Santum AI.",
+  path: "/offline",
+  index: false,
+});
 
 export default function OfflinePage() {
   return (

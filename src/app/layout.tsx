@@ -3,17 +3,18 @@ import LoadingScreenWrapper from "@/components/onboarding/LoadingScreenWrapper";
 import { PageTransitionProvider } from "@/components/providers/PageTransitionProvider";
 import { ReduxProvider } from "@/components/providers/ReduxProvider";
 import OfflineDetector from "@/components/OfflineDetector";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import Script from "next/script";
 import { Suspense } from "react";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
 import LayoutContent from "@/components/app/LayoutConetent";
-
-const siteUrl = new URL(
-  process.env.NEXT_PUBLIC_SITE_URL || "https://santum-ai-pwa.vercel.app",
-);
+import {
+  absoluteUrl,
+  createSeoMetadata,
+  defaultSeoDescription,
+} from "@/lib/seo";
 
 const segoeUi = localFont({
   src: [
@@ -83,55 +84,23 @@ const segoeUi = localFont({
   fallback: ["Segoe UI", "Arial", "sans-serif"],
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
 export const metadata: Metadata = {
-  metadataBase: siteUrl,
+  ...createSeoMetadata({
+    title: "Santum AI",
+    description: defaultSeoDescription,
+  }),
+  metadataBase: new URL(absoluteUrl("/")),
   title: {
     default: "Santum AI",
     template: "%s | Santum AI",
   },
-  description:
-    "A standalone AI counselling PWA for text-based emotional wellbeing support.",
-  viewport: "width=device-width, initial-scale=1",
-  keywords: [
-    "Santum AI",
-    "AI counselling",
-    "emotional wellbeing",
-    "mental health app",
-    "PWA",
-    "chat support",
-  ],
   manifest: "/manifest.json",
-  alternates: {
-    canonical: siteUrl.toString(),
-  },
-  openGraph: {
-    title: "Santum AI",
-    description:
-      "A standalone AI counselling PWA for text-based emotional wellbeing support.",
-    url: siteUrl.toString(),
-    siteName: "Santum AI",
-    type: "website",
-    images: [
-      {
-        url: `${siteUrl}/Logo Source files 21-4/Icon/1x/Artboard1.png`,
-        width: 1200,
-        height: 630,
-        alt: "Santum AI logo",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Santum AI",
-    description:
-      "A standalone AI counselling PWA for text-based emotional wellbeing support.",
-    images: [`${siteUrl}/Logo Source files 21-4/Icon/1x/Artboard1.png`],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    nocache: false,
-  },
+  alternates: undefined,
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",

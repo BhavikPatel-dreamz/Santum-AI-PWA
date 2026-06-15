@@ -1,10 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, Home } from "lucide-react";
+import { createSeoMetadata } from "@/lib/seo";
 
-export const metadata = {
-  title: "Page Not Found | Santum AI",
-};
+export const metadata = createSeoMetadata({
+  title: "Page not found",
+  description: "This Santum AI page is not available.",
+  index: false,
+});
 
 export default function NotFound() {
   return (
