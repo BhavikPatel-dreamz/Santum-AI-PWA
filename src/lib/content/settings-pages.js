@@ -183,7 +183,7 @@ export const SETTINGS_PAGE_CONTENT = {
     heroTitle: "Protect private conversations without making access feel heavy",
     description:
       "A calm security hub for PINs, biometrics, alerts, and account-protection habits.",
-    imageSrc: "/icons/finger-print-img-green.png",
+    imageSrc: "/finger-print-img-green.png",
     imageAlt: "Security fingerprint",
     sections: [
       {
@@ -927,7 +927,7 @@ export const SETTINGS_PAGE_CONTENT = {
     heroTitle: "Make hard account decisions feel clear and carefully explained",
     description:
       "This screen helps people understand the difference between taking a break, exporting data, and leaving permanently.",
-    imageSrc: "/icons/finger-print-img-black.png",
+    imageSrc: "/finger-print-img-black.png",
     imageAlt: "Account control",
     sections: [
       {

@@ -20,17 +20,6 @@ export default function LoadingScreen({ onDone }) {
       className="theme-shell fixed inset-0 flex items-center justify-center overflow-hidden transition-colors duration-300"
       style={{ zIndex: 99999 }}
     >
-      {/* Top-left dot pattern */}
-      {/* <div className="absolute top-0 left-0 w-full h-1/2 opacity-30">
-        <Image
-          src="/icons/dots_pattern.png"
-          alt=""
-          fill
-          className="object-cover"
-          loading="eager"
-        />
-      </div> */}
-
       {/* Center content */}
       <div
         className="flex flex-col items-center text-center z-10"
@@ -59,17 +48,6 @@ export default function LoadingScreen({ onDone }) {
           Best Viewed on Mobile
         </p>
       </div>
-
-      {/* Bottom-right dot pattern */}
-      {/* <div className="absolute bottom-0 right-0 w-full h-1/2 opacity-30">
-        <Image
-          src="/icons/dots_pattern_bottom.png"
-          alt=""
-          fill
-          className="object-cover"
-        />
-      </div> */}
-
       <style>{`
         @keyframes fadeInUp {
           from { opacity: 0; transform: translateY(24px); }

@@ -113,7 +113,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: `${siteUrl}/icons/logo.png`,
+        url: `${siteUrl}/Logo Source files 21-4/Icon/1x/Artboard1.png`,
         width: 1200,
         height: 630,
         alt: "Santum AI logo",
@@ -125,7 +125,7 @@ export const metadata: Metadata = {
     title: "Santum AI",
     description:
       "A standalone AI counselling PWA for text-based emotional wellbeing support.",
-    images: [`${siteUrl}/icons/logo.png`],
+    images: [`${siteUrl}/Logo Source files 21-4/Icon/1x/Artboard1.png`],
   },
   robots: {
     index: true,
@@ -138,9 +138,9 @@ export const metadata: Metadata = {
     title: "Santum AI",
   },
   icons: {
-    icon: "/icons/favicon.png",
-    shortcut: "/icons/favicon.png",
-    apple: "/icons/logo.png",
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/apple-icon.png",
   },
 };
 

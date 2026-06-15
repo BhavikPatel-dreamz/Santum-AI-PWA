@@ -156,12 +156,12 @@ export default function FingerPrintScan() {
 
   const fingerSrc =
     scanState === "success"
-      ? "/icons/finger-print-img-green.png"
+      ? "/finger-print-img-green.png"
       : scanState === "scanning"
-        ? "/icons/finger-print-img-green.png"
+        ? "/finger-print-img-green.png"
         : isDark
-          ? "/icons/finger-print-img-green.png"
-          : "/icons/finger-print-img-black.png";
+          ? "/finger-print-img-green.png"
+          : "/finger-print-img-black.png";
 
   const scanLineColor =
     scanState === "success"

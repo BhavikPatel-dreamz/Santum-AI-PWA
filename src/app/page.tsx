@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/icons/logo.png",
+        url: "/Logo Source files 21-4/Icon/1x/Artboard1.png",
         width: 1200,
         height: 630,
         alt: "Santum AI logo",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     title: "Santum AI | Start your private emotional wellbeing journey",
     description:
       "Santum AI is a private PWA for guided text-based emotional wellbeing support, built to help users feel calm, heard, and understood.",
-    images: ["/icons/logo.png"],
+    images: ["/Logo Source files 21-4/Icon/1x/Artboard1.png"],
   },
 };
 

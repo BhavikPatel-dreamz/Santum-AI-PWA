@@ -741,16 +741,6 @@ export default function HomeScreen() {
                 View Plans
               </button>
             </div>
-            {/* Robot placeholder */}
-            {/* <div className="flex h-[140px] w-full items-end justify-end bg-[#00D061]/50 px-4 pt-4 sm:h-auto sm:w-[160px] sm:rounded-r-[20px] sm:px-0 lg:w-[220px]">
-              <Image
-                src="/icons/plus-robort.png"
-                alt=""
-                width={96}
-                height={96}
-                className="size-24 object-contain sm:size-28 lg:size-36"
-              />
-            </div> */}
           </div>
 
           <div ref={moodCheckInRef} className="mb-5">
