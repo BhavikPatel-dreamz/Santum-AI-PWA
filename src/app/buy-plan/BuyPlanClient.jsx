@@ -13,6 +13,8 @@ import {
   enrichSubscriptionPlan,
   findPlanByPurchaseReference,
   getPlanCheckoutUrl,
+  getPlanLevel,
+  getPlanName,
   getPlanPurchaseBlockReason,
   getPlanPrice,
   isSamePlan,
@@ -57,6 +59,29 @@ function getPricePillClasses(isDark) {
     : "bg-[#0F0F0F] text-white";
 }
 
+function getCheckoutActionLabel(plan, activePlanLevel) {
+  if (!plan) {
+    return "Buy This Plan";
+  }
+
+  const selectedPlanLevel = getPlanLevel(plan);
+  const displayName = getPlanName(plan) || "Plan";
+
+  if (selectedPlanLevel === "premium" && activePlanLevel === "standard") {
+    return "Upgrade to Premium";
+  }
+
+  if (selectedPlanLevel === "standard" && activePlanLevel === "premium") {
+    return "Switch to Standard";
+  }
+
+  if (selectedPlanLevel === "standard" || selectedPlanLevel === "premium") {
+    return `Buy ${displayName}`;
+  }
+
+  return "Buy This Plan";
+}
+
 export default function BuyPlanClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -94,6 +119,10 @@ export default function BuyPlanClient() {
   const isSelectedPlanActive = Boolean(
     selectedPlan && isSamePlan(selectedPlan, subscriptionStatus),
   );
+  const activePlanLevel =
+    typeof subscriptionStatus?.active_plan_level === "string"
+      ? subscriptionStatus.active_plan_level.toLowerCase()
+      : "";
   const isSubscriptionStatusBusy =
     isSubscriptionStatusLoading || isSubscriptionStatusFetching;
   const subscriptionPurchaseBlockReason = !isSelectedPlanActive
@@ -337,7 +366,7 @@ export default function BuyPlanClient() {
               ? "Open Chat"
               : purchaseRestrictionReason
                 ? "Purchase Locked"
-                : "Buy This Plan"}
+                : getCheckoutActionLabel(selectedPlan, activePlanLevel)}
         </button>
         <button
           type="button"

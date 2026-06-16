@@ -21,7 +21,7 @@ import {
 } from "@/lib/store";
 import { extractCreditBalance } from "@/lib/utills/credit";
 import { getTodayMoodDateKey } from "@/lib/utills/mood";
-import { isProfilePaused } from "@/lib/utills/profile";
+import { isProfilePaused, PAUSED_ACCOUNT_MESSAGE } from "@/lib/utills/profile";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";

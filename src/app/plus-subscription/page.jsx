@@ -13,6 +13,8 @@ import {
   enrichSubscriptionPlan,
   getPlanCheckoutUrl,
   getPlanKey,
+  getPlanLevel,
+  getPlanName,
   getPlanPurchaseBlockReason,
   getPlanPurchaseHref,
   getPlanPrice,
@@ -68,6 +70,29 @@ function getPricePillClasses(isDark) {
   return isDark
     ? "border border-[#2F3A34] bg-[#0B1210] text-white"
     : "bg-[#0F0F0F] text-white";
+}
+
+function getPlanActionLabel(plan, activePlanLevel) {
+  if (!plan) {
+    return "Checkout Unavailable";
+  }
+
+  const selectedPlanLevel = getPlanLevel(plan);
+  const displayName = getPlanName(plan) || "Plan";
+
+  if (selectedPlanLevel === "premium" && activePlanLevel === "standard") {
+    return "Upgrade to Premium";
+  }
+
+  if (selectedPlanLevel === "standard" && activePlanLevel === "premium") {
+    return "Switch to Standard";
+  }
+
+  if (selectedPlanLevel === "standard" || selectedPlanLevel === "premium") {
+    return `Buy ${displayName}`;
+  }
+
+  return "Select This Plan";
 }
 
 export default function PlusSubscriptionPage() {
@@ -133,6 +158,10 @@ export default function PlusSubscriptionPage() {
   }, [router, subscriptionStatusError]);
 
   const activePlanReference = subscriptionStatus ?? null;
+  const activePlanLevel =
+    typeof subscriptionStatus?.active_plan_level === "string"
+      ? subscriptionStatus.active_plan_level.toLowerCase()
+      : "";
   const resolvedSelectedPlanKey = plans.some(
     (plan, index) => getPlanKey(plan, index) === selectedPlanKey,
   )
@@ -147,6 +176,8 @@ export default function PlusSubscriptionPage() {
   const isSelectedPlanActive = Boolean(
     selectedPlan && isSamePlan(selectedPlan, activePlanReference),
   );
+  const selectedPlanLevel = selectedPlan ? getPlanLevel(selectedPlan) : "";
+  const isSelectedPlanFree = selectedPlanLevel === "free";
   const subscriptionPurchaseBlockReason = !isSelectedPlanActive
     ? getPlanPurchaseBlockReason(selectedPlan, subscriptionStatus)
     : "";
@@ -187,7 +218,7 @@ export default function PlusSubscriptionPage() {
       return;
     }
 
-    if (isSelectedPlanActive || selectedPlanKey == "17") {
+    if (isSelectedPlanActive || (isSelectedPlanFree && !purchaseRestrictionReason)) {
       router.push("/santumai-chat");
       return;
     }
@@ -207,13 +238,11 @@ export default function PlusSubscriptionPage() {
   }
 
   const primaryButtonLabel =
-    isSelectedPlanActive || selectedPlanKey == "17"
+    isSelectedPlanActive || (isSelectedPlanFree && !purchaseRestrictionReason)
       ? "Start Chatting"
       : purchaseRestrictionReason
         ? "Purchase Locked"
-        : selectedPlan
-          ? "Select This Plan"
-          : "Checkout Unavailable"
+        : getPlanActionLabel(selectedPlan, activePlanLevel);
 
   const isPrimaryButtonDisabled =
     !selectedPlan ||

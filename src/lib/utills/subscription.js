@@ -165,8 +165,8 @@ const DESCRIPTION_KEYS = [
 
 const FEATURE_KEYS = ["features", "benefits", "included_features"];
 
-const PAID_PLAN_PURCHASE_BLOCK_MESSAGE =
-  "Cancel auto-pay for your current plan and wait until it ends before buying another plan.";
+const FREE_PLAN_SWITCH_BLOCK_MESSAGE =
+  "Switching back to the Free plan is not permitted while you have an active paid plan.";
 
 function normalizeTextValue(value) {
   if (typeof value === "string") {
@@ -222,15 +222,6 @@ function normalizeStatusToken(value) {
   return normalizeTextValue(value)
     .toLowerCase()
     .replace(/[\s-]+/g, "_");
-}
-
-function normalizeDateValue(value) {
-  if (!value) {
-    return null;
-  }
-
-  const date = value instanceof Date ? value : new Date(value);
-  return Number.isNaN(date.getTime()) ? null : date;
 }
 
 function dedupe(values) {
@@ -596,10 +587,11 @@ export function getPlanLevel(plan) {
 }
 
 export function getPlanPurchaseBlockReason(plan, subscriptionStatus) {
-  if (!plan || getPlanPrice(plan) <= 0) {
+  if (!plan) {
     return "";
   }
 
+  const selectedPlanLevel = getPlanLevel(plan);
   const activePlanLevel = normalizeTextValue(
     subscriptionStatus?.active_plan_level,
   ).toLowerCase();
@@ -611,11 +603,9 @@ export function getPlanPurchaseBlockReason(plan, subscriptionStatus) {
     activePlanLevel === "standard" ||
     activePlanLevel === "premium" ||
     (activePlanBillingAmount !== null && activePlanBillingAmount > 0);
-  const expiryDate = normalizeDateValue(subscriptionStatus?.expiry_date);
-  const hasEnded = expiryDate ? expiryDate.getTime() <= Date.now() : false;
 
-  if (isPaidPlanActive && !hasEnded) {
-    return PAID_PLAN_PURCHASE_BLOCK_MESSAGE;
+  if (selectedPlanLevel === "free" && isPaidPlanActive) {
+    return FREE_PLAN_SWITCH_BLOCK_MESSAGE;
   }
 
   return "";
