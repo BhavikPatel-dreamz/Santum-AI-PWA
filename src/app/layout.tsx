@@ -147,6 +147,7 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="google-site-verification" content="NsFvLxoV1cdW_s41jMXtkIZtZXLdjPMvb1yQGBMXXAs" />
       </head>
       <body className="min-h-full flex flex-col font-sans">
         <Script

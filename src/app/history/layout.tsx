@@ -3,12 +3,12 @@ import type { ReactNode } from "react";
 import { createSeoMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = createSeoMetadata({
-  title: "Credits",
-  description: "Review your Santum AI credit balance.",
-  path: "/settings/credits",
+  title: "Chat history",
+  description: "Review your private Santum AI chat history.",
+  path: "/history",
   index: false,
 });
 
-export default function CreditsLayout({ children }: { children: ReactNode }) {
+export default function HistoryLayout({ children }: { children: ReactNode }) {
   return children;
 }

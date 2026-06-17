@@ -17,6 +17,7 @@ import {
   getPlanPurchaseBlockReason,
   getPlanPurchaseHrefByLevel,
 } from "@/lib/utills/subscription";
+import { SETTINGS_PAGE_ROUTES } from "@/lib/content/settings-routes";
 
 function SectionHeading({ title, description }) {
   if (!title && !description) {
@@ -235,7 +236,7 @@ function buildPlanUpgradeGetYouItems(subscriptionStatus, sections) {
 export default function SettingsDetailPage({ content }) {
   const router = useRouter();
   const pathname = usePathname();
-  const isSubscriptionsPage = pathname === "/settings/subscriptions";
+  const isSubscriptionsPage = pathname === SETTINGS_PAGE_ROUTES.subscriptions;
   const { data: profile } = useGetProfileQuery();
   const {
     data: subscriptionStatus,
@@ -255,8 +256,8 @@ export default function SettingsDetailPage({ content }) {
   const isAccountPaused = isProfilePaused(profile);
   const isPausedFeatureLocked =
     isAccountPaused &&
-    pathname !== "/settings/security" &&
-    pathname !== "/settings/account-management";
+    pathname !== SETTINGS_PAGE_ROUTES.security &&
+    pathname !== SETTINGS_PAGE_ROUTES["account-management"];
   const [toggles, setToggles] = useState(() => {
     const initialState = {};
 

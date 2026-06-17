@@ -27,6 +27,7 @@ import {
 } from "@/lib/utills/profile";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { registerPushServiceWorker } from "@/lib/push/client";
+import { SETTINGS_PAGE_ROUTES } from "@/lib/content/settings-routes";
 
 const CollapseIcon = () => (
   <svg
@@ -369,16 +370,16 @@ const MENU_ITEMS = [
 ];
 
 const MENU_ROUTES = {
-  "Chat History": "/settings/history",
-  "Current Plan": "/settings/subscriptions",
+  "Chat History": "/history",
+  "Current Plan": SETTINGS_PAGE_ROUTES.subscriptions,
   "Profile Info": "/personal-information",
-  Protection: "/settings/security",
-  "FAQ's": "/settings/faqs",
-  "System Overview": "/settings/about-santumai",
-  Legal: "/settings/legal",
+  Protection: SETTINGS_PAGE_ROUTES.security,
+  "FAQ's": SETTINGS_PAGE_ROUTES.faqs,
+  "System Overview": SETTINGS_PAGE_ROUTES["about-santumai"],
+  Legal: SETTINGS_PAGE_ROUTES.legal,
   Notifications: "/notifications",
-  "Contact Us": "/settings/contact-us",
-  "Pause or Delete": "/settings/account-management",
+  "Contact Us": SETTINGS_PAGE_ROUTES["contact-us"],
+  "Pause or Delete": SETTINGS_PAGE_ROUTES["account-management"],
 };
 
 const QUICK_ACCESS_ITEMS = [
@@ -386,25 +387,25 @@ const QUICK_ACCESS_ITEMS = [
     label: "Chat History",
     caption: "Past Sessions",
     value: "View",
-    href: "/settings/history",
+    href: "/history",
   },
   {
     label: "Current Plan",
     caption: "Your Subscription",
     value: "Upgarde",
-    href: "/settings/subscriptions",
+    href: SETTINGS_PAGE_ROUTES.subscriptions,
   },
   {
     label: "FAQ's",
     caption: "Find Out More",
     value: "Learn",
-    href: "/settings/faqs",
+    href: SETTINGS_PAGE_ROUTES.faqs,
   },
   {
     label: "Protection",
     caption: "Add Security",
     value: "Biometrics",
-    href: "/settings/security",
+    href: SETTINGS_PAGE_ROUTES.security,
   },
 ];
 

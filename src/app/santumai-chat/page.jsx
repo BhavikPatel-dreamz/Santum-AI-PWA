@@ -381,7 +381,7 @@ export default function SantumAIChatPage() {
       toast.error(
         "This conversation was not found or has already been deleted.",
       );
-      router.replace("/settings/history");
+      router.replace("/history");
       return;
     }
 

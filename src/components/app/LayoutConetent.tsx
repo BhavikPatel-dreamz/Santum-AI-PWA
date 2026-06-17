@@ -31,7 +31,7 @@ export default function LayoutContent({
             </p>
             <button
               type="button"
-              onClick={() => router.push("/settings/account-management")}
+              onClick={() => router.push("/account-management")}
               className="shrink-0 rounded-full bg-[#00D061] px-4 py-2 text-[13px] font-semibold text-white shadow-[0_8px_18px_rgba(0,208,97,0.22)]"
             >
               Resume

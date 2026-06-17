@@ -563,7 +563,7 @@ export async function syncBillingNotifications({ snapshot, user }) {
         description: Number.isFinite(nextState.credit_balance)
           ? `Your token balance was refreshed to ${formatCreditAmount(nextState.credit_balance)}.`
           : "Your token balance was refreshed for the new billing cycle.",
-        actionHref: "/settings/credits",
+        actionHref: "/current-plan",
         actionLabel: "View credits",
         priority: "normal",
         metadata: {
