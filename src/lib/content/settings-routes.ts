@@ -16,7 +16,5 @@ export const SEO_SETTINGS_PAGE_KEYS: SettingsPageKey[] = [
   "faqs",
   "about-santumai",
   "legal",
-  "send-feedback",
   "contact-us",
-  "account-management",
 ];
