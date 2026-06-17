@@ -505,7 +505,7 @@ export async function syncBillingNotifications({ snapshot, user }) {
         category: "billing",
         title: "Payment failed",
         description: `We could not renew ${currentPlanLabel}. Review your billing details to keep premium access uninterrupted.`,
-        actionHref: "/settings/payment-methods",
+        actionHref: "/plus-subscription",
         actionLabel: "Review billing",
         priority: "high",
         metadata: {

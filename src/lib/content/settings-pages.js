@@ -1,135 +1,137 @@
 export const SETTINGS_PAGE_CONTENT = {
-  "banks-cards": {
-    title: "Billing Methods",
-    badge: "Membership Billing",
-    heroTitle: "Keep your renewal methods organized and easy to review",
-    description:
-      "Use this space to review the cards or accounts linked to SantumAI memberships and chat-credit top-ups.",
-    imageSrc: "/icons/plus-robort.png",
-    imageAlt: "Billing methods",
-    sections: [
-      {
-        type: "list",
-        title: "Saved Methods",
-        items: [
-          {
-            title: "Primary debit card",
-            description:
-              "Used for membership renewals and one-tap credit top-ups.",
-            meta: "Ending in 4821",
-            badge: "Default",
-          },
-          {
-            title: "UPI AutoPay",
-            description:
-              "Available for recurring membership charges when enabled.",
-            meta: "Ready",
-          },
-        ],
-      },
-      {
-        type: "list",
-        title: "Billing Notes",
-        items: [
-          {
-            title: "Secure checkout",
-            description:
-              "Payments are completed on Santum.net before you return to your current plan in the PWA.",
-          },
-          {
-            title: "Receipts and renewals",
-            description:
-              "Membership renewals and balance changes are reflected in your notification inbox.",
-          },
-        ],
-      },
-    ],
-    footerActions: [
-      {
-        label: "Add Billing Method",
-        toast: "Billing method saved in this session.",
-        variant: "primary",
-      },
-      {
-        label: "Payment Preferences",
-        href: "/settings/payment-methods",
-        variant: "secondary",
-      },
-    ],
-  },
-  "payment-methods": {
-    title: "Payment Preferences",
-    badge: "Checkout Ready",
-    heroTitle: "Choose how SantumAI should handle renewals and receipts",
-    description:
-      "These settings shape recurring membership charges, low-balance reminders, and receipt delivery.",
-    imageSrc: "/icons/robot-slider-img3.png",
-    imageAlt: "Payment preferences",
-    sections: [
-      {
-        type: "list",
-        title: "Available Methods",
-        items: [
-          {
-            title: "UPI AutoPay",
-            description: "A smooth option for recurring membership renewals.",
-            meta: "Recommended",
-            badge: "Fastest",
-          },
-          {
-            title: "Debit or credit card",
-            description:
-              "Reliable fallback for memberships and chat-credit purchases.",
-            meta: "Saved",
-          },
-          {
-            title: "Netbanking",
-            description: "Helpful when you prefer manual checkout on the web.",
-            meta: "Available at checkout",
-          },
-        ],
-      },
-      {
-        type: "toggles",
-        title: "Billing Preferences",
-        items: [
-          {
-            key: "autopay",
-            label: "Auto-renew active membership",
-            description:
-              "Let your current plan renew without interrupting support access.",
-            enabled: true,
-          },
-          {
-            key: "lowBalance",
-            label: "Warn when balance runs low",
-            description:
-              "Get notified before credits are too low for another chat.",
-            enabled: true,
-          },
-          {
-            key: "receipts",
-            label: "Send detailed receipts",
-            description:
-              "Share billing summaries and plan updates to your chosen inbox.",
-            enabled: false,
-          },
-        ],
-      },
-    ],
-    footerActions: [
-      {
-        label: "Save Preferences",
-        toast: "Payment preferences saved in this session.",
-        variant: "primary",
-      },
-      {
-        label: "Back To Billing",
-        href: "/settings/banks-cards",
-        variant: "secondary",
-      },
-    ],
-  },
+  // "banks-cards": {
+  //   title: "Billing Methods",
+  //   badge: "Membership Billing",
+  //   heroTitle: "Keep your renewal methods organized and easy to review",
+  //   description:
+  //     "Use this space to review the cards or accounts linked to SantumAI memberships and chat-credit top-ups.",
+  //   imageSrc: "/icons/plus-robort.png",
+  //   imageAlt: "Billing methods",
+  //   sections: [
+  //     {
+  //       type: "list",
+  //       title: "Saved Methods",
+  //       items: [
+  //         {
+  //           title: "Primary debit card",
+  //           description:
+  //             "Used for membership renewals and one-tap credit top-ups.",
+  //           meta: "Ending in 4821",
+  //           badge: "Default",
+  //         },
+  //         {
+  //           title: "UPI AutoPay",
+  //           description:
+  //             "Available for recurring membership charges when enabled.",
+  //           meta: "Ready",
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       type: "list",
+  //       title: "Billing Notes",
+  //       items: [
+  //         {
+  //           title: "Secure checkout",
+  //           description:
+  //             "Payments are completed on Santum.net before you return to your current plan in the PWA.",
+  //         },
+  //         {
+  //           title: "Receipts and renewals",
+  //           description:
+  //             "Membership renewals and balance changes are reflected in your notification inbox.",
+  //         },
+  //       ],
+  //     },
+  //   ],
+  //   footerActions: [
+  //     {
+  //       label: "Add Billing Method",
+  //       toast: "Billing method saved in this session.",
+  //       variant: "primary",
+  //     },
+  //     {
+  //       label: "Payment Preferences",
+  //       href: "/settings/payment-methods",
+  //       variant: "secondary",
+  //     },
+  //   ],
+  // },
+
+  // "payment-methods": {
+  //   title: "Payment Preferences",
+  //   badge: "Checkout Ready",
+  //   heroTitle: "Choose how SantumAI should handle renewals and receipts",
+  //   description:
+  //     "These settings shape recurring membership charges, low-balance reminders, and receipt delivery.",
+  //   imageSrc: "/icons/robot-slider-img3.png",
+  //   imageAlt: "Payment preferences",
+  //   sections: [
+  //     {
+  //       type: "list",
+  //       title: "Available Methods",
+  //       items: [
+  //         {
+  //           title: "UPI AutoPay",
+  //           description: "A smooth option for recurring membership renewals.",
+  //           meta: "Recommended",
+  //           badge: "Fastest",
+  //         },
+  //         {
+  //           title: "Debit or credit card",
+  //           description:
+  //             "Reliable fallback for memberships and chat-credit purchases.",
+  //           meta: "Saved",
+  //         },
+  //         {
+  //           title: "Netbanking",
+  //           description: "Helpful when you prefer manual checkout on the web.",
+  //           meta: "Available at checkout",
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       type: "toggles",
+  //       title: "Billing Preferences",
+  //       items: [
+  //         {
+  //           key: "autopay",
+  //           label: "Auto-renew active membership",
+  //           description:
+  //             "Let your current plan renew without interrupting support access.",
+  //           enabled: true,
+  //         },
+  //         {
+  //           key: "lowBalance",
+  //           label: "Warn when balance runs low",
+  //           description:
+  //             "Get notified before credits are too low for another chat.",
+  //           enabled: true,
+  //         },
+  //         {
+  //           key: "receipts",
+  //           label: "Send detailed receipts",
+  //           description:
+  //             "Share billing summaries and plan updates to your chosen inbox.",
+  //           enabled: false,
+  //         },
+  //       ],
+  //     },
+  //   ],
+  //   footerActions: [
+  //     {
+  //       label: "Save Preferences",
+  //       toast: "Payment preferences saved in this session.",
+  //       variant: "primary",
+  //     },
+  //     {
+  //       label: "Back To Billing",
+  //       href: "/settings/banks-cards",
+  //       variant: "secondary",
+  //     },
+  //   ],
+  // },
+
   subscriptions: {
     title: "Current Plan",
     badge: "Plan Control",
