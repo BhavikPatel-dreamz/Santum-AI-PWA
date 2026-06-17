@@ -18,11 +18,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "daily",
       priority: 1,
     },
-    {
-      url: absoluteUrl("/buy-plan"),
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
     ...settingsPages,
   ];
 }

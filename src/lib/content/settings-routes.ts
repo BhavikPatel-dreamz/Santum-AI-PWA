@@ -12,7 +12,6 @@ export const SETTINGS_PAGE_ROUTES = {
 export type SettingsPageKey = keyof typeof SETTINGS_PAGE_ROUTES;
 
 export const SEO_SETTINGS_PAGE_KEYS: SettingsPageKey[] = [
-  "subscriptions",
   "security",
   "faqs",
   "about-santumai",
