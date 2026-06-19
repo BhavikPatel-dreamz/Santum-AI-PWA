@@ -92,8 +92,30 @@ export async function POST(req) {
         method: "POST",
         body: payload,
       }),
-      "Unable to save profile",
+      "Unable to save profile"
     );
+
+    if (hasPaused) {
+      const endpoint = body.paused
+        ? "/v1/user/membership/pause"
+        : "/v1/user/membership/resume";
+
+      assertApiSuccess(
+        await apiFetchWithAuth(endpoint, {
+          method: "POST",
+        }),
+        "Membership update failed"
+      );
+    }
+
+    if (body.delete === true) {
+      assertApiSuccess(
+        await apiFetchWithAuth("/v1/user/membership/cancel", {
+          method: "POST",
+        }),
+        "Unable to cancel membership"
+      );
+    }
 
     return NextResponse.json({
       success: true,
