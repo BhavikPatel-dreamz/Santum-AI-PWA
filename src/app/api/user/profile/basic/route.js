@@ -87,6 +87,38 @@ export async function POST(req) {
       payload.append("delete", body.delete ? "1" : "0");
     }
 
+    if (hasPaused) {
+      const endpoint = body.paused
+        ? "/v1/user/membership/pause"
+        : "/v1/user/membership/resume";
+
+      const data = await apiFetchWithAuth(endpoint, {
+        method: "POST",
+      })
+
+      if (data?.success === false) {
+        console.log("MemberShip updation error:", data?.message)
+        throw {
+          status: 400,
+          message: "Unable to pause or resume membership"
+        };
+      }
+    }
+
+    if (body.delete === true) {
+      const data = await apiFetchWithAuth("/v1/user/membership/cancel", {
+        method: "POST",
+      })
+
+      if (data?.success === false) {
+        console.log("MemberShip Cancellation error:", data?.message)
+        throw {
+          status: 400,
+          message: "Unable to cancel membership"
+        };
+      }
+    }
+
     const data = assertApiSuccess(
       await apiFetchWithAuth("/v1/user/profile/basic", {
         method: "POST",
@@ -94,28 +126,6 @@ export async function POST(req) {
       }),
       "Unable to save profile"
     );
-
-    if (hasPaused) {
-      const endpoint = body.paused
-        ? "/v1/user/membership/pause"
-        : "/v1/user/membership/resume";
-
-      assertApiSuccess(
-        await apiFetchWithAuth(endpoint, {
-          method: "POST",
-        }),
-        "Membership update failed"
-      );
-    }
-
-    if (body.delete === true) {
-      assertApiSuccess(
-        await apiFetchWithAuth("/v1/user/membership/cancel", {
-          method: "POST",
-        }),
-        "Unable to cancel membership"
-      );
-    }
 
     return NextResponse.json({
       success: true,
