@@ -235,6 +235,22 @@ function extractNotificationFeed(payload: unknown): ApiRecord {
   };
 }
 
+function extractBillingOrders(payload: unknown): ApiRecord {
+  const record = extractRecord(payload) ?? {};
+  const orders = Array.isArray(record.orders) ? (record.orders as ApiList) : [];
+  const pagination =
+    record.pagination &&
+    typeof record.pagination === "object" &&
+    !Array.isArray(record.pagination)
+      ? (record.pagination as ApiRecord)
+      : {};
+
+  return {
+    orders,
+    pagination,
+  };
+}
+
 export const appApi = createApi({
   reducerPath: "appApi",
   baseQuery,
@@ -248,6 +264,7 @@ export const appApi = createApi({
     "Messages",
     "Mood",
     "Notifications",
+    "BillingOrders",
   ],
   endpoints: (builder) => ({
     login: builder.mutation<ApiRecord, LoginPayload>({
@@ -312,6 +329,7 @@ export const appApi = createApi({
         "Chat",
         "Messages",
         "Notifications",
+        "BillingOrders",
       ],
     }),
     getProfile: builder.query<ApiRecord | null, void>({
@@ -419,6 +437,11 @@ export const appApi = createApi({
       transformResponse: (response: unknown) => extractRecord(response),
       providesTags: ["SubscriptionStatus"],
     }),
+    getBillingOrders: builder.query<ApiRecord, void>({
+      query: () => noStoreGet("/settings/billing/orders"),
+      transformResponse: (response: unknown) => extractBillingOrders(response),
+      providesTags: ["BillingOrders"],
+    }),
     createChat: builder.mutation<ApiRecord, CreateChatPayload>({
       query: (body) => ({
         url: "/chat",
@@ -517,6 +540,7 @@ export const {
   useGetCreditBalanceQuery,
   useGetSubscriptionPlansQuery,
   useGetSubscriptionStatusQuery,
+  useGetBillingOrdersQuery,
   useCreateChatMutation,
   useGetChatsQuery,
   useGetChatQuery,

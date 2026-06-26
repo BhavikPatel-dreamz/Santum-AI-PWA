@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Bell, ChevronRightIcon, Settings, X } from "lucide-react";
+import { Bell, ChevronRightIcon, ReceiptText, Settings, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import MoodCheckInCard from "@/components/app/MoodCheckInCard";
@@ -122,6 +122,16 @@ const MENU_ITEMS = [
           strokeLinejoin="round"
         />
       </svg>
+    ),
+  },
+  {
+    label: "Billing",
+    hint: null,
+    danger: false,
+    icon: (
+      <div className="flex h-12 w-12 items-center justify-center rounded-[8px] bg-[#00D061]/10 text-[#00D061]">
+        <ReceiptText size={24} strokeWidth={2} />
+      </div>
     ),
   },
   {
@@ -372,6 +382,7 @@ const MENU_ITEMS = [
 const MENU_ROUTES = {
   "Chat History": "/history",
   "Current Plan": SETTINGS_PAGE_ROUTES.subscriptions,
+  Billing: "/billing-section",
   "Profile Info": "/personal-information",
   Protection: SETTINGS_PAGE_ROUTES.security,
   "FAQ's": SETTINGS_PAGE_ROUTES.faqs,
@@ -392,8 +403,14 @@ const QUICK_ACCESS_ITEMS = [
   {
     label: "Current Plan",
     caption: "Your Subscription",
-    value: "Upgarde",
+    value: "Upgrade",
     href: SETTINGS_PAGE_ROUTES.subscriptions,
+  },
+  {
+    label: "Billing",
+    caption: "Invoices & Payments",
+    value: "View",
+    href: "/billing-section",
   },
   {
     label: "FAQ's",
