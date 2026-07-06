@@ -321,7 +321,7 @@ function EmptyState() {
         No billing records yet
       </h3>
       <p className="theme-text-secondary mt-2 font-satoshi text-[14px] leading-6">
-        Your plan purchases and invoice downloads will appear here once orders
+        Your plan purchases and invoices will appear here once transactions
         are available.
       </p>
     </div>

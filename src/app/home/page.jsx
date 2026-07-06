@@ -125,16 +125,6 @@ const MENU_ITEMS = [
     ),
   },
   {
-    label: "Billing",
-    hint: null,
-    danger: false,
-    icon: (
-      <div className="flex h-12 w-12 items-center justify-center rounded-[8px] bg-[#00D061]/10 text-[#00D061]">
-        <ReceiptText size={24} strokeWidth={2} />
-      </div>
-    ),
-  },
-  {
     label: "Profile Info",
     hint: null,
     danger: false,
@@ -162,6 +152,16 @@ const MENU_ITEMS = [
           strokeLinejoin="round"
         />
       </svg>
+    ),
+  },
+  {
+    label: "Billing",
+    hint: null,
+    danger: false,
+    icon: (
+      <div className="flex h-12 w-12 items-center justify-center rounded-[8px] bg-[#00D061]/10 text-[#00D061]">
+        <ReceiptText size={24} strokeWidth={2} />
+      </div>
     ),
   },
   {
@@ -407,12 +407,6 @@ const QUICK_ACCESS_ITEMS = [
     href: SETTINGS_PAGE_ROUTES.subscriptions,
   },
   {
-    label: "Billing",
-    caption: "Invoices & Payments",
-    value: "View",
-    href: "/billing-section",
-  },
-  {
     label: "FAQ's",
     caption: "Find Out More",
     value: "Learn",
@@ -433,16 +427,14 @@ const DarkModeToggle = ({ dark, onToggle }) => (
     type="button"
     onClick={onToggle}
     aria-pressed={dark}
-    className={`relative w-[50px] h-[28px] rounded-full transition-all duration-300 flex-shrink-0 ${
-      dark
-        ? "bg-gray-700 border border-gray-600"
-        : "bg-gray-300 border border-gray-300"
-    }`}
+    className={`relative w-[50px] h-[28px] rounded-full transition-all duration-300 flex-shrink-0 ${dark
+      ? "bg-gray-700 border border-gray-600"
+      : "bg-gray-300 border border-gray-300"
+      }`}
   >
     <span
-      className={`absolute top-[3px] w-[22px] h-[22px] rounded-full transition-all duration-300 flex items-center justify-center ${
-        dark ? "left-[calc(100%-25px)] bg-gray-900" : "left-[3px] bg-white"
-      }`}
+      className={`absolute top-[3px] w-[22px] h-[22px] rounded-full transition-all duration-300 flex items-center justify-center ${dark ? "left-[calc(100%-25px)] bg-gray-900" : "left-[3px] bg-white"
+        }`}
     >
       {/* Icon */}
       {dark ? (
@@ -844,9 +836,8 @@ export default function HomeScreen() {
 
         {/* Drawer panel */}
         <div
-          className={`theme-surface-elevated fixed left-0 top-0 z-50 flex h-full w-[320px] max-w-[85vw] flex-col transition-transform duration-300 ease-in-out sm:w-[360px] ${
-            drawerOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
+          className={`theme-surface-elevated fixed left-0 top-0 z-50 flex h-full w-[320px] max-w-[85vw] flex-col transition-transform duration-300 ease-in-out sm:w-[360px] ${drawerOpen ? "translate-x-0" : "-translate-x-full"
+            }`}
         >
           {/* Drawer header */}
           <div className="theme-border-strong flex items-center justify-between border-b-2 px-4 py-4">
@@ -1004,11 +995,10 @@ export default function HomeScreen() {
 
         {/* Bottom sheet */}
         <div
-          className={`theme-surface-elevated fixed left-0 right-0 z-50 mx-auto max-w-[1200px] rounded-t-[24px] px-4 pb-8 pt-4 transition-all duration-300 ease-in-out sm:px-6 md:px-8 lg:px-10 ${
-            logoutOpen
-              ? "translate-y-0 bottom-0"
-              : "translate-y-full -bottom-full"
-          }`}
+          className={`theme-surface-elevated fixed left-0 right-0 z-50 mx-auto max-w-[1200px] rounded-t-[24px] px-4 pb-8 pt-4 transition-all duration-300 ease-in-out sm:px-6 md:px-8 lg:px-10 ${logoutOpen
+            ? "translate-y-0 bottom-0"
+            : "translate-y-full -bottom-full"
+            }`}
         >
           {/* Pull handle */}
           <div className="flex justify-center mb-4">
