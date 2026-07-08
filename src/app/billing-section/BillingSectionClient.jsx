@@ -413,7 +413,7 @@ export default function BillingSectionClient() {
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <SummaryCard
               icon={ShieldCheck}
-              label="Current active plan"
+              label="Current plan"
               value={getPlanName(activeOrder)}
               caption={
                 activeOrder
@@ -442,7 +442,7 @@ export default function BillingSectionClient() {
             </div>
             <SummaryCard
               icon={CreditCard}
-              label="Monthly billing amount"
+              label="Billing amount"
               value={formatAmount(monthlyAmountSource?.total)}
               caption="Billed monthly"
             />
@@ -450,7 +450,7 @@ export default function BillingSectionClient() {
               icon={CalendarClock}
               label="Next billing date"
               value={formatDate(nextBillingDate)}
-              caption={nextBillingDate ? "Estimated from latest successful order" : ""}
+              caption={nextBillingDate ? "Estimated from last payment date" : ""}
             />
           </div>
 
@@ -470,7 +470,7 @@ export default function BillingSectionClient() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="theme-static-panel rounded-[18px] border px-3 py-3">
-                <p className="theme-text-muted text-[12px] leading-5">Gateway</p>
+                <p className="theme-text-muted text-[12px] leading-5">Facilitator</p>
                 <p className="theme-text-primary mt-1 text-[15px] font-semibold capitalize">
                   {normalizeText(activeOrder?.gateway) || "Not available"}
                 </p>
