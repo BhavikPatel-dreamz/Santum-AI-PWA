@@ -253,14 +253,14 @@ async function downloadInvoice(order) {
 
   addPdfSectionTitle(doc, "Plan details", 105);
   addPdfRow(doc, "Plan", getPlanName(order), 119);
-  addPdfRow(doc, "Payment method", getPaymentMethod(order), 129);
+  addPdfRow(doc, "Payment method", `Bank card - ${getPaymentMethod(order)}`, 129);
   addPdfRow(
     doc,
     "Transaction ID",
     normalizeText(order?.payment_transaction_id) || "N/A",
     139,
   );
-  addPdfRow(doc, "Facilitator", normalizeText(order?.gateway) || "N/A", 149);
+  addPdfRow(doc, "Facilitator", `${normalizeText(order?.gateway)} by Network` || "N/A", 149);
 
   addPdfSectionTitle(doc, "Amount", 170);
   addPdfRow(doc, "Subtotal", formatAmount(order?.subtotal), 184);
@@ -415,11 +415,6 @@ export default function BillingSectionClient() {
               icon={ShieldCheck}
               label="Current plan"
               value={getPlanName(activeOrder)}
-              caption={
-                activeOrder
-                  ? `Order No.${normalizeText(activeOrder.code) || normalizeText(activeOrder.id)}`
-                  : ""
-              }
             />
             <div className="theme-card-muted rounded-[22px] border px-4 py-4">
               <div className="flex items-start gap-3">
@@ -521,7 +516,7 @@ export default function BillingSectionClient() {
                         </span>
                       </div>
                       <p className="theme-text-secondary mt-1 font-satoshi text-[13px] leading-5">
-                        {formatDate(order.timestamp)} · Order No.
+                        {formatDate(order.timestamp)} · Invoice No.
                         {normalizeText(order.code) || normalizeText(order.id)}
                       </p>
                     </div>
