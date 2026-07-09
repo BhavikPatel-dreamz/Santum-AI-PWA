@@ -100,7 +100,8 @@ function formatAmount(value) {
   return new Intl.NumberFormat("en-ZA", {
     style: "currency",
     currency: "ZAR",
-    maximumFractionDigits: amount % 1 === 0 ? 0 : 2,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(amount);
 }
 
@@ -232,7 +233,7 @@ async function downloadInvoice(order) {
   // Subtitle
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
-  doc.text("Billing invoice", 40, 27);
+  doc.text("Johannesburg, South Africa", 40, 27);
 
   doc.setFillColor(248, 255, 251);
   doc.roundedRect(20, 54, 170, 34, 4, 4, "F");
@@ -241,7 +242,7 @@ async function downloadInvoice(order) {
   doc.setFont("helvetica", "bold");
   doc.setFontSize(16);
   doc.setTextColor(15, 15, 15);
-  doc.text(`Invoice #${fileCode}`, 28, 66);
+  doc.text(`Invoice No.${fileCode}`, 28, 66);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
   doc.setTextColor(85, 85, 85);
@@ -259,11 +260,10 @@ async function downloadInvoice(order) {
     normalizeText(order?.payment_transaction_id) || "N/A",
     139,
   );
-  addPdfRow(doc, "Gateway", normalizeText(order?.gateway) || "N/A", 149);
+  addPdfRow(doc, "Facilitator", normalizeText(order?.gateway) || "N/A", 149);
 
   addPdfSectionTitle(doc, "Amount", 170);
   addPdfRow(doc, "Subtotal", formatAmount(order?.subtotal), 184);
-  addPdfRow(doc, "Tax", formatAmount(order?.tax), 194);
 
   doc.setFillColor(232, 255, 241);
   doc.roundedRect(20, 205, 170, 18, 4, 4, "F");
@@ -417,7 +417,7 @@ export default function BillingSectionClient() {
               value={getPlanName(activeOrder)}
               caption={
                 activeOrder
-                  ? `Order #${normalizeText(activeOrder.code) || normalizeText(activeOrder.id)}`
+                  ? `Order No.${normalizeText(activeOrder.code) || normalizeText(activeOrder.id)}`
                   : ""
               }
             />
@@ -464,7 +464,7 @@ export default function BillingSectionClient() {
                   Payment method details
                 </h3>
                 <p className="theme-text-secondary font-satoshi text-[13px] leading-5">
-                  {getPaymentMethod(activeOrder)}
+                  Bank card - {getPaymentMethod(activeOrder)}
                 </p>
               </div>
             </div>
@@ -472,7 +472,7 @@ export default function BillingSectionClient() {
               <div className="theme-static-panel rounded-[18px] border px-3 py-3">
                 <p className="theme-text-muted text-[12px] leading-5">Facilitator</p>
                 <p className="theme-text-primary mt-1 text-[15px] font-semibold capitalize">
-                  {normalizeText(activeOrder?.gateway) || "Not available"}
+                  {normalizeText(activeOrder?.gateway) + " by Network" || "Not available"}
                 </p>
               </div>
               <div className="theme-static-panel rounded-[18px] border px-3 py-3">
@@ -521,7 +521,7 @@ export default function BillingSectionClient() {
                         </span>
                       </div>
                       <p className="theme-text-secondary mt-1 font-satoshi text-[13px] leading-5">
-                        {formatDate(order.timestamp)} · Order #
+                        {formatDate(order.timestamp)} · Order No.
                         {normalizeText(order.code) || normalizeText(order.id)}
                       </p>
                     </div>
