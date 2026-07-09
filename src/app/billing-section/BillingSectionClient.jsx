@@ -2,7 +2,8 @@
 
 import StepPageShell from "@/components/app/StepPageShell";
 import { getClientErrorMessage, isUnauthorizedError } from "@/lib/api/error";
-import { useGetBillingOrdersQuery } from "@/lib/store";
+import { useGetBillingOrdersQuery, useGetProfileQuery } from "@/lib/store";
+import { getProfileEmail } from "@/lib/utills/profile";
 import {
   CalendarClock,
   CreditCard,
@@ -47,6 +48,11 @@ async function loadImageAsBase64(url) {
     img.onerror = reject;
     img.src = url;
   });
+}
+
+function capitalize(str) {
+  if (!str) return "";
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 function normalizeText(value) {
@@ -208,8 +214,9 @@ function addPdfSectionTitle(doc, title, y) {
   doc.line(20, y + 4, 190, y + 4);
 }
 
-async function downloadInvoice(order) {
+async function downloadInvoice(order, customerEmail) {
   const fileCode = normalizeText(order?.code) || normalizeText(order?.id) || "order";
+  const invoiceCustomerEmail = normalizeText(customerEmail) || "N/A";
   const doc = new jsPDF({
     orientation: "portrait",
     unit: "mm",
@@ -251,28 +258,32 @@ async function downloadInvoice(order) {
   doc.setTextColor(0, 168, 77);
   doc.text(formatStatus(order?.status), 160, 66, { align: "right" });
 
-  addPdfSectionTitle(doc, "Plan details", 105);
-  addPdfRow(doc, "Plan", getPlanName(order), 119);
-  addPdfRow(doc, "Payment method", `Bank card - ${getPaymentMethod(order)}`, 129);
+  addPdfSectionTitle(doc, "Customer details", 105);
+  addPdfRow(doc, "Name", "Anonymous", 119);
+  addPdfRow(doc, "Email ID", invoiceCustomerEmail, 129);
+
+  addPdfSectionTitle(doc, "Plan details", 150);
+  addPdfRow(doc, "Plan", getPlanName(order), 164);
+  addPdfRow(doc, "Payment method", `Bank card - ${getPaymentMethod(order)}`, 174);
   addPdfRow(
     doc,
     "Transaction ID",
     normalizeText(order?.payment_transaction_id) || "N/A",
-    139,
+    184,
   );
-  addPdfRow(doc, "Facilitator", `${normalizeText(order?.gateway)} by Network` || "N/A", 149);
+  addPdfRow(doc, "Facilitator", `${capitalize(normalizeText(order?.gateway))} by Network` || "N/A", 194);
 
-  addPdfSectionTitle(doc, "Amount", 170);
-  addPdfRow(doc, "Subtotal", formatAmount(order?.subtotal), 184);
+  addPdfSectionTitle(doc, "Amount", 215);
+  addPdfRow(doc, "Subtotal", formatAmount(order?.subtotal), 229);
 
   doc.setFillColor(232, 255, 241);
-  doc.roundedRect(20, 205, 170, 18, 4, 4, "F");
+  doc.roundedRect(20, 250, 170, 18, 4, 4, "F");
   doc.setFont("helvetica", "bold");
   doc.setFontSize(12);
   doc.setTextColor(15, 15, 15);
-  doc.text("Total paid", 28, 216);
+  doc.text("Total paid", 28, 261);
   doc.setTextColor(0, 168, 77);
-  doc.text(formatAmount(order?.total), 182, 216, { align: "right" });
+  doc.text(formatAmount(order?.total), 182, 261, { align: "right" });
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(9);
@@ -341,6 +352,11 @@ export default function BillingSectionClient() {
     refetchOnMountOrArgChange: true,
     refetchOnReconnect: true,
   });
+  const { data: profile } = useGetProfileQuery(undefined, {
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true,
+    refetchOnReconnect: true,
+  });
 
   useEffect(() => {
     if (!error) {
@@ -370,6 +386,7 @@ export default function BillingSectionClient() {
   const activeOrderDate = parseOrderDate(activeOrder?.timestamp);
   const nextBillingDate = addOneMonth(activeOrderDate);
   const monthlyAmountSource = activeOrder ?? latestOrder;
+  const customerEmail = getProfileEmail(profile);
   const successfulPaymentCount = orders.filter(
     (order) => normalizeStatus(order?.status) === "success",
   ).length;
@@ -382,7 +399,7 @@ export default function BillingSectionClient() {
             Billing overview
           </h2>
           <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6">
-            Plan, renewal, payments, invoices, and saved payment details.
+            Plan, renewal, invoices, and saved payment details.
           </p>
         </div>
         <button
@@ -456,7 +473,7 @@ export default function BillingSectionClient() {
               </span>
               <div>
                 <h3 className="theme-text-primary text-[18px] font-semibold leading-6">
-                  Payment method details
+                  Payment method
                 </h3>
                 <p className="theme-text-secondary font-satoshi text-[13px] leading-5">
                   Bank card - {getPaymentMethod(activeOrder)}
@@ -535,7 +552,7 @@ export default function BillingSectionClient() {
                     </div>
                     <button
                       type="button"
-                      onClick={async () => { await downloadInvoice(order) }}
+                      onClick={async () => { await downloadInvoice(order, customerEmail) }}
                       className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#E8FFF1] text-[#00A84D] transition-opacity hover:opacity-85"
                       aria-label={`Download invoice ${normalizeText(order.code) || normalizeText(order.id)}`}
                       title="Download invoice"
