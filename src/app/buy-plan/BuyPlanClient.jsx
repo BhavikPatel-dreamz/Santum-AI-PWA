@@ -8,6 +8,10 @@ import {
   useGetSubscriptionPlansQuery,
   useGetSubscriptionStatusQuery,
 } from "@/lib/store";
+import {
+  extractCreditBalance,
+  getExpiredUsageNotice,
+} from "@/lib/utills/credit";
 import { PAUSED_ACCOUNT_MESSAGE, isProfilePaused } from "@/lib/utills/profile";
 import {
   enrichSubscriptionPlan,
@@ -123,6 +127,10 @@ export default function BuyPlanClient() {
     typeof subscriptionStatus?.active_plan_level === "string"
       ? subscriptionStatus.active_plan_level.toLowerCase()
       : "";
+  const activeCreditBalance = extractCreditBalance(subscriptionStatus);
+  const isUsageExpired =
+    activeCreditBalance !== null && activeCreditBalance <= 0;
+  const expiredUsageNotice = getExpiredUsageNotice(activePlanLevel);
   const isSubscriptionStatusBusy =
     isSubscriptionStatusLoading || isSubscriptionStatusFetching;
   const subscriptionPurchaseBlockReason = !isSelectedPlanActive
@@ -231,6 +239,17 @@ export default function BuyPlanClient() {
           </p>
           <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6">
             Please try again in a moment.
+          </p>
+        </div>
+      ) : null}
+
+      {isUsageExpired ? (
+        <div className="theme-warning-card mb-4 rounded-[22px] border px-5 py-4">
+          <p className="theme-warning-copy text-[12px] font-semibold uppercase tracking-[0.16em]">
+            Time Expired
+          </p>
+          <p className="theme-warning-copy mt-2 font-satoshi text-[14px] leading-6">
+            {expiredUsageNotice}
           </p>
         </div>
       ) : null}

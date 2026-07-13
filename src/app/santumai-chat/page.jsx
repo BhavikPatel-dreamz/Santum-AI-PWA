@@ -19,7 +19,10 @@ import {
   useGetSubscriptionStatusQuery,
   useUpsertMoodCheckInMutation,
 } from "@/lib/store";
-import { extractCreditBalance } from "@/lib/utills/credit";
+import {
+  extractCreditBalance,
+  getExpiredUsageNotice,
+} from "@/lib/utills/credit";
 import { getTodayMoodDateKey } from "@/lib/utills/mood";
 import { isProfilePaused, PAUSED_ACCOUNT_MESSAGE } from "@/lib/utills/profile";
 import Image from "next/image";
@@ -28,8 +31,6 @@ import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import ReactMarkdown from "react-markdown";
 
-const CREDIT_LIMIT_MESSAGE =
-  "You have reached your chat credit limit. Purchase a plan to continue your support conversations with Sai.";
 const PURCHASE_PLAN_PATH = "/plus-subscription";
 const RECENT_MESSAGE_LIMIT = 6;
 const STARTER_MESSAGES = [
@@ -58,8 +59,10 @@ function isCreditLimitError(error) {
   );
 }
 
-function getCreditLimitMessage(error) {
-  return error?.data?.message || error?.message || CREDIT_LIMIT_MESSAGE;
+function getCreditLimitMessage(error, planLevel) {
+  return (
+    error?.data?.message || error?.message || getExpiredUsageNotice(planLevel)
+  );
 }
 
 function mapStoredMessage(message) {
@@ -182,6 +185,7 @@ export default function SantumAIChatPage() {
     typeof subscriptionStatus?.active_plan_level === "string"
       ? subscriptionStatus.active_plan_level
       : DEFAULT_PLAN_LEVEL;
+  const expiredUsageNotice = getExpiredUsageNotice(activePlanLevel);
   const creditBalance = extractCreditBalance(balanceResponse);
   const usedBalance = Math.max(0, MAX_CREDITS - creditBalance);
   const creditPercentage =
@@ -418,19 +422,17 @@ export default function SantumAIChatPage() {
 
   useEffect(() => {
     if (isCreditDepleted) {
-      setPurchasePromptMessage(
-        (currentMessage) => currentMessage || CREDIT_LIMIT_MESSAGE,
-      );
+      setPurchasePromptMessage(expiredUsageNotice);
       return;
     }
 
     if (creditBalance !== null && creditBalance > 0) {
       setPurchasePromptMessage("");
     }
-  }, [creditBalance, isCreditDepleted]);
+  }, [creditBalance, expiredUsageNotice, isCreditDepleted]);
 
   const promptPlanPurchase = async (message, draftMessage = "") => {
-    const nextMessage = message || CREDIT_LIMIT_MESSAGE;
+    const nextMessage = message || expiredUsageNotice;
 
     setPurchasePromptMessage(nextMessage);
 
@@ -500,7 +502,7 @@ export default function SantumAIChatPage() {
     }
 
     if (isCreditDepleted) {
-      await promptPlanPurchase(CREDIT_LIMIT_MESSAGE, text);
+      await promptPlanPurchase(expiredUsageNotice, text);
       return;
     }
 
@@ -648,7 +650,10 @@ export default function SantumAIChatPage() {
       if (isCreditLimitError(error)) {
         setHasDraftMessages(false);
         setDraftMessages([]);
-        await promptPlanPurchase(getCreditLimitMessage(error), text);
+        await promptPlanPurchase(
+          getCreditLimitMessage(error, activePlanLevel),
+          text,
+        );
         return;
       }
 
@@ -708,13 +713,13 @@ export default function SantumAIChatPage() {
           {purchasePromptMessage || isCreditDepleted ? (
             <div className="theme-warning-card mb-4 rounded-[24px] border px-4 py-4 shadow-[0_12px_30px_rgba(15,15,15,0.04)]">
               <p className="theme-warning-copy text-[12px] font-semibold uppercase tracking-[0.16em]">
-                Purchase Required
+                Time Expired
               </p>
               <h2 className="mt-2 text-[20px] font-semibold leading-7 text-[#0F0F0F]">
-                Your credits are used up
+                Your chat time is used up
               </h2>
               <p className="theme-warning-copy mt-2 font-satoshi text-[14px] leading-6">
-                {purchasePromptMessage || CREDIT_LIMIT_MESSAGE}
+                {purchasePromptMessage || expiredUsageNotice}
               </p>
               <div className="mt-4 flex flex-wrap gap-3">
                 <button
@@ -883,7 +888,7 @@ export default function SantumAIChatPage() {
                   : !hasTodayMoodCheckIn
                     ? "Complete today's mood check-in to unlock chat."
                     : isCreditDepleted
-                      ? "Purchase a plan or refresh your balance to keep chatting."
+                      ? expiredUsageNotice
                       : "Type your thoughts here..."
               }
               className="theme-input-surface w-full resize-none rounded-[18px] px-3 py-3 sm:px-4 sm:py-4 font-satoshi text-[15px] leading-6 outline-none disabled:cursor-not-allowed disabled:bg-[#F1F5F2] disabled:text-[#7E8A83]"
@@ -898,7 +903,7 @@ export default function SantumAIChatPage() {
                   : !hasTodayMoodCheckIn
                     ? "Share your mood first so Sai can respond with better context."
                     : isCreditDepleted
-                      ? "Purchase a plan to continue Sai support chats."
+                      ? expiredUsageNotice
                       : "Powered by advanced artificial intelligence counseling system."}
               </p>
               <div className="flex items-center justify-end gap-3">
@@ -938,7 +943,7 @@ export default function SantumAIChatPage() {
                   {/* this svg only show for free & standard */}
                   {/* Percentage Text */}
                   <span className="absolute text-[10px] font-semibold text-[#0F0F0F] sm:text-[11px]">
-                    {!creditPercentage ? 100 : Math.round(creditPercentage)}%
+                    {!creditPercentage ? 100 : Math.floor(creditPercentage)}%
                   </span>
                 </div>
 

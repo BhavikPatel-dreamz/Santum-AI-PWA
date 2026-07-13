@@ -13,6 +13,7 @@ import {
   buildChatCreditReference,
   extractChatCreditDebit,
   extractCreditBalance,
+  getExpiredUsageNotice,
 } from "../../../../lib/utills/credit";
 import {
   buildMoodAssistantContext,
@@ -25,16 +26,18 @@ import {
 import { resolveCurrentUserKey } from "../../../../lib/user/server";
 
 const STREAM_METADATA_SEPARATOR = "\n\n{";
-const CREDIT_LIMIT_MESSAGE =
-  "You have reached your chat credit limit. Purchase a plan to continue your support conversations with Sai.";
+const CREDIT_LIMIT_MESSAGE = getExpiredUsageNotice("free");
 const RECENT_HISTORY_LIMIT = 10;
 const NEW_MESSAGES_PER_TURN = 2;
 const DEFAULT_AI_API_URL = "http://localhost:8000";
 
-function createCreditLimitResponse(message = CREDIT_LIMIT_MESSAGE) {
+function createCreditLimitResponse({ message, planLevel } = {}) {
+  const resolvedMessage =
+    message || getExpiredUsageNotice(planLevel) || CREDIT_LIMIT_MESSAGE;
+
   return NextResponse.json(
     {
-      message,
+      message: resolvedMessage,
       code: "CREDIT_LIMIT_REACHED",
       action: "purchase_plan",
       cta_href: "/plus-subscription",
@@ -242,13 +245,21 @@ async function loadCreditBalance() {
   return balance;
 }
 
-async function reduceCreditsAfterChat({ amount, message }) {
+async function reduceCreditsAfterChat({ amount, balance, message }) {
   if (!Number.isFinite(amount) || amount <= 0) {
     return;
   }
 
+  const amountToDeduct = Number.isFinite(balance)
+    ? Math.min(amount, balance)
+    : amount;
+
+  if (amountToDeduct <= 0) {
+    return;
+  }
+
   const payload = new FormData();
-  payload.append("amount", String(amount));
+  payload.append("amount", String(amountToDeduct));
   payload.append("reference_id", buildChatCreditReference());
   payload.append("note", createCreditNote(message));
   payload.append("source", "chat");
@@ -438,10 +449,13 @@ async function refreshChatTitle({
 }
 
 export async function POST(req) {
+  let requestPlanLevel = "free";
+
   try {
     const token = await getAuthToken();
     const body = await req.json();
     const aiApiUrl = getAiApiUrl();
+    requestPlanLevel = body?.plan_level;
 
     if (!token) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -545,7 +559,7 @@ export async function POST(req) {
     availableTokens = Math.max(Math.floor(availableBalance), 0);
 
     if (availableTokens <= 0) {
-      return createCreditLimitResponse();
+      return createCreditLimitResponse({ planLevel: requestPlanLevel });
     }
 
     const aiRes = await fetch(`${aiApiUrl}/api/v1/chat/stream`, {
@@ -659,6 +673,7 @@ export async function POST(req) {
           try {
             await reduceCreditsAfterChat({
               amount: debitAmount,
+              balance: availableTokens,
               message: body?.message,
             });
           } catch (creditError) {
@@ -711,9 +726,7 @@ export async function POST(req) {
     }
 
     if (isCreditLimitError(error)) {
-      return createCreditLimitResponse(
-        error?.data?.message || error?.data?.data?.message || error?.message,
-      );
+      return createCreditLimitResponse({ planLevel: requestPlanLevel });
     }
 
     return createErrorResponse(error, "AI Chat API failed");

@@ -76,6 +76,14 @@ const DEFAULT_PLAN_CREDIT_AMOUNTS = {
   team: 300,
 };
 
+const EXPIRED_USAGE_NOTICE_BY_PLAN = {
+  free: "time expired, upgrade to a paid plan",
+  standard:
+    "time expired, wait for refresh at the beginning of new billing cycle or upgrade to Premium",
+  premium:
+    "time expired, wait for refresh at the beginning of new billing cycle",
+};
+
 function getValueAtPath(payload, path) {
   return path.reduce(
     (currentValue, key) =>
@@ -119,6 +127,29 @@ function getFirstNumericValue(payload, paths) {
 
 export function extractCreditBalance(payload) {
   return getFirstNumericValue(payload, CREDIT_BALANCE_PATHS);
+}
+
+export function normalizeUsagePlanLevel(planLevel) {
+  const normalizedPlanLevel =
+    typeof planLevel === "string" ? planLevel.trim().toLowerCase() : "";
+
+  if (
+    normalizedPlanLevel.includes("premium") ||
+    normalizedPlanLevel.includes("plus") ||
+    normalizedPlanLevel.includes("pro")
+  ) {
+    return "premium";
+  }
+
+  if (normalizedPlanLevel.includes("standard")) {
+    return "standard";
+  }
+
+  return "free";
+}
+
+export function getExpiredUsageNotice(planLevel) {
+  return EXPIRED_USAGE_NOTICE_BY_PLAN[normalizeUsagePlanLevel(planLevel)];
 }
 
 export function extractUsedTokens(payload) {
