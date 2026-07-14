@@ -21,7 +21,9 @@ import {
 } from "@/lib/store";
 import {
   extractCreditBalance,
+  getExpiredComposerNotice,
   getExpiredUsageNotice,
+  normalizeUsagePlanLevel,
 } from "@/lib/utills/credit";
 import { getTodayMoodDateKey } from "@/lib/utills/mood";
 import { isProfilePaused, PAUSED_ACCOUNT_MESSAGE } from "@/lib/utills/profile";
@@ -59,10 +61,8 @@ function isCreditLimitError(error) {
   );
 }
 
-function getCreditLimitMessage(error, planLevel) {
-  return (
-    error?.data?.message || error?.message || getExpiredUsageNotice(planLevel)
-  );
+function getCreditLimitMessage(planLevel) {
+  return getExpiredUsageNotice(planLevel);
 }
 
 function mapStoredMessage(message) {
@@ -185,7 +185,10 @@ export default function SantumAIChatPage() {
     typeof subscriptionStatus?.active_plan_level === "string"
       ? subscriptionStatus.active_plan_level
       : DEFAULT_PLAN_LEVEL;
+  const normalizedActivePlanLevel = normalizeUsagePlanLevel(activePlanLevel);
+  const expiredUsageLabel = `${normalizedActivePlanLevel.toUpperCase()} TIME EXPIRED`;
   const expiredUsageNotice = getExpiredUsageNotice(activePlanLevel);
+  const expiredComposerNotice = getExpiredComposerNotice(activePlanLevel);
   const creditBalance = extractCreditBalance(balanceResponse);
   const usedBalance = Math.max(0, MAX_CREDITS - creditBalance);
   const creditPercentage =
@@ -651,7 +654,7 @@ export default function SantumAIChatPage() {
         setHasDraftMessages(false);
         setDraftMessages([]);
         await promptPlanPurchase(
-          getCreditLimitMessage(error, activePlanLevel),
+          getCreditLimitMessage(activePlanLevel),
           text,
         );
         return;
@@ -711,21 +714,21 @@ export default function SantumAIChatPage() {
           </div> */}
 
           {purchasePromptMessage || isCreditDepleted ? (
-            <div className="theme-warning-card mb-4 rounded-[24px] border px-4 py-4 shadow-[0_12px_30px_rgba(15,15,15,0.04)]">
-              <p className="theme-warning-copy text-[12px] font-semibold uppercase tracking-[0.16em]">
-                Time Expired
+            <div className="theme-danger-card mb-4 rounded-[24px] border px-4 py-4 shadow-[0_12px_30px_rgba(15,15,15,0.04)]">
+              <p className="theme-danger-title text-[12px] font-semibold uppercase tracking-[0.16em]">
+                {expiredUsageLabel}
               </p>
-              <h2 className="mt-2 text-[20px] font-semibold leading-7 text-[#0F0F0F]">
+              <h2 className="theme-danger-title mt-2 text-[20px] font-semibold leading-7">
                 Your chat time is used up
               </h2>
-              <p className="theme-warning-copy mt-2 font-satoshi text-[14px] leading-6">
+              <p className="theme-danger-copy mt-2 font-satoshi text-[14px] leading-6">
                 {purchasePromptMessage || expiredUsageNotice}
               </p>
               <div className="mt-4 flex flex-wrap gap-3">
                 <button
                   type="button"
                   onClick={() => router.push(PURCHASE_PLAN_PATH)}
-                  className="rounded-full bg-[#0F0F0F] px-4 py-2.5 text-[14px] font-semibold text-white"
+                  className="rounded-full bg-[#00D061] px-4 py-2.5 text-[14px] font-semibold text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)] transition-colors hover:bg-[#00B856]"
                 >
                   View Plans
                 </button>
@@ -888,24 +891,29 @@ export default function SantumAIChatPage() {
                   : !hasTodayMoodCheckIn
                     ? "Complete today's mood check-in to unlock chat."
                     : isCreditDepleted
-                      ? expiredUsageNotice
+                      ? expiredComposerNotice
                       : "Type your thoughts here..."
               }
-              className="theme-input-surface w-full resize-none rounded-[18px] px-3 py-3 sm:px-4 sm:py-4 font-satoshi text-[15px] leading-6 outline-none disabled:cursor-not-allowed disabled:bg-[#F1F5F2] disabled:text-[#7E8A83]"
+              className={`theme-input-surface w-full resize-none rounded-[18px] px-3 py-3 sm:px-4 sm:py-4 font-satoshi text-[15px] leading-6 outline-none disabled:cursor-not-allowed disabled:bg-[#F1F5F2] ${isCreditDepleted
+                ? "placeholder:text-[var(--app-danger-title)] disabled:text-[var(--app-danger-title)]"
+                : "disabled:text-[#7E8A83]"
+                }`}
             />
 
-            <div className="mt-2 flex items-center justify-between">
-              <p
-                className={`font-satoshi text-[10px] ${isWarn ? "text-red-500" : "text-[#555]"}`}
-              >
-                {isMoodCheckInLoading
-                  ? "Checking today's mood check-in before chat unlocks."
-                  : !hasTodayMoodCheckIn
-                    ? "Share your mood first so Sai can respond with better context."
-                    : isCreditDepleted
-                      ? expiredUsageNotice
-                      : "Powered by advanced artificial intelligence counseling system."}
-              </p>
+            <div className="mt-2 flex items-center justify-between gap-3">
+              <div className="min-w-0 flex-1">
+                {!isCreditDepleted ? (
+                  <p
+                    className={`font-satoshi text-[10px] ${isWarn ? "theme-danger-title" : "text-[#555]"}`}
+                  >
+                    {isMoodCheckInLoading
+                      ? "Checking today's mood check-in before chat unlocks."
+                      : !hasTodayMoodCheckIn
+                        ? "Share your mood first so Sai can respond with better context."
+                        : "Powered by advanced artificial intelligence counseling system."}
+                  </p>
+                ) : null}
+              </div>
               <div className="flex items-center justify-end gap-3">
                 {/* Circular Progress */}
                 <div className="relative flex h-11 w-11 items-center justify-center sm:h-12 sm:w-12">

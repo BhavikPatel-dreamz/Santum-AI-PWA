@@ -77,11 +77,17 @@ const DEFAULT_PLAN_CREDIT_AMOUNTS = {
 };
 
 const EXPIRED_USAGE_NOTICE_BY_PLAN = {
-  free: "time expired, upgrade to a paid plan",
+  free: "To continue talking to Sai please upgrade to a higher plan.",
   standard:
-    "time expired, wait for refresh at the beginning of new billing cycle or upgrade to Premium",
-  premium:
-    "time expired, wait for refresh at the beginning of new billing cycle",
+    "To continue talking to Sai please wait for monthly auto-refresh, or upgrade to Premium.",
+  premium: "To continue talking to Sai please wait for monthly auto-refresh.",
+};
+
+const EXPIRED_COMPOSER_NOTICE_BY_PLAN = {
+  free: "Your chat time is used up. Please upgrade to a higher plan.",
+  standard:
+    "Your chat time is used up. Please wait for monthly auto-refresh, or upgrade to Premium.",
+  premium: "Your chat time is used up. Please wait for monthly auto-refresh.",
 };
 
 function getValueAtPath(payload, path) {
@@ -150,6 +156,10 @@ export function normalizeUsagePlanLevel(planLevel) {
 
 export function getExpiredUsageNotice(planLevel) {
   return EXPIRED_USAGE_NOTICE_BY_PLAN[normalizeUsagePlanLevel(planLevel)];
+}
+
+export function getExpiredComposerNotice(planLevel) {
+  return EXPIRED_COMPOSER_NOTICE_BY_PLAN[normalizeUsagePlanLevel(planLevel)];
 }
 
 export function extractUsedTokens(payload) {
