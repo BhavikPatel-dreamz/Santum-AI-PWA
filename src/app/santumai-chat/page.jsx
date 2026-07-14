@@ -117,6 +117,51 @@ function buildTempMessageId(prefix) {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
+function formatAutoRefreshDate(value) {
+  const normalizedValue =
+    typeof value === "string" ? value.trim() : value instanceof Date ? value : "";
+
+  if (!normalizedValue) {
+    return "";
+  }
+
+  const dayMonthYearMatch =
+    typeof normalizedValue === "string"
+      ? normalizedValue.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/)
+      : null;
+  const date = normalizedValue instanceof Date
+    ? normalizedValue
+    : dayMonthYearMatch
+      ? new Date(
+          Number(dayMonthYearMatch[3]),
+          Number(dayMonthYearMatch[2]) - 1,
+          Number(dayMonthYearMatch[1]),
+        )
+      : new Date(normalizedValue.replace(" ", "T"));
+
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  return new Intl.DateTimeFormat("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(date);
+}
+
+function getAutoRefreshDateValue(subscriptionStatus) {
+  return (
+    subscriptionStatus?.renewal_date ||
+    subscriptionStatus?.renewalDate ||
+    subscriptionStatus?.next_billing_date ||
+    subscriptionStatus?.nextBillingDate ||
+    subscriptionStatus?.expiry_date ||
+    subscriptionStatus?.expiryDate ||
+    ""
+  );
+}
+
 export default function SantumAIChatPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -184,11 +229,20 @@ export default function SantumAIChatPage() {
   const activePlanLevel =
     typeof subscriptionStatus?.active_plan_level === "string"
       ? subscriptionStatus.active_plan_level
+      : typeof subscriptionStatus?.active_plan_name === "string"
+        ? subscriptionStatus.active_plan_name
       : DEFAULT_PLAN_LEVEL;
   const normalizedActivePlanLevel = normalizeUsagePlanLevel(activePlanLevel);
   const expiredUsageLabel = `${normalizedActivePlanLevel.toUpperCase()} TIME EXPIRED`;
   const expiredUsageNotice = getExpiredUsageNotice(activePlanLevel);
   const expiredComposerNotice = getExpiredComposerNotice(activePlanLevel);
+  const autoRefreshDate = formatAutoRefreshDate(
+    getAutoRefreshDateValue(subscriptionStatus),
+  );
+  const shouldShowAutoRefreshDate =
+    (normalizedActivePlanLevel === "standard" ||
+      normalizedActivePlanLevel === "premium") &&
+    Boolean(autoRefreshDate);
   const creditBalance = extractCreditBalance(balanceResponse);
   const usedBalance = Math.max(0, MAX_CREDITS - creditBalance);
   const creditPercentage =
@@ -723,6 +777,12 @@ export default function SantumAIChatPage() {
               </h2>
               <p className="theme-danger-copy mt-2 font-satoshi text-[14px] leading-6">
                 {purchasePromptMessage || expiredUsageNotice}
+                {shouldShowAutoRefreshDate ? (
+                  <span className="theme-danger-title font-semibold">
+                    {" "}
+                    Next auto-refresh {autoRefreshDate}
+                  </span>
+                ) : null}
               </p>
               <div className="mt-4 flex flex-wrap gap-3">
                 <button
