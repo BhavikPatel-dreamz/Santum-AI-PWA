@@ -910,7 +910,7 @@ export default function SantumAIChatPage() {
                       ? "Checking today's mood check-in before chat unlocks."
                       : !hasTodayMoodCheckIn
                         ? "Share your mood first so Sai can respond with better context."
-                        : "Powered by advanced artificial intelligence counseling system."}
+                        : "Powered by advanced AI counseling system."}
                   </p>
                 ) : null}
               </div>
