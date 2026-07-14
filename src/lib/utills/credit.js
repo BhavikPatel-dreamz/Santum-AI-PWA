@@ -84,7 +84,7 @@ const EXPIRED_USAGE_NOTICE_BY_PLAN = {
 };
 
 const EXPIRED_COMPOSER_NOTICE_BY_PLAN = {
-  free: "Your chat time is used up. Please upgrade.",
+  free: "Your chat time is used up, Please upgrade.",
   standard:
     "Your chat time is used up. Please wait for monthly auto-refresh, or upgrade to Premium.",
   premium: "Your chat time is used up. Please wait for monthly auto-refresh.",

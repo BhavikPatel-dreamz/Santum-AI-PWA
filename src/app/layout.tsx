@@ -3,6 +3,7 @@ import LoadingScreenWrapper from "@/components/onboarding/LoadingScreenWrapper";
 import { PageTransitionProvider } from "@/components/providers/PageTransitionProvider";
 import { ReduxProvider } from "@/components/providers/ReduxProvider";
 import OfflineDetector from "@/components/OfflineDetector";
+import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import Script from "next/script";
@@ -157,6 +158,7 @@ export default function RootLayout({
         />
         <ReduxProvider>
           <ThemeProvider>
+            <ServiceWorkerRegistration />
             <OfflineDetector />
             <LoadingScreenWrapper />
             <PageTransitionProvider>
