@@ -133,10 +133,10 @@ function formatAutoRefreshDate(value) {
     ? normalizedValue
     : monthDayYearMatch
       ? new Date(
-          Number(monthDayYearMatch[3]),
-          Number(monthDayYearMatch[1]) - 1,
-          Number(monthDayYearMatch[2]),
-        )
+        Number(monthDayYearMatch[3]),
+        Number(monthDayYearMatch[1]) - 1,
+        Number(monthDayYearMatch[2]),
+      )
       : new Date(normalizedValue.replace(" ", "T"));
 
   if (Number.isNaN(date.getTime())) {
@@ -231,7 +231,7 @@ export default function SantumAIChatPage() {
       ? subscriptionStatus.active_plan_level
       : typeof subscriptionStatus?.active_plan_name === "string"
         ? subscriptionStatus.active_plan_name
-      : DEFAULT_PLAN_LEVEL;
+        : DEFAULT_PLAN_LEVEL;
   const normalizedActivePlanLevel = normalizeUsagePlanLevel(activePlanLevel);
   const expiredUsageLabel = `${normalizedActivePlanLevel.toUpperCase()} TIME EXPIRED`;
   const expiredUsageNotice = getExpiredUsageNotice(activePlanLevel);
@@ -778,10 +778,13 @@ export default function SantumAIChatPage() {
               <p className="theme-danger-copy mt-2 font-satoshi text-[14px] leading-6">
                 {purchasePromptMessage || expiredUsageNotice}
                 {shouldShowAutoRefreshDate ? (
-                  <span className="theme-danger-title font-semibold">
-                    {" "}
-                    Next auto-refresh {autoRefreshDate}
-                  </span>
+                  <>
+                    {" "}Next auto-refresh
+                    <span className="theme-danger-title font-semibold">
+                      {" "}
+                      {autoRefreshDate}
+                    </span>
+                  </>
                 ) : null}
               </p>
               <div className="mt-4 flex flex-wrap gap-3">
