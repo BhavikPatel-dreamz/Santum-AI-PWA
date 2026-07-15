@@ -100,6 +100,51 @@ function getPlanActionLabel(plan, activePlanLevel) {
   return "Select This Plan";
 }
 
+function formatAutoRefreshDate(value) {
+  const normalizedValue =
+    typeof value === "string" ? value.trim() : value instanceof Date ? value : "";
+
+  if (!normalizedValue) {
+    return "";
+  }
+
+  const monthDayYearMatch =
+    typeof normalizedValue === "string"
+      ? normalizedValue.match(/^(\d{1,2})-(\d{1,2})-+(\d{4})$/)
+      : null;
+  const date = normalizedValue instanceof Date
+    ? normalizedValue
+    : monthDayYearMatch
+      ? new Date(
+          Number(monthDayYearMatch[3]),
+          Number(monthDayYearMatch[1]) - 1,
+          Number(monthDayYearMatch[2]),
+        )
+      : new Date(normalizedValue.replace(" ", "T"));
+
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  return new Intl.DateTimeFormat("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(date);
+}
+
+function getAutoRefreshDateValue(subscriptionStatus) {
+  return (
+    subscriptionStatus?.expiry_date ||
+    subscriptionStatus?.expiryDate ||
+    subscriptionStatus?.renewal_date ||
+    subscriptionStatus?.renewalDate ||
+    subscriptionStatus?.next_billing_date ||
+    subscriptionStatus?.nextBillingDate ||
+    ""
+  );
+}
+
 export default function PlusSubscriptionPage() {
   const [selectedPlanKey, setSelectedPlanKey] = useState(null);
   const router = useRouter();
@@ -170,8 +215,16 @@ export default function PlusSubscriptionPage() {
   const activeCreditBalance = extractCreditBalance(subscriptionStatus);
   const isUsageExpired =
     activeCreditBalance !== null && activeCreditBalance <= 0;
-  const expiredUsageLabel = `${normalizeUsagePlanLevel(activePlanLevel).toUpperCase()} TIME EXPIRED`;
+  const normalizedActivePlanLevel = normalizeUsagePlanLevel(activePlanLevel);
+  const expiredUsageLabel = `${normalizedActivePlanLevel.toUpperCase()} TIME EXPIRED`;
   const expiredUsageNotice = getExpiredUsageNotice(activePlanLevel);
+  const autoRefreshDate = formatAutoRefreshDate(
+    getAutoRefreshDateValue(subscriptionStatus),
+  );
+  const shouldShowAutoRefreshDate =
+    (normalizedActivePlanLevel === "standard" ||
+      normalizedActivePlanLevel === "premium") &&
+    Boolean(autoRefreshDate);
   const resolvedSelectedPlanKey = plans.some(
     (plan, index) => getPlanKey(plan, index) === selectedPlanKey,
   )
@@ -274,6 +327,12 @@ export default function PlusSubscriptionPage() {
             </p>
             <p className="theme-danger-copy mt-2 font-satoshi text-[14px] leading-6">
               {expiredUsageNotice}
+              {shouldShowAutoRefreshDate ? (
+                <span className="theme-danger-title font-semibold">
+                  {" "}
+                  Next auto-refresh {autoRefreshDate}
+                </span>
+              ) : null}
             </p>
           </div>
         ) : null}

@@ -125,17 +125,17 @@ function formatAutoRefreshDate(value) {
     return "";
   }
 
-  const dayMonthYearMatch =
+  const monthDayYearMatch =
     typeof normalizedValue === "string"
-      ? normalizedValue.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/)
+      ? normalizedValue.match(/^(\d{1,2})-(\d{1,2})-+(\d{4})$/)
       : null;
   const date = normalizedValue instanceof Date
     ? normalizedValue
-    : dayMonthYearMatch
+    : monthDayYearMatch
       ? new Date(
-          Number(dayMonthYearMatch[3]),
-          Number(dayMonthYearMatch[2]) - 1,
-          Number(dayMonthYearMatch[1]),
+          Number(monthDayYearMatch[3]),
+          Number(monthDayYearMatch[1]) - 1,
+          Number(monthDayYearMatch[2]),
         )
       : new Date(normalizedValue.replace(" ", "T"));
 
@@ -795,7 +795,7 @@ export default function SantumAIChatPage() {
                 <button
                   type="button"
                   onClick={() => loadCreditBalance()}
-                  className="theme-surface rounded-full px-4 py-2.5 text-[14px] font-semibold text-[#0F0F0F] shadow-[0_10px_24px_rgba(15,15,15,0.05)]"
+                  className="theme-secondary-button rounded-full px-4 py-2.5 text-[14px] font-semibold shadow-[0_10px_24px_rgba(15,15,15,0.05)] transition-opacity hover:opacity-90"
                 >
                   Refresh Balance
                 </button>

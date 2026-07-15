@@ -12,6 +12,11 @@ import {
   useLogoutMutation,
   useUpdateBasicProfileMutation,
 } from "@/lib/store";
+import {
+  extractCreditBalance,
+  getExpiredUsageNotice,
+  normalizeUsagePlanLevel,
+} from "@/lib/utills/credit";
 import { PAUSED_ACCOUNT_MESSAGE, isProfilePaused } from "@/lib/utills/profile";
 import {
   getPlanPurchaseBlockReason,
@@ -233,6 +238,51 @@ function buildPlanUpgradeGetYouItems(subscriptionStatus, sections) {
   );
 }
 
+function formatAutoRefreshDate(value) {
+  const normalizedValue =
+    typeof value === "string" ? value.trim() : value instanceof Date ? value : "";
+
+  if (!normalizedValue) {
+    return "";
+  }
+
+  const monthDayYearMatch =
+    typeof normalizedValue === "string"
+      ? normalizedValue.match(/^(\d{1,2})-(\d{1,2})-+(\d{4})$/)
+      : null;
+  const date = normalizedValue instanceof Date
+    ? normalizedValue
+    : monthDayYearMatch
+      ? new Date(
+          Number(monthDayYearMatch[3]),
+          Number(monthDayYearMatch[1]) - 1,
+          Number(monthDayYearMatch[2]),
+        )
+      : new Date(normalizedValue.replace(" ", "T"));
+
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  return new Intl.DateTimeFormat("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(date);
+}
+
+function getAutoRefreshDateValue(subscriptionStatus) {
+  return (
+    subscriptionStatus?.expiry_date ||
+    subscriptionStatus?.expiryDate ||
+    subscriptionStatus?.renewal_date ||
+    subscriptionStatus?.renewalDate ||
+    subscriptionStatus?.next_billing_date ||
+    subscriptionStatus?.nextBillingDate ||
+    ""
+  );
+}
+
 export default function SettingsDetailPage({ content }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -331,6 +381,27 @@ export default function SettingsDetailPage({ content }) {
   });
 
   const isDisable = feedbackText.trim().length < 1;
+  const activePlanLevel =
+    typeof subscriptionStatus?.active_plan_level === "string"
+      ? subscriptionStatus.active_plan_level
+      : typeof subscriptionStatus?.active_plan_name === "string"
+        ? subscriptionStatus.active_plan_name
+        : "";
+  const activeCreditBalance = extractCreditBalance(subscriptionStatus);
+  const isUsageExpired =
+    isSubscriptionsPage &&
+    activeCreditBalance !== null &&
+    activeCreditBalance <= 0;
+  const normalizedActivePlanLevel = normalizeUsagePlanLevel(activePlanLevel);
+  const expiredUsageLabel = `${normalizedActivePlanLevel.toUpperCase()} TIME EXPIRED`;
+  const expiredUsageNotice = getExpiredUsageNotice(activePlanLevel);
+  const autoRefreshDate = formatAutoRefreshDate(
+    getAutoRefreshDateValue(subscriptionStatus),
+  );
+  const shouldShowAutoRefreshDate =
+    (normalizedActivePlanLevel === "standard" ||
+      normalizedActivePlanLevel === "premium") &&
+    Boolean(autoRefreshDate);
 
   useEffect(() => {
     if (!subscriptionStatusError) {
@@ -1134,6 +1205,23 @@ export default function SettingsDetailPage({ content }) {
 
   return (
     <StepPageShell title={content.title} contentClassName="overflow-y-auto">
+      {isUsageExpired ? (
+        <div className="theme-danger-card mb-6 rounded-[22px] border px-5 py-4">
+          <p className="theme-danger-title text-[12px] font-semibold uppercase tracking-[0.16em]">
+            {expiredUsageLabel}
+          </p>
+          <p className="theme-danger-copy mt-2 font-satoshi text-[14px] leading-6">
+            {expiredUsageNotice}
+            {shouldShowAutoRefreshDate ? (
+              <span className="theme-danger-title font-semibold">
+                {" "}
+                Next auto-refresh {autoRefreshDate}
+              </span>
+            ) : null}
+          </p>
+        </div>
+      ) : null}
+
       {content.sections.map((section, sectionIndex) =>
         renderSection(section, sectionIndex),
       )}
