@@ -3,8 +3,8 @@
 import { ChevronDown, Download, Share2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const DISMISS_STORAGE_KEY = "santumai_install_prompt_dismissed_at";
-const DISMISS_DURATION_MS = 5 * 60 * 1000;
+const SNOOZE_STORAGE_KEY = "santumai_install_prompt_snoozed_at";
+const SNOOZE_DURATION_MS = 5 * 60 * 1000;
 const PROMPT_DELAY_MS = 1200;
 const IOS_FALLBACK_DELAY_MS = 1800;
 
@@ -25,26 +25,26 @@ function isIosDevice() {
   );
 }
 
-function getDismissalRemainingMs() {
-  let dismissedAt = 0;
+function getSnoozeRemainingMs() {
+  let snoozedAt = 0;
 
   try {
-    dismissedAt = Number(window.localStorage.getItem(DISMISS_STORAGE_KEY));
+    snoozedAt = Number(window.sessionStorage.getItem(SNOOZE_STORAGE_KEY));
   } catch {
-    dismissedAt = 0;
+    snoozedAt = 0;
   }
 
   const isRecent =
-    Number.isFinite(dismissedAt) &&
-    dismissedAt > 0 &&
-    Date.now() - dismissedAt < DISMISS_DURATION_MS;
+    Number.isFinite(snoozedAt) &&
+    snoozedAt > 0 &&
+    Date.now() - snoozedAt < SNOOZE_DURATION_MS;
 
-  return isRecent ? DISMISS_DURATION_MS - (Date.now() - dismissedAt) : 0;
+  return isRecent ? SNOOZE_DURATION_MS - (Date.now() - snoozedAt) : 0;
 }
 
-function rememberDismissal() {
+function rememberSnooze() {
   try {
-    window.localStorage.setItem(DISMISS_STORAGE_KEY, String(Date.now()));
+    window.sessionStorage.setItem(SNOOZE_STORAGE_KEY, String(Date.now()));
   } catch {}
 }
 
@@ -68,7 +68,7 @@ export default function PWAInstallPrompt() {
         setPromptMode("ios");
         setIsVisible(true);
       }
-    }, Math.max(IOS_FALLBACK_DELAY_MS, getDismissalRemainingMs()));
+    }, Math.max(IOS_FALLBACK_DELAY_MS, getSnoozeRemainingMs()));
 
     const handleBeforeInstallPrompt = (event) => {
       event.preventDefault();
@@ -79,7 +79,7 @@ export default function PWAInstallPrompt() {
 
       showTimer = window.setTimeout(() => {
         setIsVisible(true);
-      }, Math.max(PROMPT_DELAY_MS, getDismissalRemainingMs()));
+      }, Math.max(PROMPT_DELAY_MS, getSnoozeRemainingMs()));
     };
 
     const handleAppInstalled = () => {
@@ -88,7 +88,7 @@ export default function PWAInstallPrompt() {
       window.clearTimeout(snoozeTimerRef.current);
 
       try {
-        window.localStorage.removeItem(DISMISS_STORAGE_KEY);
+        window.sessionStorage.removeItem(SNOOZE_STORAGE_KEY);
       } catch {}
     };
 
@@ -108,7 +108,7 @@ export default function PWAInstallPrompt() {
   }, []);
 
   const handleDismiss = useCallback(() => {
-    rememberDismissal();
+    rememberSnooze();
     setIsVisible(false);
 
     window.clearTimeout(snoozeTimerRef.current);
@@ -116,7 +116,7 @@ export default function PWAInstallPrompt() {
       if (!isStandaloneMode()) {
         setIsVisible(true);
       }
-    }, DISMISS_DURATION_MS);
+    }, SNOOZE_DURATION_MS);
   }, []);
 
   const handleInstall = useCallback(async () => {
@@ -135,7 +135,7 @@ export default function PWAInstallPrompt() {
       const choice = await deferredPrompt.userChoice;
 
       if (choice?.outcome === "dismissed") {
-        rememberDismissal();
+        rememberSnooze();
       }
 
       setDeferredPrompt(null);
