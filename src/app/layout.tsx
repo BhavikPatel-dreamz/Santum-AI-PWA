@@ -3,6 +3,7 @@ import LoadingScreenWrapper from "@/components/onboarding/LoadingScreenWrapper";
 import { PageTransitionProvider } from "@/components/providers/PageTransitionProvider";
 import { ReduxProvider } from "@/components/providers/ReduxProvider";
 import OfflineDetector from "@/components/OfflineDetector";
+import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
@@ -160,6 +161,7 @@ export default function RootLayout({
           <ThemeProvider>
             <ServiceWorkerRegistration />
             <OfflineDetector />
+            <PWAInstallPrompt />
             <LoadingScreenWrapper />
             <PageTransitionProvider>
               <Suspense>
