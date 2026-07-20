@@ -30,7 +30,7 @@ const ONBOARDING_SLIDES = [
     darkImage: "/Logo Source files 21-4/Logo/SVG/Artboard3.svg",
     lightImage: "/Logo Source files 21-4/Logo/SVG/Artboard2.svg",
     title: "Get started and meet Sai (SantumAI)",
-    desc: "Create an account to start structured, confidential conversations.",
+    desc: "Create a private account to start confidential conversations.",
     btnLabel: "Try it for free",
   },
 ];

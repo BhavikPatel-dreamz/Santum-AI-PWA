@@ -45,7 +45,7 @@ function getSnoozeRemainingMs() {
 function rememberSnooze() {
   try {
     window.sessionStorage.setItem(SNOOZE_STORAGE_KEY, String(Date.now()));
-  } catch {}
+  } catch { }
 }
 
 export default function PWAInstallPrompt() {
@@ -89,7 +89,7 @@ export default function PWAInstallPrompt() {
 
       try {
         window.sessionStorage.removeItem(SNOOZE_STORAGE_KEY);
-      } catch {}
+      } catch { }
     };
 
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
@@ -188,7 +188,7 @@ export default function PWAInstallPrompt() {
           Install Santum AI
         </h2>
         <p className="theme-text-secondary mx-auto mb-6 max-w-[420px] text-center text-[16px] font-medium leading-6">
-          Add Santum AI to your home screen for a faster, app-like experience.
+          Add an icon to your apps screen for a faster, app-like experience.
         </p>
 
         {isIosPrompt ? (
@@ -217,19 +217,18 @@ export default function PWAInstallPrompt() {
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <button
               type="button"
-              onClick={handleDismiss}
-              className="theme-card-soft w-full rounded-[12px] px-8 py-[18px] text-[18px] font-medium text-[#00D061] transition-all duration-300 active:scale-[0.97] sm:w-auto"
-            >
-              Later
-            </button>
-            <button
-              type="button"
               onClick={handleInstall}
               disabled={isPrompting}
               className="flex w-full items-center justify-center gap-2 rounded-[12px] bg-[#00D061] px-8 py-[18px] text-[18px] font-medium text-white transition-all active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
             >
-              <Download aria-hidden="true" size={20} strokeWidth={2.4} />
-              {isPrompting ? "Opening..." : "Install"}
+              {isPrompting ? "Opening..." : "Install Icon"}
+            </button>
+            <button
+              type="button"
+              onClick={handleDismiss}
+              className="theme-card-soft w-full rounded-[12px] px-8 py-[18px] text-[18px] font-medium text-[#00D061] transition-all duration-300 active:scale-[0.97] sm:w-auto"
+            >
+              Later
             </button>
           </div>
         )}

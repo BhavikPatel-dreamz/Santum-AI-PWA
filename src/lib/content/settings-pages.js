@@ -266,9 +266,10 @@ export const SETTINGS_PAGE_CONTENT = {
         type: "steps",
         title: "What Santum AI Does",
         items: [
-          "Offer gentle text-based support for everyday emotional wellbeing.",
-          "Use mood check-ins to adapt tone before a conversation begins.",
-          "Keep private, mobile-friendly conversations accessible inside a standalone PWA.",
+          "Offers gentle text-based support for everyday emotional wellbeing.",
+          "Educates through basic pchychotherapy exercises and training.",
+          "Uses mood check-ins to adapt tone before a conversation begins.",
+          "Keeps private, mobile-friendly conversations inside a standalone PWA.",
         ],
       },
     ],
