@@ -63,9 +63,6 @@ export default function PersonalInformationPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isOnboarding = searchParams.get("source") === "onboarding";
-  // const [draftForm, setDraftForm] = useState(null);
-  // const [savedBaseline, setSavedBaseline] = useState(null);
-
   const {
     data: profile,
     error: profileError,
@@ -100,46 +97,6 @@ export default function PersonalInformationPage() {
     sessionStorage.setItem(PASSWORD_RESET_EMAIL_STORAGE_KEY, form.email.trim());
     router.push("/forgot-password");
   };
-
-  //     if (isBasicChanged) {
-  //       await updateBasicProfile({
-  //         firstName: normalizedCurrent.firstName,
-  //         lastName: normalizedCurrent.lastName,
-  //         dob: normalizedCurrent.dob,
-  //       }).unwrap();
-  //     }
-
-  //     if (isLanguageChanged) {
-  //       await updatePreferredLanguage({
-  //         preferredLanguage: normalizedCurrent.preferredLanguage,
-  //       }).unwrap();
-  //     }
-
-  //     if (isInterestsChanged) {
-  //       await updateInterests({
-  //         interests: normalizedCurrent.interests,
-  //       }).unwrap();
-  //     }
-
-  //     setSavedBaseline(normalizedCurrent);
-  //     setDraftForm(normalizedCurrent);
-
-  //     if (isOnboarding) {
-  //       toast.success("Profile completed");
-  //     } else {
-  //       toast.success("Profile changes saved");
-  //     }
-
-  //     finishProfileFlow();
-  //   } catch (error) {
-  //     if (isUnauthorizedError(error)) {
-  //       router.replace("/sign-in");
-  //       return;
-  //     }
-
-  //     toast.error(getClientErrorMessage(error, "Unable to save profile"));
-  //   }
-  // };
 
   return (
     <StepPageShell
