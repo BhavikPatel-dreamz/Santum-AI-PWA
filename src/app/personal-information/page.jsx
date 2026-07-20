@@ -37,9 +37,8 @@ function FloatingInput({
         onChange={onChange}
         placeholder=" "
         disabled={disabled}
-        className={`theme-floating-input peer block h-[64px] w-full rounded-[18px] border px-4 pt-5 text-[17px] outline-none transition-all ${
-          disabled ? "cursor-not-allowed theme-text-muted" : ""
-        }`}
+        className={`theme-floating-input peer block h-[64px] w-full rounded-[18px] border px-4 pt-5 text-[17px] outline-none transition-all ${disabled ? "cursor-not-allowed theme-text-muted" : ""
+          }`}
       />
       <label
         htmlFor={id}
@@ -59,71 +58,6 @@ function buildProfileForm(profile) {
   };
 }
 
-// function normalizeInterests(values) {
-//   return [...new Set(values.map((value) => value.trim()).filter(Boolean))];
-// }
-
-// function normalizeFormState(form) {
-//   return {
-//     firstName: form.firstName.trim(),
-//     lastName: form.lastName.trim(),
-//     email: form.email,
-//   };
-// }
-
-// function hasMatchingInterests(leftValues, rightValues) {
-//   if (leftValues.length !== rightValues.length) {
-//     return false;
-//   }
-
-//   return leftValues.every((value, index) => value === rightValues[index]);
-// }
-
-// function validateBasicProfile(form) {
-//   if (!form.firstName.trim()) {
-//     return "First name is required";
-//   }
-
-//   if (!form.lastName.trim()) {
-//     return "Last name is required";
-//   }
-
-//   if (!form.dob) {
-//     return "Date of birth is required";
-//   }
-
-//   const birthDate = new Date(form.dob);
-
-//   if (Number.isNaN(birthDate.getTime())) {
-//     return "Enter a valid date of birth";
-//   }
-
-//   const ageDifference = Date.now() - birthDate.getTime();
-//   const ageDate = new Date(ageDifference);
-//   const age = Math.abs(ageDate.getUTCFullYear() - 1970);
-
-//   if (age < 18) {
-//     return "You must be at least 18 years old";
-//   }
-
-//   return null;
-// }
-
-// function SelectionChip({ label, isSelected, onClick }) {
-//   return (
-//     <button
-//       type="button"
-//       onClick={onClick}
-//       className={`rounded-full border px-4 py-2 text-[14px] font-medium transition-all ${
-//         isSelected
-//           ? "theme-choice-chip-selected"
-//           : "theme-choice-chip hover:opacity-90"
-//       }`}
-//     >
-//       {label}
-//     </button>
-//   );
-// }
 
 export default function PersonalInformationPage() {
   const router = useRouter();
@@ -167,8 +101,6 @@ export default function PersonalInformationPage() {
     router.push("/forgot-password");
   };
 
-
-  //   try {
   //     if (isBasicChanged) {
   //       await updateBasicProfile({
   //         firstName: normalizedCurrent.firstName,
@@ -227,39 +159,12 @@ export default function PersonalInformationPage() {
               <h2 className="theme-text-primary mt-2 truncate text-[24px] font-semibold leading-8">
                 Anonymous
               </h2>
-              <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6">
+              <p className="theme-text-secondary mt-1 font-satoshi text-[14px] leading-6 truncate">
                 {emailAddress ||
                   "Contact details are managed from your Santum account"}
               </p>
             </div>
           </div>
-
-          {/* <div className="mt-5 grid grid-cols-3 gap-3">
-          <div className="theme-static-panel rounded-[20px] border px-3 py-4 text-center">
-            <p className="theme-text-primary text-[20px] font-semibold leading-7">
-              {completionScore}/4
-            </p>
-            <p className="theme-text-secondary mt-1 font-satoshi text-[12px] leading-5">
-              Complete
-            </p>
-          </div>
-          <div className="theme-static-panel rounded-[20px] border px-3 py-4 text-center">
-            <p className="theme-text-primary text-[20px] font-semibold leading-7">
-              {normalizedCurrent.preferredLanguage || "--"}
-            </p>
-            <p className="theme-text-secondary mt-1 font-satoshi text-[12px] leading-5">
-              Language
-            </p>
-          </div>
-          <div className="theme-static-panel rounded-[20px] border px-3 py-4 text-center">
-            <p className="theme-text-primary text-[20px] font-semibold leading-7">
-              {normalizedCurrent.interests.length}
-            </p>
-            <p className="theme-text-secondary mt-1 font-satoshi text-[12px] leading-5">
-              Interests
-            </p>
-          </div>
-        </div> */}
         </div>
       )}
 
@@ -284,117 +189,15 @@ export default function PersonalInformationPage() {
                 id="first-name"
                 label="Username"
                 value={EMPTY_PROFILE_FORM.firstName}
-                // onChange={(event) =>
-                //   updateField("firstName", event.target.value)
-                // }
               />
               <FloatingInput
                 disabled={true}
                 id="email"
                 label="Email"
                 value={form.email}
-                // onChange={(event) => updateField("email", event.target.value)}
               />
             </div>
           </div>
-
-          {/* <div className="theme-card mb-5 rounded-[26px] border px-5 py-5">
-            <div className="mb-4">
-              <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#00A84D]">
-                Contact Details
-              </p>
-              <h3 className="theme-text-primary mt-2 text-[22px] font-semibold leading-8">
-                Visible here, managed from your account source
-              </h3>
-              <p className="theme-text-secondary mt-2 font-satoshi text-[14px] leading-6">
-                Email and mobile currently come from your signed-in Santum
-                account. This module shows them clearly but does not overwrite
-                them locally without a dedicated backend update route.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="theme-static-panel rounded-[22px] border px-4 py-4">
-                <div className="theme-text-secondary mb-3 flex items-center gap-2">
-                  <Mail size={16} />
-                  <span className="text-[12px] font-semibold uppercase tracking-[0.16em]">
-                    Email
-                  </span>
-                </div>
-                <p className="theme-text-primary text-[15px] font-medium leading-6">
-                  {emailAddress || "No email returned by the current profile API"}
-                </p>
-              </div>
-              <div className="theme-static-panel rounded-[22px] border px-4 py-4">
-                <div className="theme-text-secondary mb-3 flex items-center gap-2">
-                  <Phone size={16} />
-                  <span className="text-[12px] font-semibold uppercase tracking-[0.16em]">
-                    Mobile
-                  </span>
-                </div>
-                <p className="theme-text-primary text-[15px] font-medium leading-6">
-                  {phoneNumber || "No mobile number returned by the current profile API"}
-                </p>
-              </div>
-            </div>
-          </div> */}
-
-          {/* <div className="theme-card mb-5 rounded-[26px] border px-5 py-5">
-            <div className="mb-4">
-              <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#00A84D]">
-                Preferred Language
-              </p>
-              <h3 className="theme-text-primary mt-2 text-[22px] font-semibold leading-8">
-                Save the language you want to use most
-              </h3>
-            </div>
-
-            <div className="flex flex-wrap gap-3">
-              {PROFILE_LANGUAGES.map((language) => (
-                <SelectionChip
-                  key={language}
-                  label={language}
-                  isSelected={form.preferredLanguage === language}
-                  onClick={() => updateField("preferredLanguage", language)}
-                />
-              ))}
-            </div>
-          </div> */}
-
-          {/* <div className="theme-card rounded-[26px] border px-5 py-5">
-            <div className="mb-4 flex items-start justify-between gap-3">
-              <div>
-                <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#00A84D]">
-                  Interests
-                </p>
-                <h3 className="theme-text-primary mt-2 text-[22px] font-semibold leading-8">
-                  Keep your preference set relevant
-                </h3>
-              </div>
-              <span className="theme-pill rounded-full px-3 py-1 text-[12px] font-semibold">
-                {normalizedCurrent.interests.length} selected
-              </span>
-            </div>
-
-            <div className="flex flex-wrap gap-3">
-              {PROFILE_INTERESTS.map((interest) => (
-                <SelectionChip
-                  key={interest}
-                  label={interest}
-                  isSelected={form.interests.includes(interest)}
-                  onClick={() => toggleInterest(interest)}
-                />
-              ))}
-            </div>
-
-            <div className="theme-static-panel mt-4 rounded-[20px] border px-4 py-4">
-              <p className="theme-text-secondary font-satoshi text-[14px] leading-6">
-                Select at least one interest if you want this section updated.
-                If you are returning from onboarding, saving here will replace
-                the old separate language and interest steps.
-              </p>
-            </div>
-          </div> */}
         </>
       )}
 
@@ -411,28 +214,14 @@ export default function PersonalInformationPage() {
 
         <button
           type="button"
-          // onClick={handleSaveProfile}
           onClick={() => {
             router.push("/home");
           }}
           disabled={!didInitialize}
-          className={`rounded-[14px] px-5 py-4 text-[16px] font-semibold text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)] ${
-            !didInitialize ? "bg-[#A8F0CB]" : "bg-[#00D061]"
-          } ${isOnboarding ? "sm:col-span-2" : ""}`}
+          className={`rounded-[14px] px-5 py-4 text-[16px] font-semibold text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)] ${!didInitialize ? "bg-[#A8F0CB]" : "bg-[#00D061]"
+            } ${isOnboarding ? "sm:col-span-2" : ""}`}
         >
           Back Home
-          {/* {isSavingProfile ? (
-            <span className="inline-flex items-center gap-3">
-              <span className="h-5 w-5 rounded-full border-[3px] border-white border-t-transparent animate-spin" />
-              Saving profile...
-            </span>
-          ) : isOnboarding ? (
-            "Finish Profile Setup"
-          ) : hasProfileChanges ? (
-            "Save Profile Changes"
-          ) : (
-            "Profile Is Up To Date"
-          )} */}
         </button>
       </div>
     </StepPageShell>

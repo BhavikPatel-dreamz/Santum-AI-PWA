@@ -84,7 +84,13 @@ export async function registerPushServiceWorker() {
     return null;
   }
 
-  return navigator.serviceWorker.register("/sw.js");
+  const registration = await navigator.serviceWorker.register("/sw.js", {
+    updateViaCache: "none",
+  });
+
+  registration.update().catch(() => undefined);
+
+  return registration;
 }
 
 export async function subscribeCurrentBrowserToPush() {

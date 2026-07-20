@@ -1,4 +1,4 @@
-const CACHE_NAME = "santumai-runtime-v1";
+const CACHE_NAME = "santumai-runtime-v2";
 const OFFLINE_URL = "/offline";
 const PRECACHE_URLS = [
   OFFLINE_URL,
@@ -6,6 +6,8 @@ const PRECACHE_URLS = [
   "/web-app-manifest-192x192.png",
   "/web-app-manifest-512x512.png",
 ];
+const CACHEABLE_ASSET_PATTERN =
+  /\.(?:woff2?|ico|png|jpg|jpeg|svg|webp|json)$/;
 
 self.addEventListener("install", (event) => {
   self.skipWaiting();
@@ -87,10 +89,11 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  if (
-    url.pathname.startsWith("/_next/static/") ||
-    /\.(?:css|js|woff2?|ico|png|jpg|jpeg|svg|webp)$/.test(url.pathname)
-  ) {
+  if (url.pathname.startsWith("/_next/")) {
+    return;
+  }
+
+  if (CACHEABLE_ASSET_PATTERN.test(url.pathname)) {
     event.respondWith(cacheFirst(request));
   }
 });

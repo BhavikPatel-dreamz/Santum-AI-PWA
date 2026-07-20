@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, Download, Share2 } from "lucide-react";
+import { ChevronDown, Share2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const SNOOZE_STORAGE_KEY = "santumai_install_prompt_snoozed_at";

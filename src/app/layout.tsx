@@ -7,7 +7,6 @@ import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
-import Script from "next/script";
 import { Suspense } from "react";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
@@ -115,23 +114,6 @@ export const metadata: Metadata = {
   },
 };
 
-const themeInitScript = `
-(() => {
-  try {
-    const storedTheme = window.localStorage.getItem("theme");
-    const theme = storedTheme === "light" || storedTheme === "dark"
-      ? storedTheme
-      : "light";
-
-    document.documentElement.dataset.theme = theme;
-    document.documentElement.style.colorScheme = theme;
-  } catch {
-    document.documentElement.dataset.theme = "light";
-    document.documentElement.style.colorScheme = "light";
-  }
-})();
-`;
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -152,11 +134,6 @@ export default function RootLayout({
         <meta name="google-site-verification" content="NsFvLxoV1cdW_s41jMXtkIZtZXLdjPMvb1yQGBMXXAs" />
       </head>
       <body className="min-h-full flex flex-col font-sans">
-        <Script
-          id="theme-init"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{ __html: themeInitScript }}
-        />
         <ReduxProvider>
           <ThemeProvider>
             <ServiceWorkerRegistration />
