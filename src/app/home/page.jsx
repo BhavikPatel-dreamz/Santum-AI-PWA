@@ -1,7 +1,14 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Bell, ChevronRightIcon, ReceiptText, Settings, X } from "lucide-react";
+import {
+  Bell,
+  ChevronRightIcon,
+  HeartHandshake,
+  ReceiptText,
+  Settings,
+  X,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import MoodCheckInCard from "@/components/app/MoodCheckInCard";
@@ -241,6 +248,16 @@ const MENU_ITEMS = [
     ),
   },
   {
+    label: "Santum Platform",
+    hint: null,
+    danger: false,
+    icon: (
+      <div className="flex h-12 w-12 items-center justify-center rounded-[8px] bg-[#00D061]/10 text-[#00D061]">
+        <HeartHandshake size={24} strokeWidth={2} />
+      </div>
+    ),
+  },
+  {
     label: "Notifications",
     hint: null,
     danger: false,
@@ -382,6 +399,7 @@ const MENU_ITEMS = [
 const MENU_ROUTES = {
   "Chat History": "/history",
   "Current Plan": SETTINGS_PAGE_ROUTES.subscriptions,
+  "Santum Platform": SETTINGS_PAGE_ROUTES["santum-platform"],
   Billing: "/billing-section",
   "Profile Info": "/personal-information",
   Protection: SETTINGS_PAGE_ROUTES.security,
@@ -407,16 +425,28 @@ const QUICK_ACCESS_ITEMS = [
     href: SETTINGS_PAGE_ROUTES.subscriptions,
   },
   {
-    label: "FAQ's",
-    caption: "Find Out More",
-    value: "Learn",
-    href: SETTINGS_PAGE_ROUTES.faqs,
+    label: "Profile",
+    caption: "Your Details",
+    value: "Overview",
+    href: "/personal-information",
   },
   {
     label: "Protection",
     caption: "Add Security",
     value: "Biometrics",
     href: SETTINGS_PAGE_ROUTES.security,
+  },
+  {
+    label: "FAQ's",
+    caption: "Find Out More",
+    value: "Learn",
+    href: SETTINGS_PAGE_ROUTES.faqs,
+  },
+  {
+    label: "Santum.net",
+    caption: "Human Therapy",
+    value: "Get help",
+    href: SETTINGS_PAGE_ROUTES["santum-platform"],
   },
 ];
 
