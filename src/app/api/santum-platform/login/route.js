@@ -28,7 +28,8 @@ async function validateSantumToken(token) {
 
 export async function GET(request) {
   const token = getTokenFromUrl(request);
-  const loginUrl = new URL("/lets-you-in", request.url);
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim() || request.url;
+  const loginUrl = new URL("/lets-you-in", siteUrl);
 
   if (!token) {
     const response = NextResponse.redirect(loginUrl);
@@ -45,7 +46,7 @@ export async function GET(request) {
     return clearAuthCookie(response);
   }
 
-  const response = NextResponse.redirect(new URL("/home", request.url));
+  const response = NextResponse.redirect(new URL("/home", siteUrl));
   response.headers.set("Cache-Control", "no-store");
 
   return setAuthCookie(response, token);
