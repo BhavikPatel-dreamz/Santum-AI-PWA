@@ -98,7 +98,7 @@ export default function SantumPlatformClient() {
         </section>
         <div className="flex justify-center pt-6">
           <a
-            href="https://santum.net/"
+            href="/api/santum-platform/redirect"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center w-max bg-green-500 text-white px-8 py-3 rounded-2xl font-medium hover:opacity-90 transition-opacity duration-200"
