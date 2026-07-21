@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-const HeaderSection = ({ title, showImage = true }) => {
+const HeaderSection = ({ title, showImage = true, imageURL=null }) => {
   const router = useRouter();
 
   return (
@@ -39,7 +39,7 @@ const HeaderSection = ({ title, showImage = true }) => {
               height={95}
               className=""
             /> : <Image
-              src="/message.png"
+              src={imageURL}
               alt=""
               width={64}
               height={64}

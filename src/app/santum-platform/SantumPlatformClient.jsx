@@ -1,6 +1,7 @@
 "use client";
 
 import StepPageShell from "@/components/app/StepPageShell";
+import Image from "next/image";
 
 const platformOffers = [
   {
@@ -16,7 +17,7 @@ const platformOffers = [
   {
     title: "Convenience",
     description:
-      "An in-depth online therapy session can rarely be achieved during our busy lives already packed with schedules. Many places of employments will not allow for the necessary time off each week. With online therapy you can work from a preferred location and within your own timeframe.",
+      "An in-office therapy session can rarely be achieved during our busy lives already packed with schedules. Many places of employments will not allow for the necessary time off each week. With online therapy you can get counselling from a preferred location and within your own timeframe.",
   },
   {
     title: "Affordability",
@@ -28,7 +29,8 @@ const platformOffers = [
 const platformFeatures = [
   "Choice of Therapist Expertise",
   "Therapist Matching",
-  "Real-Time Video or Chat Sessions",
+  "Real-Time Sessions",
+  "Live Video or Chat",
   "Anytime Messaging",
   "Professional Assessments",
   "Live Session Scheduling",
@@ -43,16 +45,19 @@ function Bullet() {
 
 export default function SantumPlatformClient() {
   return (
-    <StepPageShell title="Santum Platform" contentClassName="overflow-y-auto">
+    <StepPageShell showImage={false} imageURL="/1006-removebg-preview.png" title="Santum Platform" contentClassName="overflow-y-auto">
       <div className="space-y-5">
-        <div className="space-y-3 px-1">
-          <h2 className="theme-text-primary text-[18px] font-semibold leading-7">
-            Get help from human therapist
-          </h2>
-          <h3 className="theme-text-primary text-[17px] font-semibold leading-6">
-            What does Santum platform offer
-          </h3>
+        <div className="flex items-center justify-center mb-4">
+          <Image
+            src="/logo009-removebg-preview.png"
+            alt=""
+            width={200}
+            height={200}
+            className="" />
         </div>
+        <h2 className="theme-text-primary text-[18px] font-semibold leading-7">
+          Human therapy from Santum.net
+        </h2>
 
         <div className="space-y-4">
           {platformOffers.map((offer) => (
@@ -91,6 +96,16 @@ export default function SantumPlatformClient() {
             </ul>
           </div>
         </section>
+        <div className="flex justify-center pt-6">
+          <a
+            href="https://santum.net/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center w-max bg-green-500 text-white px-8 py-3 rounded-2xl font-medium hover:opacity-90 transition-opacity duration-200"
+          >
+            Get Human Therapy
+          </a>
+        </div>
       </div>
     </StepPageShell>
   );

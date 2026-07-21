@@ -738,6 +738,7 @@ export default function SantumAIChatPage() {
     <StepPageShell
       showImage={false}
       title="Chat with Sai..."
+      imageURL="/message.png"
       contentClassName="h-[100dvh] overflow-hidden pb-4"
     >
       <div className="flex h-full min-h-0 flex-col">

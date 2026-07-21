@@ -248,7 +248,7 @@ const MENU_ITEMS = [
     ),
   },
   {
-    label: "Santum Platform",
+    label: "Human Therapy",
     hint: null,
     danger: false,
     icon: (
@@ -399,7 +399,7 @@ const MENU_ITEMS = [
 const MENU_ROUTES = {
   "Chat History": "/history",
   "Current Plan": SETTINGS_PAGE_ROUTES.subscriptions,
-  "Santum Platform": SETTINGS_PAGE_ROUTES["santum-platform"],
+  "Human Therapy": SETTINGS_PAGE_ROUTES["santum-platform"],
   Billing: "/billing-section",
   "Profile Info": "/personal-information",
   Protection: SETTINGS_PAGE_ROUTES.security,
