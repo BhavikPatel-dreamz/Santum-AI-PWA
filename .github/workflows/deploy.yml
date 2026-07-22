@@ -1,0 +1,53 @@
+name: Deploy Santum-AI-PWA
+
+on:
+  push:
+    branches: [main]
+
+env:
+  VPS_APP_PATH: "/var/www/html/Santum-AI-PWA"
+  PM2_PROCESS_NAME: "santumai-pwa"
+  PM2_PROCESS_NAME_2: "santumai-push-worker"
+  NODE_PORT: "3000"
+
+jobs:
+  deploy:
+    runs-on: [self-hosted]
+    steps:
+      - name: Sync Code
+        run: |
+          if [ -d "${{ env.VPS_APP_PATH }}/.git" ]; then
+              cd "${{ env.VPS_APP_PATH }}"
+              git fetch origin
+              git reset --hard "origin/main"
+              git clean -fd
+          else
+              git clone -b main git@github.com:BhavikPatel-dreamz/Santum-AI-PWA.git "${{ env.VPS_APP_PATH }}"
+          fi
+
+      - name: Build
+        run: |
+          cd "${{ env.VPS_APP_PATH }}"
+          npm install
+          npm run build
+           
+      - name: Start PM2 Apps
+        run: |
+          cd "${{ env.VPS_APP_PATH }}"
+          
+          # Process 1: PWA
+          if pm2 list | grep -q "${{ env.PM2_PROCESS_NAME }}"; then
+              pm2 restart "${{ env.PM2_PROCESS_NAME }}"
+          else
+              PORT=${{ env.NODE_PORT }} pm2 start npm --name "${{ env.PM2_PROCESS_NAME }}" -- start
+          fi
+
+          # Process 2: Push Worker
+          if pm2 list | grep -q "${{ env.PM2_PROCESS_NAME_2 }}"; then
+              pm2 restart "${{ env.PM2_PROCESS_NAME_2 }}"
+          else
+              pm2 start npm --name "${{ env.PM2_PROCESS_NAME_2 }}" -- run worker
+          fi
+          
+          # Save the process list for system reboots
+          pm2 save   
