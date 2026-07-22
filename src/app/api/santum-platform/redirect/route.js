@@ -9,7 +9,7 @@ export async function GET(request) {
     return NextResponse.redirect(new URL("/lets-you-in", request.url));
   }
 
-  const santumUrl = new URL("https://santum.net/");
+  const santumUrl = new URL("https://santum.net/dashboard/");
   santumUrl.searchParams.set("pwa_token", token);
 
   const response = NextResponse.redirect(santumUrl);
