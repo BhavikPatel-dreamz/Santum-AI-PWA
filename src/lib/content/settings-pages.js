@@ -61,43 +61,18 @@ export const SETTINGS_PAGE_CONTENT = {
         type: "list",
         title: "Additional Security",
         items: [
-          // {
-          //   title: "4-digit security PIN",
-          //   description:
-          //     "Adds a quick privacy check before returning to sensitive screens.",
-          //   meta: "Suggested next step",
-          // },
           {
             title: "Fingerprint unlock",
             description:
               "Use local biometrics on supported devices for enhanced protection.",
             meta: "Device ready",
           },
-          // {
-          //   title: "New device alerts",
-          //   description:
-          //     "Get notified when your account is opened somewhere new.",
-          //   meta: "Enabled",
-          //   badge: "Live",
-          // },
         ],
       },
       {
         type: "toggles",
         title: "Security Controls",
         items: [
-          // {
-          //   key: "loginAlerts",
-          //   label: "Instant sign-in alerts",
-          //   description: "Know right away when a new session is created.",
-          //   enabled: true,
-          // },
-          // {
-          //   key: "weeklyDigest",
-          //   label: "Weekly account summary",
-          //   description: "Receive a simple recap of recent account activity.",
-          //   enabled: false,
-          // },
           {
             key: "biometricPrompt",
             label: "Fingerprint lock",
@@ -212,21 +187,6 @@ export const SETTINGS_PAGE_CONTENT = {
             answer:
               " Yes. When you achieve your goals, you can simply delete your account. Alternatively, you can opt to 'Pause' the account, in which case you will be able to resume using the same access details.",
           },
-          // {
-          //   question: "Can I chat with Sai without buying a plan?",
-          //   answer:
-          //     "Yes. Access depends on your active plan and available chat credits, and the core experience can still work on the free tier when credits are available.",
-          // },
-          // {
-          //   question: "Is Santum AI a real therapist?",
-          //   answer:
-          //     "No. Santum AI is not a licensed psychologist, psychiatrist, or medical professional. It is an AI support tool designed to provide general mental wellness guidance and supportive conversation, but it does not replace professional therapy, diagnosis, or emergency care.",
-          // },
-          // {
-          //   question: "What should I do in a mental health emergency?",
-          //   answer:
-          //     "Santum AI is not an emergency or crisis service. If you are in danger, experiencing a crisis, or need urgent support, contact emergency services, a crisis hotline, or a licensed healthcare professional immediately.",
-          // },
         ],
       },
     ],
@@ -766,21 +726,7 @@ export const SETTINGS_PAGE_CONTENT = {
             title: "In-app feedback",
             description:
               "The best path for account enquiries, billing, app-navigation, reply quality and emotional safety matters.",
-            // meta: "Fastest",
-            // badge: "Recommended",
           },
-          // {
-          //   title: "Care experience review",
-          //   description:
-          //     "Use this for feedback on tone, reply quality, or how emotionally safe the app feels.",
-          //   meta: "Thoughtful follow-up",
-          // },
-          // {
-          //   title: "Membership and billing help",
-          //   description:
-          //     "Best for plan questions, credit issues, or checkout follow-up.",
-          //   meta: "Business hours",
-          // },
         ],
       },
     ],
@@ -816,12 +762,6 @@ export const SETTINGS_PAGE_CONTENT = {
               "Hide your account temporarily while keeping the option to return.",
             buttonLabel: "Pause",
           },
-          // {
-          //   title: "Export my cha archive",
-          //   description:t
-          //     "Prepare a downloadable copy of saved conversations and account preferences.",
-          //   buttonLabel: "Request Export",
-          // },
           {
             title: "Delete account permanently",
             description:

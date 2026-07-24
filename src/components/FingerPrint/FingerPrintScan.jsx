@@ -17,24 +17,6 @@ export default function FingerPrintScan() {
   const [updateBasicProfile, { isLoading: isSavingFingerprint }] =
     useUpdateBasicProfileMutation();
 
-  // Simulate scanning animation when in "scanning" state
-  // useEffect(() => {
-  //   if (scanState !== "scanning") return;
-
-  //   const interval = setInterval(() => {
-  //     setScanProgress((prev) => {
-  //       if (prev >= 100) {
-  //         clearInterval(interval);
-  //         setScanState("success");
-  //         return 100;
-  //       }
-  //       return prev + 2;
-  //     });
-  //   }, 40);
-
-  //   return () => clearInterval(interval);
-  // }, [scanState]);
-
   const generateRandomChallenge = () => {
     const randomValues = new Uint8Array(32);
     window.crypto.getRandomValues(randomValues);
@@ -100,29 +82,6 @@ export default function FingerPrintScan() {
       // store locally after the account profile accepts the passkey
       localStorage.setItem("passkeyId", JSON.stringify(rawId));
       localStorage.setItem("fingerprintEnabled", "true");
-
-      // if (!window.currentPasskey) {
-      //   console.warn("No passkey found, creating one...");
-      //   return;
-      // }
-
-      // const credential = await navigator.credentials.get({
-      //   publicKey: {
-      //     challenge: generateRandomChallenge(),
-      //     userVerification: "required",
-      //     allowCredentials: window.currentPasskey
-      //       ? [
-      //           {
-      //             id: window.currentPasskey.rawId,
-      //             type: "public-key",
-      //             transports: ["internal"],
-      //           },
-      //         ]
-      //       : [],
-      //   },
-      // });
-
-      // console.log(credential);
 
       // SUCCESS
       setScanProgress(100);

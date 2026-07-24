@@ -152,16 +152,6 @@ export default function OtpPage() {
 
         <section className="theme-surface relative -mt-10 flex flex-1 flex-col rounded-t-[32px] px-4 pb-10 pt-3 transition-colors duration-300 sm:px-6 md:px-8 lg:px-10 lg:pb-12 lg:rounded-t-[40px]">
           <div className="mx-auto flex w-full max-w-[560px] flex-col items-center text-center lg:max-w-[720px]">
-            {/* <div className="theme-static-panel mb-8 mt-2 flex aspect-square w-full max-w-[343px] items-center justify-center rounded-[24px] border sm:max-w-[380px] lg:max-w-[460px]">
-              <Image
-                src="/Logo Source files 21-4/Logo/1x/Artboard3.png"
-                alt="Verification illustration"
-                width={343}
-                height={343}
-                className="h-auto w-full"
-              />
-            </div> */}
-
             <p className="theme-text-secondary mb-8 text-center font-satoshi text-[18px] leading-6">
               Please enter the verification code we sent to your email{" "}
               <span className="theme-text-primary font-semibold">

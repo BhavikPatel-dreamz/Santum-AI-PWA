@@ -10,8 +10,6 @@ export async function POST(req) {
   try {
     const body = await req.json();
 
-    // const hasBasicProfile =
-    //   Boolean(body?.firstName) || Boolean(body?.lastName) || Boolean(body?.dob);
     const hasFingerprintEnabled =
       typeof body?.fingerprintEnabled === "boolean" ||
       typeof body?.fingerprint_enabled === "boolean" ||
@@ -35,7 +33,6 @@ export async function POST(req) {
       body?.delete === 1;
 
     if (
-      // !hasBasicProfile &&
       !hasFingerprintEnabled &&
       !hasPasskeyId &&
       !hasPaused &&
@@ -47,23 +44,7 @@ export async function POST(req) {
       );
     }
 
-    // if (
-    //   hasBasicProfile &&
-    //   (!body?.firstName || !body?.lastName || !body?.dob)
-    // ) {
-    //   return NextResponse.json(
-    //     { message: "First name, last name, and date of birth are required" },
-    //     { status: 400 },
-    //   );
-    // }
-
     const payload = new FormData();
-
-    // if (hasBasicProfile) {
-    //   payload.append("first_name", body.firstName);
-    //   payload.append("last_name", body.lastName);
-    //   payload.append("dob", body.dob);
-    // }
 
     if (hasFingerprintEnabled) {
       const fingerprintEnabled =

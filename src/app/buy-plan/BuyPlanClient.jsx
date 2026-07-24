@@ -278,7 +278,6 @@ export default function BuyPlanClient() {
 
           <div
             role="button"
-            // aria-disabled={isCheckoutActionDisabled}
             onClick={() => {
               if (!isCheckoutActionDisabled) {
                 handleBuyNow();
@@ -314,31 +313,7 @@ export default function BuyPlanClient() {
         ) : null}
       </div>
 
-      {/* <div className="mt-4 grid grid-cols-1 gap-3 min-[520px]:grid-cols-3">
-        <PlanMetric
-          icon={MessageCircle}
-          label="Access"
-          value={selectedPlan?.token_info || "Monthly support"}
-        />
-        <PlanMetric icon={CreditCard} label="Billing" value="Monthly" />
-        <PlanMetric icon={ShieldCheck} label="Checkout" value="Santum.net" />
-      </div> */}
-
       <div className="mt-5 theme-card rounded-[24px] border px-5 py-5">
-        {/* <div className="flex items-start gap-3 sm:items-center">
-          <div className="theme-pill flex h-10 w-10 shrink-0 items-center justify-center rounded-full">
-            <Sparkles size={18} />
-          </div>
-          <div className="min-w-0">
-            <h3 className="theme-text-primary text-[20px] font-semibold leading-7">
-              What is included
-            </h3>
-            <p className="theme-text-secondary font-satoshi text-[14px] leading-6">
-              Key benefits available with this membership.
-            </p>
-          </div>
-        </div> */}
-
         {featureList.length > 0 ? (
           <div className=" space-y-3">
             {featureList.map((feature) => (

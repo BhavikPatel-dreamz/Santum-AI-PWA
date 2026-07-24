@@ -736,38 +736,15 @@ export default function SantumAIChatPage() {
 
   return (
     <StepPageShell
-      showImage={false}
+      showImage={true}
       title="Chat with Sai..."
       imageURL="/message.png"
       contentClassName="h-[100dvh] overflow-hidden pb-4"
+      imgHeight={64}
+      imgWidth={64}
     >
       <div className="flex h-full min-h-0 flex-col">
         <div className="flex min-h-0 flex-col lg:overflow-y-auto lg:pr-1">
-
-          {/* <div className="theme-card-muted mb-4 rounded-[22px] border px-4 py-4">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#7E8A83]">
-                  Available Credits
-                </p>
-                <p className="mt-2 text-[24px] font-semibold leading-8 text-[#0F0F0F]">
-                  {isBalanceLoading
-                    ? "Loading..."
-                    : creditBalance === null
-                      ? "Unavailable"
-                      : formatCreditAmount(creditBalance)}
-                </p>
-              </div>
-              <div className="rounded-full bg-[#E8FFF1] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#00A84D]">
-                Live
-              </div>
-            </div>
-            <p className="mt-3 font-satoshi text-[14px] leading-6 text-[#555]">
-              SantumAI checks this balance before each support chat and stores
-              each finished reply back into your conversation history.
-            </p>
-          </div> */}
-
           {purchasePromptMessage || isCreditDepleted ? (
             <div className="theme-danger-card mb-4 rounded-[24px] border px-4 py-4 shadow-[0_12px_30px_rgba(15,15,15,0.04)]">
               <p className="theme-danger-title text-[12px] font-semibold uppercase tracking-[0.16em]">
@@ -814,7 +791,7 @@ export default function SantumAIChatPage() {
                 alt=""
                 width={200}
                 height={200}
-                className="" />
+              />
             </div>)}
 
           {isMoodCheckInLoading && !todayMoodCheckIn ? (
@@ -843,33 +820,6 @@ export default function SantumAIChatPage() {
         </div>
 
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[24px] bg-[#F8FFFB] p-3 sm:p-4 md:p-5">
-          {/* {messages.length <= 1 && (
-            <div className="mb-4 flex flex-wrap gap-2">
-              {quickPrompts?.length > 0 ? (
-                quickPrompts?.map((prompt) => (
-                  <button
-                    key={prompt}
-                    type="button"
-                    onClick={() => sendMessage(prompt)}
-                    disabled={areChatActionsDisabled}
-                    className={`rounded-full px-4 py-2 text-[13px] font-semibold transition-all ${areChatActionsDisabled
-                      ? "bg-[#EDF2EE] text-[#93A099]"
-                      : "bg-[#F4F7F5] text-[#0F0F0F] hover:bg-[#E8FFF1]"
-                      }`}
-                  >
-                    {prompt}
-                  </button>
-                ))
-              ) : (
-                <div className="px-4 py-4 ">
-                  <p className="font-satoshi text-[14px] leading-6 text-[#555]">
-                    loading quick prompts...
-                  </p>
-                </div>
-              )}
-            </div>
-          )} */}
-
           <div className="mb-3 flex items-center justify-between gap-3">
             <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#7E8A83]">
               {requestedChatId

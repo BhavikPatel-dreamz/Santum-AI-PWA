@@ -45,15 +45,15 @@ function Bullet() {
 
 export default function SantumPlatformClient() {
   return (
-    <StepPageShell showImage={false} imageURL="/1006-removebg-preview.png" title="Santum Platform" contentClassName="overflow-y-auto">
+    <StepPageShell showImage={true} imgHeight={52} imgWidth={52} imageURL="/1006-removebg-preview.png" title="Santum Platform" contentClassName="overflow-y-auto">
       <div className="space-y-5">
         <div className="flex items-center justify-center mb-4">
           <Image
-            src="/logo009-removebg-preview.png"
-            alt=""
-            width={200}
-            height={200}
-            className="" />
+            src="/Logo-03-removebg-preview.png"
+            alt="santum logo"
+            width={300}
+            height={300}
+          />
         </div>
         <h2 className="theme-text-primary text-[18px] font-semibold leading-7">
           Human therapy from Santum.net

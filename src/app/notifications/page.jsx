@@ -508,9 +508,6 @@ export default function NotificationsPage() {
                       <h3 className="text-[16px] font-semibold leading-6 text-[#0F0F0F]">
                         {item.title}
                       </h3>
-                      {/* <span className="rounded-full bg-[#0F0F0F] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
-                        {getNotificationTag(item)}
-                      </span> */}
                       {item.priority === "high" ? (
                         <span className="rounded-full bg-[#FFF3E9] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#D46B08]">
                           Priority

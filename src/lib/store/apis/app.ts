@@ -28,9 +28,6 @@ type ResetPasswordPayload = {
 };
 
 type BasicProfilePayload = {
-  // firstName?: string;
-  // lastName?: string;
-  // dob?: string;
   fingerprint_enabled?: boolean;
   passkey_id?: string | number[];
   paused?: boolean;

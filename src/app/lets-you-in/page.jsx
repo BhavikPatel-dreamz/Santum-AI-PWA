@@ -67,7 +67,6 @@ export default function LetsYouInPage() {
     <div className="theme-auth-shell min-h-dvh flex flex-col items-center font-sans transition-colors duration-300">
       <div className="bg-[#323d51] theme-border relative flex min-h-dvh w-full lg:max-w-3xl flex-col transition-colors duration-300 lg:my-4 lg:min-h-[calc(100dvh-2rem)] lg:overflow-hidden lg:rounded-[36px] lg:border lg:shadow-[0_24px_64px_rgba(15,15,15,0.08)]">
         {/* ── Top green section ── */}
-        {/* <GreenSection show={false} /> */}
         <div>
           <div className="flex min-h-[200px] h-[32vh] max-h-[360px] flex-shrink-0 items-center justify-center overflow-hidden bg-[#323d51] pb-6 sm:min-h-[300px] sm:h-[38vh] sm:pb-10 lg:min-h-[420px] lg:max-h-[460px] lg:pb-16">
             <div className="flex items-center justify-center">

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-const HeaderSection = ({ title, showImage = true, imageURL=null }) => {
+const HeaderSection = ({ title, showImage = true, imageURL = "/Logo Source files 21-4/Icon/SVG/Artboard1.svg", imgHieght=95, imgWidth=95 }) => {
   const router = useRouter();
 
   return (
@@ -33,18 +33,11 @@ const HeaderSection = ({ title, showImage = true, imageURL=null }) => {
           </h1>
           <div className="flex items-center justify-end w-[95px] h-[63.33px]">
             {showImage ? <Image
-              src="/Logo Source files 21-4/Icon/SVG/Artboard1.svg"
-              alt=""
-              width={95}
-              height={95}
-              className=""
-            /> : <Image
               src={imageURL}
-              alt=""
-              width={64}
-              height={64}
-              className=""
-            />}
+              alt="icon"
+              width={imgWidth}
+              height={imgHieght}
+            /> : null}
           </div>
         </div>
       </div>

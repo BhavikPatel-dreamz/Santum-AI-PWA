@@ -72,15 +72,6 @@ export default function ForgetPasswordPage() {
 
   return (
     <StepPageShell title="Reset Password" contentClassName="overflow-y-auto">
-      {/* <div className="mb-4">
-        <h2 className="theme-text-primary text-[20px] font-semibold leading-7">
-          Pick a recovery path
-        </h2>
-        <p className="theme-text-secondary mt-1 font-satoshi text-[15px] leading-6">
-          We&apos;ll use this to send your verification code.
-        </p>
-      </div> */}
-
       {!emailEntered ? (
         <>
           <div className="mb-6">

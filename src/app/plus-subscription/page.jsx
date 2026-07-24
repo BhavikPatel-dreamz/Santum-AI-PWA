@@ -446,26 +446,6 @@ export default function PlusSubscriptionPage() {
         })}
       </div>
 
-      {/* <button
-        type="button"
-        onClick={handlePrimaryAction}
-        disabled={isPrimaryButtonDisabled}
-        className="mt-6 rounded-[14px] bg-[#00D061] px-5 py-4 text-[16px] font-semibold text-white shadow-[0_10px_24px_rgba(0,208,97,0.22)] disabled:cursor-not-allowed disabled:opacity-60"
-      >
-        {primaryButtonLabel}
-      </button>
-      {purchaseRestrictionReason ? (
-        <p className="theme-text-secondary mt-3 font-satoshi text-[13px] leading-5">
-          {purchaseRestrictionReason}
-        </p>
-      ) : null} */}
-      {/* <button
-          type="button"
-          onClick={handleSecondaryAction}
-          className="theme-secondary-button rounded-[14px] px-5 py-4 text-[16px] font-semibold"
-        >
-          {secondaryButtonLabel}
-        </button> */}
     </StepPageShell>
   );
 }
